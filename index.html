@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Latin</title>
+<style>
+  :root { --ink: #2B1A3A; --paper: #FBF7F0; --accent: #8E2F4A; }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #F2EAF5; --paper: #1A1020; --accent: #E8A0B4; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+         background: var(--paper); color: var(--ink); padding: 24px;
+         font: 400 17px/1.6 Georgia, 'Times New Roman', serif; }
+  main { max-width: 32rem; text-align: center; }
+  h1 { font-size: clamp(2.5rem, 12vw, 4rem); margin: 0 0 .2em; letter-spacing: -.02em; }
+  p.sub { font-style: italic; color: var(--accent); margin: 0 0 2rem; }
+  p { margin: 0 0 1rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Salve!</h1>
+  <p class="sub">Nothing here yet &mdash; but the address works.</p>
+  <p>This is where the Latin game will live.</p>
+</main>
+</body>
+</html>
