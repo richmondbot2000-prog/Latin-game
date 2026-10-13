@@ -413,9 +413,12 @@ const Hammer = (() => {
     for (const kind in CATALOGUE) for (const [id] of CATALOGUE[kind]) { if (kind === 'hammer') img('w_' + id); else if (kind === 'pup') for (const p in DOG) img(id + '_' + p); else if (META) for (const p in META.jacque[id] || {}) if (!SKIP.test(p)) img(`j_${id}_${p}`); }
     ui.overlay.hidden = false;
     ui.overlay.innerHTML = `<div class="hitems">
-      <div class="hihead"><span class="hititle">ITEMS</span><span class="hicoins">🪙 <b id="hiCoins">${sv.coins || 0}</b></span><button class="hiclose" id="hiClose">✕</button></div>
-      <div class="hitabs">${['costume', 'hammer', 'pup', 'shop'].map(t => `<button data-t="${t}" class="${t === itemsTab ? 'on' : ''}">${{ costume: 'JACQUE', hammer: 'HAMMER', pup: 'PUP', shop: 'SHOP' }[t]}</button>`).join('')}</div>
-      <div class="hibody"><div class="hiwho"><span class="hilv">Lv.${sv.cleared || 0}</span><canvas id="hiMe"></canvas><div class="hibar"><i id="hiBar"></i></div></div><div class="higrid" id="hiGrid"></div></div>
+      <div class="hihead"><span class="hititle">ITEMS</span><span class="hicoins">🪙 <b id="hiCoins">${sv.coins || 0}</b></span><button class="hiclose" id="hiClose">close</button></div>
+      <div class="hiframe">
+        <div class="hitabs">${['costume', 'hammer', 'pup', 'shop'].map(t => `<button data-t="${t}" class="${t === itemsTab ? 'on' : ''}">${{ costume: 'JACQUE', hammer: 'HAMMER', pup: 'PUP', shop: 'SHOP' }[t]}</button>`).join('')}</div>
+        <div class="hibody"><div class="hiwho"><span class="hilv">Lv.${sv.cleared || 0}</span><canvas id="hiMe"></canvas></div><div class="higrid" id="hiGrid"></div></div>
+        <div class="hibar"><i id="hiBar"></i></div>
+      </div>
       <div class="hinote" id="hiNote"></div></div>`;
     const paint = () => {
       const sv = saved(); WEAR = wear();

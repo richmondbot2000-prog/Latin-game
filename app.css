@@ -342,31 +342,33 @@ body.noscroll { overflow: hidden; }
 .hwhy.show { opacity: 1; transform: translate(-50%, 0); animation: whyout 3.2s forwards; }
 @keyframes whyout { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
 
-/* Jacques Hammer items screen (after the artist's mockup: brown frame, peach panels, teal tabs) */
-.hitems { position: absolute; inset: 0; background: #d8a05a url('art/jh/title_tall.jpg') center / cover; display: flex; flex-direction: column; padding: 8px; gap: 6px; font-family: system-ui, sans-serif; }
-.hitems::before { content: ''; position: absolute; inset: 0; background: rgba(90,50,20,.55); }
+/* Jacques Hammer items screen, built from the artist's ShopUI pieces (art/jh/ui_*) */
+.hitems { position: absolute; inset: 0; background: #6d8f6f url('art/jh/title_tall.jpg') center / cover; display: flex; flex-direction: column; padding: 6px 6px 4px; gap: 0; font-family: system-ui, sans-serif; image-rendering: pixelated; }
+.hitems::before { content: ''; position: absolute; inset: 0; background: rgba(60,40,30,.5); }
 .hitems > * { position: relative; }
-.hihead { display: flex; align-items: center; gap: 8px; }
-.hititle { background: #f7c94d; border: 3px solid #7a4a1e; border-radius: 10px 10px 0 0; padding: 4px 16px; font-weight: 900; letter-spacing: .1em; color: #fff; text-shadow: 0 2px 0 #7a4a1e; font-size: 18px; }
-.hicoins { background: #f9dcb5; border: 3px solid #7a4a1e; border-radius: 10px 10px 0 0; padding: 4px 12px; font-weight: 900; color: #7a4a1e; font-size: 16px; }
-.hiclose { margin-left: auto; background: #f9dcb5; border: 3px solid #7a4a1e; border-radius: 10px; width: 36px; height: 36px; font-weight: 900; color: #7a4a1e; font-size: 16px; }
-.hitabs { display: flex; gap: 4px; }
-.hitabs button { flex: 1; background: #6ad0b8; border: 3px solid #2e7a63; border-radius: 10px 10px 0 0; padding: 6px 2px; font-weight: 900; letter-spacing: .04em; color: #4b3fa8; font-size: 13px; }
-.hitabs button.on { background: #fff6cc; color: #e8902b; border-color: #7a4a1e; }
-.hibody { flex: 1; min-height: 0; background: #ffe9d2; border: 4px solid #7a4a1e; border-radius: 14px; display: flex; gap: 8px; padding: 8px; box-shadow: inset 0 0 0 3px #f5c58a; }
-.hiwho { width: 34%; background: #fff3e4; border: 3px solid #e2b27a; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; padding: 6px 4px; position: relative; }
-.hilv { position: absolute; top: 6px; left: 8px; font-weight: 900; color: #5a3a1a; font-size: 14px; }
+.hihead { display: flex; align-items: flex-end; gap: 6px; margin: 0 10px -2px; z-index: 2; }
+.hititle { width: 150px; height: 33px; background: url('art/jh/ui_title.png') no-repeat center / 100% 100%; color: #fff; text-shadow: 0 2px 0 #7a4a1e; font-weight: 900; letter-spacing: .12em; font-size: 17px; display: flex; align-items: center; justify-content: center; padding-bottom: 4px; }
+.hicoins { height: 30px; border: 10px solid transparent; border-image: url('art/jh/ui_panel.png') 12 fill / 10px round; padding: 0 4px 2px; display: flex; align-items: center; font-weight: 900; color: #7a4a1e; font-size: 15px; min-width: 70px; }
+.hiclose { margin-left: auto; width: 38px; height: 36px; border: 0; background: url('art/jh/ui_close.png') no-repeat center / 100% 100%; color: transparent; font-size: 0; }
+.hiframe { flex: 1; min-height: 0; position: relative; border: 60px solid transparent; border-width: 56px 30px 32px 30px; border-image: url('art/jh/ui_frame.png') 60 34 36 34 fill / 56px 30px 32px 30px stretch; padding: 0 0 2px; display: flex; flex-direction: column; gap: 6px; }
+.hitabs { position: absolute; top: -48px; left: -20px; right: -20px; display: flex; gap: 3px; height: 36px; }
+.hitabs button { flex: 1; border: 8px solid transparent; border-image: url('art/jh/ui_tab.png') 10 fill / 8px stretch; padding: 0 0 2px; background: none; font-weight: 900; letter-spacing: .02em; color: #4b3fa8; font-size: 12px; font-family: system-ui, sans-serif; }
+.hitabs button.on { border-image: url('art/jh/ui_tab_on.png') 10 fill / 8px stretch; color: #e8902b; }
+.hibody { flex: 1; min-height: 0; display: flex; gap: 6px; padding: 0 0 6px; }
+.hiwho { width: 33%; border: 10px solid transparent; border-image: url('art/jh/ui_panel.png') 12 fill / 10px stretch; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; padding: 6px 4px; position: relative; }
+.hilv { position: absolute; top: 8px; left: 10px; font-weight: 900; color: #5a3a1a; font-size: 14px; }
 .hiwho canvas { width: 100%; max-width: 150px; height: auto; image-rendering: pixelated; }
-.hibar { width: 100%; height: 14px; border: 3px solid #7a4a1e; border-radius: 8px; background: #d9f6e6; overflow: hidden; }
-.hibar i { display: block; height: 100%; background: linear-gradient(180deg, #ffb060, #f08a2a); }
-.higrid { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; align-content: start; }
-.hislot { background: #fff3e4; border: 3px solid #e2b27a; border-radius: 12px; padding: 4px 2px; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 108px; cursor: pointer; color: #5a3a1a; }
-.hislot canvas { width: 64px; height: 64px; image-rendering: pixelated; }
-.hislot.worn { border-color: #e8902b; background: #fff6cc; box-shadow: 0 0 0 2px #f7c94d; }
+.higrid { flex: 1; min-width: 0; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 6px; align-content: start; padding: 2px; }
+.hislot { border: 10px solid transparent; border-image: url('art/jh/ui_slot.png') 14 fill / 10px stretch; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 104px; cursor: pointer; color: #5a3a1a; font-family: system-ui, sans-serif; }
+.hislot canvas { width: 60px; height: 60px; image-rendering: pixelated; }
+.hislot.worn { border-image: url('art/jh/ui_slot_on.png') 14 fill / 10px stretch; }
 .hislot.poor { opacity: .55; }
 .hiname { font-size: 11px; font-weight: 800; text-align: center; line-height: 1.1; }
 .hiprice { font-size: 11px; font-weight: 900; color: #e8902b; }
-.hinote { text-align: center; color: #fff; font-weight: 700; font-size: 13px; text-shadow: 0 1px 2px rgba(0,0,0,.6); min-height: 1.2em; }
+.hibar { height: 18px; margin: 0 2px; border: 7px solid transparent; border-image: url('art/jh/ui_track.png') 8 fill / 7px stretch; position: relative; }
+.hibar i { position: absolute; left: -7px; top: -7px; bottom: -7px; min-width: 16px; border: 7px solid transparent; border-image: url('art/jh/ui_fill.png') 8 fill / 7px stretch; }
+.hinote { text-align: center; color: #fff; font-weight: 700; font-size: 12px; text-shadow: 0 1px 2px rgba(0,0,0,.7); min-height: 1.2em; padding-top: 4px; }
 .hiopen { position: absolute; top: 10px; right: 10px; width: auto; font-size: 14px; padding: 8px 12px; min-height: 36px; }
+@media (max-width: 520px) { .hiwho { width: 31%; } .higrid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 5px; } .hislot { min-height: 98px; } .hislot canvas { width: 54px; height: 54px; } }
 .hcoin { color: #e8902b; font-weight: 900; }
 @media (max-width: 520px) { .hiwho { width: 30%; } .higrid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; } .hislot { min-height: 100px; } .hislot canvas { width: 56px; height: 56px; } }
