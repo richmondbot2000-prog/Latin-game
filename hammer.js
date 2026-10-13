@@ -7,11 +7,13 @@ const Hammer = (() => {
   let S = null, ui = null, user = null, saveKey = '';
   let cv, ctx, W = 0, H = 0, stage = null, raf = 0, last = 0;
   const rnd = (a, b) => a + Math.random() * (b - a);
-  const JX = .22;
+  const JX = .3;                      // where Jaques stands (fraction of width)
+  const boardW = () => Math.min(W * .8, H * .9);
 
   function newGame() {
     S = { t: 0, dist: 0, speed: .22, score: 0, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
-      swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0 };
+      swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0,
+      clouds: [...Array(6)].map((_, i) => ({ i: i % 5, x: Math.random() * 1.2 - .1, y: rnd(.1, .85), s: rnd(.9, 1.5), v: rnd(.012, .025) })) };
   }
 
   /* ---------- words on signs ---------- */
@@ -25,7 +27,7 @@ const Hammer = (() => {
     const correct = Math.random() < .5;
     const ds = distractors(w, words);
     const shown = correct ? w.english : ds[Math.floor(Math.random() * ds.length)].english;
-    S.signs.push({ w, shown, correct, x: 1.15, state: 'up', wob: 0 });
+    S.signs.push({ w, shown, correct, x: 1.05, state: 'up', wob: 0 });
   }
 
   /* ---------- update ---------- */
@@ -41,21 +43,22 @@ const Hammer = (() => {
       if (was < .83 && S.vil.t >= .83) { S.ouch = .9; S.flashRed = .4; S.bits.push({ kind: 'ouch', t: 0 }); }
       if (S.vil.t > 2.05) { S.vil = null; if (S.lives <= 0) { S.phase = 'over'; setTimeout(gameOver, 400); } }
     }
+    for (const c of S.clouds) { c.x -= c.v * dt * (slow || .3); if (c.x < -.25) { c.x = 1.05; c.y = rnd(.1, .85); } }
     if (slow) { S.dustT -= dt; if (S.dustT <= 0) { S.dustT = .22; S.bits.push({ kind: 'dust', i: [0, 1, 2, 4, 5][Math.floor(Math.random() * 5)], x: JX - .04 - Math.random() * .02, t: 0 }); } }
     if (S.invuln > 0) S.invuln -= dt; if (S.flashRed > 0) S.flashRed -= dt;
     if (S.ouch > 0) S.ouch -= dt;
     // signs
     S.nextSign -= dt;
-    const gap = Math.max(1.5, 3.2 - S.t * .02);
-    const lastX = S.signs.length ? Math.max(...S.signs.map(s => s.x)) : -1;
-    if (S.nextSign <= 0 && lastX < .62 && !S.vil) { makeSign(); S.nextSign = gap; }
-    const CX = JX + .04;
+    const gap = Math.max(1.2, 2.6 - S.t * .02);
+    const bw = boardW() / W, lastX = S.signs.length ? Math.max(...S.signs.map(s => s.x)) : -9;
+    if (S.nextSign <= 0 && lastX + bw < .55 && !S.vil) { makeSign(); S.nextSign = gap; }
+    const CX = JX;
     for (const s of S.signs) {
       s.x -= v * dt; s.wob += dt;
-      if (s.state === 'up' && s.x < CX - .09) {
+      if (s.state === 'up' && s.x + bw * .45 < CX) {
         // it got past Jaques
         s.state = 'passed';
-        if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: s.x, t: 0 }); }
+        if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: Math.max(.2, s.x + bw / 2), t: 0 }); }
         else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.word}” doesn’t mean “${s.shown}” — you let it past!`); }
       }
     }
@@ -65,11 +68,11 @@ const Hammer = (() => {
       S.swing += dt;
       if (!S.hitDone && S.swing >= .14) {
         S.hitDone = true;
-        const target = S.signs.find(s => s.state === 'up' && s.x > CX - .07 && s.x < CX + .22);
+        const target = S.signs.find(s => s.state === 'up' && s.x < CX + .3 && s.x + bw > CX);
         if (target) {
           target.state = 'smashed'; target.smashT = 0;
-          for (let i = 0; i < 9; i++) S.bits.push({ kind: 'plank', x: target.x, y: .55, vx: rnd(-.25, .35), vy: rnd(-.9, -.3), r: rnd(0, 6), t: 0 });
-          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: target.x, t: 0, text: '+' + pts }); }
+          const hx = Math.max(target.x, CX + .05); for (let i = 0; i < 9; i++) S.bits.push({ kind: 'plank', x: hx, y: GROUND - .22, vx: rnd(-.25, .35), vy: rnd(-.9, -.3), r: rnd(0, 6), t: 0 });
+          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '+' + pts }); }
           else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.word}” really does mean “${target.shown}” — don’t smash the right ones!`); }
         }
       }
@@ -117,15 +120,22 @@ const Hammer = (() => {
     const i = img(name); if (!ok(i)) return;
     ctx.drawImage(i, sx + (box[0] - px) * k, sy + (box[1] - py) * k, (box[2] - box[0]) * k, (box[3] - box[1]) * k);
   }
-  const GROUND = .955;
-  const jScale = () => H * .42 / 116;
+  const GROUND = .93;
+  const CLOUDS = [[38, 52, 113, 97], [128, 20, 178, 77], [300, 27, 366, 79], [353, 42, 408, 76], [412, 66, 485, 90]];
+  const jScale = () => Math.min(H * .24, W * .5) / 116;
 
   function drawBackground() {
     const g = ctx, bg = img('bg_road');
     if (!ok(bg)) { g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); return; }
-    const sb = H / bg.naturalHeight, tw = bg.naturalWidth * sb;
+    g.fillStyle = '#58BAF6'; g.fillRect(0, 0, W, H);
+    const bh = Math.min(H * .6, W * .9), sb = bh / bg.naturalHeight, tw = bg.naturalWidth * sb, top = H * GROUND + 14 * sb - bh;
     const off = (S.dist * W * .9) % tw;
-    for (let x = -off; x < W; x += tw - .5) g.drawImage(bg, x, 0, tw + 1, H);
+    for (let x = -off; x < W; x += tw - .5) g.drawImage(bg, x, top, tw + 1, bh);
+    g.fillStyle = '#9a9a9a'; g.fillRect(0, top + bh - 1, W, H - top - bh + 1);
+    for (const c of S.clouds) {
+      const cb = CLOUDS[c.i], cw = (cb[2] - cb[0]) * sb * c.s, ch = (cb[3] - cb[1]) * sb * c.s;
+      g.drawImage(bg, cb[0], cb[1], cb[2] - cb[0], cb[3] - cb[1], c.x * W, c.y * top - ch / 2, cw, ch);
+    }
   }
   function drawJaques() {
     const g = ctx, k = jScale(), x = W * JX, ground = H * GROUND;
@@ -152,7 +162,7 @@ const Hammer = (() => {
     g.restore();
   }
   function drawDog() {
-    const g = ctx, k = jScale() * .95, x = W * JX - W * .13, ground = H * GROUND;
+    const g = ctx, k = jScale() * .95, x = W * JX - 70 * jScale(), ground = H * GROUND;
     const running = S.phase === 'play' && S.vil == null;
     const cyc = running ? S.t * 10 + 1.5 : 0, bob = running ? Math.abs(Math.sin(cyc * Math.PI / 2)) * 2 : 0;
     g.save(); g.translate(x, ground - bob);
@@ -164,7 +174,7 @@ const Hammer = (() => {
   // the evil guy: rises out of the ground to the right, clubs Jaques with his signpost, sinks back
   function drawVillain() {
     const v = S.vil; if (!v) return;
-    const g = ctx, kd = H * .5 / 160, ground = H * GROUND, vx = W * JX + 88 * jScale();
+    const g = ctx, kd = jScale() * .82, ground = H * GROUND, vx = W * JX + 62 * jScale();
     const t = v.t;
     if (t < .56 || t > 1.5) {
       const f = t < .56 ? 1 + Math.min(6, Math.floor(t / .08)) : 7 - Math.min(6, Math.floor((t - 1.5) / .08));
@@ -190,24 +200,23 @@ const Hammer = (() => {
     if (line) lines.push(line); return lines;
   }
   function drawSign(s) {
-    const g = ctx, x = s.x * W, ground = H * GROUND, sw = Math.min(W * .26, H * .6), sh = sw * .58, top = ground - sh * 2.05;
     if (s.state === 'smashed') return;
+    const g = ctx, k = jScale(), sw = boardW(), sh = Math.min(sw * .42, H * .2), x = s.x * W, ground = H * GROUND;
+    const top = ground - 100 * k - sh * .5, px = Math.max(3, Math.round(k * 2));
     g.save(); g.translate(x, 0);
-    const px = Math.max(3, sw * .02);
-    g.fillStyle = '#2a1a10'; g.fillRect(-sw * .045 - px, top + sh * .8, sw * .09 + px * 2, ground - top - sh * .8);   // post
-    g.fillStyle = '#8a5a2a'; g.fillRect(-sw * .045, top + sh * .8, sw * .09, ground - top - sh * .8);
-    g.fillStyle = '#5a3a1a'; g.fillRect(sw * .01, top + sh * .8, sw * .03, ground - top - sh * .8);
-    g.fillStyle = '#2a1a10'; g.fillRect(-sw / 2 - px, top - px, sw + px * 2, sh + px * 2);                              // board
-    g.fillStyle = s.state === 'passed' && s.correct ? '#b9e08c' : '#e8c27a'; g.fillRect(-sw / 2, top, sw, sh);
-    g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(-sw / 2, top + sh * .33, sw, px); g.fillRect(-sw / 2, top + sh * .66, sw, px);
-    g.fillStyle = '#fff3cf'; g.fillRect(-sw / 2, top, sw, px);
+    const post = (px0) => { g.fillStyle = '#2a1a10'; g.fillRect(px0 - px, top + sh * .6, sw * .07 + px * 2, ground - top - sh * .6); g.fillStyle = '#8a5a2a'; g.fillRect(px0, top + sh * .6, sw * .07, ground - top - sh * .6); g.fillStyle = '#5a3a1a'; g.fillRect(px0 + sw * .045, top + sh * .6, sw * .02, ground - top - sh * .6); };
+    post(sw * .12); post(sw * .81);
+    g.fillStyle = '#2a1a10'; g.fillRect(-px, top - px, sw + px * 2, sh + px * 2);
+    g.fillStyle = s.state === 'passed' && s.correct ? '#b9e08c' : '#e8c27a'; g.fillRect(0, top, sw, sh);
+    g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(0, top + sh * .5, sw, px);
+    g.fillStyle = '#fff3cf'; g.fillRect(0, top, sw, px); g.fillStyle = '#b48a4a'; g.fillRect(0, top + sh - px * 2, sw, px * 2);
     g.fillStyle = '#2B1A3A'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    const lat = Math.round(sw * .17);
-    g.font = `700 ${lat}px Georgia, serif`;
-    let f = lat; while (g.measureText(s.w.word).width > sw * .9 && f > 10) { f--; g.font = `700 ${f}px Georgia, serif`; }
-    g.fillText(s.w.word, 0, top + sh * .25);
-    const lines = wrap(g, s.shown, sw * .9, Math.round(sw * .105));
-    lines.slice(0, 2).forEach((ln, i) => g.fillText(ln, 0, top + sh * (lines.length > 1 ? .55 : .66) + i * sw * .115));
+    let f = Math.round(sh * .36); g.font = `700 ${f}px Georgia, serif`;
+    while (g.measureText(s.w.word).width > sw * .9 && f > 10) { f--; g.font = `700 ${f}px Georgia, serif`; }
+    g.fillText(s.w.word, sw / 2, top + sh * .27);
+    let f2 = Math.round(sh * .24); g.font = `700 ${f2}px system-ui, sans-serif`;
+    while (g.measureText(s.shown).width > sw * .92 && f2 > 9) { f2--; g.font = `700 ${f2}px system-ui, sans-serif`; }
+    g.fillText(s.shown, sw / 2, top + sh * .74);
     g.restore();
   }
   function sprite(n, x, y, k, alpha = 1, rot = 0) {
@@ -216,10 +225,10 @@ const Hammer = (() => {
   }
   function drawHud() {
     const g = ctx;
-    if (S.phase === 'play' && S.t < 1.2) sprite('fx_ready', W * .55, H * .16, Math.min(W / 420, H / 180), S.t < 1 ? 1 : (1.2 - S.t) / .2);
-    else if (S.phase === 'play' && !S.taps && S.signs.length) sprite(Math.floor(S.t * 3) % 2 ? 'fx_tap1' : 'fx_tap2', W * .55, H * .16, Math.min(W / 420, H / 180) * .8);
+    if (S.phase === 'play' && S.t < 1.2) sprite('fx_ready', W / 2, H * .2, Math.min(W / 300, H / 400), S.t < 1 ? 1 : (1.2 - S.t) / .2);
+    else if (S.phase === 'play' && !S.taps && S.signs.length) sprite(Math.floor(S.t * 3) % 2 ? 'fx_tap1' : 'fx_tap2', W / 2, H * .2, Math.min(W / 300, H / 400) * .8);
     if (S.combo >= 3) {
-      const i = img('ui_combo'), k = Math.min(W * .2 / 227, H * .1 / 58);
+      const i = img('ui_combo'), k = Math.min(W * .3 / 227, H * .06 / 58);
       if (ok(i)) {
         const w = i.naturalWidth * k, h = i.naturalHeight * k, x = W - w - 8 - h * 1.4, y = 6;
         g.drawImage(i, x, y, w, h);
@@ -237,8 +246,8 @@ const Hammer = (() => {
     drawDog(); drawJaques(); drawVillain();
     for (const b of S.bits) {
       if (b.kind === 'plank') { ctx.save(); ctx.translate(b.x * W, b.y * H); ctx.rotate(b.r); ctx.globalAlpha = 1 - b.t / 1.2; ctx.fillStyle = '#E8C27A'; ctx.fillRect(-W * .03, -H * .012, W * .06, H * .024); ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 2; ctx.strokeRect(-W * .03, -H * .012, W * .06, H * .024); ctx.restore(); }
-      else if (b.kind === 'pop') { sprite('fx_star2', b.x * W, H * .5, k * (1 + b.t * .6), 1 - b.t, b.t * 2); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#FFD23F'; ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 4; ctx.font = `900 ${H * .09}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.strokeText(b.text, b.x * W, H * .3 - b.t * H * .15); ctx.fillText(b.text, b.x * W, H * .3 - b.t * H * .15); ctx.globalAlpha = 1; }
-      else if (b.kind === 'tick') { sprite('fx_smallstar', b.x * W, H * .3 - b.t * H * .1, k * 1.2, 1 - b.t, b.t * 3); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#2E7D4F'; ctx.font = `900 ${H * .08}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('✓', b.x * W + H * .07, H * .3 - b.t * H * .1); ctx.globalAlpha = 1; }
+      else if (b.kind === 'pop') { sprite('fx_star2', b.x * W, H * GROUND - 120 * jScale(), k * (1 + b.t * .6), 1 - b.t, b.t * 2); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#FFD23F'; ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 4; ctx.font = `900 ${jScale() * 44}px system-ui, sans-serif`; ctx.textAlign = 'center'; const py = H * GROUND - 170 * jScale() - b.t * H * .1; ctx.strokeText(b.text, b.x * W, py); ctx.fillText(b.text, b.x * W, py); ctx.globalAlpha = 1; }
+      else if (b.kind === 'tick') { const ty = H * GROUND - 170 * jScale() - b.t * H * .1; sprite('fx_smallstar', b.x * W, ty, k * 1.2, 1 - b.t, b.t * 3); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#2E7D4F'; ctx.font = `900 ${jScale() * 40}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('✓', b.x * W + jScale() * 36, ty); ctx.globalAlpha = 1; }
       else if (b.kind === 'ouch') sprite('fx_redstar', W * JX + 10, H * GROUND - jScale() * 70, k * (1.2 + b.t), 1 - b.t / .9, -b.t);
     }
     drawHud();
@@ -258,10 +267,9 @@ const Hammer = (() => {
   function start() { S.phase = 'play'; refreshUI(); }
   function layout() {
     if (!stage) return;
-    const rot = innerHeight > innerWidth;
-    stage.classList.toggle('rot', rot);
-    stage.style.width = (rot ? innerHeight : innerWidth) + 'px';
-    stage.style.height = (rot ? innerWidth : innerHeight) + 'px';
+    stage.classList.remove('rot');
+    stage.style.width = innerWidth + 'px';
+    stage.style.height = innerHeight + 'px';
     const box = ui.box;
     W = box.clientWidth; H = box.clientHeight;
     const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -288,7 +296,7 @@ const Hammer = (() => {
         <div class="pcash"><span class="lbl">score</span><b id="hscore">0</b></div>
       </div>
       <div class="hbox" id="hbox"><canvas id="hcv"></canvas><div class="hwhy" id="hwhy"></div><div class="overlay" id="hover" hidden></div></div>
-      <div class="hbar"><span class="small">Tap anywhere to swing. Smash the <b>wrong</b> meanings, let the <b>right</b> ones run past.</span><span class="small">Best ${sv.best || 0}</span></div>`;
+      <div class="hbar"><span class="small">Tap to swing. Smash <b>wrong</b> meanings, let <b>right</b> ones past.</span><span class="small">Best ${sv.best || 0}</span></div>`;
     ui = { box: root.querySelector('#hbox'), overlay: root.querySelector('#hover'), score: root.querySelector('#hscore'), lives: root.querySelector('#hlives'), why: root.querySelector('#hwhy') };
     cv = root.querySelector('#hcv'); ctx = cv.getContext('2d');
     document.body.classList.add('noscroll');

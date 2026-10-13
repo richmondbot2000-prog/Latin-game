@@ -34,7 +34,8 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
   `art/ui/`, `art/trophies/`. Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
-- **Jaques Hammer** — a runner (`hammer.js`), always landscape. Signs scroll
+- **Jaques Hammer** — a runner (`hammer.js`), portrait like the artist's mockup
+  (works either way up). One wide board at a time scrolls
   in with a Latin word and a meaning; tap to smash the wrong ones, let the right
   ones pass. Mistakes bring the evil guy (the "Decoy") out of the ground to club
   Jaques; three lives, score with a combo bonus, best score in `latin.hammer.<id>`.

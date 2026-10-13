@@ -329,7 +329,8 @@ body.noscroll { overflow: hidden; }
 /* Jaques Hammer */
 .hbox { flex: 1; min-height: 0; position: relative; margin: 2px 8px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); border: 3px solid #5a3b22; background: #8FD3FF; touch-action: none; }
 .hbox canvas { display: block; }
-.hlives { font-size: 16px; letter-spacing: 2px; margin-left: 6px; }
+.hlives { font-size: 16px; letter-spacing: 2px; margin-left: 6px; white-space: nowrap; }
+@media (max-width: 520px) { .hstage .ptop { gap: 4px; padding: 2px 6px 0; } .hstage .ptop .iconbtn { padding: 4px 2px; font-size: 14px; } .hstage .plev { font-size: 14px; } .hstage .ptag { display: none; } .hstage .hlives { font-size: 13px; letter-spacing: 0; margin-left: 2px; } .hstage .pcash { padding: 2px 10px 2px 8px; } .hstage .pcash .lbl { display: none; } .hstage .pcash b { font-size: 22px; } .hbar { padding: 4px 8px 6px; } }
 .hbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 10px 6px; }
 .hwhy { position: absolute; left: 50%; top: 10px; transform: translate(-50%, -20px); opacity: 0; background: rgba(60,20,40,.85); color: #FFD23F; padding: 6px 12px; border-radius: 10px; font: 700 14px system-ui, sans-serif; max-width: 90%; text-align: center; pointer-events: none; transition: opacity .3s, transform .3s; }
 .hwhy.show { opacity: 1; transform: translate(-50%, 0); animation: whyout 3.2s forwards; }
