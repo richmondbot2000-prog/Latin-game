@@ -101,7 +101,7 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
   font-family: system-ui, sans-serif; letter-spacing: .05em; }
 .card .stamp.yes { right: 18px; color: var(--good); transform: rotate(12deg); }
 .card .stamp.no { left: 18px; color: var(--bad); transform: rotate(-12deg); }
-.card.under { transform: scale(.95) translateY(10px); opacity: .7; }
+.card.under { transform: scale(.95) translateY(10px); opacity: .85; }
 .answer { display: flex; gap: 14px; margin-top: 16px; }
 .answer button { flex: 1; border: 0; border-radius: 16px; padding: 14px 8px; font-weight: 700; font-size: 1.1rem; min-height: 56px; }
 .answer .no { background: var(--bad-bg); color: var(--bad); }

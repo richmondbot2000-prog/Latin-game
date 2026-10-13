@@ -467,31 +467,35 @@ function renderPlay(u, pane) {
     for (let i = 0; i < pool.length; i++) { r -= wts[i]; if (r <= 0) return pool[i]; }
     return pool[pool.length - 1];
   }
-  function next() {
-    const w = pick();
-    const p = getProg(u), now = Date.now();
-    $('#left', pane).textContent = activeWords(u).filter(x => resting(p[x.id], now)).length + ' resting 😴';
-    if (!w) {
-      deck.innerHTML = '<div class="empty">🏆 Every word is resting!<br>Come back soon to keep them fresh.</div>';
-      return;
-    }
+  // a card is picked one ahead, so the next word sits underneath while the top one is swiped
+  let pending = null;
+  function prepare() {
+    const w = pick(); if (!w) return null;
     recent.push(w.id); if (recent.length > 6) recent.shift();
     const match = Math.random() < 0.5;
     const ds = match ? null : distractors(w, activeWords(u));
-    const shown = match ? w.english : ds[Math.floor(Math.random() * ds.length)].english;
-    card = { w, match, shown };
-    const s = (p[w.id] && p[w.id].s) || 0;
-    deck.innerHTML = `
-      <div class="card under" aria-hidden="true"></div>
-      <div class="card" id="top" data-kind="${w.kind}">
-        <div class="cstars">${starsHTML(s)}</div>
-        ${phraseFor(w) ? `<div class="phrase">${phraseHTML(phraseFor(w).la)}</div>` : ''}
-        <div class="kind">${w.kind}</div>
-        <span class="stamp yes">RIGHT</span><span class="stamp no">WRONG</span>
-        <div class="lat">${esc(w.show)}</div>
+    return { w, match, shown: match ? w.english : ds[Math.floor(Math.random() * ds.length)].english };
+  }
+  const cardHTML = (c, p, top) => `
+      <div class="card${top ? '' : ' under'}" ${top ? 'id="top"' : 'aria-hidden="true"'} data-kind="${c.w.kind}">
+        <div class="cstars">${starsHTML((p[c.w.id] && p[c.w.id].s) || 0)}</div>
+        ${phraseFor(c.w) ? `<div class="phrase">${phraseHTML(phraseFor(c.w).la)}</div>` : ''}
+        <div class="kind">${c.w.kind}</div>
+        ${top ? '<span class="stamp yes">RIGHT</span><span class="stamp no">WRONG</span>' : ''}
+        <div class="lat">${esc(c.w.show)}</div>
         <div class="means">means</div>
-        <div class="en">${esc(shown)}</div>
+        <div class="en">${esc(c.shown)}</div>
       </div>`;
+  function next() {
+    const p = getProg(u), now = Date.now();
+    $('#left', pane).textContent = activeWords(u).filter(x => resting(p[x.id], now)).length + ' resting 😴';
+    card = pending || prepare();
+    if (!card) {
+      deck.innerHTML = '<div class="empty">🏆 Every word is resting!<br>Come back soon to keep them fresh.</div>';
+      return;
+    }
+    pending = prepare();
+    deck.innerHTML = (pending ? cardHTML(pending, p, false) : '<div class="card under" aria-hidden="true"></div>') + cardHTML(card, p, true);
     drawFrame();
     attachSwipe($('#top', deck));
     busy = false;
@@ -573,9 +577,10 @@ function renderPlay(u, pane) {
     if (bump === false) el.classList.add('zero');
   }
   function drawFrame() {
-    const el = $('#top', deck); if (!el) return;
-    const old = $('.frame', el); if (old) old.remove();
-    el.insertAdjacentHTML('afterbegin', frameSVG(el.dataset.kind, el.clientWidth, el.clientHeight));
+    for (const el of deck.querySelectorAll('.card[data-kind]')) {
+      const old = $('.frame', el); if (old) old.remove();
+      el.insertAdjacentHTML('afterbegin', frameSVG(el.dataset.kind, el.clientWidth, el.clientHeight));
+    }
   }
   function flash(msg) {
     toast.textContent = msg; toast.classList.add('show');
