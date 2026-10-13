@@ -45,6 +45,9 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Seven costumes (disco, suit, samurai, astronaut, cowboy, karate, turban) came
   only as flat pictures (PixelOutfits), so their `body` is one cut-out and their
   legs are the standard run frames recoloured.
+  Signs are the artist's eight boards (`sign0-7`, with `_l`/`_r` halves that fly
+  apart on a smash): six wooden styles cycle by level, green = judged right,
+  red = judged wrong; `meta.json.signs` holds their geometry.
   Only two backgrounds exist so far (road, pier), so most outfits run on the
   road until the owner sends their scenes. Progress in `latin.hammer.<id>`
   {best, level, cleared, plays}.
