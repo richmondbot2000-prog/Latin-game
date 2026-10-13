@@ -1,6 +1,6 @@
 'use strict';
 
-/* ---------- Jamie's Hammer: a runner. Signs show a Latin word with a right or wrong meaning.
+/* ---------- Jaques Hammer: a runner. Signs show a Latin word with a right or wrong meaning.
    Tap to smash the wrong ones; let the right ones pass. Get it wrong and the evil guy comes out. ---------- */
 const Hammer = (() => {
   const LIVES = 3;
@@ -36,7 +36,7 @@ const Hammer = (() => {
     S.speed = Math.min(.5, S.speed + .0035 * dt);
     const v = S.speed * slow;
     S.dist += v * dt;
-    if (S.vil) {   // the evil guy's visit: everything else waits while he clubs Jamie
+    if (S.vil) {   // the evil guy's visit: everything else waits while he clubs Jaques
       const was = S.vil.t; S.vil.t += dt;
       if (was < .83 && S.vil.t >= .83) { S.ouch = .9; S.flashRed = .4; S.bits.push({ kind: 'ouch', t: 0 }); }
       if (S.vil.t > 2.05) { S.vil = null; if (S.lives <= 0) { S.phase = 'over'; setTimeout(gameOver, 400); } }
@@ -53,7 +53,7 @@ const Hammer = (() => {
     for (const s of S.signs) {
       s.x -= v * dt; s.wob += dt;
       if (s.state === 'up' && s.x < CX - .09) {
-        // it got past Jamie
+        // it got past Jaques
         s.state = 'passed';
         if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: s.x, t: 0 }); }
         else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.word}” doesn’t mean “${s.shown}” — you let it past!`); }
@@ -127,7 +127,7 @@ const Hammer = (() => {
     const off = (S.dist * W * .9) % tw;
     for (let x = -off; x < W; x += tw - .5) g.drawImage(bg, x, 0, tw + 1, H);
   }
-  function drawJamie() {
+  function drawJaques() {
     const g = ctx, k = jScale(), x = W * JX, ground = H * GROUND;
     const running = S.phase === 'play' && S.vil == null;
     const cyc = running ? S.t * 10 : 0, bob = running ? Math.abs(Math.sin(cyc * Math.PI / 2)) * 2.5 : 0;
@@ -161,7 +161,7 @@ const Hammer = (() => {
     P('openlefteye'); P('openrighteye'); P('lefteyebrow'); P('righteyebrow');
     g.restore();
   }
-  // the evil guy: rises out of the ground to the right, clubs Jamie with his signpost, sinks back
+  // the evil guy: rises out of the ground to the right, clubs Jaques with his signpost, sinks back
   function drawVillain() {
     const v = S.vil; if (!v) return;
     const g = ctx, kd = H * .5 / 160, ground = H * GROUND, vx = W * JX + 88 * jScale();
@@ -234,7 +234,7 @@ const Hammer = (() => {
     for (const s of S.signs) drawSign(s);
     const k = jScale() * .8;
     for (const b of S.bits) if (b.kind === 'dust') sprite('fx_dust' + b.i, b.x * W, H * GROUND - 6 * k, k * (.6 + b.t), .7 * (1 - b.t / .6));
-    drawDog(); drawJamie(); drawVillain();
+    drawDog(); drawJaques(); drawVillain();
     for (const b of S.bits) {
       if (b.kind === 'plank') { ctx.save(); ctx.translate(b.x * W, b.y * H); ctx.rotate(b.r); ctx.globalAlpha = 1 - b.t / 1.2; ctx.fillStyle = '#E8C27A'; ctx.fillRect(-W * .03, -H * .012, W * .06, H * .024); ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 2; ctx.strokeRect(-W * .03, -H * .012, W * .06, H * .024); ctx.restore(); }
       else if (b.kind === 'pop') { sprite('fx_star2', b.x * W, H * .5, k * (1 + b.t * .6), 1 - b.t, b.t * 2); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#FFD23F'; ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 4; ctx.font = `900 ${H * .09}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.strokeText(b.text, b.x * W, H * .3 - b.t * H * .15); ctx.fillText(b.text, b.x * W, H * .3 - b.t * H * .15); ctx.globalAlpha = 1; }
@@ -282,7 +282,7 @@ const Hammer = (() => {
     root.innerHTML = `
       <div class="ptop">
         <button class="iconbtn" id="hhome">← Home</button>
-        <span class="plev">Jamie's Hammer</span>
+        <span class="plev">Jaques Hammer</span>
         <span class="ptag">${esc(opts.tag || '')}</span>
         <span class="hlives" id="hlives"></span>
         <div class="pcash"><span class="lbl">score</span><b id="hscore">0</b></div>
@@ -298,7 +298,7 @@ const Hammer = (() => {
     cv.addEventListener('pointerdown', e => { e.preventDefault(); tap(); });
     addEventListener('resize', layout);
     const keys = e => { if (e.code === 'Space' || e.key === 'ArrowUp') tap(); }; document.addEventListener('keydown', keys); ui.keys = keys;
-    showOverlay(`<img src="${ART}icon.png" alt="" style="width:64px;height:64px;border-radius:14px;vertical-align:middle;margin-right:8px">Jamie's Hammer`, 'Signs come running at you with a Latin word and a meaning. If the meaning is <b>wrong</b>, tap to smash it with the hammer. If it’s <b>right</b>, let it go by. Get it wrong and the evil guy comes out!', "Let's run!", start);
+    showOverlay(`<img src="${ART}icon.png" alt="" style="width:64px;height:64px;border-radius:14px;vertical-align:middle;margin-right:8px">Jaques Hammer`, 'Signs come running at you with a Latin word and a meaning. If the meaning is <b>wrong</b>, tap to smash it with the hammer. If it’s <b>right</b>, let it go by. Get it wrong and the evil guy comes out!', "Let's run!", start);
     last = performance.now(); raf = requestAnimationFrame(frame);
   }
   function unmount() {

@@ -326,7 +326,7 @@ body.noscroll { overflow: hidden; }
 
 .pshop .gun[hidden] { display: none; }
 
-/* Jamie's Hammer */
+/* Jaques Hammer */
 .hbox { flex: 1; min-height: 0; position: relative; margin: 2px 8px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); border: 3px solid #5a3b22; background: #8FD3FF; touch-action: none; }
 .hbox canvas { display: block; }
 .hlives { font-size: 16px; letter-spacing: 2px; margin-left: 6px; }

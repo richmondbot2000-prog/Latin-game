@@ -34,10 +34,10 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
   `art/ui/`, `art/trophies/`. Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
-- **Jamie's Hammer** — a runner (`hammer.js`), always landscape. Signs scroll
+- **Jaques Hammer** — a runner (`hammer.js`), always landscape. Signs scroll
   in with a Latin word and a meaning; tap to smash the wrong ones, let the right
   ones pass. Mistakes bring the evil guy (the "Decoy") out of the ground to club
-  Jamie; three lives, score with a combo bonus, best score in `latin.hammer.<id>`.
+  Jaques; three lives, score with a combo bonus, best score in `latin.hammer.<id>`.
   Art from the owner's "Jaques Hammer" folder in `art/jh/`: pixel rigs drawn part
   by part (`meta.json` holds every part's box — Jacque has 19 outfit skins and
   there are 22 weapons, only `standard` + the hammer are used so far), the dog,
