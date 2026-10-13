@@ -405,7 +405,7 @@ const Practice = (() => {
     type = gun.type;
     const rig = rigFor(gun), bounds = rig && Rig.bounds(rig);
     if (bounds) {   // the artist's rig: Fire after a shot, then Idle
-      const bw = bounds[2] - bounds[0], bh = bounds[3] - bounds[1], sc = Math.min(s * .95 / bw, s * 1.1 / bh);
+      const bw = bounds[2] - bounds[0], bh = bounds[3] - bounds[1], sc = Math.min(s * 1.14 / bw, s * 1.32 / bh);
       const bottom = y + s * .42, ox = x - (bounds[0] + bounds[2]) / 2 * sc, oy = bottom + bounds[1] * sc;
       let anim = null, t = 0;
       const since = gun.fired != null ? S.t - gun.fired : 1e9, fireDur = Rig.duration(rig, 'Fire');
@@ -425,7 +425,7 @@ const Practice = (() => {
       return;
     }
     if (im) {
-      const w = s * (k.kind === 'wall' ? .8 : .92), h = w * im.naturalHeight / im.naturalWidth;
+      const w = s * (k.kind === 'wall' ? .96 : 1.1), h = w * im.naturalHeight / im.naturalWidth;
       if (k.kind === 'mine' && !gun.armed) g.globalAlpha = .55;
       if (k.kind === 'bomb') { const p = gun.fuse != null ? Math.max(0, gun.fuse) / k.fuse : 1; g.save(); g.translate(x, y + s * .42); g.scale(1 + .15 * Math.sin(S.t * 25) * (1 - p), 1 + .15 * Math.sin(S.t * 25) * (1 - p)); g.translate(-x, -(y + s * .42)); }
       g.drawImage(im, x - w / 2 - kick * s * .6, y + s * .42 - h, w, h);
@@ -506,7 +506,7 @@ const Practice = (() => {
     g.restore();
   }
   function drawSquishy(g, sq, x, y, s) {
-    const k = sq.k, w = s * k.size, mo = motionOf(sq);
+    const k = sq.k, w = s * k.size * 1.2, mo = motionOf(sq);
     if (sq.rise <= 0) sq.blink -= 1 / 60; if (sq.blink < 0) sq.blink = 2 + Math.random() * 3;
     const foot = y + s * .42;
     if (sq.under) {   // a mound of earth travelling along the row
@@ -599,7 +599,7 @@ const Practice = (() => {
         for (let i = 0; i < 7; i++) { const a = i * .9 + f.x, d = cell * f.size * (.2 + p * .6); ctx.beginPath(); ctx.arc(x + Math.cos(a) * d, y + Math.sin(a) * d * .6, cell * .08 * (1 - p) + 1, 0, 7); ctx.fill(); }
         ctx.globalAlpha = 1;
       } else if (f.kind === 'melt') {
-        const p = f.t / .6, w = cell * f.size, foot = y + cell * .42 - (f.fly ? cell * .28 : 0);
+        const p = f.t / .6, w = cell * f.size * 1.2, foot = y + cell * .42 - (f.fly ? cell * .28 : 0);
         ctx.save(); ctx.translate(x, foot);
         if (f.bones) { drawSprite(ctx, f.art, 0, 0, w, 1 - p); }
         else { ctx.scale(1 + p * .5, Math.max(.05, 1 - p)); drawSprite(ctx, f.art, 0, 0, w, 1 - p * .7); }
@@ -608,7 +608,7 @@ const Practice = (() => {
         // nine frames from the artist's death animation, then the puddle fades
         const n = Math.min(9, 1 + Math.floor(f.t / .1)), im = SPRITES['antbun/death' + n];
         if (im && im.complete) {
-          const w = cell * f.size, fd = w / ANTBUN.death.body[2], bb = ANTBUN.death.body, foot = y + cell * .42;
+          const w = cell * f.size * 1.2, fd = w / ANTBUN.death.body[2], bb = ANTBUN.death.body, foot = y + cell * .42;
           ctx.globalAlpha = f.t > 1 ? Math.max(0, 1 - (f.t - 1) / .4) : 1;
           ctx.drawImage(im, x - (bb[0] + bb[2] / 2) * fd, foot - (bb[1] + bb[3]) * fd, ANTBUN.death.w * fd, ANTBUN.death.h * fd);
           ctx.globalAlpha = 1;
