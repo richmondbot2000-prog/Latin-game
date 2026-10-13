@@ -40,8 +40,11 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Turret, Freeze Turret, Freeze Ray, Sonic Boom, Solar Blast (key `mortar`),
   Miner Shoot, Detonate Bomb, Plasma Bomb, Brain Wash, Shield, most with
   three upgrade tiers; `GUNS` in `practice.js` holds their behaviour
-  (`kind`: shoot / beam / ring / lob / mine / bomb / brain / wall). Not used
-  yet: Floaty, Generators (sketch only).
+  (`kind`: shoot / beam / ring / lob / mine / bomb / brain / wall). Weapons
+  with a Spine rig animate through `rig.js` (a small Spine player) from
+  `art/rigs/<key>.json+.png`, exported by `scratchpad/sq2/export_rigs.py`:
+  Fire plays after a shot, Idle between. Plasma Bomb and Brain Wash have no
+  usable rig and stay as still pictures. Not used yet: Floaty, Generators.
   Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
   `art/ui/`, `art/trophies/`. Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).

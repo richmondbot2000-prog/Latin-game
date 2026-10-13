@@ -70,6 +70,9 @@ const Practice = (() => {
   const uiImg = n => { const im = UI[n]; return im && im.complete && im.naturalWidth ? im : null; };
   const WEAPONS = {};   // art/weapons: every gun tier and the projectiles
   const LAWN = {};      // art/lawn: grass and soil textures, the mower, bushes, the path
+  // the weapons that have an animation rig (art/rigs): they fire with the artist's recoil and idle between shots
+  const RIG_KEYS = ['blaster1', 'blaster3', 'mine1', 'mine2', 'mine3', 'freezeray1', 'freezeturret2', 'freezeturret3', 'handy1', 'handy3', 'miner1', 'miner2', 'miner3', 'solar1', 'sonic1', 'sonic2', 'sonic3'];
+  const rigFor = g => { const n = GUNS[g.type].art + (g.tier || 1); return RIG_KEYS.includes(n) && typeof Rig !== 'undefined' ? Rig.load(n) : null; };
   const lawnImg = n => { const im = LAWN[n]; return im && im.complete && im.naturalWidth ? im : null; };
   const wImg = n => { const im = WEAPONS[n]; return im && im.complete && im.naturalWidth ? im : null; };
   const gunArt = g => { const k = GUNS[g.type]; return wImg(k.art + (g.tier || 1)) ? k.art + (g.tier || 1) : k.art + '1'; };
@@ -250,7 +253,7 @@ const Practice = (() => {
       const targets = S.squishies.filter(s => !s.dead && !s.hypno && s.x < COLS + .6 && (k.kind === 'lob' && !k.lane ? s.x > .5 : s.row === r && s.x > c + .2 && !s.under));
       if (!targets.length) continue;
       const first = targets.reduce((a, b) => a.x < b.x ? a : b);
-      g.cool = tier.every; g.kick = .12;
+      g.cool = tier.every; g.kick = .12; g.fired = S.t;
       if (k.kind === 'lob') S.shells.push({ x0: c + .5, row0: r, x1: first.x, row: first.row, t: 0, dur: Math.max(.6, Math.hypot(first.x - c, first.row - r) / 6 + .4), dmg: tier.dmg, splash: tier.splash, proj: k.proj });
       else if (k.kind === 'ring') S.rings.push({ x: c + .6, row: r, speed: 4.5, push: tier.push, dmg: tier.dmg, hit: new Set(), t: 0 });
       else for (let i = 0; i < tier.shots; i++) S.bullets.push({ x: c + .75 - i * .22, row: r, speed: k.speed, dmg: k.dmg, proj: k.proj, small: !!k.small, freeze: tier.freeze || 0, big: g.type === 'shooter' && (g.tier || 1) < 3 });
@@ -400,6 +403,27 @@ const Practice = (() => {
     const gun = typeof type === 'object' ? type : { type, tier: 1 };
     const im = wImg(gunArt(gun)), k = GUNS[gun.type];
     type = gun.type;
+    const rig = rigFor(gun), bounds = rig && Rig.bounds(rig);
+    if (bounds) {   // the artist's rig: Fire after a shot, then Idle
+      const bw = bounds[2] - bounds[0], bh = bounds[3] - bounds[1], sc = Math.min(s * .95 / bw, s * 1.1 / bh);
+      const bottom = y + s * .42, ox = x - (bounds[0] + bounds[2]) / 2 * sc, oy = bottom + bounds[1] * sc;
+      let anim = null, t = 0;
+      const since = gun.fired != null ? S.t - gun.fired : 1e9, fireDur = Rig.duration(rig, 'Fire');
+      if (fireDur && since < fireDur) { anim = 'Fire'; t = since; }
+      else { const idle = Rig.has(rig, 'Idle') ? 'Idle' : Rig.has(rig, 'ReadyIdle') ? 'ReadyIdle' : null; if (idle) { anim = idle; const d = Rig.duration(rig, idle); t = d ? (S.t + (gun.seed || 0)) % d : 0; } }
+      if (k.kind === 'mine' && !gun.armed) g.globalAlpha = .55;
+      g.save();
+      if (k.kind === 'bomb') { const p = gun.fuse != null ? Math.max(0, gun.fuse) / k.fuse : 1; g.translate(x, bottom); g.scale(1 + .15 * Math.sin(S.t * 25) * (1 - p), 1 + .15 * Math.sin(S.t * 25) * (1 - p)); g.translate(-x, -bottom); }
+      Rig.draw(g, rig, anim, t, ox, oy, sc);
+      g.restore(); g.globalAlpha = 1;
+      if (k.kind === 'beam' && gun.beam) {
+        const bx = x + s * .35, by = y + s * .1;
+        const gr = g.createLinearGradient(bx, 0, bx + k.range * s, 0); gr.addColorStop(0, 'rgba(180,240,255,.85)'); gr.addColorStop(1, 'rgba(180,240,255,0)');
+        g.fillStyle = gr; g.fillRect(bx, by - s * .07 * (1 + .3 * Math.sin(S.t * 30)), k.range * s, s * .14 * (1 + .3 * Math.sin(S.t * 30)));
+      }
+      if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
+      return;
+    }
     if (im) {
       const w = s * (k.kind === 'wall' ? .8 : .92), h = w * im.naturalHeight / im.naturalWidth;
       if (k.kind === 'mine' && !gun.armed) g.globalAlpha = .55;
@@ -685,7 +709,7 @@ const Practice = (() => {
     } else {
       if (S.grid[r][c] || !S.spec.rows.includes(r)) return;
       const k = GUNS[S.sel]; if (S.money < k.cost || S.recharge[S.sel] > 0) return;
-      S.grid[r][c] = { type: S.sel, hp: k.tiers[0].hp || k.hp, cool: .3, kick: 0, bitten: 0, tier: 1, arm: k.arm || 0, armed: false, fuse: k.fuse != null ? k.fuse : null, uses: k.tiers[0].uses || 0, beam: false };
+      S.grid[r][c] = { type: S.sel, hp: k.tiers[0].hp || k.hp, cool: .3, kick: 0, bitten: 0, tier: 1, seed: Math.random() * 3, arm: k.arm || 0, armed: false, fuse: k.fuse != null ? k.fuse : null, uses: k.tiers[0].uses || 0, beam: false };
       S.money -= k.cost; S.recharge[S.sel] = k.recharge; S.sel = null;
     }
     refreshShop();
@@ -831,6 +855,7 @@ const Practice = (() => {
     for (const n of UI_NAMES) if (!UI[n]) { const im = new Image(); im.src = 'art/ui/' + n + '.png'; UI[n] = im; }
     for (const key in GUNS) for (let t = 1; t <= GUNS[key].tiers.length; t++) { const n = GUNS[key].art + t; if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; } }
     for (const n of ['proj_bullet', 'proj_lava', 'proj_ice', 'proj_ring', 'proj_rock']) if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; }
+    if (typeof Rig !== 'undefined') for (const n of RIG_KEYS) Rig.load(n);
     for (const n of ['grass', 'soil', 'path', 'mower', 'bush', 'fence']) if (!LAWN[n]) { const im = new Image(); im.onload = () => { bg = null; }; im.src = 'art/lawn/' + n + '.png'; LAWN[n] = im; }
     S = null; newLevel(sv.level || 1);
     renderShop(); layout(); refreshShop();
