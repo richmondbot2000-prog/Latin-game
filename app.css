@@ -429,3 +429,13 @@ body.noscroll { overflow: hidden; }
 .ropts .btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
 .rmsg { text-align: center; min-height: 1.5em; margin: 12px 0 0; color: var(--muted); }
 .gname.read { color: #FFF3B0; }
+
+/* leaderboard */
+.lb { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.lb th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; text-align: right; padding: 4px 6px; font-family: system-ui, sans-serif; }
+.lb td { padding: 8px 6px; text-align: right; border-top: 1px solid var(--line); font-size: 1.05rem; }
+.lb td.who { text-align: left; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.lb tr.me td { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.avatar.tiny { width: 28px; height: 28px; box-shadow: none; }
+.avatar.tiny b { font-size: 13px; }
+.avatar.tiny i { display: none; }

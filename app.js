@@ -5,7 +5,7 @@ const mem = {};
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return k in mem ? mem[k] : d; } },
   set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
-    if (/^latin\.(progress|streak|level|practice)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
+    if (/^latin\.(progress|streak|level|practice|stats)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
   del(k) { delete mem[k]; try { localStorage.removeItem(k); } catch (e) {} },
 };
 
@@ -71,6 +71,11 @@ function recordAnswer(u, w, ok) {
   else { pw.bad = (pw.bad || 0) + 1; pw.s = 0; delete pw.r; pw.w = [...(pw.w || []).filter(t => t > Date.now() - DAY), Date.now()].slice(-5); }   // when it was got wrong, last 24 h
   pw.t = Date.now();
   p[w.id] = pw; saveProg(u, p);
+  // the daily tally behind the leaderboard: one point per word answered, in any game
+  const st = store.get('latin.stats.' + u.id, { days: {}, total: 0 }), d = dayKey();
+  st.days[d] = (st.days[d] || 0) + 1; st.total = (st.total || 0) + 1;
+  for (const k in st.days) if (k < dayKey(Date.now() - 40 * DAY)) delete st.days[k];
+  store.set('latin.stats.' + u.id, st);
   return pw;
 }
 
@@ -96,6 +101,25 @@ const $ = (sel, el = document) => el.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const starsHTML = n => '<span class="stars" aria-label="' + n + ' of 5 stars">' + '★'.repeat(n) + '<span class="off">' + '★'.repeat(5 - n) + '</span></span>';
 const resting = (p, now = Date.now()) => p && p.r && p.r > now;
+const dayKey = (t = Date.now()) => { const d = new Date(t); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+// words answered today, this week (since Monday) and ever; players from before the tally get their 'ever' from their stars record
+function statsOf(u) {
+  const st = store.get('latin.stats.' + u.id, null);
+  const prog = store.get('latin.progress.' + u.id, {});
+  const legacy = Object.values(prog).reduce((n, p) => n + (p.ok || 0) + (p.bad || 0), 0);
+  const now = new Date(), dow = (now.getDay() + 6) % 7, monday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dow).getTime();
+  const days = st ? st.days : {};
+  let today = days[dayKey()] || 0, week = 0;
+  for (const k in days) if (k >= dayKey(monday)) week += days[k];
+  return { today, week, ever: Math.max(st ? st.total : 0, legacy) };
+}
+function leaderboardHTML() {
+  const rows = users().map(u => ({ u, ...statsOf(u) })).sort((a, b) => b.today - a.today || b.week - a.week || b.ever - a.ever);
+  return `<div class="tile board"><h2>Leaderboard</h2><p class="small" style="margin:0 0 8px">Words answered, in any game.</p>
+    <table class="lb"><thead><tr><th></th><th>Today</th><th>This week</th><th>Ever</th></tr></thead><tbody>
+    ${rows.map((r, i) => `<tr class="${current() && r.u.id === current().id ? 'me' : ''}"><td class="who">${i === 0 && r.today ? '🥇 ' : ''}${avatarHTML(r.u, 'tiny')}${esc(r.u.name)}</td><td>${r.today}</td><td>${r.week}</td><td>${r.ever}</td></tr>`).join('')}
+    </tbody></table></div>`;
+}
 // how often a word should come up: twice as often if it was got wrong in the last day, three times if twice or more
 const boost = (p, now = Date.now()) => { const n = p && p.w ? p.w.filter(t => t > now - DAY).length : 0; return n >= 2 ? 3 : n === 1 ? 2 : 1; };
 const weightOf = p => (6 - ((p && p.s) || 0)) * boost(p);
@@ -318,6 +342,7 @@ function renderHome(u) {
       <button class="gamebanner" id="pracGo" style="background-image:url('art/banners/squishygeddon.jpg')"><span class="gname squishy">Squishygeddon</span></button>
       <button class="gamebanner" id="hamGo" style="background-image:url('art/banners/hammer.jpg')"><span class="gname hammer">Jacques Hammer</span></button>
     </div>
+    ${leaderboardHTML()}
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
   </div>`;
   $('.who').textContent = u.name;

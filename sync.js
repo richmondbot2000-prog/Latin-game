@@ -32,9 +32,9 @@ const Sync = (() => {
     store.set('latin.users', users().map(x => x.id === u.id ? { ...x, code: u.code } : x));
     return u.code;
   }
-  const KEYS = ['progress', 'streak', 'level', 'practice'];
+  const KEYS = ['progress', 'streak', 'level', 'practice', 'stats'];
   const blobOf = u => ({ v: 1, updated: Date.now(), progress: store.get('latin.progress.' + u.id, {}), streak: store.get('latin.streak.' + u.id, null),
-    level: store.get('latin.level.' + u.id, null), practice: store.get('latin.practice.' + u.id, null) });
+    level: store.get('latin.level.' + u.id, null), practice: store.get('latin.practice.' + u.id, null), stats: store.get('latin.stats.' + u.id, null) });
 
   // merge what the cloud has into this device: per word, keep the more recent answer
   function merge(u, remote) {
@@ -55,6 +55,12 @@ const Sync = (() => {
       for (const k in rp) if (typeof rp[k] === 'number' && (m[k] == null || rp[k] > m[k])) { m[k] = rp[k]; ch = true; }
       if (rp.stars) { m.stars = { ...(m.stars || {}) }; for (const l in rp.stars) if ((m.stars[l] || 0) < rp.stars[l]) { m.stars[l] = rp.stars[l]; ch = true; } }
       if (ch) { store.set('latin.practice.' + u.id, m); changed = true; }
+    }
+    const lst = store.get('latin.stats.' + u.id, null), rst = remote.stats;
+    if (rst) {   // the daily tallies: the bigger count for each day wins
+      const m = { days: { ...((lst && lst.days) || {}) }, total: Math.max((lst && lst.total) || 0, rst.total || 0) }; let ch = !lst || m.total !== lst.total;
+      for (const d in rst.days || {}) if ((m.days[d] || 0) < rst.days[d]) { m.days[d] = rst.days[d]; ch = true; }
+      if (ch) { store.set('latin.stats.' + u.id, m); changed = true; }
     }
     if (remote.level && !store.get('latin.level.' + u.id, null)) { store.set('latin.level.' + u.id, remote.level); changed = true; }
     return changed;
