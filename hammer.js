@@ -208,7 +208,7 @@ const Hammer = (() => {
   function drawBackground() {
     const g = ctx, bg = img(lev().bg);
     if (!ok(bg)) { g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); return; }
-    g.fillStyle = lev().bg === 'bg_pier' ? '#8ED4F8' : '#58BAF6'; g.fillRect(0, 0, W, H);
+    g.fillStyle = lev().bg === 'bg_pier' ? '#98D4FF' : '#58BAF6'; g.fillRect(0, 0, W, H);
     const bh = Math.min(H * .6, W * .9), sb = bh / bg.naturalHeight, tw = bg.naturalWidth * sb, top = H * GROUND + 14 * sb - bh;
     const off = (S.dist * W * .9) % tw;
     for (let x = -off; x < W; x += tw - .5) g.drawImage(bg, x, top, tw + 1, bh);
