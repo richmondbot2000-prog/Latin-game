@@ -72,6 +72,19 @@ const starsHTML = n => '<span class="stars" aria-label="' + n + ' of 5 stars">' 
 const resting = (p, now = Date.now()) => p && p.r && p.r > now;
 const fmtDate = t => new Date(t).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 const app = $('#app');
+
+/* iPhone / iPad: suggest adding to the home screen (only in Safari, not once installed) */
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const installed = () => navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+const SHARE_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" aria-label="Share" style="vertical-align:-3px"><path d="M12 3v12M8 7l4-4 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 11H5v10h14V11h-1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+function installTip(where) {
+  if (!isIOS || installed() || store.get('latin.tipHidden', false)) return '';
+  const first = where === 'signin' ? ' Do this <b>before</b> making your player, so your stars live in the app.' : '';
+  return `<div class="tip" id="tip"><button class="x" id="tipX" aria-label="Hide tip">×</button>
+    <b>Make it an app!</b> Tap ${SHARE_ICON} <b>Share</b>, then <b>Add to Home Screen</b>.${first}</div>`;
+}
+function wireTip() { const x = $('#tipX'); if (x) x.onclick = () => { store.set('latin.tipHidden', true); $('#tip').remove(); }; }
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
 const sheet = $('#sheet');
 
 function route() {
@@ -92,6 +105,7 @@ function renderSignIn(mode = store.get('latin.signinMode', users().length ? 'in'
   <div class="wrap">
     <h1>Salve!</h1>
     <p class="sub">Learn every Latin word, one card at a time.</p>
+    ${installTip('signin')}
     <div class="tabs" role="tablist">
       <button role="tab" data-m="in" aria-selected="${mode === 'in'}">I've played before</button>
       <button role="tab" data-m="new" aria-selected="${mode === 'new'}">I'm new</button>
@@ -105,6 +119,7 @@ function renderSignIn(mode = store.get('latin.signinMode', users().length ? 'in'
     <button class="btn" id="go" disabled>${mode === 'new' ? 'Create my player' : "Let's play"}</button>
     ${mode === 'new' ? '<p class="small" style="text-align:center">Remember your name and emojis — they are how the game knows it’s you. Your progress stays on this device.</p>' : ''}
   </div>`;
+  wireTip();
   const name = $('#name'), go = $('#go'), err = $('#err');
   const slots = app.querySelectorAll('.slot');
   const sync = () => {
@@ -163,6 +178,7 @@ function renderHome(u) {
   <div class="wrap">
     <div class="bar"><span class="title"></span><button class="iconbtn" id="who">Switch</button></div>
     <div class="hello"><div class="small">Salve,</div><div class="who"></div></div>
+    ${installTip('home')}
     <button class="tile" id="org">
       <h2>Organise</h2>
       <p>${levelName(levelOf(u))}: ${total} words to learn with swipe cards.</p>
@@ -174,6 +190,7 @@ function renderHome(u) {
     <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
   </div>`;
   $('.who').textContent = u.name + ' ' + u.emojis.join('');
+  wireTip();
   $('#org').onclick = () => { location.hash = 'organise'; };
   $('#who').onclick = () => { store.del('latin.current'); route(); };
   $('#del').onclick = () => {
