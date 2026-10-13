@@ -305,7 +305,6 @@ function renderHome(u) {
       <button class="gamebanner" id="hamGo" style="background-image:url('art/banners/hammer.jpg')"><span class="gname hammer">Jacques Hammer</span></button>
     </div>
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
-    <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
   </div>`;
   $('.who').textContent = u.name;
   $('#avatarBtn').onclick = () => pickPhoto(u, () => renderHome(current()));
@@ -328,12 +327,6 @@ function renderHome(u) {
     store.set('latin.orgTab', b.dataset.t); location.hash = b.dataset.t;
   };
   $('#who').onclick = () => { store.del('latin.current'); route(); };
-  $('#del').onclick = () => {
-    if (!confirm(`Delete ${u.name} and all their stars on this device? This can't be undone.`)) return;
-    store.set('latin.users', users().filter(x => x.id !== u.id));
-    store.del(progressKey(u)); store.del(streakKey(u)); store.del(levelKey(u)); store.del('latin.current');
-    route();
-  };
 }
 
 /* ---------- practice (garden defence) ---------- */
