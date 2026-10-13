@@ -107,7 +107,7 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .answer .no { background: var(--bad-bg); color: var(--bad); }
 .answer .yes { background: var(--good-bg); color: var(--good); }
 .hint { text-align: center; font-size: 14px; color: var(--muted); margin-top: 10px; }
-.toast { position: fixed; left: 50%; top: 42%; transform: translate(-50%, 0); background: var(--good); color: #fff; padding: 8px 18px; border-radius: 999px;
+.toast { position: fixed; left: 50%; top: 27%; transform: translate(-50%, 0); background: var(--good); color: #fff; padding: 8px 18px; border-radius: 999px;
   font-weight: 700; pointer-events: none; opacity: 0; transition: opacity .2s, transform .5s; z-index: 30; font-family: system-ui, sans-serif; }
 .toast.show { opacity: 1; transform: translate(-50%, -16px); }
 .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
