@@ -25,7 +25,7 @@ const Hammer = (() => {
   let S = null, ui = null, user = null, saveKey = '';
   let cv, ctx, W = 0, H = 0, stage = null, raf = 0, last = 0;
   const rnd = (a, b) => a + Math.random() * (b - a);
-  const JX = .3;                      // where Jacques stands (fraction of width)
+  const JX = .3; const recentS = [];                      // where Jacques stands (fraction of width)
   const boardW = () => Math.min(W * .8, H * .9);
 
   function newGame(level = 1, score = 0) {
@@ -40,8 +40,8 @@ const Hammer = (() => {
     let total = 0; const wts = words.map(w => { const t = weightOf(p[w.id]); total += t; return t; });
     let r = Math.random() * total, w = words[words.length - 1];
     for (let i = 0; i < words.length; i++) { r -= wts[i]; if (r <= 0) { w = words[i]; break; } }
-    if (w === S.lastWord && words.length > 1) return makeSign();
-    S.lastWord = w;
+    if (words.length > 1 && recentS.slice(-Math.min(20, words.length - 2)).includes(w.id)) return makeSign();   // a long gap before a word repeats
+    recentS.push(w.id); if (recentS.length > 20) recentS.shift();
     const correct = Math.random() < .5;
     const ds = distractors(w, words);
     const shown = correct ? w.english : ds[Math.floor(Math.random() * ds.length)].english;

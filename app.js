@@ -518,7 +518,7 @@ function closeSheet() { sheet.hidden = true; sheet.innerHTML = ''; sheet.onclick
 
 /* swipe game */
 function renderPlay(u, pane) {
-  const recent = [];
+  const recent = [], GAP = 25;
   let card = null, busy = false, right = 0, seen = 0;
   const st = store.get(streakKey(u), { cur: 0, best: 0 });
   pane.innerHTML = `
@@ -538,7 +538,9 @@ function renderPlay(u, pane) {
     // nothing due yet: cycle through every word again rather than stopping the session
     if (!pool.length) pool = active.slice();
     if (!pool.length) return null;
-    if (pool.length > 8) pool = pool.filter(w => !recent.includes(w.id));
+    // a word never comes back until at least GAP others have been shown (fewer when the pool is small)
+    const gap = Math.min(GAP, Math.max(0, pool.length - 3)), block = recent.slice(-gap);
+    pool = pool.filter(w => !block.includes(w.id));
     let total = 0;
     const wts = pool.map(w => { const t = weightOf(p[w.id]); total += t; return t; });
     let r = Math.random() * total;
@@ -549,7 +551,7 @@ function renderPlay(u, pane) {
   let pending = null;
   function prepare() {
     const w = pick(); if (!w) return null;
-    recent.push(w.id); if (recent.length > 6) recent.shift();
+    recent.push(w.id); if (recent.length > GAP) recent.shift();
     const match = Math.random() < 0.5;
     const ds = match ? null : distractors(w, activeWords(u));
     return { w, match, shown: match ? w.english : ds[Math.floor(Math.random() * ds.length)].english };
