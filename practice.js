@@ -126,9 +126,13 @@ const Practice = (() => {
       if (sq.brood) { sq.broodT = (sq.broodT || 4) - dt; if (sq.broodT <= 0) { sq.broodT = sq.brood; spawn('skitter', sq.row, { x: sq.x + .5, extra: true }); } }
       const col = Math.floor(sq.x - .35);
       const g = col >= 0 && col < COLS ? S.grid[sq.row][col] : null;
-      if (g && sq.k.boom) {            // kamikaze: blows the gun up and is gone
-        S.grid[sq.row][col] = null; sq.hp = 0; sq.dead = true; S.shake = .3;
-        S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: .9 }); S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 });
+      if (g && sq.k.boom) {            // kamikaze: explodes, taking out every gun in the 3x3 block around the one it hit
+        for (let r = sq.row - 1; r <= sq.row + 1; r++) for (let c = col - 1; c <= col + 1; c++) {
+          if (r < 0 || r >= ROWS || c < 0 || c >= COLS || !S.grid[r][c]) continue;
+          S.grid[r][c] = null; S.fx.push({ kind: 'crunch', x: c + .5, row: r, t: 0 });
+        }
+        sq.hp = 0; sq.dead = true; S.shake = .5;
+        S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: 1.8 });
         continue;
       }
       if (g && sq.pass > 0 && sq.passedCol !== col) { sq.pass--; sq.passedCol = col; }   // ghosts and flyers float over guns
