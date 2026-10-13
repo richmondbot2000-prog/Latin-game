@@ -370,6 +370,18 @@ function renderHome(u) {
 }
 
 /* ---------- read: sentences, one word at a time ---------- */
+// put a dictionary meaning into the shape a sentence needs: plural nouns, he/she verbs
+const IRREG = { be: ['is', 'are', 'am'], do: ['does', 'do', 'do'], go: ['goes', 'go', 'go'], have: ['has', 'have', 'have'], man: 'men', woman: 'women', child: 'children', foot: 'feet', tooth: 'teeth', mouse: 'mice', person: 'people', wife: 'wives', life: 'lives', knife: 'knives', sheep: 'sheep' };
+function inflect(english, shape) {
+  let base = english.split(',')[0].trim().replace(/\s*\(.*\)$/, '');
+  if (shape === 'o' || shape === 'adj' || shape === 'n1') return base;
+  const words = base.split(' '), head = words[0], rest = words.slice(1).join(' ');
+  const sfx = w => /(s|x|z|ch|sh)$/.test(w) ? w + 'es' : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + 'ies' : /[^aeiou]o$/.test(w) ? w + 'es' : w + 's';
+  if (shape === 'n2') { const ir = IRREG[base]; const pl = typeof ir === 'string' ? ir : sfx(words[words.length - 1]); return words.length > 1 ? words.slice(0, -1).join(' ') + ' ' + pl : pl; }
+  const ir = Array.isArray(IRREG[head]) ? IRREG[head] : null;
+  const v = shape === 'v3s' ? (ir ? ir[0] : sfx(head)) : shape === 'v1s' ? (ir ? ir[2] : head) : (ir ? ir[1] : head);
+  return rest ? v + ' ' + rest : v;
+}
 function renderRead(u) {
   const byId = Object.fromEntries(WORDS.map(w => [w.id, w]));
   const pool = WORDS.filter(w => w.beginner);
@@ -400,9 +412,10 @@ function renderRead(u) {
     $('#rsent').innerHTML = `<div class="rla">${sent.la.map(t => t[1] ? `<span class="rw ${t === cur ? 'cur' : words.indexOf(t) < i ? 'done' : ''}" data-id="${esc(t[1])}">${esc(t[0])}</span>` : `<span class="rp">${esc(t[0])}</span>`).join(' ')}</div>
       <div class="ren" id="ren"></div>`;
     if (!cur) { finish(); return; }
-    const w = byId[cur[1]];
-    const ds = distractors(w, pool).slice().sort(() => Math.random() - .5);
-    opts = [w.english, ds[0].english, ds[1] ? ds[1].english : ds[0].english].sort(() => Math.random() - .5);
+    const w = byId[cur[1]], gloss = cur[2], shape = cur[3];
+    // wrong answers are put into the same English form as the right one (horses, not horse; walks, not walk)
+    const ds = distractors(w, pool).slice().sort(() => Math.random() - .5).map(d => inflect(d.english, shape)).filter(x => x !== gloss);
+    opts = [gloss, ds[0], ds[1] || ds[0]].sort(() => Math.random() - .5);
     $('#ropts').innerHTML = opts.map((o, k) => `<button class="btn ghost" data-k="${k}">${esc(o)}</button>`).join('');
     $('#rmsg').textContent = '';
     busy = false;
@@ -419,13 +432,13 @@ function renderRead(u) {
   $('#ropts').onclick = e => {
     const b = e.target.closest('button[data-k]'); if (!b || busy) return;
     busy = true;
-    const cur = wordsIn()[i], w = byId[cur[1]], ok = opts[+b.dataset.k] === w.english;
+    const cur = wordsIn()[i], w = byId[cur[1]], gloss = cur[2], ok = opts[+b.dataset.k] === gloss;
     recordAnswer(u, w, ok);
     if (ok) { b.classList.add('good'); setTimeout(() => { i++; show(); }, 450); }
     else {
       misses++; b.classList.add('bad');
       $('#ropts').querySelectorAll('button').forEach((x, k) => { if (opts[k] === w.english) x.classList.add('good'); });
-      $('#rmsg').innerHTML = `<b>${esc(w.show)}</b> means <b>${esc(w.english)}</b>.`;
+      $('#rmsg').innerHTML = `<b>${esc(cur[0])}</b> means <b>${esc(gloss)}</b>.`;
       setTimeout(() => { i++; show(); }, 1600);
     }
   };
