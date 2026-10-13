@@ -103,7 +103,7 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .answer .no { background: var(--bad-bg); color: var(--bad); }
 .answer .yes { background: var(--good-bg); color: var(--good); }
 .hint { text-align: center; font-size: 14px; color: var(--muted); margin-top: 10px; }
-.toast { position: fixed; left: 50%; top: 18%; transform: translate(-50%, 0); background: var(--good); color: #fff; padding: 8px 18px; border-radius: 999px;
+.toast { position: fixed; left: 50%; top: 42%; transform: translate(-50%, 0); background: var(--good); color: #fff; padding: 8px 18px; border-radius: 999px;
   font-weight: 700; pointer-events: none; opacity: 0; transition: opacity .2s, transform .5s; z-index: 30; font-family: system-ui, sans-serif; }
 .toast.show { opacity: 1; transform: translate(-50%, -16px); }
 .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
@@ -124,3 +124,52 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .memo .how h3 { margin: 0 0 .3rem; font-size: 1rem; color: var(--accent); }
 .memo .how p { margin: 0; }
 .memo .meta { margin-top: 10px; }
+
+/* word-type borders */
+.card { --frame: #2B5BA8; color: var(--ink); padding: 44px 36px; }
+.card[data-kind="noun"]          { --frame: #2B5BA8; }
+.card[data-kind="verb"]          { --frame: #C62E2E; }
+.card[data-kind="adjective"]     { --frame: #7B3FB5; }
+.card[data-kind="adverb"]        { --frame: #0F8A8A; }
+.card[data-kind="preposition"]   { --frame: #2E8B3E; }
+.card[data-kind="joining word"]  { --frame: #D2691E; }
+.card[data-kind="pronoun"]       { --frame: #C2367A; }
+.card[data-kind="question word"] { --frame: #3F3FB0; }
+.card[data-kind="number"]        { --frame: #B8860B; }
+@media (prefers-color-scheme: dark) {
+  .card[data-kind="noun"]          { --frame: #7FA8F0; }
+  .card[data-kind="verb"]          { --frame: #FF8A80; }
+  .card[data-kind="adjective"]     { --frame: #C79BF2; }
+  .card[data-kind="adverb"]        { --frame: #5FD3D3; }
+  .card[data-kind="preposition"]   { --frame: #7FD68F; }
+  .card[data-kind="joining word"]  { --frame: #FFB070; }
+  .card[data-kind="pronoun"]       { --frame: #F28BBF; }
+  .card[data-kind="question word"] { --frame: #A3A3FF; }
+  .card[data-kind="number"]        { --frame: #F2C94C; }
+}
+.card[data-kind] { background: linear-gradient(var(--card), var(--card)); background: color-mix(in srgb, var(--frame) 7%, var(--card)); }
+.card .frame { position: absolute; inset: 0; color: var(--frame); pointer-events: none; overflow: visible; }
+.card .kind { position: absolute; bottom: 30px; left: 0; right: 0; font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--frame); font-family: system-ui, sans-serif; font-weight: 700; }
+.card .cstars { top: 32px; }
+.card .stamp { top: 40px; z-index: 1; }
+.card .stamp.yes { right: 36px; } .card .stamp.no { left: 36px; }
+
+/* streak */
+.streakbar { display: flex; align-items: center; justify-content: center; position: relative; margin: 12px 0 2px; }
+.streak { display: inline-flex; align-items: baseline; gap: 6px; padding: 6px 18px; border-radius: 999px; background: var(--chip);
+  font-family: system-ui, sans-serif; font-weight: 800; transition: background .3s; }
+.streak .fire { font-size: 1.3rem; filter: grayscale(1); opacity: .5; transition: filter .3s, opacity .3s; }
+.streak .n { font-size: 1.6rem; line-height: 1; min-width: 1ch; text-align: center; }
+.streak .lbl { font-size: 13px; font-weight: 600; color: var(--muted); }
+.streak:not(.zero) .fire { filter: none; opacity: 1; }
+.streak.hot { background: linear-gradient(90deg, #FFB347, #FF5D8F); color: #fff; }
+.streak.hot .lbl { color: #fff; }
+.streak.pop { animation: pop .45s ease; }
+.streak.zero { animation: shake .4s ease; }
+.best { position: absolute; right: 2px; font-size: 13px; color: var(--muted); font-family: system-ui, sans-serif; }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.35); } 100% { transform: scale(1); } }
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+/* fireworks layer */
+canvas.fx { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 40; }

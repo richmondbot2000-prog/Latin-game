@@ -54,6 +54,7 @@ const current = () => users().find(u => u.id === store.get('latin.current', null
 const progressKey = u => 'latin.progress.' + u.id;
 const getProg = u => store.get(progressKey(u), {});
 const saveProg = (u, p) => store.set(progressKey(u), p);
+const streakKey = u => 'latin.streak.' + u.id;
 
 /* ---------- helpers ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -167,7 +168,7 @@ function renderHome(u) {
   $('#del').onclick = () => {
     if (!confirm(`Delete ${u.name} and all their stars on this device? This can't be undone.`)) return;
     store.set('latin.users', users().filter(x => x.id !== u.id));
-    store.del(progressKey(u)); store.del('latin.current');
+    store.del(progressKey(u)); store.del(streakKey(u)); store.del('latin.current');
     route();
   };
 }
@@ -263,7 +264,9 @@ function closeSheet() { sheet.hidden = true; sheet.innerHTML = ''; sheet.onclick
 function renderPlay(u, pane) {
   const recent = [];
   let card = null, busy = false, right = 0, seen = 0;
+  const st = store.get(streakKey(u), { cur: 0, best: 0 });
   pane.innerHTML = `
+    <div class="streakbar"><div class="streak" id="streak"><span class="fire">🔥</span><span class="n" id="sn">0</span><span class="lbl">in a row</span></div><div class="best" id="best"></div></div>
     <div class="score"><span id="sc">Swipe to answer</span><span id="left"></span></div>
     <div class="deck" id="deck"></div>
     <div class="answer"><button class="no" id="no">✗ Wrong</button><button class="yes" id="yes">Right ✓</button></div>
@@ -299,13 +302,15 @@ function renderPlay(u, pane) {
     const s = (p[w.id] && p[w.id].s) || 0;
     deck.innerHTML = `
       <div class="card under" aria-hidden="true"></div>
-      <div class="card" id="top">
+      <div class="card" id="top" data-kind="${w.kind}">
         <div class="cstars">${starsHTML(s)}</div>
+        <div class="kind">${w.kind}</div>
         <span class="stamp yes">RIGHT</span><span class="stamp no">WRONG</span>
         <div class="lat">${esc(w.word)}</div>
         <div class="means">means</div>
         <div class="en">${esc(shown)}</div>
       </div>`;
+    drawFrame();
     attachSwipe($('#top', deck));
     busy = false;
   }
@@ -319,17 +324,23 @@ function renderPlay(u, pane) {
     const pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
     seen++;
     if (ok) {
+      st.cur++; st.best = Math.max(st.best, st.cur);
+      const big = st.cur % 10 === 0 ? 2.4 : st.cur % 5 === 0 ? 1.7 : 1;
+      const r = deck.getBoundingClientRect();
+      Celebrate(r.left + r.width / 2, r.top + r.height / 2, big);
       right++; pw.ok = (pw.ok || 0) + 1;
       pw.s = Math.min(5, (pw.s || 0) + 1);
       if (pw.s === 5) { pw.r = Date.now() + RETIRE_DAYS * DAY; flash(`🏆 ${w.word} mastered! Resting for a month`); }
-      else flash('+1 ⭐');
     } else {
+      st.cur = 0;
       pw.bad = (pw.bad || 0) + 1;
       pw.s = Math.max(0, (pw.s || 0) - 1);
       delete pw.r;
     }
     pw.t = Date.now();
     p[w.id] = pw; saveProg(u, p);
+    store.set(streakKey(u), st);
+    showStreak(ok);
     $('#sc', pane).textContent = `${right} / ${seen} right this time`;
     if (ok) setTimeout(next, 120);
     else {
@@ -378,6 +389,20 @@ function renderPlay(u, pane) {
     $(dir > 0 ? '.stamp.yes' : '.stamp.no', el).style.opacity = 1;
     fly(el, dir);
   }
+  function showStreak(bump) {
+    $('#sn', pane).textContent = st.cur;
+    $('#best', pane).textContent = st.best ? 'Best ' + st.best : '';
+    const el = $('#streak', pane);
+    el.classList.toggle('hot', st.cur >= 5);
+    el.classList.remove('pop', 'zero'); void el.offsetWidth;
+    if (bump === true) el.classList.add('pop');
+    if (bump === false) el.classList.add('zero');
+  }
+  function drawFrame() {
+    const el = $('#top', deck); if (!el) return;
+    const old = $('.frame', el); if (old) old.remove();
+    el.insertAdjacentHTML('afterbegin', frameSVG(el.dataset.kind, el.clientWidth, el.clientHeight));
+  }
   function flash(msg) {
     toast.textContent = msg; toast.classList.add('show');
     clearTimeout(flash.t); flash.t = setTimeout(() => toast.classList.remove('show'), 900);
@@ -390,6 +415,9 @@ function renderPlay(u, pane) {
     if (e.key === 'ArrowLeft') button(-1);
   };
   document.addEventListener('keydown', keys);
+  const onResize = () => { if (!document.body.contains(deck)) return removeEventListener('resize', onResize); drawFrame(); };
+  addEventListener('resize', onResize);
+  showStreak();
   next();
 }
 
