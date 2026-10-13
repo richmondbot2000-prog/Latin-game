@@ -40,9 +40,10 @@ const tokens = s => new Set(s.toLowerCase().replace(/\(.*?\)/g, ' ').split(/[^a-
 const WORDS = VOCAB.map((v, i) => ({ ...v, id: v.word, kind: KIND(v.pos), toks: tokens(v.english), i }));
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.word} means ${w.english}.` };
 
-function distractors(w) {
+function distractors(w, pool = WORDS) {
   const clash = o => o === w || o.english === w.english || [...o.toks].some(t => w.toks.has(t));
-  let c = WORDS.filter(o => o.kind === w.kind && !clash(o));
+  let c = pool.filter(o => o.kind === w.kind && !clash(o));
+  if (c.length < 3) c = WORDS.filter(o => o.kind === w.kind && !clash(o));
   if (c.length < 3) c = c.concat(WORDS.filter(o => o.kind !== w.kind && !clash(o)));
   return c;
 }
@@ -55,6 +56,14 @@ const progressKey = u => 'latin.progress.' + u.id;
 const getProg = u => store.get(progressKey(u), {});
 const saveProg = (u, p) => store.set(progressKey(u), p);
 const streakKey = u => 'latin.streak.' + u.id;
+const levelKey = u => 'latin.level.' + u.id;
+
+/* vocabulary settings: each one opens up more words; Level 3 is the full list */
+const LEVELS = [['beginner', 'Beginner'], ['1', 'Level 1'], ['2', 'Level 2'], ['3', 'Level 3']];
+const inLevel = (w, l) => l === 'beginner' ? !!w.beginner : w.level <= +l;
+const levelOf = u => { const l = store.get(levelKey(u), 'beginner'); return LEVELS.some(x => x[0] === l) ? l : 'beginner'; };
+const levelName = l => LEVELS.find(x => x[0] === l)[1];
+const activeWords = u => { const l = levelOf(u); return WORDS.filter(w => inLevel(w, l)); };
 
 /* ---------- helpers ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
@@ -66,6 +75,7 @@ const app = $('#app');
 const sheet = $('#sheet');
 
 function route() {
+  Celebrate.stop();
   closeSheet();
   const u = current();
   const h = location.hash.slice(1);
@@ -139,24 +149,25 @@ function renderSignIn(mode = store.get('latin.signinMode', users().length ? 'in'
 function summary(u) {
   const p = getProg(u), now = Date.now();
   const c = [0, 0, 0, 0, 0, 0]; let rest = 0;
-  for (const w of WORDS) { const s = (p[w.id] && p[w.id].s) || 0; c[s]++; if (resting(p[w.id], now)) rest++; }
-  return { c, rest };
+  const words = activeWords(u);
+  for (const w of words) { const s = (p[w.id] && p[w.id].s) || 0; c[s]++; if (resting(p[w.id], now)) rest++; }
+  return { c, rest, total: words.length };
 }
-function meterHTML(c) {
+function meterHTML(c, total) {
   const col = ['var(--line)', '#E9C46A', '#E9A23B', '#D97B3A', '#B85C8E', 'var(--good)'];
-  return '<div class="meter">' + [5, 4, 3, 2, 1, 0].map(s => `<span style="width:${100 * c[s] / WORDS.length}%;background:${col[s]}"></span>`).join('') + '</div>';
+  return '<div class="meter">' + [5, 4, 3, 2, 1, 0].map(s => `<span style="width:${100 * c[s] / total}%;background:${col[s]}"></span>`).join('') + '</div>';
 }
 function renderHome(u) {
-  const { c } = summary(u);
+  const { c, total } = summary(u);
   app.innerHTML = `
   <div class="wrap">
     <div class="bar"><span class="title"></span><button class="iconbtn" id="who">Switch</button></div>
     <div class="hello"><div class="small">Salve,</div><div class="who"></div></div>
     <button class="tile" id="org">
       <h2>Organise</h2>
-      <p>Learn all ${WORDS.length} words with swipe cards.</p>
-      ${meterHTML(c)}
-      <div class="small">${c[5]} mastered · ${WORDS.length - c[0]} started · ${c[0]} new</div>
+      <p>${levelName(levelOf(u))}: ${total} words to learn with swipe cards.</p>
+      ${meterHTML(c, total)}
+      <div class="small">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
     </button>
     <div class="tile locked"><h2>Coming soon</h2><p>Reading sentences</p></div>
     <div class="tile locked"><h2>Coming soon</h2><p>Reading stories</p></div>
@@ -168,17 +179,21 @@ function renderHome(u) {
   $('#del').onclick = () => {
     if (!confirm(`Delete ${u.name} and all their stars on this device? This can't be undone.`)) return;
     store.set('latin.users', users().filter(x => x.id !== u.id));
-    store.del(progressKey(u)); store.del(streakKey(u)); store.del('latin.current');
+    store.del(progressKey(u)); store.del(streakKey(u)); store.del(levelKey(u)); store.del('latin.current');
     route();
   };
 }
 
 /* ---------- organise ---------- */
 function renderOrganise(u) {
+  Celebrate.stop();
   const tab = store.get('latin.orgTab', 'list');
   app.innerHTML = `
   <div class="wrap">
     <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Organise</span><span style="min-width:72px"></span></div>
+    <div class="levels" role="radiogroup" aria-label="Which words">
+      ${LEVELS.map(([k, n]) => `<button role="radio" data-l="${k}" aria-checked="${k === levelOf(u)}"><b>${n}</b><span>${WORDS.filter(w => inLevel(w, k)).length} words</span></button>`).join('')}
+    </div>
     <div class="tabs" role="tablist">
       <button role="tab" data-t="list" aria-selected="${tab === 'list'}">Word list</button>
       <button role="tab" data-t="play" aria-selected="${tab === 'play'}">Play</button>
@@ -186,6 +201,10 @@ function renderOrganise(u) {
     <div id="pane" class="play"></div>
   </div>`;
   $('#back').onclick = () => { location.hash = ''; };
+  app.querySelector('.levels').onclick = e => {
+    const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
+    store.set(levelKey(u), b.dataset.l); renderOrganise(u);
+  };
   app.querySelector('.tabs').onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
     store.set('latin.orgTab', b.dataset.t); renderOrganise(u);
@@ -198,18 +217,18 @@ function renderList(u, pane) {
   const p = getProg(u);
   const now = Date.now();
   let filter = store.get('latin.listFilter', 'all'), term = '';
-  const { c, rest } = summary(u);
-  const opts = [['all', 'All ' + WORDS.length], ['0', 'New ' + c[0]], ...[1, 2, 3, 4, 5].map(s => [String(s), '★'.repeat(s) + ' ' + c[s]]), ['rest', 'Resting ' + rest]];
+  const { c, rest, total } = summary(u);
+  const opts = [['all', 'All ' + total], ['0', 'New ' + c[0]], ...[1, 2, 3, 4, 5].map(s => [String(s), '★'.repeat(s) + ' ' + c[s]]), ['rest', 'Resting ' + rest]];
   pane.innerHTML = `
     <div class="sticky">
-      ${meterHTML(c)}
+      ${meterHTML(c, total)}
       <input type="search" id="q" placeholder="Search Latin or English…" autocomplete="off">
       <div class="filters">${opts.map(([k, l]) => `<button data-f="${k}" aria-pressed="${k === filter}">${l}</button>`).join('')}</div>
       <div class="count" id="count"></div>
     </div>
     <ul class="words" id="words"></ul>`;
   const list = $('#words', pane);
-  const sorted = WORDS.slice().sort((a, b) => a.word.replace(/^-/, '').localeCompare(b.word.replace(/^-/, ''), 'en', { sensitivity: 'base' }));
+  const sorted = activeWords(u).sort((a, b) => a.word.replace(/^-/, '').localeCompare(b.word.replace(/^-/, ''), 'en', { sensitivity: 'base' }));
   const draw = () => {
     const shown = sorted.filter(w => {
       const s = (p[w.id] && p[w.id].s) || 0;
@@ -277,7 +296,8 @@ function renderPlay(u, pane) {
 
   function pick() {
     const p = getProg(u), now = Date.now();
-    let pool = WORDS.filter(w => !resting(p[w.id], now));
+    const active = activeWords(u);
+    let pool = active.filter(w => !resting(p[w.id], now));
     if (!pool.length) return null;
     if (pool.length > 8) pool = pool.filter(w => !recent.includes(w.id));
     let total = 0;
@@ -289,14 +309,14 @@ function renderPlay(u, pane) {
   function next() {
     const w = pick();
     const p = getProg(u), now = Date.now();
-    $('#left', pane).textContent = WORDS.filter(x => resting(p[x.id], now)).length + ' resting 😴';
+    $('#left', pane).textContent = activeWords(u).filter(x => resting(p[x.id], now)).length + ' resting 😴';
     if (!w) {
       deck.innerHTML = '<div class="empty">🏆 Every word is resting!<br>Come back soon to keep them fresh.</div>';
       return;
     }
     recent.push(w.id); if (recent.length > 6) recent.shift();
     const match = Math.random() < 0.5;
-    const ds = match ? null : distractors(w);
+    const ds = match ? null : distractors(w, activeWords(u));
     const shown = match ? w.english : ds[Math.floor(Math.random() * ds.length)].english;
     card = { w, match, shown };
     const s = (p[w.id] && p[w.id].s) || 0;

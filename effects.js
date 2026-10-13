@@ -127,7 +127,7 @@ function frameSVG(kind, w, h) {
 /* ---------- fireworks + glitter ---------- */
 
 const Celebrate = (() => {
-  let cv, ctx, parts = [], raf = 0, W = 0, H = 0, dpr = 1;
+  let cv, ctx, parts = [], raf = 0, W = 0, H = 0, dpr = 1, timers = [];
   const COLORS = ['#FFD23F', '#FF5D8F', '#5BC0EB', '#9BE564', '#FF8C42', '#C77DFF', '#FFFFFF', '#F72585', '#4CC9F0', '#FFE66D'];
   const reduce = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -202,17 +202,24 @@ const Celebrate = (() => {
   function go() { if (!raf) raf = requestAnimationFrame(frame); }
 
   // power: 1 = normal right answer, bigger for streak milestones
-  return function celebrate(fromX, fromY, power = 1) {
+  function celebrate(fromX, fromY, power = 1) {
     setup();
     if (reduce()) { glitter(fromX, fromY, 40); go(); return; }
     glitter(fromX, fromY, Math.round(140 * power));
     const shots = Math.round(4 + 2.5 * (power - 1));
     for (let i = 0; i < shots; i++) {
-      setTimeout(() => {
+      timers.push(setTimeout(() => {
         burst(rnd(W * .12, W * .88), rnd(H * .1, H * .55), Math.round(rnd(90, 130)), rnd(9, 13) * Math.min(1.4, .9 + power * .15));
         go();
-      }, i * rnd(110, 190));
+      }, i * rnd(110, 190)));
     }
     go();
+  }
+  // stop everything at once (used when leaving the game screen)
+  celebrate.stop = () => {
+    timers.forEach(clearTimeout); timers = []; parts = [];
+    if (raf) cancelAnimationFrame(raf); raf = 0;
+    if (ctx) ctx.clearRect(0, 0, W, H);
   };
+  return celebrate;
 })();
