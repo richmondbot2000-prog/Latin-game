@@ -746,7 +746,7 @@ const Practice = (() => {
   /* word matching: the only way to earn coins */
   let quiz = null;
   function askWord() {
-    const words = activeWords(user), p = getProg(user);
+    const p = getProg(user), all = activeWords(user), due = all.filter(w => !resting(p[w.id])), words = due.length >= 8 ? due : all;   // spaced repetition: words that are resting stay out while enough are due
     let total = 0; const wts = words.map(w => { const t = 6 - ((p[w.id] && p[w.id].s) || 0); total += t; return t; });
     let r = Math.random() * total, w = words[words.length - 1];
     for (let i = 0; i < words.length; i++) { r -= wts[i]; if (r <= 0) { w = words[i]; break; } }

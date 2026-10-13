@@ -20,8 +20,12 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const RETIRE_DAYS = 30;
 const DAY = 86400000;
+// spaced repetition: each right answer earns a star and a longer rest before the word comes round again
+// (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
+const REST = [0, 10 * 60000, DAY, 3 * DAY, 7 * DAY, 30 * DAY];
+const RETIRE_DAYS = 30;
+const restText = ms => ms < 3600000 ? Math.round(ms / 60000) + ' minutes' : ms < DAY * 1.5 ? 'a day' : ms < DAY * 6 ? Math.round(ms / DAY) + ' days' : ms < DAY * 20 ? 'a week' : 'a month';
 
 /* ---------- words ---------- */
 const KIND = pos => {
@@ -59,11 +63,11 @@ function distractors(w, pool = WORDS) {
 }
 
 /* ---------- the star rule, shared by Organise and Practice ----------
-   right answer: one more star (a word at 5 rests for a month); wrong answer: back to zero */
+   right answer: one more star and a longer rest (spaced repetition); wrong answer: back to zero and straight back in */
 function recordAnswer(u, w, ok) {
   const p = getProg(u);
   const pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
-  if (ok) { pw.ok = (pw.ok || 0) + 1; pw.s = Math.min(5, (pw.s || 0) + 1); if (pw.s === 5) pw.r = Date.now() + RETIRE_DAYS * DAY; }
+  if (ok) { pw.ok = (pw.ok || 0) + 1; pw.s = Math.min(5, (pw.s || 0) + 1); pw.r = Date.now() + REST[pw.s]; }
   else { pw.bad = (pw.bad || 0) + 1; pw.s = 0; delete pw.r; }
   pw.t = Date.now();
   p[w.id] = pw; saveProg(u, p);
@@ -459,6 +463,8 @@ function renderPlay(u, pane) {
     const p = getProg(u), now = Date.now();
     const active = activeWords(u);
     let pool = active.filter(w => !resting(p[w.id], now));
+    // nothing due yet: carry on with the words due soonest rather than stopping the session
+    if (!pool.length) pool = active.slice().sort((a, b) => ((p[a.id] && p[a.id].r) || 0) - ((p[b.id] && p[b.id].r) || 0)).slice(0, 12);
     if (!pool.length) return null;
     if (pool.length > 8) pool = pool.filter(w => !recent.includes(w.id));
     let total = 0;
@@ -515,7 +521,7 @@ function renderPlay(u, pane) {
       const r = deck.getBoundingClientRect();
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
       right++;
-      if (pw.s === 5) flash(`🏆 ${w.show} mastered! Resting for a month`);
+      if (pw.s === 5) flash(`🏆 ${w.show} mastered! Resting for a month`); else if (pw.s >= 2) flash(`⭐ ${pw.s} stars — back in ${restText(REST[pw.s])}`);
     } else st.cur = 0;
     store.set(streakKey(u), st);
     showStreak(ok);

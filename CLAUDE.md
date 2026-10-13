@@ -25,7 +25,10 @@ A game for learning the ISEB Common Entrance Latin vocabulary (Levels 1–3, 403
 words in `vocab.js`) by recognition, not grammar. Built so far:
 
 - **Organise** — swipe cards (`app.js`): Latin word + a right or clearly-wrong
-  meaning; stars 0–5 per word; memory cards (`memory.js`); example phrases
+  meaning; stars 0–5 per word with spaced repetition (`REST` in `app.js`: a
+  right answer rests the word 10 min / 1 / 3 / 7 / 30 days by star count, a
+  wrong one zeroes it and brings it straight back; all games use the rule);
+  memory cards (`memory.js`); example phrases
   (`phrases.js`); fireworks (`effects.js`); vocabulary settings Beginner / Level
   1 / 2 / 3. Players = first name + two emojis, no passwords.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
