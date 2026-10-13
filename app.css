@@ -84,10 +84,14 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .play { flex: 1; display: flex; flex-direction: column; }
 .score { display: flex; justify-content: space-between; align-items: center; font-size: 15px; color: var(--muted); margin: 4px 2px 10px; }
 .deck { position: relative; flex: 1; min-height: 340px; max-height: 460px; touch-action: none; user-select: none; -webkit-user-select: none; }
-.card { position: absolute; inset: 0; background: var(--card); border-radius: 24px; box-shadow: var(--shadow); border: 1px solid var(--line);
+.card { position: absolute; inset: 0; background: url('art/ui/paper.jpg') center / 200px, #EFE1C2; background-blend-mode: multiply; border-radius: 18px; box-shadow: var(--shadow), inset 0 0 0 1px rgba(120,90,50,.2), inset 0 0 60px rgba(130,95,45,.22); border: 1px solid #CBB893; overflow: hidden;
   display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px; text-align: center;
   will-change: transform; cursor: grab; }
 .card.dragging { cursor: grabbing; }
+.card::before { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(ellipse at 30% 20%, rgba(255,250,235,.45), rgba(255,250,235,0) 55%), linear-gradient(160deg, rgba(255,255,255,.1), rgba(120,80,30,.07) 70%, rgba(120,80,30,.18)); mix-blend-mode: multiply; }
+.card::after { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; box-shadow: inset 0 0 0 6px rgba(255,255,255,.35), inset 0 0 0 7px rgba(140,110,70,.12); }
+.card > * { position: relative; }
 .card.anim { transition: transform .28s ease, opacity .28s ease; }
 .card .lat { font-size: clamp(2.2rem, 12vw, 3.2rem); font-weight: 700; line-height: 1.1; overflow-wrap: anywhere; }
 .card .means { color: var(--muted); font-style: italic; margin: 1.2rem 0 .3rem; }
@@ -210,7 +214,7 @@ html, body { overscroll-behavior: none; }
 .card { padding-bottom: 56px; }
 /* word type sits on the bottom border, like a nameplate */
 .card .kind { left: 50%; right: auto; bottom: 8px; transform: translateX(-50%); white-space: nowrap;
-  background: var(--card); padding: 1px 10px; line-height: 20px; z-index: 1; }
+  background: #EFE1C2; padding: 1px 10px; line-height: 20px; z-index: 1; }
 .card { padding-bottom: 40px; }
 
 /* Organise panel on the home screen */
