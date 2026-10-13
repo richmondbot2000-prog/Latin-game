@@ -13,16 +13,16 @@ const Practice = (() => {
   // the squishies (art in art/squishies, drawn facing left as supplied). size is relative to a cell;
   // 'from' is the first level they appear; look.hurt shows once they are below half health
   const SQUISHIES = {
-    chomp:      { name: 'Chomp',      hp: 100, speed: .20, chomp: 25, size: 1.0,  from: 1, look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8' },
-    skitter:    { name: 'Skitter',    hp: 60,  speed: .42, chomp: 25, size: .74,  from: 2, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496' },
-    chompking:  { name: 'ChompKing',  hp: 320, speed: .14, chomp: 35, size: 1.3,  from: 3, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0' },
-    antbun:     { name: 'Antbun',     hp: 200, speed: .26, chomp: 25, size: 1.05, from: 4, look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd' },
-    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .30, chomp: 0,  size: .92,  from: 5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true },
-    ghost:      { name: 'Ghost',      hp: 80,  speed: .30, chomp: 25, size: 1.0,  from: 6, look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
-    flying:     { name: 'Flyer',      hp: 70,  speed: .36, chomp: 0,  size: .9,   from: 7, look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
-    moley:      { name: 'Mole King',  hp: 220, speed: .22, chomp: 30, size: .95,  from: 8, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .34 },
-    broodqueen: { name: 'Brood Queen', hp: 900, speed: .10, chomp: 40, size: 1.4, from: 6, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
-    ghostking:  { name: 'Ghost King', hp: 700, speed: .16, chomp: 35, size: 1.35, from: 9, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
+    chomp:      { name: 'Chomp',      hp: 100, speed: .1, chomp: 25, size: 1.0,  from: 1, look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8' },
+    skitter:    { name: 'Skitter',    hp: 60,  speed: .21, chomp: 25, size: .74,  from: 2, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496' },
+    chompking:  { name: 'ChompKing',  hp: 320, speed: .07, chomp: 35, size: 1.3,  from: 3, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0' },
+    antbun:     { name: 'Antbun',     hp: 200, speed: .13, chomp: 25, size: 1.05, from: 4, look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd' },
+    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .15, chomp: 0,  size: .92,  from: 5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true },
+    ghost:      { name: 'Ghost',      hp: 80,  speed: .15, chomp: 25, size: 1.0,  from: 6, look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
+    flying:     { name: 'Flyer',      hp: 70,  speed: .18, chomp: 0,  size: .9,   from: 7, look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
+    moley:      { name: 'Mole King',  hp: 220, speed: .11, chomp: 30, size: .95,  from: 8, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .17 },
+    broodqueen: { name: 'Brood Queen', hp: 900, speed: .05, chomp: 40, size: 1.4, from: 6, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
+    ghostking:  { name: 'Ghost King', hp: 700, speed: .08, chomp: 35, size: 1.35, from: 9, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
   };
   // the Antbun is a rigged character: separate parts in a 320-wide box, positions from the artist's PSD
   const ANTBUN = {"parts": {"dead_leftarm": [65, 18, 88, 116], "dead_body": [0, 43, 242, 210], "dead_skull": [16, 91, 177, 127], "dead_arm": [155, 189, 46, 40], "dead_rightear": [153, 31, 167, 106], "hurt_leftear": [65, 20, 88, 116], "hurt_body": [0, 43, 243, 210], "hurt_righteyeclose": [98, 161, 31, 10], "hurt_righteyeopen": [98, 154, 30, 30], "hurt_arm": [165, 170, 48, 53], "hurt_rightear": [140, 31, 177, 131], "leftear": [68, 0, 132, 131], "body": [0, 55, 250, 198], "body2": [10, 87, 239, 179], "body3": [10, 87, 242, 176], "eyesopen": [31, 149, 98, 36], "rightear": [140, 31, 177, 131], "eyepopping": [96, 141, 58, 58], "eyesclose": [32, 155, 98, 15], "arm": [166, 171, 45, 52]}, "box": [320, 266], "death": {"w": 320, "h": 322, "body": [50, 95, 234, 187]}};
@@ -34,7 +34,7 @@ const Practice = (() => {
     const boss = n >= 9 ? (n % 2 ? 'ghostking' : 'broodqueen') : n >= 6 ? 'broodqueen' : null;
     // early levels use fewer rows, like the original's first lawns
     const rows = n === 1 ? [2, 3] : n === 2 ? [1, 2, 3, 4] : [0, 1, 2, 3, 4, 5];
-    return { count: 8 + 3 * (n - 1), rows, grace: n === 1 ? 12 : 8, gap0: Math.max(4, 10 - n), gap1: Math.max(2.2, 6.5 - .45 * (n - 1)), weights, huge: n >= 2, boss };
+    return { count: 16 + 5 * (n - 1), rows, grace: n === 1 ? 12 : 8, gap0: Math.max(4, 10 - n), gap1: Math.max(2.2, 6.5 - .45 * (n - 1)), weights, huge: n >= 2, boss };
   }
   const rnd = (a, b) => a + Math.random() * (b - a);
   const pickWeighted = w => { let t = 0; for (const k in w) t += w[k]; let r = Math.random() * t; for (const k in w) { r -= w[k]; if (r <= 0) return k; } return Object.keys(w)[0]; };
