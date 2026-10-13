@@ -204,3 +204,7 @@ html, body { overscroll-behavior: none; }
 .card .lat { margin-top: auto; font-size: clamp(1.9rem, min(12vw, 6.4vh), 3.2rem); }
 .card .en { margin-bottom: auto; }
 .card { padding-bottom: 56px; }
+/* word type sits on the bottom border, like a nameplate */
+.card .kind { left: 50%; right: auto; bottom: 8px; transform: translateX(-50%); white-space: nowrap;
+  background: var(--card); padding: 1px 10px; line-height: 20px; z-index: 1; }
+.card { padding-bottom: 40px; }
