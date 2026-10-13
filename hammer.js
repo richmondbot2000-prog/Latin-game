@@ -31,8 +31,15 @@ const Hammer = (() => {
   }
 
   /* ---------- update ---------- */
+  const INTRO = ['Oh Jacque...', 'I have been busy. Some of the signs in this town now say the WRONG thing. Heh heh heh.', 'Smash the wrong ones with that hammer of yours. But hit a right one, or let a wrong one past...', '...and I will be back. With THIS.'];
   function update(dt) {
     S.t += dt;
+    if (S.phase === 'intro') {
+      const v = S.vil; v.t += dt; v.typed += dt * 28;
+      if (!v.leaving && v.t > .56) v.t = .56;                      // stands and talks until tapped through
+      if (v.leaving && v.t > 2.05) { S.vil = null; S.phase = 'play'; S.t = 0; refreshUI(); }
+      return;
+    }
     if (S.phase !== 'play') return;
     const slow = S.vil ? 0 : S.ouch > 0 ? .35 : 1;
     S.speed = Math.min(.5, S.speed + .0035 * dt);
@@ -97,6 +104,13 @@ const Hammer = (() => {
     if (isBest) Celebrate(innerWidth / 2, innerHeight / 3, 2);
   }
   function tap() {
+    if (S && S.phase === 'intro' && !S.vil.leaving) {
+      const v = S.vil, line = INTRO[v.line];
+      if (v.typed < line.length) { v.typed = line.length; return; }   // first tap finishes the line
+      v.line++; v.typed = 0;
+      if (v.line >= INTRO.length) { v.leaving = true; v.t = 1.5; }
+      return;
+    }
     if (!S || S.phase !== 'play' || S.swing >= 0 || S.vil) return;
     S.swing = 0; S.hitDone = false; S.taps++;
   }
@@ -187,14 +201,32 @@ const Hammer = (() => {
     const P = n => part('d_' + n, DEC[n], 0, 221, 0, 0, kd);
     P('leftarm'); P('lefthand'); P('body'); P('head'); P('eyes'); P('smile2'); P('rightarm');
     // swing: wind up, whack, recover
-    const u = t - .56, a = u < .12 ? u / .12 * .35 : u < .27 ? .35 - (u - .12) / .15 * 2.35 : u < .6 ? -2 : -2 + (u - .6) / .34 * 2;
+    const u = t - .56, a = v.talk ? Math.sin(S.t * 3) * .04 : u < .12 ? u / .12 * .35 : u < .27 ? .35 - (u - .12) / .15 * 2.35 : u < .6 ? -2 : -2 + (u - .6) / .34 * 2;
     g.save(); g.translate(DHAND[0] * kd, (DHAND[1] - 221) * kd); g.rotate(a);
     part('d_weapon', DEC.weapon, DHAND[0], DHAND[1], 0, 0, kd); part('d_righthand', DEC.righthand, DHAND[0], DHAND[1], 0, 0, kd);
     g.restore();
     g.restore();
+    if (v.talk && !v.leaving) drawBubble(v, vx + 40 * kd, ground - 150 * kd);
   }
-  function wrap(g, text, maxW, size) {
-    g.font = `700 ${size}px system-ui, sans-serif`;
+  // pixel speech bubble, text typed out letter by letter
+  function drawBubble(v, tx, ty) {
+    const g = ctx, k = jScale(), fs = Math.max(12, Math.round(k * 9)), pad = fs * .9;
+    const bw = Math.min(W * .86, 420), lines = wrap(g, INTRO[v.line], bw - pad * 2, fs, `700 ${fs}px "Courier New", monospace`);
+    const bh = lines.length * fs * 1.3 + pad * 2, bx = Math.max(6, Math.min(W - bw - 6, tx - bw * .7)), by = Math.max(6, ty - bh - fs * 1.4);
+    g.save();
+    g.fillStyle = '#2a1a10'; rr(g, bx - 3, by - 3, bw + 6, bh + 6, fs); g.fill();
+    g.fillStyle = '#fff'; rr(g, bx, by, bw, bh, fs * .8); g.fill();
+    const px = Math.max(bx + fs * 2, Math.min(bx + bw - fs * 2, tx));
+    g.fillStyle = '#2a1a10'; g.beginPath(); g.moveTo(px - fs * .9, by + bh - 2); g.lineTo(px + fs * .9, by + bh - 2); g.lineTo(px + fs * .2, by + bh + fs * 1.1); g.fill();
+    g.fillStyle = '#fff'; g.beginPath(); g.moveTo(px - fs * .6, by + bh - 4); g.lineTo(px + fs * .6, by + bh - 4); g.lineTo(px + fs * .2, by + bh + fs * .7); g.fill();
+    g.fillStyle = '#1a1a1a'; g.font = `700 ${fs}px "Courier New", monospace`; g.textAlign = 'left'; g.textBaseline = 'top';
+    let left = Math.floor(v.typed);
+    lines.forEach((ln, i) => { const show = ln.slice(0, Math.max(0, left)); left -= ln.length + 1; g.fillText(show, bx + pad, by + pad + i * fs * 1.3); });
+    if (v.typed >= INTRO[v.line].length && Math.floor(S.t * 2) % 2) { g.font = `700 ${fs * .8}px system-ui, sans-serif`; g.textAlign = 'right'; g.fillStyle = '#8a5a2a'; g.fillText('tap ▶', bx + bw - pad * .6, by + bh - pad * .9); }
+    g.restore();
+  }
+  function wrap(g, text, maxW, size, font) {
+    g.font = font || `700 ${size}px system-ui, sans-serif`;
     const words = text.split(' '), lines = []; let line = '';
     for (const w of words) { const t = line ? line + ' ' + w : w; if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
     if (line) lines.push(line); return lines;
@@ -219,12 +251,14 @@ const Hammer = (() => {
     g.fillText(s.shown, sw / 2, top + sh * .74);
     g.restore();
   }
+  function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
   function sprite(n, x, y, k, alpha = 1, rot = 0) {
     const i = img(n); if (!ok(i)) return;
     ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y); ctx.rotate(rot); ctx.drawImage(i, -i.naturalWidth * k / 2, -i.naturalHeight * k / 2, i.naturalWidth * k, i.naturalHeight * k); ctx.restore();
   }
   function drawHud() {
     const g = ctx;
+    if (S.phase === 'intro') return;
     if (S.phase === 'play' && S.t < 1.2) sprite('fx_ready', W / 2, H * .2, Math.min(W / 300, H / 400), S.t < 1 ? 1 : (1.2 - S.t) / .2);
     else if (S.phase === 'play' && !S.taps && S.signs.length) sprite(Math.floor(S.t * 3) % 2 ? 'fx_tap1' : 'fx_tap2', W / 2, H * .2, Math.min(W / 300, H / 400) * .8);
     if (S.combo >= 3) {
@@ -264,7 +298,7 @@ const Hammer = (() => {
     ui.overlay.innerHTML = `<div class="ovbox"><h3>${title}</h3><p>${sub}</p><button class="btn ovbtn" id="hvBtn">${btn}</button></div>`;
     ui.overlay.querySelector('#hvBtn').onclick = () => { ui.overlay.hidden = true; fn(); };
   }
-  function start() { S.phase = 'play'; refreshUI(); }
+  function start() { S.phase = 'intro'; S.t = 0; S.vil = { t: 0, line: 0, typed: 0, talk: true }; refreshUI(); }
   function layout() {
     if (!stage) return;
     stage.classList.remove('rot');
@@ -306,7 +340,7 @@ const Hammer = (() => {
     cv.addEventListener('pointerdown', e => { e.preventDefault(); tap(); });
     addEventListener('resize', layout);
     const keys = e => { if (e.code === 'Space' || e.key === 'ArrowUp') tap(); }; document.addEventListener('keydown', keys); ui.keys = keys;
-    showOverlay(`<img src="${ART}icon.png" alt="" style="width:64px;height:64px;border-radius:14px;vertical-align:middle;margin-right:8px">Jaques Hammer`, 'Signs come running at you with a Latin word and a meaning. If the meaning is <b>wrong</b>, tap to smash it with the hammer. If it’s <b>right</b>, let it go by. Get it wrong and the evil guy comes out!', "Let's run!", start);
+    showOverlay(`<img src="${ART}icon.png" alt="" style="width:64px;height:64px;border-radius:14px;vertical-align:middle;margin-right:8px">Jaques Hammer`, 'Someone has been fiddling with the signs in town. Each one shows a Latin word and a meaning. If the meaning is <b>wrong</b>, tap to smash it with the hammer. If it’s <b>right</b>, let it go by.', "Let's run!", start);
     last = performance.now(); raf = requestAnimationFrame(frame);
   }
   function unmount() {
