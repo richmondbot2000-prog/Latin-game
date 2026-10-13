@@ -209,7 +209,9 @@ const Celebrate = (() => {
     const shots = Math.round(4 + 2.5 * (power - 1));
     for (let i = 0; i < shots; i++) {
       timers.push(setTimeout(() => {
-        burst(rnd(W * .12, W * .88), rnd(H * .1, H * .55), Math.round(rnd(90, 130)), rnd(9, 13) * Math.min(1.4, .9 + power * .15));
+        // the card sits mid-screen in front of this layer, so aim bursts at the open space above and below it
+        const y = Math.random() < .7 ? rnd(H * .02, H * .2) : rnd(H * .8, H * .96);
+        burst(rnd(W * .12, W * .88), y, Math.round(rnd(90, 130)), rnd(9, 13) * Math.min(1.4, .9 + power * .15));
         go();
       }, i * rnd(110, 190)));
     }

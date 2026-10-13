@@ -369,7 +369,7 @@ function renderPlay(u, pane) {
       st.cur++; st.best = Math.max(st.best, st.cur);
       const big = st.cur % 10 === 0 ? 2.4 : st.cur % 5 === 0 ? 1.7 : 1;
       const r = deck.getBoundingClientRect();
-      Celebrate(r.left + r.width / 2, r.top + r.height / 2, big);
+      Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
       right++; pw.ok = (pw.ok || 0) + 1;
       pw.s = Math.min(5, (pw.s || 0) + 1);
       if (pw.s === 5) { pw.r = Date.now() + RETIRE_DAYS * DAY; flash(`🏆 ${w.word} mastered! Resting for a month`); }

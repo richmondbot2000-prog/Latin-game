@@ -172,7 +172,11 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
 /* fireworks layer */
-canvas.fx { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 40; }
+/* fireworks draw on a layer behind the page, so they never cover the card */
+canvas.fx { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; }
+html { background: var(--paper); }
+body { background: transparent; }
+#app { position: relative; z-index: 1; }
 
 /* vocabulary setting */
 .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 0 0 10px; }
