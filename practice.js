@@ -20,7 +20,7 @@ const Practice = (() => {
     kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .30, chomp: 0,  size: .92,  from: 5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true },
     ghost:      { name: 'Ghost',      hp: 80,  speed: .30, chomp: 25, size: 1.0,  from: 6, look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
     flying:     { name: 'Flyer',      hp: 70,  speed: .36, chomp: 0,  size: .9,   from: 7, look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
-    moley:      { name: 'Moley',      hp: 150, speed: .22, chomp: 30, size: .95,  from: 8, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true },
+    moley:      { name: 'Mole King',  hp: 220, speed: .22, chomp: 30, size: .95,  from: 8, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .34 },
     broodqueen: { name: 'Brood Queen', hp: 900, speed: .10, chomp: 40, size: 1.4, from: 6, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
     ghostking:  { name: 'Ghost King', hp: 700, speed: .16, chomp: 35, size: 1.35, from: 9, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
   };
@@ -66,11 +66,11 @@ const Practice = (() => {
       row = rows[Math.floor(Math.random() * rows.length)];
       S.lastRows.push(row); if (S.lastRows.length > 2) S.lastRows.shift();
     }
-    const x = opts.x != null ? opts.x : k.digs ? 3 + Math.random() * (COLS - 5) : COLS + .4 + Math.random() * .3;
+    const x = opts.x != null ? opts.x : COLS + .4 + Math.random() * .3;
     const sq = { type, k, row, x, hp: k.hp, phase: Math.random() * 7, blink: 2 + Math.random() * 3,
-      eating: null, flash: 0, wob: 0, pass: k.pass || 0, passedCol: -1, brood: k.brood || 0, rise: k.digs ? 1 : 0 };
+      eating: null, flash: 0, wob: 0, pass: k.pass || 0, passedCol: -1, brood: k.brood || 0, rise: 0,
+      under: !!k.digs, target: 2.5 + Math.random() * 3.5 };   // the Mole King drills underground until he reaches his target column
     S.squishies.push(sq);
-    if (k.digs) S.fx.push({ kind: 'dirt', x, row, t: 0 });
     if (!opts.extra) S.spawned++;
     return sq;
   }
@@ -123,6 +123,13 @@ const Practice = (() => {
     // squishies move / chomp
     for (const sq of S.squishies) {
       sq.wob += dt; if (sq.flash > 0) sq.flash -= dt; if (sq.rise > 0) sq.rise -= dt;
+      if (sq.under) {                  // drilling: only a moving mound shows; bullets pass over, mortar blasts still hurt
+        sq.x -= sq.k.dig * dt;
+        sq.dirtT = (sq.dirtT || 0) - dt;
+        if (sq.dirtT <= 0) { sq.dirtT = .28; S.fx.push({ kind: 'dirt', x: sq.x, row: sq.row, t: 0, small: true }); }
+        if (sq.x <= sq.target) { sq.under = false; sq.rise = 1; S.fx.push({ kind: 'dirt', x: sq.x, row: sq.row, t: 0 }); S.shake = .2; }
+        continue;
+      }
       if (sq.brood) { sq.broodT = (sq.broodT || 4) - dt; if (sq.broodT <= 0) { sq.broodT = sq.brood; spawn('skitter', sq.row, { x: sq.x + .5, extra: true }); } }
       const col = Math.floor(sq.x - .35);
       const g = col >= 0 && col < COLS ? S.grid[sq.row][col] : null;
@@ -162,7 +169,7 @@ const Practice = (() => {
       g.cool -= dt;
       if (g.cool > 0) continue;
       // bullets only fly along the gun's own row; the mortar lobs at the most advanced squishy on the whole lawn
-      const targets = S.squishies.filter(s => !s.dead && s.x < COLS + .6 && (g.type === 'mortar' ? s.x > .5 : s.row === r && s.x > c + .2));
+      const targets = S.squishies.filter(s => !s.dead && s.x < COLS + .6 && (g.type === 'mortar' ? s.x > .5 : s.row === r && s.x > c + .2 && !s.under));
       if (!targets.length) continue;
       const first = targets.reduce((a, b) => a.x < b.x ? a : b);
       const k = GUNS[g.type];
@@ -173,7 +180,7 @@ const Practice = (() => {
     // bullets
     for (const b of S.bullets) {
       b.x += b.speed * dt;
-      const hit = S.squishies.find(s => s.row === b.row && !s.dead && Math.abs(s.x - b.x) < s.k.size * .45);
+      const hit = S.squishies.find(s => s.row === b.row && !s.dead && !s.under && Math.abs(s.x - b.x) < s.k.size * .45);
       if (hit) { hurt(hit, b.dmg); b.gone = true; }
       if (b.x > COLS + 1) b.gone = true;
     }
@@ -332,6 +339,13 @@ const Practice = (() => {
     const k = sq.k, w = s * k.size, mo = motionOf(sq);
     if (sq.rise <= 0) sq.blink -= 1 / 60; if (sq.blink < 0) sq.blink = 2 + Math.random() * 3;
     const foot = y + s * .42;
+    if (sq.under) {   // a mound of earth travelling along the row
+      const bump = 1 + .08 * Math.sin(sq.wob * 12);
+      g.fillStyle = '#8B5E34'; g.beginPath(); g.ellipse(x, foot - s * .02, s * .34, s * .17 * bump, 0, Math.PI, 0); g.fill();
+      g.fillStyle = '#A97A4A'; g.beginPath(); g.ellipse(x - s * .04, foot - s * .06, s * .2, s * .1 * bump, 0, Math.PI, 0); g.fill();
+      g.fillStyle = '#6E4526'; g.beginPath(); g.ellipse(x, foot, s * .36, s * .05, 0, 0, 7); g.fill();
+      return;
+    }
     g.save();
     // shadow stays on the ground; smaller when the squishy is in the air
     const air = Math.max(0, -mo.dy); g.fillStyle = 'rgba(0,0,0,.16)'; g.beginPath(); g.ellipse(x, foot, w * .38 * (1 - air * .4), w * .1 * (1 - air * .4), 0, 0, 7); g.fill();
@@ -419,7 +433,7 @@ const Practice = (() => {
         }
       } else if (f.kind === 'dirt') {
         const p = f.t / .8; ctx.fillStyle = `rgba(110,75,40,${1 - p})`;
-        for (let i = 0; i < 8; i++) { const a = i * .8 + .3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * p * cell * .7, y + cell * .3 - Math.sin(a) * p * cell * .9 + p * p * cell * .8, cell * .07, 0, 7); ctx.fill(); }
+        for (let i = 0; i < (f.small ? 3 : 8); i++) { const a = i * .8 + .3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * p * cell * .7, y + cell * .3 - Math.sin(a) * p * cell * .9 + p * p * cell * .8, cell * .07, 0, 7); ctx.fill(); }
       } else if (f.kind === 'pot') {
         const p = f.t / .8; ctx.fillStyle = `rgba(184,102,58,${1 - p})`; ctx.beginPath(); ctx.arc(x + p * cell * .6, y - cell * .6 - Math.sin(p * Math.PI) * cell * .8 + p * cell, cell * .12, 0, 7); ctx.fill();
       } else if (f.kind === 'crunch') {
