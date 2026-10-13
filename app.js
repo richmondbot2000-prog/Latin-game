@@ -110,12 +110,14 @@ const sheet = $('#sheet');
 function route() {
   Celebrate.stop();
   if (typeof Practice !== 'undefined') Practice.unmount();
+  if (typeof Hammer !== 'undefined') Hammer.unmount();
   closeSheet();
   const u = current();
   const h = location.hash.slice(1);
   if (!u) return renderSignIn();
   if (h === 'practice') return renderPractice(u);
   if (h === 'trophies') return renderTrophies(u);
+  if (h === 'hammer') return renderHammer(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
@@ -264,7 +266,12 @@ function renderHome(u) {
       <div class="small">${(() => { const sv = store.get('latin.practice.' + u.id, { best: 1 }); return (sv.best || 1) > 1 ? `Best: level ${sv.best} · ${sv.kills || 0} squishies squished` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
       <div class="orgbtns"><button class="btn ghost" id="trophGo">🏆 Trophies ${(() => { const sv = store.get('latin.practice.' + u.id, {}); return Practice.trophies(sv).filter(t => t.got).length; })()}/20</button><button class="btn" id="pracGo">Play</button></div>
     </div>
-    <div class="tile locked"><h2>Coming soon</h2><p>Reading stories</p></div>
+    <div class="tile org" id="ham">
+      <h2>Jamie's Hammer</h2>
+      <p>Run past the signs. Smash the wrong meanings, let the right ones by.</p>
+      <div class="small">${(() => { const sv = store.get('latin.hammer.' + u.id, { best: 0 }); return sv.best ? `Best score ${sv.best}` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
+      <div class="orgbtns"><span></span><button class="btn" id="hamGo">Play</button></div>
+    </div>
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
     <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
   </div>`;
@@ -279,6 +286,7 @@ function renderHome(u) {
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#trophGo').onclick = () => { location.hash = 'trophies'; };
+  $('#hamGo').onclick = () => { location.hash = 'hammer'; };
   $('#org .levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
     store.set(levelKey(u), b.dataset.l); renderHome(u);
@@ -300,6 +308,12 @@ function renderHome(u) {
 function renderPractice(u) {
   app.innerHTML = '<div id="pstage"></div>';
   Practice.mount($('#pstage'), u, { home: () => { location.hash = ''; }, tag: levelName(levelOf(u)) });
+}
+
+/* ---------- Jamie's Hammer ---------- */
+function renderHammer(u) {
+  app.innerHTML = '<div id="hstage"></div>';
+  Hammer.mount($('#hstage'), u, { home: () => { location.hash = ''; }, tag: levelName(levelOf(u)) });
 }
 
 /* ---------- trophy cabinet ---------- */

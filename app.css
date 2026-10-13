@@ -325,3 +325,12 @@ body.noscroll { overflow: hidden; }
 @media (min-width: 600px) { .shelves { gap: 12px 8px; } .trophy img { max-width: 110px; } .trophy span { font-size: 13px; } }
 
 .pshop .gun[hidden] { display: none; }
+
+/* Jamie's Hammer */
+.hbox { flex: 1; min-height: 0; position: relative; margin: 2px 8px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); border: 3px solid #5a3b22; background: #8FD3FF; touch-action: none; }
+.hbox canvas { display: block; }
+.hlives { font-size: 16px; letter-spacing: 2px; margin-left: 6px; }
+.hbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 10px 6px; }
+.hwhy { position: absolute; left: 50%; top: 10px; transform: translate(-50%, -20px); opacity: 0; background: rgba(60,20,40,.85); color: #FFD23F; padding: 6px 12px; border-radius: 10px; font: 700 14px system-ui, sans-serif; max-width: 90%; text-align: center; pointer-events: none; transition: opacity .3s, transform .3s; }
+.hwhy.show { opacity: 1; transform: translate(-50%, 0); animation: whyout 3.2s forwards; }
+@keyframes whyout { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
