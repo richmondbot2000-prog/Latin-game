@@ -373,3 +373,22 @@ body.noscroll { overflow: hidden; }
 @media (max-width: 520px) { .hiwho { width: 31%; } .higrid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 5px; } .hislot { min-height: 98px; } .hislot canvas { width: 54px; height: 54px; } }
 .hcoin { color: #e8902b; font-weight: 900; }
 @media (max-width: 520px) { .hiwho { width: 30%; } .higrid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; } .hislot { min-height: 100px; } .hislot canvas { width: 56px; height: 56px; } }
+
+/* profiles and avatars */
+.profiles { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 18px; margin: 10px 0 18px; }
+.profile { border: 0; background: none; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 700; font-size: 15px; color: var(--ink); padding: 4px; min-width: 84px; }
+.avatar { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: var(--c, var(--chip)); position: relative; box-shadow: var(--shadow); vertical-align: middle; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar b { font-size: 18px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.avatar i { position: absolute; right: -2px; bottom: -2px; width: 16px; height: 16px; border-radius: 50%; background: var(--ink); color: #fff; font: 700 13px/16px system-ui, sans-serif; font-style: normal; text-align: center; }
+.avatar.big { width: 76px; height: 76px; }
+.avatar.big b { font-size: 34px; }
+.avatar.big i { width: 24px; height: 24px; font-size: 18px; line-height: 24px; right: 0; bottom: 0; }
+.avatar.add { background: var(--card); border: 3px dashed var(--line); color: var(--muted); font-size: 40px; font-weight: 300; box-shadow: none; }
+.userbox { display: flex; align-items: center; gap: 10px; }
+.avatarbtn { border: 0; background: none; padding: 0; }
+.avatarbtn .avatar { width: 44px; height: 44px; }
+.avatarbtn .avatar b { font-size: 20px; }
+.pickhello { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 6px 0 10px; }
+.pickhello .avatar i { display: none; }
+.profile .avatar i { display: none; }

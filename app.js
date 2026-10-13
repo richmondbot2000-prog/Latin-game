@@ -125,71 +125,113 @@ function route() {
 }
 window.addEventListener('hashchange', route);
 
-/* ---------- sign in / new player ---------- */
-function renderSignIn(mode = store.get('latin.signinMode', users().length ? 'in' : 'new')) {
-  let picked = [];
+/* ---------- avatars (a photo kept only in this browser, never sent anywhere) ---------- */
+const AVATAR_COLOURS = ['#E8A0B4', '#8FD3FF', '#9BE564', '#FFD23F', '#C9A7F0', '#FFB347', '#7DD3C0', '#F28B82'];
+function avatarHTML(u, cls = '') {
+  const col = AVATAR_COLOURS[(u.name.charCodeAt(0) + u.name.length) % AVATAR_COLOURS.length];
+  return u.avatar ? `<span class="avatar ${cls}"><img src="${u.avatar}" alt=""></span>`
+    : `<span class="avatar ${cls} plus" style="--c:${col}"><b>${esc(u.name[0].toUpperCase())}</b><i>+</i></span>`;
+}
+// choose a photo, shrink it to a small square, and keep it with the player on this device
+function pickPhoto(u, done) {
+  const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*'; inp.style.display = 'none'; document.body.appendChild(inp);
+  inp.onchange = () => {
+    const f = inp.files && inp.files[0]; inp.remove(); if (!f) return;
+    const img = new Image(); const url = URL.createObjectURL(f);
+    img.onload = () => {
+      const S = 160, c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d');
+      const m = Math.min(img.width, img.height); g.drawImage(img, (img.width - m) / 2, (img.height - m) / 2, m, m, 0, 0, S, S);
+      URL.revokeObjectURL(url);
+      const data = c.toDataURL('image/jpeg', .82);
+      store.set('latin.users', users().map(x => x.id === u.id ? { ...x, avatar: data } : x));
+      if (done) done();
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); alert("That picture couldn't be read. Try another one."); };
+    img.src = url;
+  };
+  inp.click();
+}
+
+/* ---------- sign in: pick your face, then your two secret emojis; or add a new player ---------- */
+function renderSignIn(mode) {
+  const all = users();
+  if (mode == null) mode = all.length ? 'pick' : 'new';
+  let picked = [], chosen = mode && mode.id ? mode : null;
+  if (chosen) mode = 'in';
+  const who = chosen ? chosen : null;
   app.innerHTML = `
   <div class="wrap">
     <h1>Salve!</h1>
     <p class="sub">Learn every Latin word, one card at a time.</p>
     ${installTip('signin')}
-    <div class="tabs" role="tablist">
-      <button role="tab" data-m="in" aria-selected="${mode === 'in'}">I've played before</button>
-      <button role="tab" data-m="new" aria-selected="${mode === 'new'}">I'm new</button>
-    </div>
-    <label class="lbl" for="name">Your first name</label>
-    <input id="name" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false">
-    <label class="lbl">${mode === 'new' ? 'Choose your two secret emojis' : 'Your two secret emojis'}</label>
+    ${mode === 'pick' ? `
+    <p class="lbl" style="text-align:center">Who's playing?</p>
+    <div class="profiles">
+      ${all.map(u => `<button class="profile" data-id="${u.id}">${avatarHTML(u, 'big')}<span>${esc(u.name)}</span></button>`).join('')}
+      <button class="profile" data-id="new"><span class="avatar big add">+</span><span>Add player</span></button>
+    </div>` : mode === 'in' ? `
+    <button class="linkbtn" id="back">← Not ${esc(who.name)}? Choose another player</button>
+    <div class="hello pickhello">${avatarHTML(who, 'big')}<div class="who">${esc(who.name)}</div></div>
+    <label class="lbl">Your two secret emojis</label>
     <div class="picked"><div class="slot"></div><div class="slot"></div></div>
     <div class="emojis">${EMOJIS.map(e => `<button type="button" aria-pressed="false">${e}</button>`).join('')}</div>
     <p class="err" id="err"></p>
-    <button class="btn" id="go" disabled>${mode === 'new' ? 'Create my player' : "Let's play"}</button>
-    ${mode === 'in' && Sync.enabled() ? '<button class="btn ghost" id="link">I have a sync code from another device</button>' : ''}
-    ${mode === 'new' ? '<p class="small" style="text-align:center">Remember your name and emojis — they are how the game knows it’s you. Your progress stays on this device.</p>' : ''}
+    <button class="btn" id="go" disabled>Let's play</button>
+    ${Sync.enabled() ? '<button class="btn ghost" id="link">I have a sync code from another device</button>' : ''}` : `
+    ${all.length ? '<button class="linkbtn" id="back">← Back to the players</button>' : ''}
+    <label class="lbl" for="name">Your first name</label>
+    <input id="name" type="text" maxlength="20" autocomplete="off" autocapitalize="words" spellcheck="false">
+    <label class="lbl">Choose your two secret emojis</label>
+    <div class="picked"><div class="slot"></div><div class="slot"></div></div>
+    <div class="emojis">${EMOJIS.map(e => `<button type="button" aria-pressed="false">${e}</button>`).join('')}</div>
+    <p class="err" id="err"></p>
+    <button class="btn" id="go" disabled>Create my player</button>
+    <p class="small" style="text-align:center">Remember your two emojis — they are how the game knows it’s you. You can add a photo on the next page. Everything stays on this device.</p>`}
   </div>`;
   wireTip();
+  const back = $('#back'); if (back) back.onclick = () => renderSignIn('pick');
+  if (mode === 'pick') {
+    app.querySelector('.profiles').onclick = e => {
+      const b = e.target.closest('.profile'); if (!b) return;
+      if (b.dataset.id === 'new') return renderSignIn('new');
+      const u = all.find(x => x.id === b.dataset.id); if (u) renderSignIn(u);
+    };
+    return;
+  }
   const name = $('#name'), go = $('#go'), err = $('#err');
   const slots = app.querySelectorAll('.slot');
   const sync = () => {
     slots.forEach((s, i) => { s.textContent = picked[i] || ''; s.classList.toggle('full', !!picked[i]); });
     app.querySelectorAll('.emojis button').forEach(b => b.setAttribute('aria-pressed', picked.includes(b.textContent)));
-    go.disabled = !(name.value.trim() && picked.length === 2);
+    go.disabled = !((mode === 'in' || name.value.trim()) && picked.length === 2);
     err.textContent = '';
-  };
-  app.querySelector('.tabs').onclick = e => {
-    const b = e.target.closest('button'); if (!b) return;
-    store.set('latin.signinMode', b.dataset.m); renderSignIn(b.dataset.m);
   };
   app.querySelector('.emojis').onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
     const em = b.textContent;
     picked = picked.includes(em) ? picked.filter(x => x !== em) : picked.length < 2 ? [...picked, em] : [picked[0], em];
     sync();
+    if (mode === 'in' && picked.length === 2 && keyOf(who.name, picked) === keyOf(who.name, who.emojis)) go.click();   // right emojis: straight in
   };
-  name.oninput = sync;
+  if (name) name.oninput = sync;
   go.onclick = () => {
-    const nm = name.value.trim().replace(/\s+/g, ' ');
-    const k = keyOf(nm, picked);
-    const all = users();
-    const found = all.find(u => keyOf(u.name, u.emojis) === k);
     if (mode === 'in') {
-      if (!found) { err.textContent = "We can't find that player on this device. Check your name and emojis" + (Sync.enabled() ? ', use your sync code below, ' : ' ') + "or tap “I'm new”."; return; }
-      store.set('latin.current', found.id);
+      if (keyOf(who.name, picked) !== keyOf(who.name, who.emojis)) { picked = []; sync(); err.textContent = "Those aren't " + who.name + "'s emojis. Try again" + (Sync.enabled() ? ', or use a sync code below.' : '.'); return; }
+      store.set('latin.current', who.id);
     } else {
-      if (found) { err.textContent = 'That player already exists — tap “I’ve played before”.'; return; }
+      const nm = name.value.trim().replace(/\s+/g, ' ');
+      const k = keyOf(nm, picked);
+      if (all.find(u => keyOf(u.name, u.emojis) === k)) { err.textContent = 'That player already exists — go back and tap their face.'; return; }
       const u = { id: 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name: nm, emojis: picked, created: Date.now() };
       store.set('latin.users', [...all, u]);
       store.set('latin.current', u.id);
-      if (Sync.enabled()) { store.set('latin.signinMode', 'in'); location.hash = ''; showCode(u, true); return; }
+      if (Sync.enabled()) { location.hash = ''; showCode(u, true); return; }
     }
-    store.set('latin.signinMode', 'in');
     location.hash = '';
     route();
   };
   const link = $('#link');
   if (link) link.onclick = async () => {
-    const nm = name.value.trim().replace(/\s+/g, ' ');
-    if (!nm || picked.length !== 2) { err.textContent = 'Type your name and pick your two emojis first, then enter the code.'; return; }
     const code = prompt('Type the sync code shown on your other device (like APPLE-TIGER-2481):');
     if (code == null) return;
     if (!Sync.valid(code)) { err.textContent = 'That doesn’t look like a sync code. It has two words and four numbers.'; return; }
@@ -197,13 +239,10 @@ function renderSignIn(mode = store.get('latin.signinMode', users().length ? 'in'
     try {
       const blob = await Sync.link(code);
       if (!blob) { err.textContent = 'No player found with that code. Check it on the other device (Home → sync code).'; return; }
-      const all = users();
-      let u = all.find(x => keyOf(x.name, x.emojis) === keyOf(nm, picked));
-      if (!u) { u = { id: 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name: nm, emojis: picked, created: Date.now(), code: Sync.normalise(code) }; store.set('latin.users', [...all, u]); }
-      else { u.code = Sync.normalise(code); store.set('latin.users', all.map(x => x.id === u.id ? u : x)); }
+      const u = { ...who, code: Sync.normalise(code) }; store.set('latin.users', all.map(x => x.id === u.id ? u : x));
       store.set('latin.current', u.id);
       Sync.merge(u, blob);
-      store.set('latin.signinMode', 'in'); location.hash = ''; route();
+      location.hash = ''; route();
     } catch (e) { err.textContent = 'Couldn’t reach the sync server. Check the internet and try again.'; }
   };
   sync();
@@ -247,7 +286,7 @@ function renderHome(u) {
   const { c, total } = summary(u);
   app.innerHTML = `
   <div class="wrap">
-    <div class="bar"><span class="title"></span><button class="iconbtn" id="who">Switch</button></div>
+    <div class="bar"><span class="title"></span><span class="userbox"><button class="linkbtn" id="who">Log out</button><button class="avatarbtn" id="avatarBtn" title="${u.avatar ? 'Change your photo' : 'Add a photo'}">${avatarHTML(u)}</button></span></div>
     <div class="hello"><div class="small">Salve,</div><div class="who"></div></div>
     ${installTip('home')}
     <div class="tile org" id="org">
@@ -277,7 +316,8 @@ function renderHome(u) {
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
     <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
   </div>`;
-  $('.who').textContent = u.name + ' ' + u.emojis.join('');
+  $('.who').textContent = u.name;
+  $('#avatarBtn').onclick = () => pickPhoto(u, () => renderHome(current()));
   wireTip();
   if (Sync.enabled()) {
     $('#syncline').onclick = () => showCode(u, false);

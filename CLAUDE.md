@@ -10,6 +10,10 @@ A Latin learning game, built by a father for his daughter. Public site at
   age, school or photograph**. The game must be good without knowing who is
   playing it. Progress lives in `localStorage`. Cloud sync (see below) stores
   stars and levels only, under a random per-player sync code — never a name.
+- Players pick their face on a profile screen, then their two secret emojis.
+  An avatar photo is optional and lives only in that browser's `localStorage`
+  (`latin.users[].avatar`, a 160px JPEG data URL); it is never synced or
+  committed.
 - **No accounts, no sign-in, no tracking, no third-party analytics.** A child uses
   this. Plain HTML, CSS and JS served from one domain.
 - **No ads, no external embeds**, nothing that could put something unexpected in
