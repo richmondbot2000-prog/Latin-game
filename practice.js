@@ -3,7 +3,7 @@
 /* ---------- Practice: defend the garden from squishies; earn coins by matching words ----------
    Positions are in cells: squishies walk from x = COLS (right) towards x = 0 (left). */
 const Practice = (() => {
-  const ROWS = 6, COLS = 9;
+  const ROWS = 6, COLS = 9, PADL = .75, PADR = .6;   // a strip for the lawnmowers on the left, bushes on the right
   const START_MONEY = 150, MATCH_COINS = 25, FREEZE_SECS = 5;
   // the artist's weapon set (art/weapons). kind: shoot = bullets along the row; beam = slows everything in front; ring = a sonic ring
   // that knocks the whole row back; lob = lobbed shells (Solar Blast anywhere, Miner along its row); mine = explodes when touched;
@@ -14,7 +14,7 @@ const Practice = (() => {
     freezeturret: { name: 'Freeze Turret', cost: 175, hp: 100, recharge: 10, art: 'freezeturret', kind: 'shoot', proj: 'ice', dmg: 15, speed: 8, tiers: [{ every: 3, shots: 1, freeze: 1.5 }, { every: 2.2, shots: 1, freeze: 2, cost: 150 }, { every: 1.5, shots: 1, freeze: 2.5, cost: 250 }], blurb: 'ice shards freeze a squishy on the spot' },
     freezeray:    { name: 'Freeze Ray', cost: 150, hp: 100, recharge: 8, art: 'freezeray', kind: 'beam', range: 3.5, dmg: 6, tiers: [{}], blurb: 'a cold beam: everything in front crawls at half speed' },
     sonic:        { name: 'Sonic Boom', cost: 200, hp: 100, recharge: 12, art: 'sonic', kind: 'ring', tiers: [{ every: 5, push: .8, dmg: 25 }, { every: 4, push: 1.2, dmg: 35, cost: 150 }, { every: 3, push: 1.6, dmg: 45, cost: 250 }], blurb: 'a ring that knocks the whole row back' },
-    mortar:       { name: 'Solar Blast', cost: 225, hp: 100, recharge: 12, art: 'solar', kind: 'lob', proj: 'lava', tiers: [{ every: 7, dmg: 90, splash: 1.4 }], blurb: 'lobs a fireball at the squishy nearest your gnomes' },
+    mortar:       { name: 'Solar Blast', cost: 225, hp: 100, recharge: 12, art: 'solar', kind: 'lob', proj: 'lava', tiers: [{ every: 7, dmg: 90, splash: 1.4 }], blurb: 'lobs a fireball at the squishy nearest your mowers' },
     miner:        { name: 'Miner Shoot', cost: 150, hp: 100, recharge: 8, art: 'miner', kind: 'lob', lane: true, proj: 'rock', tiers: [{ every: 4, dmg: 45, splash: .8 }, { every: 3, dmg: 55, splash: .9, cost: 150 }, { every: 2.2, dmg: 70, splash: 1, cost: 250 }], blurb: 'flings rocks along its row' },
     mine:         { name: 'Detonate Bomb', cost: 125, hp: 60, recharge: 14, art: 'mine', kind: 'mine', arm: 4, tiers: [{ dmg: 300, splash: 1 }, { dmg: 420, splash: 1.4, cost: 120 }, { dmg: 600, splash: 1.8, cost: 200 }], blurb: 'arms in 4 s, then blows up the first squishy to touch it' },
     plasma:       { name: 'Plasma Bomb', cost: 150, hp: 9999, recharge: 20, art: 'plasma', kind: 'bomb', fuse: 1.5, tiers: [{ dmg: 500, splash: 1.7 }], blurb: 'goes off after 1.5 s and clears the area' },
@@ -69,6 +69,8 @@ const Practice = (() => {
     'pose_stand', 'pose_wave', 'pose_arms', 'pose_hips', 'pose_thumbs', 'pose_facepalm', 'emo_neutral', 'emo_xx', 'emo_happy', 'emo_sleepy', 'emo_shock', 'emo_sad', 'emo_confused', 'emo_qqq', 'emo_v', 'emo_bear', 'emo_stare', 'emo_love', 'emo_grin', 'wave1', 'wave2', 'wave3', 'wave4'];
   const uiImg = n => { const im = UI[n]; return im && im.complete && im.naturalWidth ? im : null; };
   const WEAPONS = {};   // art/weapons: every gun tier and the projectiles
+  const LAWN = {};      // art/lawn: grass and soil textures, the mower, bushes, the path
+  const lawnImg = n => { const im = LAWN[n]; return im && im.complete && im.naturalWidth ? im : null; };
   const wImg = n => { const im = WEAPONS[n]; return im && im.complete && im.naturalWidth ? im : null; };
   const gunArt = g => { const k = GUNS[g.type]; return wImg(k.art + (g.tier || 1)) ? k.art + (g.tier || 1) : k.art + '1'; };
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -315,7 +317,7 @@ const Practice = (() => {
   }
 
   /* ---------- drawing ---------- */
-  let cv, ctx, cell = 40, W = 0, H = 0, bg = null, stage = null;
+  let cv, ctx, cell = 40, W = 0, H = 0, OX = 0, bg = null, stage = null;
   const rotated = () => stage && stage.classList.contains('rot');
   function layout() {
     if (!stage) return;
@@ -325,8 +327,8 @@ const Practice = (() => {
     stage.style.width = (rot ? innerHeight : innerWidth) + 'px';
     stage.style.height = (rot ? innerWidth : innerHeight) + 'px';
     const box = ui.garden;
-    cell = Math.max(24, Math.floor(Math.min(box.clientWidth / COLS, box.clientHeight / ROWS)));
-    W = cell * COLS; H = cell * ROWS;
+    cell = Math.max(24, Math.floor(Math.min(box.clientWidth / (COLS + PADL + PADR), box.clientHeight / ROWS)));
+    OX = Math.round(cell * PADL); W = OX + cell * COLS + Math.round(cell * PADR); H = cell * ROWS;
     const dpr = Math.min(devicePixelRatio || 1, 2);
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
@@ -337,34 +339,60 @@ const Practice = (() => {
   // pointer position in canvas pixels, allowing for the rotated stage
   function canvasPoint(e) {
     const r = cv.getBoundingClientRect();
-    return rotated() ? { x: e.clientY - r.top, y: r.right - e.clientX } : { x: e.clientX - r.left, y: e.clientY - r.top };
+    const pt = rotated() ? { x: e.clientY - r.top, y: r.right - e.clientX } : { x: e.clientX - r.left, y: e.clientY - r.top };
+    pt.x -= OX; return pt;
   }
+  // the lawn: textured grass in mown stripes, a flagstone path for the mowers on the left, bushes on the right
   function drawBackground() {
     bg = document.createElement('canvas');
     const dpr = Math.min(devicePixelRatio || 1, 2);
     bg.width = cv.width; bg.height = cv.height;
     const g = bg.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const wd = S.spec.world;
+    const wd = S.spec.world, grass = lawnImg('grass'), soil = lawnImg('soil'), path = lawnImg('path'), bush = lawnImg('bush');
+    const texture = (im, x, y, w, h, scale) => {   // multiply a tileable luminance texture over what is already there
+      if (!im) return;
+      g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip(); g.globalCompositeOperation = 'multiply';
+      g.translate(x, y); g.scale(scale, scale); g.fillStyle = g.createPattern(im, 'repeat'); g.fillRect(0, 0, w / scale + 1, h / scale + 1);
+      g.restore();
+    };
+    const gs = (cell * 2) / 256;   // one grass tile spans two cells
+    // the lawn
     for (let r = 0; r < ROWS; r++) {
       const on = S.spec.rows.includes(r);
-      g.fillStyle = on ? wd.lanes[r % 2] : wd.soil[r % 2];   // bare ground where squishies never come
-      g.fillRect(0, r * cell, W, cell);
+      g.fillStyle = on ? wd.lanes[r % 2] : wd.soil[r % 2];
+      g.fillRect(OX, r * cell, cell * COLS, cell);
+      texture(on ? grass : soil, OX, r * cell, cell * COLS, cell, gs);
       if (!on) continue;
-      g.strokeStyle = 'rgba(255,255,255,.18)'; g.lineWidth = 1;
-      for (let c = 1; c < COLS; c++) { g.beginPath(); g.moveTo(c * cell, r * cell + 4); g.lineTo(c * cell, r * cell + cell - 4); g.stroke(); }
+      g.fillStyle = 'rgba(255,255,255,.08)';   // a soft mown-stripe edge
+      g.fillRect(OX, r * cell, cell * COLS, 2);
+      g.strokeStyle = 'rgba(255,255,255,.12)'; g.lineWidth = 1;
+      for (let c = 1; c < COLS; c++) { g.beginPath(); g.moveTo(OX + c * cell, r * cell + 4); g.lineTo(OX + c * cell, r * cell + cell - 4); g.stroke(); }
+    }
+    // the path on the left
+    g.fillStyle = wd.key === 'tutorial' || wd.key === 'earth' ? '#D9D2C4' : wd.soil[0]; g.fillRect(0, 0, OX, H);
+    texture(path, 0, 0, OX, H, cell / 128);
+    g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(OX - 3, 0, 3, H);
+    // bushes on the right, where the squishies come from
+    const right = OX + cell * COLS;
+    g.fillStyle = wd.lanes[1]; g.fillRect(right, 0, W - right, H); texture(grass, right, 0, W - right, H, gs);
+    let seed = 11; const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    if (bush) {
+      for (let y = -cell * .3; y < H + cell * .2; y += cell * .62) {
+        const w = cell * (1.2 + rand() * .5); g.drawImage(bush, right - cell * .15 + rand() * cell * .25, y - w * .2, w, w);
+      }
+      if (wd.key !== 'tutorial' && wd.key !== 'earth') {   // other worlds: the bushes take the planet's colour
+        g.save(); g.beginPath(); g.rect(right - cell * .2, 0, W - right + cell * .2, H); g.clip(); g.globalCompositeOperation = 'color'; g.fillStyle = wd.lanes[0]; g.fillRect(0, 0, W, H); g.restore();
+      }
     }
     // little flowers, same places every time
-    let seed = 7;
-    const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    seed = 7;
     for (let i = 0; i < 40; i++) {
-      const x = rand() * W, y = rand() * H, col = ['#FFF0F5', '#FFE066', '#FFFFFF', '#FFB3C6'][i % 4];
+      const x = OX + rand() * cell * COLS, y = rand() * H, col = ['#FFF0F5', '#FFE066', '#FFFFFF', '#FFB3C6'][i % 4];
       if (!S.spec.rows.includes(Math.floor(y / cell))) continue;
       if (wd.deco === 'flowers') { g.fillStyle = col; g.beginPath(); g.arc(x, y, cell * .05, 0, 7); g.fill(); g.fillStyle = '#FFD23F'; g.beginPath(); g.arc(x, y, cell * .02, 0, 7); g.fill(); }
       else if (wd.deco === 'craters') { g.fillStyle = 'rgba(0,0,0,.12)'; g.beginPath(); g.ellipse(x, y, cell * .12, cell * .07, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.12)'; g.beginPath(); g.ellipse(x, y - cell * .02, cell * .1, cell * .05, 0, 0, 7); g.fill(); }
       else { g.fillStyle = 'rgba(0,0,0,.14)'; g.beginPath(); g.ellipse(x, y, cell * .07, cell * .045, rand(), 0, 7); g.fill(); }
     }
-    // path on the left where the gnomes stand
-    g.fillStyle = 'rgba(120,80,40,.18)'; g.fillRect(0, 0, cell * .22, H);
   }
   function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
   function drawGun(g, type, x, y, s, kick = 0, hp = 1) {
@@ -485,13 +513,12 @@ const Practice = (() => {
       g.fillStyle = '#FF5D8F'; g.fillRect(x - w * .35, foot + s * .08, w * .7 * Math.max(0, sq.hp / k.hp), s * .07);
     }
   }
-  function drawGnome(g, x, y, s, running) {
+  function drawGnome(g, x, y, s, running) {   // the lawnmower (kept the old name inside the code)
+    const im = lawnImg('mower');
     g.save(); g.translate(x, y);
-    if (running) g.rotate(Math.sin(S.t * 30) * .15);
-    g.fillStyle = '#3E6FD0'; rr(g, -s * .13, -s * .05, s * .26, s * .3, s * .06); g.fill();     // coat
-    g.fillStyle = '#F6C8A0'; g.beginPath(); g.arc(0, -s * .12, s * .12, 0, 7); g.fill();          // face
-    g.fillStyle = '#fff'; g.beginPath(); g.ellipse(0, -s * .02, s * .1, s * .09, 0, 0, Math.PI); g.fill(); // beard
-    g.fillStyle = '#D33'; g.beginPath(); g.moveTo(-s * .14, -s * .18); g.lineTo(s * .14, -s * .18); g.lineTo(0, -s * .48); g.closePath(); g.fill(); // hat
+    if (running) { g.rotate(Math.sin(S.t * 40) * .06); g.translate(0, Math.sin(S.t * 60) * 1.5); }
+    if (im) { const w = s * .82, h = w * im.naturalHeight / im.naturalWidth; g.drawImage(im, -w * .55, s * .28 - h, w, h); }
+    else { g.fillStyle = '#C4242E'; rr(g, -s * .3, -s * .1, s * .5, s * .25, s * .06); g.fill(); g.fillStyle = '#222'; g.beginPath(); g.arc(-s * .2, s * .18, s * .09, 0, 7); g.arc(s * .12, s * .18, s * .09, 0, 7); g.fill(); }
     g.restore();
   }
   function draw() {
@@ -499,10 +526,11 @@ const Practice = (() => {
     ctx.save();
     if (S.shake > 0) ctx.translate(rnd(-3, 3), rnd(-3, 3));
     ctx.drawImage(bg, 0, 0, W, H);
+    ctx.translate(OX, 0);   // everything else is drawn in lawn cells
     // selected gun: show where it can go
     if (S.sel && S.sel !== 'shovel') { ctx.fillStyle = 'rgba(255,255,255,.14)'; for (const r of S.spec.rows) for (let c = 0; c < COLS; c++) if (!S.grid[r][c]) ctx.fillRect(c * cell + 2, r * cell + 2, cell - 4, cell - 4); }
     // gnomes
-    for (const r of S.spec.rows) if (S.gnomes[r]) drawGnome(ctx, cell * .12, r * cell + cell * .62, cell, false);
+    for (const r of S.spec.rows) if (S.gnomes[r]) drawGnome(ctx, -cell * .38, r * cell + cell * .62, cell, false);
     for (const gr of S.gnomeRuns) drawGnome(ctx, gr.x * cell + cell * .5, gr.row * cell + cell * .62, cell, true);
     // guns
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
@@ -742,7 +770,7 @@ const Practice = (() => {
   function ready() {
     const fresh = Object.keys(SQUISHIES).filter(k => SQUISHIES[k].from === S.level && !SQUISHIES[k].boss).map(k => SQUISHIES[k].name);
     const w = S.spec.world;
-    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. Scroll the shop for more weapons. Keep the squishies away from your gnomes!'
+    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. Scroll the shop for more weapons. Keep the squishies away from your lawnmowers!'
       : (S.level === w.from ? `Welcome to ${w.name}! ` : '') + `${S.spec.count} squishies are on their way.` + (fresh.length ? ` New: ${fresh.join(', ')}!` : '') + (S.spec.boss ? ` Boss level — ${SQUISHIES[S.spec.boss].name} leads the final wave!` : '');
     showOverlay({ kind: 'ready', title: `${w.name === 'the Moon' ? 'The Moon' : w.name} · Level ${S.level}`, sub: first, btn: S.level === 1 ? "Let's go!" : 'Ready!' }, start);
     if (S.level > 1) {
@@ -800,6 +828,7 @@ const Practice = (() => {
     for (const n of UI_NAMES) if (!UI[n]) { const im = new Image(); im.src = 'art/ui/' + n + '.png'; UI[n] = im; }
     for (const key in GUNS) for (let t = 1; t <= GUNS[key].tiers.length; t++) { const n = GUNS[key].art + t; if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; } }
     for (const n of ['proj_bullet', 'proj_lava', 'proj_ice', 'proj_ring', 'proj_rock']) if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; }
+    for (const n of ['grass', 'soil', 'path', 'mower', 'bush', 'fence']) if (!LAWN[n]) { const im = new Image(); im.onload = () => { bg = null; }; im.src = 'art/lawn/' + n + '.png'; LAWN[n] = im; }
     S = null; newLevel(sv.level || 1);
     renderShop(); layout(); refreshShop();
     cv.addEventListener('pointerdown', onCanvasTap);
