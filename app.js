@@ -128,6 +128,7 @@ function route() {
   if (h === 'trophies') return renderTrophies(u);
   if (h === 'hammer') return renderHammer(u);
   if (h === 'hammer-items') return renderHammer(u, true);
+  if (h === 'read') return renderRead(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
@@ -308,6 +309,10 @@ function renderHome(u) {
       <button class="gamebanner" data-t="play" style="background-image:url('art/banners/cards.jpg')"><span class="gname cards">Cards</span></button>
       <button class="gamebanner" data-t="list" style="background-image:url('art/banners/wordlist.jpg')"><span class="gname list">Word list</span></button>
     </div>
+    <div class="tile prac2" id="readtile">
+      <h2>Read</h2>
+      <button class="gamebanner" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span></button>
+    </div>
     <div class="tile prac2" id="prac">
       <h2>Practice</h2>
       <button class="gamebanner" id="pracGo" style="background-image:url('art/banners/squishygeddon.jpg')"><span class="gname squishy">Squishygeddon</span></button>
@@ -326,6 +331,7 @@ function renderHome(u) {
     if (pulledFor !== u.id) { pulledFor = u.id; Sync.pull(u).then(changed => { if (changed && current() && current().id === u.id && location.hash === '') renderHome(u); }); }
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
+  $('#readGo').onclick = () => { location.hash = 'read'; };
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
   $('#levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
@@ -336,6 +342,69 @@ function renderHome(u) {
     store.set('latin.orgTab', b.dataset.t); location.hash = b.dataset.t;
   };
   $('#who').onclick = () => { store.del('latin.current'); route(); };
+}
+
+/* ---------- read: sentences, one word at a time ---------- */
+function renderRead(u) {
+  const byId = Object.fromEntries(WORDS.map(w => [w.id, w]));
+  const pool = WORDS.filter(w => w.beginner);
+  const key = 'latin.read.' + u.id;
+  const sv = store.get(key, { done: {}, read: 0 });
+  app.innerHTML = `
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Sentences</span><span class="lvtag" id="rcount"></span></div>
+    <p class="small" style="text-align:center;margin:0 0 6px">Read the sentence. What does the <b>highlighted word</b> mean?</p>
+    <div class="rsent card" id="rsent"></div>
+    <div class="ropts" id="ropts"></div>
+    <p class="rmsg" id="rmsg"></p>
+  </div>`;
+  $('#back').onclick = () => { location.hash = ''; };
+  let sent = null, i = 0, opts = [], busy = false, misses = 0;
+  const pick = () => {
+    const seen = sv.done || {};
+    const fresh = SENTENCES.map((x, n) => n).filter(n => !seen[n]);
+    const list = fresh.length ? fresh : SENTENCES.map((x, n) => n);
+    const n = list[Math.floor(Math.random() * list.length)];
+    return { n, ...SENTENCES[n] };
+  };
+  const wordsIn = () => sent.la.filter(t => t[1]);
+  function show() {
+    const words = wordsIn();
+    const cur = words[i];
+    $('#rcount').textContent = `${Object.keys(sv.done || {}).length}/${SENTENCES.length} read`;
+    $('#rsent').innerHTML = `<div class="rla">${sent.la.map(t => t[1] ? `<span class="rw ${t === cur ? 'cur' : words.indexOf(t) < i ? 'done' : ''}" data-id="${esc(t[1])}">${esc(t[0])}</span>` : `<span class="rp">${esc(t[0])}</span>`).join(' ')}</div>
+      <div class="ren" id="ren"></div>`;
+    if (!cur) { finish(); return; }
+    const w = byId[cur[1]];
+    const ds = distractors(w, pool).slice().sort(() => Math.random() - .5);
+    opts = [w.english, ds[0].english, ds[1] ? ds[1].english : ds[0].english].sort(() => Math.random() - .5);
+    $('#ropts').innerHTML = opts.map((o, k) => `<button class="btn ghost" data-k="${k}">${esc(o)}</button>`).join('');
+    $('#rmsg').textContent = '';
+    busy = false;
+  }
+  function finish() {
+    $('#ren').textContent = sent.en; $('#ren').classList.add('show');
+    sv.done = sv.done || {}; sv.done[sent.n] = Date.now(); sv.read = (sv.read || 0) + 1; store.set(key, sv);
+    $('#rcount').textContent = `${Object.keys(sv.done).length}/${SENTENCES.length} read`;
+    $('#ropts').innerHTML = `<button class="btn" id="rnext">${misses ? 'Next sentence' : '⭐ Perfect! Next sentence'}</button>`;
+    $('#rmsg').textContent = misses ? `${misses} to look at again — they'll come round sooner.` : '';
+    if (!misses) Celebrate(innerWidth / 2, innerHeight / 3, 1.6);
+    $('#rnext').onclick = () => { sent = pick(); i = 0; misses = 0; show(); };
+  }
+  $('#ropts').onclick = e => {
+    const b = e.target.closest('button[data-k]'); if (!b || busy) return;
+    busy = true;
+    const cur = wordsIn()[i], w = byId[cur[1]], ok = opts[+b.dataset.k] === w.english;
+    recordAnswer(u, w, ok);
+    if (ok) { b.classList.add('good'); setTimeout(() => { i++; show(); }, 450); }
+    else {
+      misses++; b.classList.add('bad');
+      $('#ropts').querySelectorAll('button').forEach((x, k) => { if (opts[k] === w.english) x.classList.add('good'); });
+      $('#rmsg').innerHTML = `<b>${esc(w.show)}</b> means <b>${esc(w.english)}</b>.`;
+      setTimeout(() => { i++; show(); }, 1600);
+    }
+  };
+  sent = pick(); show();
 }
 
 /* ---------- practice (garden defence) ---------- */

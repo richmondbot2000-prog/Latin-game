@@ -413,3 +413,19 @@ body.noscroll { overflow: hidden; }
 .gname.hammer { color: #8FEBD6; }
 .gname.cards { color: #FFE9B0; }
 .gname.list { color: #FFD6E0; }
+
+/* read: sentences */
+.rsent { position: relative; inset: auto; background-color: #F8F0DC; min-height: 150px; padding: 26px 18px; margin: 6px 0 14px; display: flex; flex-direction: column; justify-content: center; gap: 12px; cursor: default; }
+.rla { font-size: clamp(1.5rem, 7vw, 2rem); line-height: 1.6; font-weight: 700; text-align: center; }
+.rw { padding: 2px 6px; border-radius: 8px; transition: background .2s; }
+.rw.cur { background: #FFE066; box-shadow: 0 0 0 3px #FFD23F; }
+.rw.done { color: var(--good); }
+.rp { color: var(--muted); }
+.ren { text-align: center; color: var(--muted); font-style: italic; min-height: 1.4em; opacity: 0; transition: opacity .3s; }
+.ren.show { opacity: 1; }
+.ropts { display: flex; flex-direction: column; gap: 10px; }
+.ropts .btn { width: 100%; font-size: 1.15rem; }
+.ropts .btn.good { background: var(--good); color: #fff; border-color: var(--good); }
+.ropts .btn.bad { background: var(--bad); color: #fff; border-color: var(--bad); }
+.rmsg { text-align: center; min-height: 1.5em; margin: 12px 0 0; color: var(--muted); }
+.gname.read { color: #FFF3B0; }

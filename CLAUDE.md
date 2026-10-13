@@ -33,6 +33,11 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   memory cards (`memory.js`); example phrases
   (`phrases.js`); fireworks (`effects.js`); vocabulary settings Beginner / Level
   1 / 2 / 3. Players = first name + two emojis, no passwords.
+- **Read** — "Sentences" (`read.js`, `renderRead` in `app.js`): 60 hand-written
+  sentences using only Beginner words, each token mapped to its headword and
+  checked against `vocab.js`. The reader is asked each word's meaning in turn
+  (3 options, same star rule); the English appears at the end. Progress in
+  `latin.read.<id>` {done{n: time}, read}. Next: longer passages.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Worlds through the solar system (Tutorial, Earth, Moon, Mars, Saturn,
