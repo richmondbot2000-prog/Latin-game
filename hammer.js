@@ -31,7 +31,7 @@ const Hammer = (() => {
   function newGame(level = 1, score = 0) {
     S = { level, made: 0, right0: 0, wrong0: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
       swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0, dogX: null, dogHop: 0, shake: 0, card: null,
-      clouds: [...Array(6)].map((_, i) => ({ i: i % 5, x: Math.random() * 1.2 - .1, y: rnd(.1, .85), s: rnd(.9, 1.5), v: rnd(.012, .025) })) };
+      clouds: makeClouds() };
   }
 
   /* ---------- words on signs ---------- */
@@ -76,7 +76,7 @@ const Hammer = (() => {
         } else after();
       }
     }
-    for (const c of S.clouds) { c.x -= c.v * dt * (slow || .3); if (c.x < -.25) { c.x = 1.05; c.y = rnd(.1, .85); } }
+    for (const c of S.clouds) { c.x -= (c.drift + v * c.par) * dt; if (c.x < -.4) { c.x = 1.1 + Math.random() * .3; c.y = c.layer === 0 ? rnd(.02, .3) : c.layer === 1 ? rnd(.15, .55) : rnd(.35, .8); } }
     if (slow) { S.dustT -= dt; if (S.dustT <= 0) { S.dustT = .22; S.bits.push({ kind: 'dust', i: [0, 1, 2, 4, 5][Math.floor(Math.random() * 5)], x: JX - .04 - Math.random() * .02, t: 0 }); } }
     if (S.invuln > 0) S.invuln -= dt; if (S.flashRed > 0) S.flashRed -= dt;
     if (S.ouch > 0) S.ouch -= dt; if (S.shake > 0) S.shake -= dt;
@@ -182,34 +182,39 @@ const Hammer = (() => {
     ctx.drawImage(i, sx + (box[0] - px) * k, sy + (box[1] - py) * k, (box[2] - box[0]) * k, (box[3] - box[1]) * k);
   }
   const GROUND = .93;
-  const CLOUDS = [[38, 52, 113, 97], [128, 20, 178, 77], [300, 27, 366, 79], [353, 42, 408, 76], [412, 66, 485, 90]];
-  let CLOUD_SPR = null;
-  // the clouds are cut out of the road picture with its sky made transparent, so they sit on any sky
-  function cloudSprites(road) {
-    if (CLOUD_SPR || !ok(road)) return CLOUD_SPR;
-    try {
-      CLOUD_SPR = CLOUDS.map(b => {
-        const c = document.createElement('canvas'); c.width = b[2] - b[0]; c.height = b[3] - b[1];
-        const x = c.getContext('2d'); x.drawImage(road, b[0], b[1], c.width, c.height, 0, 0, c.width, c.height);
-        const d = x.getImageData(0, 0, c.width, c.height), p = d.data;
-        for (let i = 0; i < p.length; i += 4) { const r = p[i], g = p[i + 1], bl = p[i + 2]; if (bl > 200 && r < 160 && g < 215) p[i + 3] = 0; }   // sky blues go
-        x.putImageData(d, 0, 0); return c;
-      });
-    } catch (e) { CLOUD_SPR = []; }
-    return CLOUD_SPR;
-  }
+  // parallax clouds: three layers. Far clouds are small, pale and slow; near ones big, bright and quick.
+  // Each layer scrolls at a fraction of the run speed, plus a little drift of its own so the sky moves even when Jacques stops.
+  const CLOUD_SHAPES = [[[0, 8, 7], [8, 4, 9], [17, 6, 8], [24, 10, 6], [12, 11, 7]], [[0, 6, 5], [6, 2, 7], [14, 4, 6], [20, 7, 5]], [[0, 10, 8], [9, 5, 10], [20, 3, 9], [30, 8, 7], [16, 12, 8], [36, 11, 5]], [[0, 5, 5], [5, 2, 6], [11, 5, 5]]];
   const jScale = () => Math.min(H * .24, W * .5) / 116;
-
+  const CLOUD_SPR = [];
+  function cloudSprite(i) {
+    if (CLOUD_SPR[i]) return CLOUD_SPR[i];
+    const sh = CLOUD_SHAPES[i], px = 3;   // drawn chunky, then scaled with no smoothing, to match the pixel art
+    let x1 = 0, y1 = 0; for (const [x, y, r] of sh) { x1 = Math.max(x1, x + r * 2); y1 = Math.max(y1, y + r * 2); }
+    const c = document.createElement('canvas'); c.width = (x1 + 2) * px; c.height = (y1 + 3) * px; const g = c.getContext('2d');
+    const blob = (col, dy) => { g.fillStyle = col; for (const [x, y, r] of sh) { g.beginPath(); g.arc((x + r + 1) * px, (y + r + 1 + dy) * px, r * px, 0, 7); g.fill(); } };
+    blob('#C9DCF0', 1.2); blob('#FFFFFF', 0);                         // soft shadow underneath, white top
+    g.fillStyle = '#E8F2FC'; for (const [x, y, r] of sh) { g.beginPath(); g.arc((x + r + 1) * px, (y + r + 1) * px, r * px, 0.1, Math.PI - .1); g.fill(); }   // lower half a touch blue
+    return CLOUD_SPR[i] = c;
+  }
+  function makeClouds() {
+    const out = [];
+    const add = (layer, n) => { for (let i = 0; i < n; i++) out.push({ layer, i: Math.floor(Math.random() * CLOUD_SHAPES.length), x: Math.random() * 1.5 - .3,
+      y: layer === 0 ? rnd(.02, .3) : layer === 1 ? rnd(.15, .55) : rnd(.35, .8),
+      s: layer === 0 ? rnd(.5, .7) : layer === 1 ? rnd(.85, 1.1) : rnd(1.3, 1.7), par: [.08, .2, .45][layer], drift: [.004, .008, .014][layer], alpha: [.55, .8, 1][layer] }); };
+    add(0, 5); add(1, 4); add(2, 3);
+    return out;
+  }
   function drawBackground() {
-    const g = ctx, bg = img(lev().bg), road = img('bg_road');
+    const g = ctx, bg = img(lev().bg);
     if (!ok(bg)) { g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); return; }
     g.fillStyle = lev().bg === 'bg_pier' ? '#8ED4F8' : '#58BAF6'; g.fillRect(0, 0, W, H);
     const bh = Math.min(H * .6, W * .9), sb = bh / bg.naturalHeight, tw = bg.naturalWidth * sb, top = H * GROUND + 14 * sb - bh;
     const off = (S.dist * W * .9) % tw;
     for (let x = -off; x < W; x += tw - .5) g.drawImage(bg, x, top, tw + 1, bh);
     g.fillStyle = '#9a9a9a'; g.fillRect(0, top + bh - 1, W, H - top - bh + 1);
-    const cl = cloudSprites(road);
-    if (cl) for (const c of S.clouds) { const ci = cl[c.i], cw = ci.width * sb * c.s, ch = ci.height * sb * c.s; g.drawImage(ci, c.x * W, c.y * top - ch / 2, cw, ch); }
+    for (const c of S.clouds) { const ci = cloudSprite(c.i), k = (W / 390) * c.s * 1.1, cw = ci.width / 3 * k, ch = ci.height / 3 * k; g.globalAlpha = c.alpha; g.drawImage(ci, c.x * W, c.y * top - ch / 2, cw, ch); }
+    g.globalAlpha = 1;
   }
   function drawJacques() {
     const g = ctx, k = jScale(), x = W * JX, ground = H * GROUND;
