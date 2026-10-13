@@ -268,7 +268,7 @@ function renderHome(u) {
     </div>
     <div class="tile org prac" id="ham">
       <img class="pracico" src="art/jh/icon.png" alt="">
-      <h2>Jaques Hammer</h2>
+      <h2>Jacques Hammer</h2>
       <p>Run past the signs. Smash the wrong meanings, let the right ones by.</p>
       <div class="small">${(() => { const sv = store.get('latin.hammer.' + u.id, { best: 0 }); return sv.best ? `Level ${sv.level || 1} · best score ${sv.best}` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
       <div class="orgbtns"><span></span><button class="btn" id="hamGo">Play</button></div>
@@ -311,7 +311,7 @@ function renderPractice(u) {
   Practice.mount($('#pstage'), u, { home: () => { location.hash = ''; }, tag: levelName(levelOf(u)) });
 }
 
-/* ---------- Jaques Hammer ---------- */
+/* ---------- Jacques Hammer ---------- */
 function renderHammer(u) {
   app.innerHTML = '<div id="hstage"></div>';
   Hammer.mount($('#hstage'), u, { home: () => { location.hash = ''; }, tag: levelName(levelOf(u)) });

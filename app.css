@@ -326,7 +326,12 @@ body.noscroll { overflow: hidden; }
 
 .pshop .gun[hidden] { display: none; }
 
-/* Jaques Hammer */
+/* Jacques Hammer */
+.htitle { position: absolute; inset: 0; background: #58BAF6 url('art/jh/title_wide.jpg') center / auto 100% no-repeat; cursor: pointer; display: flex; align-items: flex-end; justify-content: center; }
+.htsub { margin: 0 0 8%; background: rgba(40,20,30,.75); color: #fff; border-radius: 12px; padding: 8px 14px; text-align: center; font: 800 15px system-ui, sans-serif; }
+.htsub span { font-weight: 500; opacity: .85; font-size: 13px; }
+@media (orientation: portrait) { .htitle { background-image: url('art/jh/title_tall.jpg'); background-size: cover; background-position: center; } }
+@media (orientation: landscape) { .htitle { align-items: flex-start; justify-content: flex-start; } .htsub { margin: 10px 0 0 10px; text-align: left; } }
 .hbox { flex: 1; min-height: 0; position: relative; margin: 2px 8px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); border: 3px solid #5a3b22; background: #8FD3FF; touch-action: none; }
 .hbox canvas { display: block; }
 .hlev { font-size: 12px; color: var(--muted); white-space: nowrap; font-weight: 700; }

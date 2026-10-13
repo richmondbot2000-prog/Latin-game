@@ -34,11 +34,11 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
   `art/ui/`, `art/trophies/`. Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
-- **Jaques Hammer** — a runner (`hammer.js`), portrait like the artist's mockup
+- **Jacques Hammer** — a runner (`hammer.js`), portrait like the artist's mockup
   (works either way up). One wide board at a time scrolls
   in with a Latin word and a meaning; tap to smash the wrong ones, let the right
   ones pass. The bad guy (the "Decoy") opens the game saying he has changed
-  the town's signs, and comes back out of the ground to club Jaques on a
+  the town's signs, and comes back out of the ground to club Jacques on a
   mistake; three lives, score with a combo bonus. **Levels**: each is a scene
   with its matching outfit and 'hammer' (`LEVELS` in `hammer.js`: road +
   hammer, pier + shark, farmer + pitchfork …); 10 + 2/level signs to clear.
@@ -48,7 +48,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Only two backgrounds exist so far (road, pier), so most outfits run on the
   road until the owner sends their scenes. Progress in `latin.hammer.<id>`
   {best, level, cleared, plays}.
-  Art from the owner's "Jaques Hammer" folder in `art/jh/`: pixel rigs drawn part
+  Art from the owner's "Jacques Hammer" folder in `art/jh/`: pixel rigs drawn part
   by part (`meta.json` holds every part's box — Jacque has 19 outfit skins and
   there are 22 weapons, only `standard` + the hammer are used so far), the dog,
   the Decoy's enter/dead frames, effect pieces (`fx_*`), UI pieces (`ui_*`),
