@@ -199,3 +199,8 @@ html, body { overscroll-behavior: none; }
 .memo .said { margin-top: 10px; }
 .memo .said .la { font-style: italic; font-size: 1.1rem; }
 .memo .said .tr { color: var(--muted); margin-top: 2px; }
+/* phrase sits at the top in its own space; the word and meaning share what is left */
+.card .phrase { position: static; margin: 22px 0 8px; align-self: stretch; text-align: center; }
+.card .lat { margin-top: auto; font-size: clamp(1.9rem, min(12vw, 6.4vh), 3.2rem); }
+.card .en { margin-bottom: auto; }
+.card { padding-bottom: 56px; }
