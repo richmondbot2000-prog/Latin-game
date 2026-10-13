@@ -26,7 +26,7 @@ const Hammer = (() => {
     { scene: 'Town road', bg: 'bg_road', skin: 'cowboy', weapon: 'banana', outfit: 'cowboy with a banana' },
     { scene: 'Town road', bg: 'bg_road', skin: 'karate', weapon: 'bat', outfit: 'karate kid with a bat' },
     { scene: 'Town road', bg: 'bg_road', skin: 'disco', weapon: 'brushyellow', outfit: 'disco Jaques with a yellow hairbrush' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'suit', weapon: 'hammer', outfit: 'secret agent with the hammer' },
+    { scene: 'Town road', bg: 'bg_road', skin: 'suit', weapon: 'hammersilver', outfit: 'secret agent with the silver hammer' },
     { scene: 'Town road', bg: 'bg_road', skin: 'samurai', weapon: 'spear', outfit: 'samurai with a spear' },
     { scene: 'Town road', bg: 'bg_road', skin: 'turban', weapon: 'brushblue', outfit: 'wise old Jaques with a blue hairbrush' },
     { scene: 'Town road', bg: 'bg_road', skin: 'astronaut', weapon: 'hammergold', outfit: 'astronaut with the gold hammer' },
