@@ -44,7 +44,9 @@ const phraseHTML = la => esc(la).replace(/\*([^*]+)\*/g, '<mark>$1</mark>');
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.word} means ${w.english}.` };
 
 function distractors(w, pool = WORDS) {
-  const clash = o => o === w || o.english === w.english || [...o.toks].some(t => w.toks.has(t));
+  // a wrong answer must be clearly different: no shared words, and no shared meaning group (vocab.js "sense")
+  const clash = o => o === w || o.english === w.english || [...o.toks].some(t => w.toks.has(t)) ||
+    (o.sense || []).some(t => (w.sense || []).includes(t));
   let c = pool.filter(o => o.kind === w.kind && !clash(o));
   if (c.length < 3) c = WORDS.filter(o => o.kind === w.kind && !clash(o));
   if (c.length < 3) c = c.concat(WORDS.filter(o => o.kind !== w.kind && !clash(o)));
