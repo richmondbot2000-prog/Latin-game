@@ -24,9 +24,16 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   meaning; stars 0–5 per word; memory cards (`memory.js`); example phrases
   (`phrases.js`); fireworks (`effects.js`); vocabulary settings Beginner / Level
   1 / 2 / 3. Players = first name + two emojis, no passwords.
-- **Practice** — a Plants-vs-Zombies-style garden defence (`practice.js`), always
-  landscape; coins come only from matching words. Squishy art in
-  `art/squishies/` (owner's own art).
+- **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
+  (`practice.js`), always landscape; coins come only from matching words.
+  Worlds through the solar system (Tutorial, Earth, Moon, Mars, Saturn,
+  Neptune, then Deep space) with a boss on each world's last level; the Bumble
+  Blaster upgrades through three tiers (tier 3 = machine gun); 5 right answers
+  in a row arm a Freeze, 10 a Lightning storm; 1–3 stars per level from the
+  correct-answer ratio; a trophy cabinet (`#trophies`) of 20 trophies.
+  Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
+  `art/ui/`, `art/trophies/`. Per-player counters live in
+  `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
 - Installable as a home-screen app (`manifest.webmanifest`, `sw.js`; bump the
   cache name in `sw.js` when files change).
 

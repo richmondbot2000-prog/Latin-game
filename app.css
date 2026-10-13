@@ -306,3 +306,22 @@ body.noscroll { overflow: hidden; }
 .tile.prac { position: relative; padding-left: 92px; min-height: 120px; }
 .tile.prac .pracico { position: absolute; left: 16px; top: 16px; width: 64px; height: 64px; border-radius: 14px; }
 @media (min-height: 700px) and (min-width: 900px) { .buddy { height: 44px; width: 56px; } .buddy img { height: 44px; } .buddy img.emo { height: 20px; left: 30px; } .ovart img { height: 60px; } .ovart img.ttl { height: 54px; } .ovart img.sad { height: 90px; } }
+
+/* trophy cabinet */
+.cabinet { background: linear-gradient(180deg, #3a2a66, #262050); border: 3px solid #58f2ff; border-radius: 18px; padding: 12px 10px 14px; box-shadow: 0 0 0 3px #2a6a7a, var(--shadow); }
+.cabsign { text-align: center; font: 900 1.6rem/1.2 system-ui, sans-serif; letter-spacing: .12em; color: #0c3338; background: linear-gradient(180deg, #7ff9ff, #2aa9b8); border-radius: 10px; padding: 4px 10px; margin: 0 auto 12px; max-width: 16rem; box-shadow: 0 0 12px rgba(127,249,255,.6); }
+.shelves { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px 4px; }
+.trophy { display: flex; flex-direction: column; align-items: center; gap: 2px; background: linear-gradient(180deg, rgba(111,247,255,.25), rgba(38,188,201,.25)); border-radius: 10px; padding: 6px 2px 4px; border-bottom: 4px solid rgba(255,255,255,.25); }
+.trophy img { width: 100%; max-width: 64px; height: auto; filter: brightness(0) opacity(.45); transition: filter .3s; }
+.trophy.got img { filter: none; }
+.trophy span { font: 600 10px/1.15 system-ui, sans-serif; color: #cfe9ff; text-align: center; }
+.trophy.got span { color: #fff; }
+.ovstars { display: flex; justify-content: center; gap: 6px; margin: 2px 0 4px; }
+.ovstars img { height: 34px; width: auto; }
+.pshop .gun.power { border-color: #58f2ff; background: linear-gradient(180deg, #e9fdff, #bff3ff); animation: glow 1.2s ease-in-out infinite; }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(88,242,255,.0); } 50% { box-shadow: 0 0 0 5px rgba(88,242,255,.55); } }
+.pshop .gun.power .ico img { height: 32px; }
+.pshop .gun[data-g=upgrade] .ico img { height: 30px; }
+@media (min-width: 600px) { .shelves { gap: 12px 8px; } .trophy img { max-width: 110px; } .trophy span { font-size: 13px; } }
+
+.pshop .gun[hidden] { display: none; }

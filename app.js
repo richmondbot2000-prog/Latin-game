@@ -103,6 +103,7 @@ function route() {
   const h = location.hash.slice(1);
   if (!u) return renderSignIn();
   if (h === 'practice') return renderPractice(u);
+  if (h === 'trophies') return renderTrophies(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
@@ -249,7 +250,7 @@ function renderHome(u) {
       <h2>Practice</h2>
       <p>Defend the garden from the squishies. Match words to earn coins for guns.</p>
       <div class="small">${(() => { const sv = store.get('latin.practice.' + u.id, { best: 1 }); return (sv.best || 1) > 1 ? `Best: level ${sv.best} · ${sv.kills || 0} squishies squished` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
-      <div class="orgbtns"><span></span><button class="btn" id="pracGo">Play</button></div>
+      <div class="orgbtns"><button class="btn ghost" id="trophGo">🏆 Trophies ${(() => { const sv = store.get('latin.practice.' + u.id, {}); return Practice.trophies(sv).filter(t => t.got).length; })()}/20</button><button class="btn" id="pracGo">Play</button></div>
     </div>
     <div class="tile locked"><h2>Coming soon</h2><p>Reading stories</p></div>
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
@@ -265,6 +266,7 @@ function renderHome(u) {
     if (pulledFor !== u.id) { pulledFor = u.id; Sync.pull(u).then(changed => { if (changed && current() && current().id === u.id && location.hash === '') renderHome(u); }); }
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
+  $('#trophGo').onclick = () => { location.hash = 'trophies'; };
   $('#org .levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
     store.set(levelKey(u), b.dataset.l); renderHome(u);
@@ -286,6 +288,23 @@ function renderHome(u) {
 function renderPractice(u) {
   app.innerHTML = '<div id="pstage"></div>';
   Practice.mount($('#pstage'), u, { home: () => { location.hash = ''; }, tag: levelName(levelOf(u)) });
+}
+
+/* ---------- trophy cabinet ---------- */
+function renderTrophies(u) {
+  const sv = store.get('latin.practice.' + u.id, {});
+  const list = Practice.trophies(sv), got = list.filter(t => t.got).length;
+  app.innerHTML = `
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Trophies</span><span class="lvtag">${got}/20</span></div>
+    <div class="cabinet">
+      <div class="cabsign">TROPHIES</div>
+      <div class="shelves">${list.map(t => `<div class="trophy ${t.got ? 'got' : ''}" title="${esc(t.how)}"><img src="art/trophies/${t.id}.png" alt=""><span>${t.got ? esc(t.name) : '???'}</span></div>`).join('')}</div>
+    </div>
+    <p class="small" style="text-align:center">${sv.kills || 0} squishies squished · best level ${sv.best || 1}${got < 20 ? ' · tap a trophy to see how to earn it' : ' · you have them all!'}</p>
+  </div>`;
+  $('#back').onclick = () => { location.hash = ''; };
+  app.querySelector('.shelves').onclick = e => { const t = e.target.closest('.trophy'); if (t) alert(t.title); };
 }
 
 /* ---------- organise ---------- */

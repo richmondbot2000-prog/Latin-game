@@ -53,6 +53,7 @@ const Sync = (() => {
     if (rp) {   // best level, current level and every counter: the bigger value wins
       const m = { ...(lp || {}) }; let ch = false;
       for (const k in rp) if (typeof rp[k] === 'number' && (m[k] == null || rp[k] > m[k])) { m[k] = rp[k]; ch = true; }
+      if (rp.stars) { m.stars = { ...(m.stars || {}) }; for (const l in rp.stars) if ((m.stars[l] || 0) < rp.stars[l]) { m.stars[l] = rp.stars[l]; ch = true; } }
       if (ch) { store.set('latin.practice.' + u.id, m); changed = true; }
     }
     if (remote.level && !store.get('latin.level.' + u.id, null)) { store.set('latin.level.' + u.id, remote.level); changed = true; }

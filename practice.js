@@ -6,25 +6,48 @@ const Practice = (() => {
   const ROWS = 6, COLS = 9;
   const START_MONEY = 150, MATCH_COINS = 25, FREEZE_SECS = 5;
   const GUNS = {
-    shooter: { name: 'Shooter', cost: 100, every: 2, dmg: 20, speed: 7, recharge: 5, hp: 100, blurb: 'a bullet every 2 s' },
+    shooter: { name: 'Blaster', cost: 100, every: 2, dmg: 20, speed: 7, recharge: 5, hp: 100, blurb: 'a bullet every 2 s; upgrade it for more barrels' },
     mortar:  { name: 'Mortar', cost: 225, every: 7, dmg: 90, splash: 1.4, recharge: 12, hp: 100, blurb: 'big blast every 7 s' },
-    mg:      { name: 'Machine gun', cost: 300, every: 1 / 3, dmg: 10, speed: 9, recharge: 12, hp: 100, blurb: '3 bullets a second' },
   };
+  // Bumble Blaster tiers: more barrels, more bullets
+  const TIERS = [null, { every: 2, shots: 1 }, { every: 2, shots: 2, cost: 150 }, { every: 1 / 3, shots: 1, cost: 250 }];
+  const tierCost = g => g && g.type === 'shooter' && (g.tier || 1) < 3 ? TIERS[(g.tier || 1) + 1].cost : 0;
   // the squishies (art in art/squishies, drawn facing left as supplied). size is relative to a cell;
-  // 'from' is the first level they appear; look.hurt shows once they are below half health
+  // 'from' is the first level they appear; look.hurt shows once they are below half health; the Kings, the Queen and Sharky are bosses
   const SQUISHIES = {
-    chomp:      { name: 'Chomp',      hp: 100, speed: .1, chomp: 25, size: 1.0,  from: 1, look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8' },
+    chomp:      { name: 'Chomp',      hp: 100, speed: .10, chomp: 25, size: 1.0,  from: 1, look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8' },
     skitter:    { name: 'Skitter',    hp: 60,  speed: .21, chomp: 25, size: .74,  from: 2, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496' },
-    chompking:  { name: 'ChompKing',  hp: 320, speed: .07, chomp: 35, size: 1.3,  from: 3, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0' },
-    antbun:     { name: 'Antbun',     hp: 200, speed: .13, chomp: 25, size: 1.05, from: 4, look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd' },
+    antbun:     { name: 'Antbun',     hp: 200, speed: .13, chomp: 25, size: 1.05, from: 3, look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd' },
     kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .15, chomp: 0,  size: .92,  from: 5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true },
-    ghost:      { name: 'Ghost',      hp: 80,  speed: .15, chomp: 25, size: 1.0,  from: 6, look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
-    flying:     { name: 'Flyer',      hp: 70,  speed: .18, chomp: 0,  size: .9,   from: 7, look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
-    moley:      { name: 'Mole King',  hp: 220, speed: .11, chomp: 30, size: .95,  from: 8, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .17 },
-    broodqueen: { name: 'Brood Queen', hp: 900, speed: .05, chomp: 40, size: 1.4, from: 6, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
-    ghostking:  { name: 'Ghost King', hp: 700, speed: .08, chomp: 35, size: 1.35, from: 9, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
-    sharky:     { name: 'Sharky',     hp: 1100, speed: .055, chomp: 90, size: 1.5, from: 12, look: { ok: 'sharky' }, motion: 'float', color: '#d9c48a', boss: true },
+    ghost:      { name: 'Ghost',      hp: 80,  speed: .15, chomp: 25, size: 1.0,  from: 7, look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
+    flying:     { name: 'Flyer',      hp: 70,  speed: .18, chomp: 0,  size: .9,   from: 9, look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
+    moley:      { name: 'Mole King',  hp: 220, speed: .11, chomp: 30, size: .95,  from: 11, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .17 },
+    chompking:  { name: 'ChompKing',  hp: 600, speed: .07, chomp: 50, size: 1.4,  from: 6, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0', boss: true },
+    broodqueen: { name: 'Brood Queen', hp: 900, speed: .05, chomp: 40, size: 1.4, from: 10, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
+    ghostking:  { name: 'Ghost King', hp: 800, speed: .08, chomp: 35, size: 1.35, from: 14, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
+    sharky:     { name: 'Sharky',     hp: 1100, speed: .055, chomp: 90, size: 1.5, from: 18, look: { ok: 'sharky' }, motion: 'float', color: '#d9c48a', boss: true },
   };
+  // the worlds, as the planet trophies name them; each ends with a boss level
+  const WORLDS = [
+    { key: 'tutorial', name: 'Tutorial', from: 1, to: 2, lanes: ['#7DBE50', '#8CCB5E'], soil: ['#9C7D4F', '#A98A5B'], boss: null, deco: 'flowers' },
+    { key: 'earth', name: 'Earth', from: 3, to: 6, lanes: ['#6FB54A', '#7FC45A'], soil: ['#8E6E42', '#9B7A4D'], boss: 'chompking', deco: 'flowers' },
+    { key: 'moon', name: 'the Moon', from: 7, to: 10, lanes: ['#A3A3B0', '#B3B3C0'], soil: ['#6E6E7C', '#7B7B8A'], boss: 'broodqueen', deco: 'craters' },
+    { key: 'mars', name: 'Mars', from: 11, to: 14, lanes: ['#C86A3C', '#D47A4C'], soil: ['#8A4224', '#984B2B'], boss: 'ghostking', deco: 'rocks' },
+    { key: 'saturn', name: 'Saturn', from: 15, to: 18, lanes: ['#D9B86A', '#E3C57D'], soil: ['#A3823F', '#B08E49'], boss: 'sharky', deco: 'rocks' },
+    { key: 'neptune', name: 'Neptune', from: 19, to: 22, lanes: ['#4A6FB5', '#5A80C8'], soil: ['#2E4A80', '#38568E'], boss: 'all', deco: 'craters' },
+  ];
+  const worldOf = n => WORLDS.find(w => n >= w.from && n <= w.to) || { ...WORLDS[WORLDS.length - 1], name: 'Deep space', key: 'deep', from: 23, to: 1e9, boss: 'all' };
+  function levelSpec(n) {
+    const world = worldOf(n);
+    const weights = {};
+    for (const k in SQUISHIES) { const s = SQUISHIES[k]; if (s.boss || n < s.from) continue; weights[k] = k === 'chomp' ? 1 : .22 + .04 * (n - s.from); }
+    const last = n === world.to || (world.key === 'deep' && (n - 23) % 4 === 3);
+    const bossOf = world.boss === 'all' ? ['chompking', 'broodqueen', 'ghostking', 'sharky'][n % 4] : world.boss;
+    const boss = last ? bossOf : null;
+    // early levels use fewer rows, like the original's first lawns
+    const rows = n === 1 ? [2, 3] : n === 2 ? [1, 2, 3, 4] : [0, 1, 2, 3, 4, 5];
+    return { count: 16 + 5 * (n - 1), rows, grace: n === 1 ? 12 : 8, gap0: Math.max(4, 10 - n), gap1: Math.max(2.2, 6.5 - .45 * (n - 1)), weights, huge: n >= 2, boss, world, last };
+  }
   // the Antbun is a rigged character: separate parts in a 320-wide box, positions from the artist's PSD
   const ANTBUN = {"parts": {"dead_leftarm": [65, 18, 88, 116], "dead_body": [0, 43, 242, 210], "dead_skull": [16, 91, 177, 127], "dead_arm": [155, 189, 46, 40], "dead_rightear": [153, 31, 167, 106], "hurt_leftear": [65, 20, 88, 116], "hurt_body": [0, 43, 243, 210], "hurt_righteyeclose": [98, 161, 31, 10], "hurt_righteyeopen": [98, 154, 30, 30], "hurt_arm": [165, 170, 48, 53], "hurt_rightear": [140, 31, 177, 131], "leftear": [68, 0, 132, 131], "body": [0, 55, 250, 198], "body2": [10, 87, 239, 179], "body3": [10, 87, 242, 176], "eyesopen": [31, 149, 98, 36], "rightear": [140, 31, 177, 131], "eyepopping": [96, 141, 58, 58], "eyesclose": [32, 155, 98, 15], "arm": [166, 171, 45, 52]}, "box": [320, 266], "death": {"w": 320, "h": 322, "body": [50, 95, 234, 187]}};
   const ANTBUN_PARTS = Object.keys(ANTBUN.parts);
@@ -33,15 +56,8 @@ const Practice = (() => {
   const UI_NAMES = ['blaster1', 'blaster2', 'blaster3', 'bullet', 'planet', 'bolt', 'bolt2', 'ice', 'title_gameover', 'title_youwin', 'laurel_l', 'laurel_r', 'spaceman_sad', 'star', 'star_dark',
     'pose_stand', 'pose_wave', 'pose_arms', 'pose_hips', 'pose_thumbs', 'pose_facepalm', 'emo_neutral', 'emo_xx', 'emo_happy', 'emo_sleepy', 'emo_shock', 'emo_sad', 'emo_confused', 'emo_qqq', 'emo_v', 'emo_bear', 'emo_stare', 'emo_love', 'emo_grin', 'wave1', 'wave2', 'wave3', 'wave4'];
   const uiImg = n => { const im = UI[n]; return im && im.complete && im.naturalWidth ? im : null; };
-  const GUN_ART = { shooter: 'blaster1', mg: 'blaster2', mortar: 'blaster3' };
-  function levelSpec(n) {
-    const weights = {};
-    for (const k in SQUISHIES) { const s = SQUISHIES[k]; if (s.boss || n < s.from) continue; weights[k] = k === 'chomp' ? 1 : .22 + .04 * (n - s.from); }
-    const boss = n >= 12 ? ['broodqueen', 'ghostking', 'sharky'][n % 3] : n >= 9 ? (n % 2 ? 'ghostking' : 'broodqueen') : n >= 6 ? 'broodqueen' : null;
-    // early levels use fewer rows, like the original's first lawns
-    const rows = n === 1 ? [2, 3] : n === 2 ? [1, 2, 3, 4] : [0, 1, 2, 3, 4, 5];
-    return { count: 16 + 5 * (n - 1), rows, grace: n === 1 ? 12 : 8, gap0: Math.max(4, 10 - n), gap1: Math.max(2.2, 6.5 - .45 * (n - 1)), weights, huge: n >= 2, boss };
-  }
+  const GUN_ART = { shooter: 'blaster1', mortar: 'mortar' };
+  const gunArt = g => g.type === 'shooter' ? 'blaster' + (g.tier || 1) : null;
   const rnd = (a, b) => a + Math.random() * (b - a);
   const pickWeighted = w => { let t = 0; for (const k in w) t += w[k]; let r = Math.random() * t; for (const k in w) { r -= w[k]; if (r <= 0) return k; } return Object.keys(w)[0]; };
 
@@ -59,7 +75,7 @@ const Practice = (() => {
       gnomes: Array(ROWS).fill(true), gnomeRuns: [],
       squishies: [], bullets: [], shells: [], fx: [], floats: [],
       spawned: 0, nextSpawn: spec.grace, hugeDone: false, banner: null,
-      sel: null, recharge: { shooter: 0, mortar: 0, mg: 0 }, lastRows: [], shake: 0, kills: 0, correct: 0, asked: 0 };
+      sel: null, recharge: { shooter: 0, mortar: 0 }, lastRows: [], shake: 0, kills: 0, correct: 0, asked: 0, streak: 0, power: null, frozen: 0 };
   }
 
   /* ---------- squishies ---------- */
@@ -99,6 +115,7 @@ const Practice = (() => {
     if (S.phase !== 'play') return;
     for (const k in S.recharge) S.recharge[k] = Math.max(0, S.recharge[k] - dt);
     if (S.shake > 0) S.shake -= dt;
+    if (S.frozen > 0) S.frozen -= dt;
 
     // spawning
     const sp = S.spec;
@@ -109,14 +126,14 @@ const Practice = (() => {
       const hugeAt = Math.floor(sp.count * .7);
       if (sp.huge && !S.hugeDone && S.spawned >= hugeAt) {
         S.hugeDone = true;
-        S.banner = { text: 'A huge wave of squishies is coming!', t: 2.4 };
+        S.banner = { text: 'A huge wave of squishies is coming!', t: 2.4, wave: true };
         S.nextSpawn = 2.4;
         S.hugeLeft = Math.min(sp.count - S.spawned, 4 + Math.floor(S.level / 2));
       }
       if (S.nextSpawn <= 0) {
         if (S.hugeLeft > 0) {
           if (sp.boss && !S.bossDone) { S.bossDone = true; spawn(sp.boss); } else spawn(pickWeighted(sp.weights));
-          S.hugeLeft--; S.nextSpawn = .45; if (!S.hugeLeft) S.banner = { text: 'Final wave!', t: 1.6 };
+          S.hugeLeft--; S.nextSpawn = .45; if (!S.hugeLeft) S.banner = { text: 'Final wave!', t: 1.6, wave: true };
         }
         else {
           spawn(pickWeighted(sp.weights));
@@ -127,8 +144,9 @@ const Practice = (() => {
     }
     if (S.banner) { S.banner.t -= dt; if (S.banner.t <= 0) S.banner = null; }
 
-    // squishies move / chomp
+    // squishies move / chomp (not while the lawn is frozen)
     for (const sq of S.squishies) {
+      if (S.frozen > 0) { sq.eating = null; continue; }
       sq.wob += dt; if (sq.flash > 0) sq.flash -= dt; if (sq.rise > 0) sq.rise -= dt;
       if (sq.under) {                  // drilling: only a moving mound shows; bullets pass over, mortar blasts still hurt
         sq.x -= sq.k.dig * dt;
@@ -179,10 +197,10 @@ const Practice = (() => {
       const targets = S.squishies.filter(s => !s.dead && s.x < COLS + .6 && (g.type === 'mortar' ? s.x > .5 : s.row === r && s.x > c + .2 && !s.under));
       if (!targets.length) continue;
       const first = targets.reduce((a, b) => a.x < b.x ? a : b);
-      const k = GUNS[g.type];
-      g.cool = k.every; g.kick = .12;
+      const k = GUNS[g.type], tier = TIERS[g.tier || 1];
+      g.cool = g.type === 'shooter' ? tier.every : k.every; g.kick = .12;
       if (g.type === 'mortar') S.shells.push({ x0: c + .5, row0: r, x1: first.x, row: first.row, t: 0, dur: Math.max(.7, Math.hypot(first.x - c, first.row - r) / 6 + .4), dmg: k.dmg, splash: k.splash });
-      else S.bullets.push({ x: c + .75, row: r, speed: k.speed, dmg: k.dmg, big: g.type === 'shooter' });
+      else for (let s = 0; s < tier.shots; s++) S.bullets.push({ x: c + .75 - s * .22, row: r, speed: k.speed, dmg: k.dmg, big: (g.tier || 1) < 3 });
     }
     // bullets
     for (const b of S.bullets) {
@@ -204,7 +222,7 @@ const Practice = (() => {
     S.shells = S.shells.filter(s => !s.gone);
     // effects
     for (const f of S.fx) f.t += dt;
-    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : .8));
+    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'icewave' ? .9 : .8));
     for (const f of S.floats) f.t += dt;
     S.floats = S.floats.filter(f => f.t < 1);
     S.squishies = S.squishies.filter(s => !s.dead);
@@ -220,11 +238,15 @@ const Practice = (() => {
   }
   function win() {
     S.phase = 'won';
+    const ratio = S.asked ? S.correct / S.asked : 0, stars = ratio >= .9 ? 3 : ratio >= .7 ? 2 : 1;
     const sv = store.get(saveKey, { best: 1, level: 1 });
-    sv.level = S.level + 1; sv.best = Math.max(sv.best || 1, S.level + 1); sv.won = (sv.won || 0) + 1; store.set(saveKey, sv);
+    sv.level = S.level + 1; sv.best = Math.max(sv.best || 1, S.level + 1); sv.won = (sv.won || 0) + 1;
+    sv.stars = sv.stars || {}; sv.stars[S.level] = Math.max(sv.stars[S.level] || 0, stars); store.set(saveKey, sv);
     buddy('pose_wave', 'emo_grin', 8);
-    showOverlay({ kind: 'won', title: 'You win', sub: `Level ${S.level} done!`, btn: 'Next level' }, () => { newLevel(S.level + 1); start(); });
-    Celebrate(innerWidth / 2, innerHeight / 3, 2.4);
+    const w = S.spec.world, next = worldOf(S.level + 1);
+    const sub = `Level ${S.level} done!` + (S.spec.last && w.key !== 'deep' ? ` ${w.name === 'the Moon' ? 'The Moon is' : w.name + ' is'} safe — next stop ${next.name}!` : '');
+    showOverlay({ kind: 'won', title: 'You win', sub, btn: 'Next level', stars }, () => { newLevel(S.level + 1); start(); });
+    Celebrate(innerWidth / 2, innerHeight / 3, stars >= 3 ? 2.6 : 2);
   }
   function lose() {
     S.phase = 'lost';
@@ -262,9 +284,10 @@ const Practice = (() => {
     const dpr = Math.min(devicePixelRatio || 1, 2);
     bg.width = cv.width; bg.height = cv.height;
     const g = bg.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const wd = S.spec.world;
     for (let r = 0; r < ROWS; r++) {
       const on = S.spec.rows.includes(r);
-      g.fillStyle = on ? (r % 2 ? '#8CCB5E' : '#7DBE50') : (r % 2 ? '#A98A5B' : '#9C7D4F');   // bare soil where squishies never come
+      g.fillStyle = on ? wd.lanes[r % 2] : wd.soil[r % 2];   // bare ground where squishies never come
       g.fillRect(0, r * cell, W, cell);
       if (!on) continue;
       g.strokeStyle = 'rgba(255,255,255,.18)'; g.lineWidth = 1;
@@ -276,8 +299,9 @@ const Practice = (() => {
     for (let i = 0; i < 40; i++) {
       const x = rand() * W, y = rand() * H, col = ['#FFF0F5', '#FFE066', '#FFFFFF', '#FFB3C6'][i % 4];
       if (!S.spec.rows.includes(Math.floor(y / cell))) continue;
-      g.fillStyle = col; g.beginPath(); g.arc(x, y, cell * .05, 0, 7); g.fill();
-      g.fillStyle = '#FFD23F'; g.beginPath(); g.arc(x, y, cell * .02, 0, 7); g.fill();
+      if (wd.deco === 'flowers') { g.fillStyle = col; g.beginPath(); g.arc(x, y, cell * .05, 0, 7); g.fill(); g.fillStyle = '#FFD23F'; g.beginPath(); g.arc(x, y, cell * .02, 0, 7); g.fill(); }
+      else if (wd.deco === 'craters') { g.fillStyle = 'rgba(0,0,0,.12)'; g.beginPath(); g.ellipse(x, y, cell * .12, cell * .07, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.12)'; g.beginPath(); g.ellipse(x, y - cell * .02, cell * .1, cell * .05, 0, 0, 7); g.fill(); }
+      else { g.fillStyle = 'rgba(0,0,0,.14)'; g.beginPath(); g.ellipse(x, y, cell * .07, cell * .045, rand(), 0, 7); g.fill(); }
     }
     // path on the left where the gnomes stand
     g.fillStyle = 'rgba(120,80,40,.18)'; g.fillRect(0, 0, cell * .22, H);
@@ -285,7 +309,8 @@ const Practice = (() => {
   function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
   function drawGun(g, type, x, y, s, kick = 0, hp = 1) {
     // x,y = centre; s = cell size
-    const im = uiImg(GUN_ART[type]);
+    const im = uiImg(typeof type === 'object' ? gunArt(type) : GUN_ART[type]);
+    if (typeof type === 'object') type = type.type;
     if (im) {
       const w = s * (type === 'mortar' ? 1.0 : .9), h = w * im.naturalHeight / im.naturalWidth;
       g.drawImage(im, x - w / 2 - kick * s * .6, y + s * .42 - h, w, h);
@@ -381,6 +406,9 @@ const Practice = (() => {
     else if (!drawSprite(g, lookOf(sq), 0, 0, w, k.alpha || 1)) { g.fillStyle = k.color; g.beginPath(); g.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); g.fill(); }
     if (sq.flash > 0 && !k.rig) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
     g.restore();
+    if (S.frozen > 0) { g.fillStyle = 'rgba(160,220,255,.45)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); }
+    const crown = uiImg('crown');
+    if (k.boss && crown) { const cw = s * .4, ch = cw * crown.naturalHeight / crown.naturalWidth; g.drawImage(crown, x - cw / 2, foot - w * .95 - ch + Math.sin(sq.wob * 3) * s * .04 + mo.dy * s, cw, ch); }
     if (k.boss) {   // boss health bar
       g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - w * .35, foot + s * .08, w * .7, s * .07);
       g.fillStyle = '#FF5D8F'; g.fillRect(x - w * .35, foot + s * .08, w * .7 * Math.max(0, sq.hp / k.hp), s * .07);
@@ -409,7 +437,7 @@ const Practice = (() => {
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const g = S.grid[r][c]; if (!g) continue;
       if (g.kick > 0) g.kick -= .016;
-      drawGun(ctx, g.type, c * cell + cell / 2 + (g.bitten > 0 ? rnd(-1.5, 1.5) : 0), r * cell + cell * .5, cell, Math.max(0, g.kick), g.hp / GUNS[g.type].hp);
+      drawGun(ctx, g, c * cell + cell / 2 + (g.bitten > 0 ? rnd(-1.5, 1.5) : 0), r * cell + cell * .5, cell, Math.max(0, g.kick), g.hp / GUNS[g.type].hp);
     }
     // bullets
     const bul = uiImg('bullet');
@@ -459,6 +487,10 @@ const Practice = (() => {
           ctx.drawImage(im, x - (bb[0] + bb[2] / 2) * fd, foot - (bb[1] + bb[3]) * fd, ANTBUN.death.w * fd, ANTBUN.death.h * fd);
           ctx.globalAlpha = 1;
         }
+      } else if (f.kind === 'icewave') {
+        const pr = f.t / .9, ice = uiImg('ice');
+        if (ice) { const w = cell * 3, h = w * ice.naturalHeight / ice.naturalWidth; ctx.globalAlpha = 1 - pr; for (let r = 0; r < ROWS; r++) ctx.drawImage(ice, W * pr - w / 2, r * cell + cell * .5 - h / 2, w, h); ctx.globalAlpha = 1; }
+        ctx.fillStyle = `rgba(190,230,255,${.35 * (1 - pr)})`; ctx.fillRect(0, 0, W * pr, H);
       } else if (f.kind === 'dirt') {
         const p = f.t / .8; ctx.fillStyle = `rgba(110,75,40,${1 - p})`;
         for (let i = 0; i < (f.small ? 3 : 8); i++) { const a = i * .8 + .3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * p * cell * .7, y + cell * .3 - Math.sin(a) * p * cell * .9 + p * p * cell * .8, cell * .07, 0, 7); ctx.fill(); }
@@ -469,10 +501,12 @@ const Practice = (() => {
         for (let i = 0; i < 5; i++) { const a = i * 1.3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * p * cell * .5, y + Math.sin(a) * p * cell * .5 - p * cell * .3, cell * .06, 0, 7); ctx.fill(); }
       }
     }
+    for (const f of S.floats) { ctx.fillStyle = `rgba(255,255,255,${1 - f.t})`; ctx.font = `800 ${cell * .32}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText(f.text, f.x * cell, f.row * cell + cell * .3 - f.t * cell * .5); }
+    if (S.frozen > 0) { ctx.fillStyle = `rgba(170,215,255,${Math.min(.25, S.frozen * .1)})`; ctx.fillRect(0, 0, W, H); }
     ctx.restore();
     // banner
     if (S.banner) {
-      const wv = uiImg('wave' + (1 + Math.floor(S.t * 6) % 4));
+      const wv = S.banner.wave ? uiImg('wave' + (1 + Math.floor(S.t * 6) % 4)) : null;
       if (wv) { const h = cell * 2.2, w = h * wv.naturalWidth / wv.naturalHeight; ctx.globalAlpha = .9; ctx.drawImage(wv, W * .5 - w / 2 + Math.sin(S.t * 8) * 6, H * .4 + cell * .55 - h * .8, w, h); ctx.globalAlpha = 1; }
       ctx.fillStyle = 'rgba(60,20,40,.75)'; rr(ctx, W * .08, H * .4, W * .84, cell * 1.1, 12); ctx.fill();
       ctx.fillStyle = '#FFD23F'; ctx.font = `700 ${Math.max(14, cell * .4)}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -491,24 +525,36 @@ const Practice = (() => {
     for (const key of Object.keys(GUNS)) {
       const k = GUNS[key];
       const b = document.createElement('button'); b.className = 'gun'; b.dataset.g = key;
-      b.innerHTML = `<div class="ico"><img src="art/ui/${GUN_ART[key]}.png" alt=""></div><b>${k.name}</b><span class="cost"><i class="coin"></i>${k.cost}</span><div class="cool"></div>`;
+      b.innerHTML = `<div class="ico">${key === 'shooter' ? '<img src="art/ui/blaster1.png" alt="">' : ''}</div><b>${k.name}</b><span class="cost"><i class="coin"></i>${k.cost}</span><div class="cool"></div>`;
+      if (key === 'mortar') b.querySelector('.ico').appendChild(iconCanvas('mortar'));
       b.title = k.blurb;
       shop.appendChild(b);
     }
+    const up = document.createElement('button'); up.className = 'gun'; up.dataset.g = 'upgrade';
+    up.innerHTML = '<div class="ico"><img src="art/ui/blaster3.png" alt=""></div><b>Upgrade</b><span class="cost"><i class="coin"></i>150+</span>';
+    up.title = 'tap a Blaster to give it more barrels'; shop.appendChild(up);
     const sh = document.createElement('button'); sh.className = 'gun shovel'; sh.dataset.g = 'shovel';
     sh.innerHTML = '<div class="ico">⛏️</div><b>Dig up</b><span class="cost">½ back</span>';
     shop.appendChild(sh);
+    const pw = document.createElement('button'); pw.className = 'gun power'; pw.dataset.g = 'power'; pw.hidden = true; shop.appendChild(pw);
     shop.onclick = e => {
       const b = e.target.closest('button'); if (!b || S.phase !== 'play') return;
       const key = b.dataset.g;
-      if (key !== 'shovel' && (S.money < GUNS[key].cost || S.recharge[key] > 0)) { b.classList.add('nope'); setTimeout(() => b.classList.remove('nope'), 400); return; }
+      if (key === 'power') return usePower();
+      if (GUNS[key] && (S.money < GUNS[key].cost || S.recharge[key] > 0)) { b.classList.add('nope'); setTimeout(() => b.classList.remove('nope'), 400); return; }
       S.sel = S.sel === key ? null : key; refreshShop();
     };
   }
+  function flashShop(key) { const b = ui.shop.querySelector(`[data-g=${key}]`); if (b) { b.classList.add('nope'); setTimeout(() => b.classList.remove('nope'), 400); } }
   function refreshShop() {
     for (const b of ui.shop.querySelectorAll('button')) {
       const key = b.dataset.g; b.classList.toggle('sel', S.sel === key);
-      if (key === 'shovel') continue;
+      if (key === 'power') {
+        b.hidden = !S.power;
+        if (S.power) b.innerHTML = S.power === 'freeze' ? '<div class="ico"><img src="art/ui/ice.png" alt=""></div><b>Freeze!</b><span class="cost">tap to use</span>' : '<div class="ico"><img src="art/ui/bolt.png" alt=""></div><b>Storm!</b><span class="cost">tap to use</span>';
+        continue;
+      }
+      if (key === 'shovel' || key === 'upgrade') continue;
       const k = GUNS[key];
       b.classList.toggle('poor', S.money < k.cost);
       const cool = b.querySelector('.cool'); cool.style.height = (100 * S.recharge[key] / k.recharge) + '%';
@@ -523,6 +569,14 @@ const Practice = (() => {
     const pt = canvasPoint(e);
     const c = Math.floor(pt.x / cell), r = Math.floor(pt.y / cell);
     if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
+    if (S.sel === 'upgrade') {
+      const g = S.grid[r][c]; const cost = tierCost(g);
+      if (!cost) { if (g) flashShop('upgrade'); return; }
+      if (S.money < cost) { flashShop('upgrade'); return; }
+      S.money -= cost; g.tier = (g.tier || 1) + 1; g.hp = GUNS.shooter.hp; S.sel = null;
+      S.fx.push({ kind: 'boom', x: c + .5, row: r, t: 0, r: .5 }); S.floats.push({ x: c + .5, row: r, t: 0, text: 'Tier ' + g.tier });
+      refreshShop(); return;
+    }
     if (S.sel === 'shovel') {
       const g = S.grid[r][c]; if (!g) return;
       S.grid[r][c] = null; S.money += Math.floor(GUNS[g.type].cost / 2); S.sel = null;
@@ -530,10 +584,22 @@ const Practice = (() => {
     } else {
       if (S.grid[r][c] || !S.spec.rows.includes(r)) return;
       const k = GUNS[S.sel]; if (S.money < k.cost || S.recharge[S.sel] > 0) return;
-      S.grid[r][c] = { type: S.sel, hp: k.hp, cool: .3, kick: 0, bitten: 0 };
+      S.grid[r][c] = { type: S.sel, hp: k.hp, cool: .3, kick: 0, bitten: 0, tier: 1 };
       S.money -= k.cost; S.recharge[S.sel] = k.recharge; S.sel = null;
     }
     refreshShop();
+  }
+
+  /* power-ups earned by answer streaks: 5 in a row freezes the lawn, 10 calls a lightning storm */
+  function usePower() {
+    if (!S.power || S.phase !== 'play') return;
+    if (S.power === 'freeze') {
+      S.frozen = 6; S.fx.push({ kind: 'icewave', t: 0 }); buddy('pose_hips', 'emo_grin', 2);
+    } else {
+      S.shake = .6; buddy('pose_thumbs', 'emo_grin', 2);
+      for (const sq of S.squishies) if (!sq.dead) { hurt(sq, 150); S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: .7 }); }
+    }
+    S.power = null; refreshShop();
   }
 
   /* the spaceman in the top bar reacts to what happens */
@@ -568,11 +634,14 @@ const Practice = (() => {
     if (ok) {
       btns[i].classList.add('good');
       S.correct++; tally('correct', 1); buddy('pose_thumbs', ['emo_happy', 'emo_love', 'emo_grin'][Math.floor(Math.random() * 3)], 1.4);
+      S.streak++;
+      if (S.streak === 5 && !S.power) { S.power = 'freeze'; S.banner = { text: '5 in a row — Freeze ready!', t: 2 }; }
+      if (S.streak === 10) { S.power = 'storm'; S.banner = { text: '10 in a row — Lightning storm ready!', t: 2 }; S.streak = 0; }
       S.money += MATCH_COINS; refreshShop();
       ui.coinPop.textContent = '+' + MATCH_COINS; ui.coinPop.classList.remove('go'); void ui.coinPop.offsetWidth; ui.coinPop.classList.add('go');
       setTimeout(askWord, 220);
     } else {
-      btns[i].classList.add('bad'); buddy('pose_facepalm', 'emo_xx', FREEZE_SECS);
+      btns[i].classList.add('bad'); buddy('pose_facepalm', 'emo_xx', FREEZE_SECS); S.streak = 0;
       btns.forEach((b, j) => { if (quiz.opts[j] === quiz.w.english) b.classList.add('good'); });
       quiz.frozen = FREEZE_SECS;
       ui.ice.hidden = false; ui.iceN.textContent = FREEZE_SECS;
@@ -588,7 +657,8 @@ const Practice = (() => {
     const art = o.kind === 'won' ? `<div class="ovart won"><img src="art/ui/laurel_l.png" alt=""><img class="ttl" src="art/ui/title_youwin.png" alt="You win"><img src="art/ui/laurel_r.png" alt=""></div>`
       : o.kind === 'lost' ? `<div class="ovart lost"><img class="ttl" src="art/ui/title_gameover.png" alt="Game over"><img class="sad" src="art/ui/spaceman_sad.png" alt=""></div>`
       : `<h3>${o.title}</h3>`;
-    ui.overlay.innerHTML = `<div class="ovbox ${o.kind || ''}">${art}<p>${o.sub}</p>${o.kind === 'won' || o.kind === 'lost' ? statsHTML() : ''}<button class="btn ovbtn" id="ovBtn">${o.btn}</button></div>`;
+    const starsRow = o.stars ? `<div class="ovstars">${[1, 2, 3].map(i => `<img src="art/ui/${i <= o.stars ? 'star' : 'star_dark'}.png" alt="${i <= o.stars ? 'star' : ''}">`).join('')}</div>` : '';
+    ui.overlay.innerHTML = `<div class="ovbox ${o.kind || ''}">${art}${starsRow}<p>${o.sub}</p>${o.kind === 'won' || o.kind === 'lost' ? statsHTML() : ''}<button class="btn ovbtn" id="ovBtn">${o.btn}</button></div>`;
     ui.overlay.querySelector('#ovBtn').onclick = () => { ui.overlay.hidden = true; fn(); };
   }
   function start() {
@@ -597,9 +667,10 @@ const Practice = (() => {
   }
   function ready() {
     const fresh = Object.keys(SQUISHIES).filter(k => SQUISHIES[k].from === S.level && !SQUISHIES[k].boss).map(k => SQUISHIES[k].name);
-    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Shooter, then tap a square to plant it. Keep the squishies away from your gnomes!'
-      : `${S.spec.count} squishies are on their way.` + (fresh.length ? ` New: ${fresh.join(', ')}!` : '') + (S.spec.boss && S.level === SQUISHIES[S.spec.boss].from ? ` Watch out for the ${SQUISHIES[S.spec.boss].name}…` : '');
-    showOverlay({ kind: 'ready', title: `Level ${S.level}`, sub: first, btn: S.level === 1 ? "Let's go!" : 'Ready!' }, start);
+    const w = S.spec.world;
+    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. Keep the squishies away from your gnomes!'
+      : (S.level === w.from ? `Welcome to ${w.name}! ` : '') + `${S.spec.count} squishies are on their way.` + (fresh.length ? ` New: ${fresh.join(', ')}!` : '') + (S.spec.boss ? ` Boss level — ${SQUISHIES[S.spec.boss].name} leads the final wave!` : '');
+    showOverlay({ kind: 'ready', title: `${w.name === 'the Moon' ? 'The Moon' : w.name} · Level ${S.level}`, sub: first, btn: S.level === 1 ? "Let's go!" : 'Ready!' }, start);
     if (S.level > 1) {
       const a = document.createElement('button'); a.className = 'linkbtn'; a.textContent = 'start again from level 1';
       a.onclick = () => { if (confirm('Go back to level 1? Your best level is kept.')) restartFromOne(); };
@@ -669,7 +740,32 @@ const Practice = (() => {
     S = null; ui = null; quiz = null; stage = null;
   }
   function restartFromOne() { if (!S) return; S.money = START_MONEY; S = null; newLevel(1); ui.overlay.hidden = true; ready(); }
+  // the trophy cabinet, as the artist's sheet lays it out: planets for worlds, 3-star planets, kill counts, and one for the lot
+  const TROPHIES = [
+    { id: 't0', name: 'Tutorial', how: 'Finish the Tutorial', test: sv => (sv.best || 1) > 2 },
+    { id: 't1', name: 'Earth', how: 'Save Earth', test: sv => (sv.best || 1) > 6 },
+    { id: 't2', name: 'Moon', how: 'Save the Moon', test: sv => (sv.best || 1) > 10 },
+    { id: 't3', name: 'Mars', how: 'Save Mars', test: sv => (sv.best || 1) > 14 },
+    { id: 't4', name: 'Neptune', how: 'Save Neptune', test: sv => (sv.best || 1) > 22 },
+    { id: 't5', name: 'Saturn', how: 'Save Saturn', test: sv => (sv.best || 1) > 18 },
+    { id: 't6', name: 'Earth ★★★', how: 'Three stars on every Earth level', test: sv => [3, 4, 5, 6].every(l => (sv.stars || {})[l] === 3) },
+    { id: 't7', name: 'Moon ★★★', how: 'Three stars on every Moon level', test: sv => [7, 8, 9, 10].every(l => (sv.stars || {})[l] === 3) },
+    { id: 't8', name: 'Mars ★★★', how: 'Three stars on every Mars level', test: sv => [11, 12, 13, 14].every(l => (sv.stars || {})[l] === 3) },
+    { id: 't9', name: 'Neptune ★★★', how: 'Three stars on every Neptune level', test: sv => [19, 20, 21, 22].every(l => (sv.stars || {})[l] === 3) },
+    { id: 't10', name: 'Saturn ★★★', how: 'Three stars on every Saturn level', test: sv => [15, 16, 17, 18].every(l => (sv.stars || {})[l] === 3) },
+    { id: 't11', name: '100 squished', how: 'Squish 100 squishies', test: sv => (sv.kills || 0) >= 100 },
+    { id: 't12', name: '500 squished', how: 'Squish 500 squishies', test: sv => (sv.kills || 0) >= 500 },
+    { id: 't13', name: '1,000 squished', how: 'Squish 1,000 squishies', test: sv => (sv.kills || 0) >= 1000 },
+    { id: 't14', name: '5,000 squished', how: 'Squish 5,000 squishies', test: sv => (sv.kills || 0) >= 5000 },
+    { id: 't15', name: '10,000 squished', how: 'Squish 10,000 squishies', test: sv => (sv.kills || 0) >= 10000 },
+    { id: 't16', name: '25,000 squished', how: 'Squish 25,000 squishies', test: sv => (sv.kills || 0) >= 25000 },
+    { id: 't17', name: '50,000 squished', how: 'Squish 50,000 squishies', test: sv => (sv.kills || 0) >= 50000 },
+    { id: 't18', name: '100,000 squished', how: 'Squish 100,000 squishies', test: sv => (sv.kills || 0) >= 100000 },
+    { id: 't19', name: 'Squishygeddon', how: 'Earn every other trophy', test: sv => TROPHIES.slice(0, 19).every(t => t.test(sv)) },
+  ];
+  const trophies = sv => TROPHIES.map(t => ({ ...t, got: !!t.test(sv) }));
+
   // test hook: run the game forward without waiting
   const step = secs => { for (let t = 0; t < secs; t += 1 / 60) update(1 / 60); refreshShop(); };
-  return { mount, unmount, restartFromOne, GUNS, SQUISHIES, debug: { step, state: () => S, answer, quiz: () => quiz, spawn } };
+  return { mount, unmount, restartFromOne, GUNS, SQUISHIES, WORLDS, worldOf, trophies, debug: { step, state: () => S, answer, quiz: () => quiz, spawn } };
 })();
