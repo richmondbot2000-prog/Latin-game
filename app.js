@@ -4,7 +4,8 @@
 const mem = {};
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return k in mem ? mem[k] : d; } },
-  set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
+    if (/^latin\.(progress|streak|level|practice)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
   del(k) { delete mem[k]; try { localStorage.removeItem(k); } catch (e) {} },
 };
 
@@ -127,6 +128,7 @@ function renderSignIn(mode = store.get('latin.signinMode', users().length ? 'in'
     <div class="emojis">${EMOJIS.map(e => `<button type="button" aria-pressed="false">${e}</button>`).join('')}</div>
     <p class="err" id="err"></p>
     <button class="btn" id="go" disabled>${mode === 'new' ? 'Create my player' : "Let's play"}</button>
+    ${mode === 'in' && Sync.enabled() ? '<button class="btn ghost" id="link">I have a sync code from another device</button>' : ''}
     ${mode === 'new' ? '<p class="small" style="text-align:center">Remember your name and emojis — they are how the game knows it’s you. Your progress stays on this device.</p>' : ''}
   </div>`;
   wireTip();
@@ -155,19 +157,62 @@ function renderSignIn(mode = store.get('latin.signinMode', users().length ? 'in'
     const all = users();
     const found = all.find(u => keyOf(u.name, u.emojis) === k);
     if (mode === 'in') {
-      if (!found) { err.textContent = "We can't find that player. Check your name and emojis — or tap “I'm new”."; return; }
+      if (!found) { err.textContent = "We can't find that player on this device. Check your name and emojis" + (Sync.enabled() ? ', use your sync code below, ' : ' ') + "or tap “I'm new”."; return; }
       store.set('latin.current', found.id);
     } else {
       if (found) { err.textContent = 'That player already exists — tap “I’ve played before”.'; return; }
       const u = { id: 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name: nm, emojis: picked, created: Date.now() };
       store.set('latin.users', [...all, u]);
       store.set('latin.current', u.id);
+      if (Sync.enabled()) { store.set('latin.signinMode', 'in'); location.hash = ''; showCode(u, true); return; }
     }
     store.set('latin.signinMode', 'in');
     location.hash = '';
     route();
   };
+  const link = $('#link');
+  if (link) link.onclick = async () => {
+    const nm = name.value.trim().replace(/\s+/g, ' ');
+    if (!nm || picked.length !== 2) { err.textContent = 'Type your name and pick your two emojis first, then enter the code.'; return; }
+    const code = prompt('Type the sync code shown on your other device (like APPLE-TIGER-2481):');
+    if (code == null) return;
+    if (!Sync.valid(code)) { err.textContent = 'That doesn’t look like a sync code. It has two words and four numbers.'; return; }
+    err.textContent = 'Looking…';
+    try {
+      const blob = await Sync.link(code);
+      if (!blob) { err.textContent = 'No player found with that code. Check it on the other device (Home → sync code).'; return; }
+      const all = users();
+      let u = all.find(x => keyOf(x.name, x.emojis) === keyOf(nm, picked));
+      if (!u) { u = { id: 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name: nm, emojis: picked, created: Date.now(), code: Sync.normalise(code) }; store.set('latin.users', [...all, u]); }
+      else { u.code = Sync.normalise(code); store.set('latin.users', all.map(x => x.id === u.id ? u : x)); }
+      store.set('latin.current', u.id);
+      Sync.merge(u, blob);
+      store.set('latin.signinMode', 'in'); location.hash = ''; route();
+    } catch (e) { err.textContent = 'Couldn’t reach the sync server. Check the internet and try again.'; }
+  };
   sync();
+}
+
+/* ---------- sync code sheet ---------- */
+let pulledFor = null;
+function showCode(u, isNew) {
+  const code = Sync.codeOf(u);
+  sheet.innerHTML = `
+    <div class="panel" role="dialog" aria-modal="true" aria-label="Your sync code">
+      <div class="memo">
+        <div class="pic" aria-hidden="true">☁️</div>
+        <div class="lat" style="font-size:1.3rem">${isNew ? 'Welcome, ' + esc(u.name) + '!' : 'Your sync code'}</div>
+        <div class="code">${esc(code)}</div>
+        <div class="how"><h3>${isNew ? 'Write this code down' : 'What it’s for'}</h3>
+          <p>Your stars and levels are saved in the cloud under this code, with no name attached. To play on another phone, tablet or computer, choose “I've played before”, type your name and emojis, then enter this code once.</p></div>
+      </div>
+      <button class="btn" id="codeOk">${isNew ? "Got it — let's play" : 'Close'}</button>
+    </div>`;
+  sheet.hidden = false;
+  const done = () => { closeSheet(); if (isNew) route(); };
+  $('#codeOk').onclick = done;
+  sheet.onclick = e => { if (e.target === sheet) done(); };
+  Sync.touch(u);
 }
 
 /* ---------- home ---------- */
@@ -206,10 +251,18 @@ function renderHome(u) {
       <div class="orgbtns"><span></span><button class="btn" id="pracGo">Play</button></div>
     </div>
     <div class="tile locked"><h2>Coming soon</h2><p>Reading stories</p></div>
+    ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
     <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
   </div>`;
   $('.who').textContent = u.name + ' ' + u.emojis.join('');
   wireTip();
+  if (Sync.enabled()) {
+    $('#syncline').onclick = () => showCode(u, false);
+    const stat = { saving: 'saving…', saved: 'saved ✓', loading: 'checking…', error: 'not reachable', off: '' };
+    const show = s => { const el = $('#syncstat'); if (el) el.textContent = stat[s] || ''; };
+    show(Sync.status()); Sync.onStatus(show);
+    if (pulledFor !== u.id) { pulledFor = u.id; Sync.pull(u).then(changed => { if (changed && current() && current().id === u.id && location.hash === '') renderHome(u); }); }
+  }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#org .levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;

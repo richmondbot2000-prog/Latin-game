@@ -8,8 +8,8 @@ A Latin learning game, built by a father for his daughter. Public site at
 - **The repo is PUBLIC.** Everything in it is readable by anyone. Never commit a
   token, a key, or anything personal — and that includes **the daughter's name,
   age, school or photograph**. The game must be good without knowing who is
-  playing it. If progress needs saving, use `localStorage`; nothing leaves the
-  browser.
+  playing it. Progress lives in `localStorage`. Cloud sync (see below) stores
+  stars and levels only, under a random per-player sync code — never a name.
 - **No accounts, no sign-in, no tracking, no third-party analytics.** A child uses
   this. Plain HTML, CSS and JS served from one domain.
 - **No ads, no external embeds**, nothing that could put something unexpected in
@@ -17,13 +17,37 @@ A Latin learning game, built by a father for his daughter. Public site at
 
 ## What it is
 
-Nothing is built yet. The owner will describe the game; this file exists so a
-fresh session knows the constraints before writing a line.
+A game for learning the ISEB Common Entrance Latin vocabulary (Levels 1–3, 403
+words in `vocab.js`) by recognition, not grammar. Built so far:
 
-Worth asking him before building rather than assuming: how old she is, what Latin
-she is actually learning (vocabulary, declensions, verb endings, translation),
-whether it should follow a particular textbook or course, and what she will play
-it on.
+- **Organise** — swipe cards (`app.js`): Latin word + a right or clearly-wrong
+  meaning; stars 0–5 per word; memory cards (`memory.js`); example phrases
+  (`phrases.js`); fireworks (`effects.js`); vocabulary settings Beginner / Level
+  1 / 2 / 3. Players = first name + two emojis, no passwords.
+- **Practice** — a Plants-vs-Zombies-style garden defence (`practice.js`), always
+  landscape; coins come only from matching words. Squishy art in
+  `art/squishies/` (owner's own art).
+- Installable as a home-screen app (`manifest.webmanifest`, `sw.js`; bump the
+  cache name in `sw.js` when files change).
+
+## Cloud sync (built, not yet switched on)
+
+`sync.js` + `sync/worker.js` (Cloudflare Worker + KV). Each player gets a code
+like `APPLE-TIGER-2481`; progress is stored under SHA-256 of the code. It is
+off until `SYNC_URL` in `sync.js` is set. To switch it on, from a session that
+has the env var **`CLOUDFLARE_API_TOKEN`** (token made from Cloudflare's
+"Edit Cloudflare Workers" template):
+
+1. `cd sync && npx wrangler kv namespace create LATIN` → put the id in
+   `wrangler.toml`.
+2. `npx wrangler deploy` → note the `https://latin-sync.<account>.workers.dev` URL.
+3. Set `SYNC_URL` in `sync.js` to that URL, bump the `sw.js` cache name, push to
+   `main`. (Optional later: a custom domain such as `sync.latin.musicalmagic.uk`.)
+4. Test: `localStorage['latin.syncUrl']` can override the URL for local testing;
+   `scratch` tests used a stand-in server with the same two routes.
+
+The worker allows only `GET`/`PUT /p/<64 hex>` from `latin.musicalmagic.uk`
+(and localhost), 64 KB max, JSON only.
 
 ## How it deploys
 

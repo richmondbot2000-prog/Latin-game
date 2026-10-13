@@ -1,0 +1,9 @@
+# Deploy from the sync/ folder:  npx wrangler deploy
+# First time: npx wrangler kv namespace create LATIN   -> paste the id below
+name = "latin-sync"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "LATIN"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

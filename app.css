@@ -278,3 +278,8 @@ body.noscroll { overflow: hidden; }
 .ice b { font-size: 1.8rem; margin-left: 8px; }
 @media (min-height: 700px) and (min-width: 900px) { .ptop { height: 48px; } .pshop { width: 110px; } .pshop .gun { max-height: 110px; } .pshop .gun .ico { height: 48px; } .pshop .gun b, .pshop .gun .cost { font-size: 13px; }
   .pquiz { height: 70px; } .pquiz .qword { font-size: 1.7rem; } .pquiz .qopts button { font-size: 18px; min-height: 52px; } .pcash b { font-size: 32px; } }
+
+/* cloud sync */
+.syncline { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px dashed var(--line); background: none; border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; font-size: 14px; color: var(--muted); text-align: left; }
+.syncline b { color: var(--ink); letter-spacing: .04em; font-family: system-ui, sans-serif; }
+.memo .code { font: 800 1.6rem/1.2 system-ui, sans-serif; letter-spacing: .06em; background: var(--chip); border-radius: 12px; padding: 10px; margin: 6px 0 12px; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
