@@ -42,6 +42,9 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   mistake; three lives, score with a combo bonus. **Levels**: each is a scene
   with its matching outfit and 'hammer' (`LEVELS` in `hammer.js`: road +
   hammer, pier + shark, farmer + pitchfork …); 10 + 2/level signs to clear.
+  Seven costumes (disco, suit, samurai, astronaut, cowboy, karate, turban) came
+  only as flat pictures (PixelOutfits), so their `body` is one cut-out and their
+  legs are the standard run frames recoloured.
   Only two backgrounds exist so far (road, pier), so most outfits run on the
   road until the owner sends their scenes. Progress in `latin.hammer.<id>`
   {best, level, cleared, plays}.

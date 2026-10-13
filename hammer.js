@@ -23,6 +23,13 @@ const Hammer = (() => {
     { scene: 'Town road', bg: 'bg_road', skin: 'dragqueen', weapon: 'brushpink', outfit: 'glamour and a pink hairbrush' },
     { scene: 'Town road', bg: 'bg_road', skin: 'farmerdenim', weapon: 'hoe', outfit: 'denim farmer with a hoe' },
     { scene: 'Town road', bg: 'bg_road', skin: 'lumberjacquebearded', weapon: 'tree', outfit: 'bearded lumberjack with a whole tree' },
+    { scene: 'Town road', bg: 'bg_road', skin: 'cowboy', weapon: 'banana', outfit: 'cowboy with a banana' },
+    { scene: 'Town road', bg: 'bg_road', skin: 'karate', weapon: 'bat', outfit: 'karate kid with a bat' },
+    { scene: 'Town road', bg: 'bg_road', skin: 'disco', weapon: 'brushyellow', outfit: 'disco Jaques with a yellow hairbrush' },
+    { scene: 'Town road', bg: 'bg_road', skin: 'suit', weapon: 'hammer', outfit: 'secret agent with the hammer' },
+    { scene: 'Town road', bg: 'bg_road', skin: 'samurai', weapon: 'spear', outfit: 'samurai with a spear' },
+    { scene: 'Town road', bg: 'bg_road', skin: 'turban', weapon: 'brushblue', outfit: 'wise old Jaques with a blue hairbrush' },
+    { scene: 'Town road', bg: 'bg_road', skin: 'astronaut', weapon: 'hammergold', outfit: 'astronaut with the gold hammer' },
     { scene: 'Town road', bg: 'bg_road', skin: 'standardred', weapon: 'hammerred', outfit: 'red Jaques and the red hammer' },
     { scene: 'Town road', bg: 'bg_road', skin: 'standardgold', weapon: 'hammergold', outfit: 'gold Jaques and the gold hammer' }];
   const levelOf = n => LEVELS[(n - 1) % LEVELS.length];
@@ -215,9 +222,8 @@ const Hammer = (() => {
     const L = RIG[legs], lw = (L[2] - L[0]) * k, lh = (L[3] - L[1]) * k;       // leg frames are centred under him
     if (RIG.tail) P('tail'); if (RIG.tails) P('tails');
     const li = img(`j_${skin}_${legs}`); if (ok(li)) g.drawImage(li, -lw / 2, -lh, lw, lh);
-    P('leftarm'); P('lefthand'); P('chest'); P('head');
-    P((S.t % 3.3) < .14 ? 'eyesclosed' : 'eyesopen');
-    P('rightarm');
+    if (RIG.body) P('body');                                                   // costumes that came as one picture
+    else { P('leftarm'); P('lefthand'); P('chest'); P('head'); P((S.t % 3.3) < .14 ? 'eyesclosed' : 'eyesopen'); P('rightarm'); }
     // the hammer swings about his right hand: resting over the shoulder, then whipped down in front
     const a = swinging ? (S.swing < .14 ? S.swing / .14 * 2.05 : Math.max(0, 2.05 - (S.swing - .14) / .26 * 2.05)) : Math.sin(S.t * 10) * .04;
     const hx = (HAND[0] - JPIV[0]) * k, hy = (HAND[1] - JPIV[1]) * k - bob;
