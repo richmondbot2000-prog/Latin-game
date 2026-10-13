@@ -27,7 +27,9 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
 - **Organise** — swipe cards (`app.js`): Latin word + a right or clearly-wrong
   meaning; stars 0–5 per word with spaced repetition (`REST` in `app.js`: a
   right answer rests the word 10 min / 1 / 3 / 7 / 30 days by star count, a
-  wrong one zeroes it and brings it straight back; all games use the rule);
+  wrong one zeroes it and brings it straight back; a word got wrong in the
+  last 24 h comes up twice as often, twice or more three times as often
+  (`boost`); all games use the rule);
   memory cards (`memory.js`); example phrases
   (`phrases.js`); fireworks (`effects.js`); vocabulary settings Beginner / Level
   1 / 2 / 3. Players = first name + two emojis, no passwords.

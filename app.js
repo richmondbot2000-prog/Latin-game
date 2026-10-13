@@ -68,7 +68,7 @@ function recordAnswer(u, w, ok) {
   const p = getProg(u);
   const pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
   if (ok) { pw.ok = (pw.ok || 0) + 1; pw.s = Math.min(5, (pw.s || 0) + 1); pw.r = Date.now() + REST[pw.s]; }
-  else { pw.bad = (pw.bad || 0) + 1; pw.s = 0; delete pw.r; }
+  else { pw.bad = (pw.bad || 0) + 1; pw.s = 0; delete pw.r; pw.w = [...(pw.w || []).filter(t => t > Date.now() - DAY), Date.now()].slice(-5); }   // when it was got wrong, last 24 h
   pw.t = Date.now();
   p[w.id] = pw; saveProg(u, p);
   return pw;
@@ -96,6 +96,9 @@ const $ = (sel, el = document) => el.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const starsHTML = n => '<span class="stars" aria-label="' + n + ' of 5 stars">' + '★'.repeat(n) + '<span class="off">' + '★'.repeat(5 - n) + '</span></span>';
 const resting = (p, now = Date.now()) => p && p.r && p.r > now;
+// how often a word should come up: twice as often if it was got wrong in the last day, three times if twice or more
+const boost = (p, now = Date.now()) => { const n = p && p.w ? p.w.filter(t => t > now - DAY).length : 0; return n >= 2 ? 3 : n === 1 ? 2 : 1; };
+const weightOf = p => (6 - ((p && p.s) || 0)) * boost(p);
 const fmtDate = t => new Date(t).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
 const app = $('#app');
 
@@ -468,7 +471,7 @@ function renderPlay(u, pane) {
     if (!pool.length) return null;
     if (pool.length > 8) pool = pool.filter(w => !recent.includes(w.id));
     let total = 0;
-    const wts = pool.map(w => { const t = 6 - ((p[w.id] && p[w.id].s) || 0); total += t; return t; });
+    const wts = pool.map(w => { const t = weightOf(p[w.id]); total += t; return t; });
     let r = Math.random() * total;
     for (let i = 0; i < pool.length; i++) { r -= wts[i]; if (r <= 0) return pool[i]; }
     return pool[pool.length - 1];
