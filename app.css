@@ -147,7 +147,7 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
   .card[data-kind="question word"] { --frame: #A3A3FF; }
   .card[data-kind="number"]        { --frame: #F2C94C; }
 }
-.card[data-kind] { background: linear-gradient(var(--card), var(--card)); background: color-mix(in srgb, var(--frame) 7%, var(--card)); }
+.card[data-kind] { background: var(--card); }
 .card .frame { position: absolute; inset: 0; color: var(--frame); pointer-events: none; overflow: visible; }
 .card .kind { position: absolute; bottom: 30px; left: 0; right: 0; font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
   color: var(--frame); font-family: system-ui, sans-serif; font-weight: 700; }
