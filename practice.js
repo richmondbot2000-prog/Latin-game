@@ -10,20 +10,27 @@ const Practice = (() => {
     mortar:  { name: 'Mortar', cost: 225, every: 7, dmg: 90, splash: 1.4, recharge: 12, hp: 100, blurb: 'big blast every 7 s' },
     mg:      { name: 'Machine gun', cost: 300, every: 1 / 3, dmg: 10, speed: 9, recharge: 12, hp: 100, blurb: '3 bullets a second' },
   };
+  // the squishies (art in art/squishies). size is relative to a cell; 'from' is the first level they appear
   const SQUISHIES = {
-    blob:   { name: 'Blob',   hp: 100, speed: .20, chomp: 25, size: .80, color: '#F27BA8', dark: '#B8457A' },
-    zippy:  { name: 'Zippy',  hp: 60,  speed: .42, chomp: 25, size: .62, color: '#FFD23F', dark: '#C99A00' },
-    chunky: { name: 'Chunky', hp: 320, speed: .14, chomp: 35, size: 1.0, color: '#9B7BEA', dark: '#5E3FB5' },
-    potty:  { name: 'Potty',  hp: 100, helmet: 180, speed: .20, chomp: 25, size: .80, color: '#4FC3B1', dark: '#1E8A79' },
+    chomp:      { name: 'Chomp',      hp: 100, speed: .20, chomp: 25, size: 1.0,  from: 1, art: ['chomp1', 'chomp2'], color: '#b8d0a8' },
+    skitter:    { name: 'Skitter',    hp: 60,  speed: .42, chomp: 25, size: .74,  from: 2, art: ['skitter1', 'skitter2'], color: '#d49496' },
+    chompking:  { name: 'ChompKing',  hp: 320, speed: .14, chomp: 35, size: 1.3,  from: 3, art: ['chompking'], color: '#9ec9c0' },
+    antbun:     { name: 'Antbun',     hp: 200, speed: .26, chomp: 25, size: 1.0,  from: 4, art: ['antbun1', 'antbun3'], dead: 'antbunskelly', color: '#bda7cd' },
+    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .30, chomp: 0,  size: .92,  from: 5, art: ['kamikaze1', 'kamikaze2'], color: '#ddb8a4', boom: true },
+    ghost:      { name: 'Ghost',      hp: 80,  speed: .30, chomp: 25, size: 1.0,  from: 6, art: ['ghost1', 'ghost2'], color: '#a6a0aa', pass: 1, alpha: .85 },
+    flying:     { name: 'Flyer',      hp: 70,  speed: .36, chomp: 0,  size: .9,   from: 7, art: ['flying1', 'flying2'], color: '#b9bcc5', pass: 99, fly: true },
+    moley:      { name: 'Moley',      hp: 150, speed: .22, chomp: 30, size: .95,  from: 8, art: ['moley'], color: '#e0c888', digs: true },
+    broodqueen: { name: 'Brood Queen', hp: 900, speed: .10, chomp: 40, size: 1.4, from: 6, art: ['broodqueen1', 'broodqueen2'], color: '#c0acb6', boss: true, brood: 9 },
+    ghostking:  { name: 'Ghost King', hp: 700, speed: .16, chomp: 35, size: 1.35, from: 9, art: ['ghostking'], color: '#aca9a2', boss: true, pass: 2, alpha: .85 },
   };
+  const SPRITES = {};   // art key -> Image
   function levelSpec(n) {
-    const weights = { blob: 1 };
-    if (n >= 2) weights.zippy = .25 + .05 * (n - 2);
-    if (n >= 3) weights.chunky = .2 + .05 * (n - 3);
-    if (n >= 4) weights.potty = .2 + .05 * (n - 4);
+    const weights = {};
+    for (const k in SQUISHIES) { const s = SQUISHIES[k]; if (s.boss || n < s.from) continue; weights[k] = k === 'chomp' ? 1 : .22 + .04 * (n - s.from); }
+    const boss = n >= 9 ? (n % 2 ? 'ghostking' : 'broodqueen') : n >= 6 ? 'broodqueen' : null;
     // early levels use fewer rows, like the original's first lawns
     const rows = n === 1 ? [2, 3] : n === 2 ? [1, 2, 3, 4] : [0, 1, 2, 3, 4, 5];
-    return { count: 8 + 3 * (n - 1), rows, grace: n === 1 ? 12 : 8, gap0: Math.max(4, 10 - n), gap1: Math.max(2.2, 6.5 - .45 * (n - 1)), weights, huge: n >= 2 };
+    return { count: 8 + 3 * (n - 1), rows, grace: n === 1 ? 12 : 8, gap0: Math.max(4, 10 - n), gap1: Math.max(2.2, 6.5 - .45 * (n - 1)), weights, huge: n >= 2, boss };
   }
   const rnd = (a, b) => a + Math.random() * (b - a);
   const pickWeighted = w => { let t = 0; for (const k in w) t += w[k]; let r = Math.random() * t; for (const k in w) { r -= w[k]; if (r <= 0) return k; } return Object.keys(w)[0]; };
@@ -46,7 +53,7 @@ const Practice = (() => {
   }
 
   /* ---------- squishies ---------- */
-  function spawn(type, row) {
+  function spawn(type, row, opts = {}) {
     const k = SQUISHIES[type];
     if (row == null) {
       // avoid the two most recent rows so the pressure spreads out
@@ -55,15 +62,23 @@ const Practice = (() => {
       row = rows[Math.floor(Math.random() * rows.length)];
       S.lastRows.push(row); if (S.lastRows.length > 2) S.lastRows.shift();
     }
-    S.squishies.push({ type, k, row, x: COLS + .4 + Math.random() * .3, hp: k.hp, helmet: k.helmet || 0, phase: Math.random() * 7,
-      eating: null, flash: 0, wob: 0 });
-    S.spawned++;
+    const x = opts.x != null ? opts.x : k.digs ? 3 + Math.random() * (COLS - 5) : COLS + .4 + Math.random() * .3;
+    const sq = { type, k, row, x, hp: k.hp, art: k.art[Math.floor(Math.random() * k.art.length)], phase: Math.random() * 7,
+      eating: null, flash: 0, wob: 0, pass: k.pass || 0, passedCol: -1, brood: k.brood || 0, rise: k.digs ? 1 : 0 };
+    S.squishies.push(sq);
+    if (k.digs) S.fx.push({ kind: 'dirt', x, row, t: 0 });
+    if (!opts.extra) S.spawned++;
+    return sq;
   }
   function hurt(sq, dmg) {
     if (sq.helmet > 0) { sq.helmet -= dmg; if (sq.helmet < 0) { sq.hp += sq.helmet; sq.helmet = 0; S.fx.push({ kind: 'pot', x: sq.x, row: sq.row, t: 0 }); } }
     else sq.hp -= dmg;
     sq.flash = .12;
-    if (sq.hp <= 0 && !sq.dead) { sq.dead = true; S.fx.push({ kind: 'splat', x: sq.x, row: sq.row, t: 0, color: sq.k.color, size: sq.k.size }); }
+    if (sq.hp <= 0 && !sq.dead) {
+      sq.dead = true;
+      S.fx.push({ kind: 'splat', x: sq.x, row: sq.row, t: 0, color: sq.k.color, size: sq.k.size });
+      S.fx.push({ kind: 'melt', x: sq.x, row: sq.row, t: 0, art: sq.k.dead || sq.art, size: sq.k.size, bones: !!sq.k.dead, fly: !!sq.k.fly });
+    }
   }
 
   /* ---------- update ---------- */
@@ -87,7 +102,10 @@ const Practice = (() => {
         S.hugeLeft = Math.min(sp.count - S.spawned, 4 + Math.floor(S.level / 2));
       }
       if (S.nextSpawn <= 0) {
-        if (S.hugeLeft > 0) { spawn(pickWeighted(sp.weights)); S.hugeLeft--; S.nextSpawn = .45; if (!S.hugeLeft) S.banner = { text: 'Final wave!', t: 1.6 }; }
+        if (S.hugeLeft > 0) {
+          if (sp.boss && !S.bossDone) { S.bossDone = true; spawn(sp.boss); } else spawn(pickWeighted(sp.weights));
+          S.hugeLeft--; S.nextSpawn = .45; if (!S.hugeLeft) S.banner = { text: 'Final wave!', t: 1.6 };
+        }
         else {
           spawn(pickWeighted(sp.weights));
           const p = S.spawned / sp.count;
@@ -99,15 +117,22 @@ const Practice = (() => {
 
     // squishies move / chomp
     for (const sq of S.squishies) {
-      sq.wob += dt; if (sq.flash > 0) sq.flash -= dt;
+      sq.wob += dt; if (sq.flash > 0) sq.flash -= dt; if (sq.rise > 0) sq.rise -= dt;
+      if (sq.brood) { sq.broodT = (sq.broodT || 4) - dt; if (sq.broodT <= 0) { sq.broodT = sq.brood; spawn('skitter', sq.row, { x: sq.x + .5, extra: true }); } }
       const col = Math.floor(sq.x - .35);
       const g = col >= 0 && col < COLS ? S.grid[sq.row][col] : null;
-      if (g) {
+      if (g && sq.k.boom) {            // kamikaze: blows the gun up and is gone
+        S.grid[sq.row][col] = null; sq.hp = 0; sq.dead = true; S.shake = .3;
+        S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: .9 }); S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 });
+        continue;
+      }
+      if (g && sq.pass > 0 && sq.passedCol !== col) { sq.pass--; sq.passedCol = col; }   // ghosts and flyers float over guns
+      if (g && sq.passedCol !== col) {
         sq.eating = g; g.hp -= sq.k.chomp * dt; g.bitten = .25;
         if (g.hp <= 0) { S.grid[sq.row][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 }); sq.eating = null; }
       } else {
         sq.eating = null;
-        sq.x -= sq.k.speed * dt;
+        if (sq.rise <= 0) sq.x -= sq.k.speed * dt;
         if (sq.x < -.25) {
           if (S.gnomes[sq.row]) { S.gnomes[sq.row] = false; S.gnomeRuns.push({ row: sq.row, x: -.6 }); S.shake = .3; }
           else if (!S.gnomeRuns.some(r => r.row === sq.row)) { lose(); return; }
@@ -156,7 +181,7 @@ const Practice = (() => {
     S.shells = S.shells.filter(s => !s.gone);
     // effects
     for (const f of S.fx) f.t += dt;
-    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'splat' ? .6 : .8));
+    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'splat' || f.kind === 'melt' ? .6 : .8));
     for (const f of S.floats) f.t += dt;
     S.floats = S.floats.filter(f => f.t < 1);
     S.squishies = S.squishies.filter(s => !s.dead);
@@ -251,39 +276,34 @@ const Practice = (() => {
     g.restore();
     if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
   }
+  function drawSprite(g, art, x, y, w, alpha = 1) {
+    // draw an art image with its bottom-centre at (x, y), scaled so its larger side is w
+    const im = SPRITES[art]; if (!im || !im.complete || !im.naturalWidth) return false;
+    const sc = w / Math.max(im.naturalWidth, im.naturalHeight), iw = im.naturalWidth * sc, ih = im.naturalHeight * sc;
+    g.globalAlpha = alpha; g.drawImage(im, x - iw / 2, y - ih, iw, ih); g.globalAlpha = 1;
+    return true;
+  }
   function drawSquishy(g, sq, x, y, s) {
-    const k = sq.k, r = s * k.size * .42;
-    const chomp = sq.eating ? Math.abs(Math.sin(sq.wob * 14)) : 0;
-    const sx = 1 + .07 * Math.sin(sq.wob * 7 + sq.phase), sy = 1 - .07 * Math.sin(sq.wob * 7 + sq.phase);
-    g.save(); g.translate(x, y + r * .15);
-    g.fillStyle = 'rgba(0,0,0,.15)'; g.beginPath(); g.ellipse(0, r * .95, r * .9, r * .25, 0, 0, 7); g.fill(); // shadow
+    const k = sq.k, w = s * k.size;
+    const bob = k.fly ? Math.sin(sq.wob * 5 + sq.phase) * s * .12 - s * .35 : 0;
+    const sx = 1 + .06 * Math.sin(sq.wob * 7 + sq.phase), sy = 1 - .06 * Math.sin(sq.wob * 7 + sq.phase);
+    const foot = y + s * .42;
+    g.save();
+    // shadow
+    g.fillStyle = 'rgba(0,0,0,.16)'; g.beginPath(); g.ellipse(x, foot, w * .38, w * .1, 0, 0, 7); g.fill();
+    g.translate(x, foot + bob);
+    if (sq.rise > 0) { g.beginPath(); g.rect(-w, -w * 2, w * 2, w * 2 * (1 - sq.rise)); g.clip(); g.translate(0, w * sq.rise); }   // moley rising out of the ground
+    if (sq.eating) g.rotate(Math.sin(sq.wob * 16) * .06);
     g.scale(sx, sy);
-    g.fillStyle = sq.flash > 0 ? '#ffffff' : k.color;
-    g.beginPath(); g.ellipse(0, 0, r, r * 1.05, 0, 0, 7); g.fill();
-    g.fillStyle = 'rgba(255,255,255,.35)'; g.beginPath(); g.ellipse(-r * .35, -r * .45, r * .3, r * .18, -.5, 0, 7); g.fill(); // shine
-    // feet
-    g.fillStyle = k.dark;
-    g.beginPath(); g.ellipse(-r * .45, r * .9, r * .28, r * .14, 0, 0, 7); g.fill();
-    g.beginPath(); g.ellipse(r * .45, r * .9, r * .28, r * .14, 0, 0, 7); g.fill();
-    // eyes, looking left
-    for (const ex of [-r * .42, r * .1]) {
-      g.fillStyle = '#fff'; g.beginPath(); g.ellipse(ex, -r * .15, r * .22, r * .26, 0, 0, 7); g.fill();
-      g.fillStyle = '#222'; g.beginPath(); g.arc(ex - r * .07, -r * .12, r * .11, 0, 7); g.fill();
-      g.fillStyle = '#fff'; g.beginPath(); g.arc(ex - r * .1, -r * .17, r * .04, 0, 7); g.fill();
+    if (!drawSprite(g, sq.art, 0, 0, w, k.alpha || 1)) {
+      g.fillStyle = k.color; g.beginPath(); g.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); g.fill();
     }
-    // mouth
-    g.fillStyle = k.dark; g.beginPath();
-    if (sq.eating) g.ellipse(-r * .2, r * .38, r * .3, r * .1 + r * .28 * chomp, 0, 0, 7);
-    else { g.ellipse(-r * .2, r * .4, r * .28, r * .12, 0, 0, Math.PI); }
-    g.fill();
-    if (sq.eating) { g.fillStyle = '#fff'; g.fillRect(-r * .42, r * .3, r * .1, r * .1); g.fillRect(-r * .1, r * .3, r * .1, r * .1); }
-    // flower-pot helmet
-    if (sq.helmet > 0) {
-      g.fillStyle = '#B8663A'; g.beginPath(); g.moveTo(-r * .75, -r * .75); g.lineTo(r * .75, -r * .75); g.lineTo(r * .55, -r * 1.55); g.lineTo(-r * .55, -r * 1.55); g.closePath(); g.fill();
-      g.fillStyle = '#D4834F'; rr(g, -r * .85, -r * 1.7, r * 1.7, r * .25, r * .08); g.fill();
-      g.fillStyle = '#5BAF4E'; g.beginPath(); g.arc(0, -r * 1.85, r * .18, 0, 7); g.fill();
-    }
+    if (sq.flash > 0) { g.globalCompositeOperation = 'lighter'; drawSprite(g, sq.art, 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
     g.restore();
+    if (k.boss) {   // boss health bar
+      g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - w * .35, foot + s * .08, w * .7, s * .07);
+      g.fillStyle = '#FF5D8F'; g.fillRect(x - w * .35, foot + s * .08, w * .7 * Math.max(0, sq.hp / k.hp), s * .07);
+    }
   }
   function drawGnome(g, x, y, s, running) {
     g.save(); g.translate(x, y);
@@ -338,6 +358,15 @@ const Practice = (() => {
         ctx.fillStyle = f.color; ctx.globalAlpha = 1 - p;
         for (let i = 0; i < 7; i++) { const a = i * .9 + f.x, d = cell * f.size * (.2 + p * .6); ctx.beginPath(); ctx.arc(x + Math.cos(a) * d, y + Math.sin(a) * d * .6, cell * .08 * (1 - p) + 1, 0, 7); ctx.fill(); }
         ctx.globalAlpha = 1;
+      } else if (f.kind === 'melt') {
+        const p = f.t / .6, w = cell * f.size, foot = y + cell * .42 - (f.fly ? cell * .35 : 0);
+        ctx.save(); ctx.translate(x, foot);
+        if (f.bones) { drawSprite(ctx, f.art, 0, 0, w, 1 - p); }
+        else { ctx.scale(1 + p * .5, Math.max(.05, 1 - p)); drawSprite(ctx, f.art, 0, 0, w, 1 - p * .7); }
+        ctx.restore();
+      } else if (f.kind === 'dirt') {
+        const p = f.t / .8; ctx.fillStyle = `rgba(110,75,40,${1 - p})`;
+        for (let i = 0; i < 8; i++) { const a = i * .8 + .3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * p * cell * .7, y + cell * .3 - Math.sin(a) * p * cell * .9 + p * p * cell * .8, cell * .07, 0, 7); ctx.fill(); }
       } else if (f.kind === 'pot') {
         const p = f.t / .8; ctx.fillStyle = `rgba(184,102,58,${1 - p})`; ctx.beginPath(); ctx.arc(x + p * cell * .6, y - cell * .6 - Math.sin(p * Math.PI) * cell * .8 + p * cell, cell * .12, 0, 7); ctx.fill();
       } else if (f.kind === 'crunch') {
@@ -456,7 +485,9 @@ const Practice = (() => {
     ui.ice.hidden = true; if (quiz) quiz.frozen = 0;
   }
   function ready() {
-    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Shooter, then tap a square to plant it. Keep the squishies away from your gnomes!' : `${S.spec.count} squishies are on their way.`;
+    const fresh = Object.keys(SQUISHIES).filter(k => SQUISHIES[k].from === S.level && !SQUISHIES[k].boss).map(k => SQUISHIES[k].name);
+    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Shooter, then tap a square to plant it. Keep the squishies away from your gnomes!'
+      : `${S.spec.count} squishies are on their way.` + (fresh.length ? ` New: ${fresh.join(', ')}!` : '') + (S.spec.boss && S.level === SQUISHIES[S.spec.boss].from ? ` Watch out for the ${SQUISHIES[S.spec.boss].name}…` : '');
     showOverlay(`Level ${S.level}`, first, S.level === 1 ? "Let's go!" : 'Ready!', start);
     if (S.level > 1) {
       const a = document.createElement('button'); a.className = 'linkbtn'; a.textContent = 'start again from level 1';
@@ -503,6 +534,7 @@ const Practice = (() => {
     cv = root.querySelector('#pcv'); ctx = cv.getContext('2d');
     document.body.classList.add('noscroll');
     root.querySelector('#phome').onclick = () => { if (opts.home) opts.home(); };
+    for (const k in SQUISHIES) for (const a of [...SQUISHIES[k].art, SQUISHIES[k].dead].filter(Boolean)) if (!SPRITES[a]) { const im = new Image(); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
     S = null; newLevel(sv.level || 1);
     renderShop(); layout(); refreshShop();
     cv.addEventListener('pointerdown', onCanvasTap);
@@ -520,5 +552,5 @@ const Practice = (() => {
   function restartFromOne() { if (!S) return; S.money = START_MONEY; S = null; newLevel(1); ui.overlay.hidden = true; ready(); }
   // test hook: run the game forward without waiting
   const step = secs => { for (let t = 0; t < secs; t += 1 / 60) update(1 / 60); refreshShop(); };
-  return { mount, unmount, restartFromOne, GUNS, SQUISHIES, debug: { step, state: () => S, answer, quiz: () => quiz } };
+  return { mount, unmount, restartFromOne, GUNS, SQUISHIES, debug: { step, state: () => S, answer, quiz: () => quiz, spawn } };
 })();
