@@ -3,7 +3,7 @@
 /* ---------- Practice: defend the garden from squishies; earn coins by matching words ----------
    Positions are in cells: squishies walk from x = COLS (right) towards x = 0 (left). */
 const Practice = (() => {
-  const ROWS = 6, COLS = 9, PADL = .75, PADR = .6;   // a strip for the lawnmowers on the left, bushes on the right
+  const ROWS = 6, COLS = 9, PADL = .75, PADR = .6, PADB = .34;   // mowers' path left, bushes right, picket fence below   // a strip for the lawnmowers on the left, bushes on the right
   const START_MONEY = 150, MATCH_COINS = 25, FREEZE_SECS = 5;
   // the artist's weapon set (art/weapons). kind: shoot = bullets along the row; beam = slows everything in front; ring = a sonic ring
   // that knocks the whole row back; lob = lobbed shells (Solar Blast anywhere, Miner along its row); mine = explodes when touched;
@@ -330,8 +330,8 @@ const Practice = (() => {
     stage.style.width = (rot ? innerHeight : innerWidth) + 'px';
     stage.style.height = (rot ? innerWidth : innerHeight) + 'px';
     const box = ui.garden;
-    cell = Math.max(24, Math.floor(Math.min(box.clientWidth / (COLS + PADL + PADR), box.clientHeight / ROWS)));
-    OX = Math.round(cell * PADL); W = OX + cell * COLS + Math.round(cell * PADR); H = cell * ROWS;
+    cell = Math.max(24, Math.floor(Math.min(box.clientWidth / (COLS + PADL + PADR), box.clientHeight / (ROWS + PADB))));
+    OX = Math.round(cell * PADL); W = OX + cell * COLS + Math.round(cell * PADR); H = cell * ROWS + Math.round(cell * PADB);
     const dpr = Math.min(devicePixelRatio || 1, 2);
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
@@ -358,39 +358,45 @@ const Practice = (() => {
       g.translate(x, y); g.scale(scale, scale); g.fillStyle = g.createPattern(im, 'repeat'); g.fillRect(0, 0, w / scale + 1, h / scale + 1);
       g.restore();
     };
-    const gs = (cell * 2) / 256;   // one grass tile spans two cells
-    // the lawn
+    const gs = (cell * 2.4) / 256, LH = cell * ROWS;   // one grass tile spans a couple of cells; LH = the lawn's height
+    const shade = (hex, f) => { const n = parseInt(hex.slice(1), 16); const ch = sh => Math.max(0, Math.min(255, Math.round(((n >> sh) & 255) * f))); return `rgb(${ch(16)},${ch(8)},${ch(0)})`; };
+    // the lawn: a soft checkerboard of cells, like a mown lawn
     for (let r = 0; r < ROWS; r++) {
       const on = S.spec.rows.includes(r);
-      g.fillStyle = on ? wd.lanes[r % 2] : wd.soil[r % 2];
-      g.fillRect(OX, r * cell, cell * COLS, cell);
-      texture(on ? grass : soil, OX, r * cell, cell * COLS, cell, gs);
-      if (!on) continue;
-      g.fillStyle = 'rgba(255,255,255,.08)';   // a soft mown-stripe edge
-      g.fillRect(OX, r * cell, cell * COLS, 2);
-      g.strokeStyle = 'rgba(255,255,255,.12)'; g.lineWidth = 1;
-      for (let c = 1; c < COLS; c++) { g.beginPath(); g.moveTo(OX + c * cell, r * cell + 4); g.lineTo(OX + c * cell, r * cell + cell - 4); g.stroke(); }
+      for (let c = 0; c < COLS; c++) {
+        const base = on ? wd.lanes[0] : wd.soil[0];
+        g.fillStyle = shade(base, (r + c) % 2 ? 1 : .93);
+        g.fillRect(OX + c * cell, r * cell, cell, cell);
+      }
     }
-    // the path on the left
-    g.fillStyle = wd.key === 'tutorial' || wd.key === 'earth' ? '#D9D2C4' : wd.soil[0]; g.fillRect(0, 0, OX, H);
-    texture(path, 0, 0, OX, H, cell / 128);
-    g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(OX - 3, 0, 3, H);
-    // bushes on the right, where the squishies come from
+    texture(grass, OX, 0, cell * COLS, LH, gs);
+    for (let r = 0; r < ROWS; r++) if (!S.spec.rows.includes(r)) { g.fillStyle = 'rgba(80,50,20,.28)'; g.fillRect(OX, r * cell, cell * COLS, cell); texture(soil, OX, r * cell, cell * COLS, cell, gs); }
+    // light from the top, a little darker at the bottom
+    const lg = g.createLinearGradient(0, 0, 0, LH); lg.addColorStop(0, 'rgba(255,255,255,.10)'); lg.addColorStop(.5, 'rgba(255,255,255,0)'); lg.addColorStop(1, 'rgba(0,0,0,.10)');
+    g.fillStyle = lg; g.fillRect(OX, 0, cell * COLS, LH);
+    // the path on the left, with its own shadow edge
+    g.fillStyle = wd.key === 'tutorial' || wd.key === 'earth' ? '#D9D2C4' : shade(wd.soil[0], 1.05); g.fillRect(0, 0, OX, LH);
+    texture(path, 0, 0, OX, LH, cell / 128);
+    const pg = g.createLinearGradient(OX - cell * .18, 0, OX, 0); pg.addColorStop(0, 'rgba(0,0,0,0)'); pg.addColorStop(1, 'rgba(0,0,0,.22)'); g.fillStyle = pg; g.fillRect(OX - cell * .18, 0, cell * .18, LH);
+    // bushes on the right, where the squishies come from, with a shadow they cast on the lawn
     const right = OX + cell * COLS;
-    g.fillStyle = wd.lanes[1]; g.fillRect(right, 0, W - right, H); texture(grass, right, 0, W - right, H, gs);
+    g.fillStyle = shade(wd.lanes[0], .8); g.fillRect(right, 0, W - right, LH);
+    const bg2 = g.createLinearGradient(right - cell * .5, 0, right, 0); bg2.addColorStop(0, 'rgba(0,0,0,0)'); bg2.addColorStop(1, 'rgba(0,0,0,.18)'); g.fillStyle = bg2; g.fillRect(right - cell * .5, 0, cell * .5, LH);
     let seed = 11; const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
     if (bush) {
-      for (let y = -cell * .3; y < H + cell * .2; y += cell * .62) {
-        const w = cell * (1.2 + rand() * .5); g.drawImage(bush, right - cell * .15 + rand() * cell * .25, y - w * .2, w, w);
-      }
-      if (wd.key !== 'tutorial' && wd.key !== 'earth') {   // other worlds: the bushes take the planet's colour
-        g.save(); g.beginPath(); g.rect(right - cell * .2, 0, W - right + cell * .2, H); g.clip(); g.globalCompositeOperation = 'color'; g.fillStyle = wd.lanes[0]; g.fillRect(0, 0, W, H); g.restore();
-      }
+      for (let y = -cell * .4; y < LH + cell * .2; y += cell * .55) { const w = cell * (1.35 + rand() * .5); g.drawImage(bush, right - cell * .3 + rand() * cell * .25, y - w * .2, w, w); }
+      for (let y = -cell * .2; y < LH; y += cell * .7) { const w = cell * (1.1 + rand() * .4); g.drawImage(bush, right + cell * .05 + rand() * cell * .2, y - w * .2, w, w); }
+      if (wd.key !== 'tutorial' && wd.key !== 'earth') { g.save(); g.beginPath(); g.rect(right - cell * .3, 0, W - right + cell * .3, LH); g.clip(); g.globalCompositeOperation = 'color'; g.fillStyle = wd.lanes[0]; g.fillRect(0, 0, W, H); g.restore(); }
     }
+    // the picket fence along the bottom
+    const fence = lawnImg('fence');
+    g.fillStyle = shade(wd.soil[1], .9); g.fillRect(0, LH, W, H - LH);
+    if (fence) { const fh = H - LH + cell * .22, fw = fh * fence.naturalWidth / fence.naturalHeight; g.fillStyle = 'rgba(0,0,0,.18)'; g.fillRect(0, LH, W, cell * .1); for (let x = -fw * .3; x < W; x += fw) g.drawImage(fence, x, LH - cell * .22, fw, fh); }
+    const vg = g.createLinearGradient(0, LH - cell * .15, 0, LH); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.14)'); g.fillStyle = vg; g.fillRect(OX, LH - cell * .15, cell * COLS, cell * .15);
     // little flowers, same places every time
     seed = 7;
     for (let i = 0; i < 40; i++) {
-      const x = OX + rand() * cell * COLS, y = rand() * H, col = ['#FFF0F5', '#FFE066', '#FFFFFF', '#FFB3C6'][i % 4];
+      const x = OX + rand() * cell * COLS, y = rand() * LH, col = ['#FFF0F5', '#FFE066', '#FFFFFF', '#FFB3C6'][i % 4];
       if (!S.spec.rows.includes(Math.floor(y / cell))) continue;
       if (wd.deco === 'flowers') { g.fillStyle = col; g.beginPath(); g.arc(x, y, cell * .05, 0, 7); g.fill(); g.fillStyle = '#FFD23F'; g.beginPath(); g.arc(x, y, cell * .02, 0, 7); g.fill(); }
       else if (wd.deco === 'craters') { g.fillStyle = 'rgba(0,0,0,.12)'; g.beginPath(); g.ellipse(x, y, cell * .12, cell * .07, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.12)'; g.beginPath(); g.ellipse(x, y - cell * .02, cell * .1, cell * .05, 0, 0, 7); g.fill(); }
@@ -541,7 +547,7 @@ const Practice = (() => {
     const im = lawnImg('mower');
     g.save(); g.translate(x, y);
     if (running) { g.rotate(Math.sin(S.t * 40) * .06); g.translate(0, Math.sin(S.t * 60) * 1.5); }
-    if (im) { const w = s * .82, h = w * im.naturalHeight / im.naturalWidth; g.drawImage(im, -w * .55, s * .28 - h, w, h); }
+    if (im) { const w = s * .98, h = w * im.naturalHeight / im.naturalWidth; g.drawImage(im, -w * .55, s * .34 - h, w, h); }
     else { g.fillStyle = '#C4242E'; rr(g, -s * .3, -s * .1, s * .5, s * .25, s * .06); g.fill(); g.fillStyle = '#222'; g.beginPath(); g.arc(-s * .2, s * .18, s * .09, 0, 7); g.arc(s * .12, s * .18, s * .09, 0, 7); g.fill(); }
     g.restore();
   }
