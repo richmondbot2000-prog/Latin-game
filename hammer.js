@@ -89,7 +89,7 @@ const Hammer = (() => {
     const CX = JX;
     for (const s of S.signs) {
       s.x -= v * dt; s.wob += dt;
-      if (s.state === 'up' && s.x + bw * .45 < CX) {
+      if (s.state === 'up' && s.x + bw < CX - .02) {   // it has passed him only once the whole board is behind him
         // it got past Jacques
         s.state = 'passed';
         if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: Math.max(.2, s.x + bw / 2), t: 0 }); }
@@ -103,7 +103,7 @@ const Hammer = (() => {
       if (!S.hitDone && S.swing >= .32) {
         S.hitDone = true; S.shake = .22;
         for (let i = 0; i < 4; i++) S.bits.push({ kind: 'dust', i: [0, 1, 2, 4, 5][i], x: JX + .08 + i * .04, t: 0 });
-        const target = S.signs.find(s => s.state === 'up' && s.x < CX + .3 && s.x + bw > CX);
+        const target = S.signs.find(s => s.state === 'up' && s.x < CX + .3 && s.x + bw > CX - .02);
         if (target) {
           target.state = 'smashed'; target.smashT = 0;
           const hx = Math.max(target.x, CX + .05); smashSign(target);
