@@ -1,7 +1,7 @@
 // Offline support. Always tries the network first so updates appear straight
 // away; falls back to the saved copy when there is no connection.
-const CACHE = 'latin-v1';
-const FILES = ['./', 'index.html', 'app.css', 'app.js', 'vocab.js', 'memory.js', 'effects.js',
+const CACHE = 'latin-v2';
+const FILES = ['./', 'index.html', 'app.css', 'app.js', 'vocab.js', 'memory.js', 'phrases.js', 'effects.js',
   'manifest.webmanifest', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/favicon-32.png'];
 
 self.addEventListener('install', e => {

@@ -38,6 +38,9 @@ const KIND = pos => {
 const STOP = new Set('a an the of to be is it i he she they his her their its one my your our self s and or on in by as at for with not no'.split(' '));
 const tokens = s => new Set(s.toLowerCase().replace(/\(.*?\)/g, ' ').split(/[^a-z]+/).filter(t => t && !STOP.has(t)));
 const WORDS = VOCAB.map((v, i) => ({ ...v, id: v.word, kind: KIND(v.pos), toks: tokens(v.english), i }));
+const phraseFor = w => (typeof PHRASES !== 'undefined' && PHRASES[w.word]) || null;
+// Latin phrase with the card's word (marked *like this*) highlighted
+const phraseHTML = la => esc(la).replace(/\*([^*]+)\*/g, '<mark>$1</mark>');
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.word} means ${w.english}.` };
 
 function distractors(w, pool = WORDS) {
@@ -284,6 +287,7 @@ function openMemo(w, stars, verdict, onClose) {
         <div class="lat">${esc(w.word)}</div>
         <div class="en">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
+        ${phraseFor(w) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w).la)}</p><p class="tr">${esc(phraseFor(w).en)}</p></div>` : ''}
         <div class="meta">${starsHTML(stars)} <span class="small">· ${w.kind} · Level ${w.level}</span></div>
       </div>
       <button class="btn" id="memoOk">${verdict ? 'Got it — next card' : 'Close'}</button>
@@ -341,6 +345,7 @@ function renderPlay(u, pane) {
       <div class="card under" aria-hidden="true"></div>
       <div class="card" id="top" data-kind="${w.kind}">
         <div class="cstars">${starsHTML(s)}</div>
+        ${phraseFor(w) ? `<div class="phrase">${phraseHTML(phraseFor(w).la)}</div>` : ''}
         <div class="kind">${w.kind}</div>
         <span class="stamp yes">RIGHT</span><span class="stamp no">WRONG</span>
         <div class="lat">${esc(w.word)}</div>
