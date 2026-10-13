@@ -7,10 +7,11 @@ const Hammer = (() => {
   let S = null, ui = null, user = null, saveKey = '';
   let cv, ctx, W = 0, H = 0, stage = null, raf = 0, last = 0;
   const rnd = (a, b) => a + Math.random() * (b - a);
+  const JX = .22;
 
   function newGame() {
     S = { t: 0, dist: 0, speed: .22, score: 0, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
-      swing: -1, hitDone: false, ouch: -1, villain: -1, invuln: 0, right: 0, wrong: 0, flashRed: 0, clouds: [...Array(5)].map(() => ({ x: Math.random(), y: rnd(.08, .32), s: rnd(.08, .16), v: rnd(.01, .02) })) };
+      swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0 };
   }
 
   /* ---------- words on signs ---------- */
@@ -31,25 +32,30 @@ const Hammer = (() => {
   function update(dt) {
     S.t += dt;
     if (S.phase !== 'play') return;
-    const slow = S.ouch > 0 ? .35 : 1;
+    const slow = S.vil ? 0 : S.ouch > 0 ? .35 : 1;
     S.speed = Math.min(.5, S.speed + .0035 * dt);
     const v = S.speed * slow;
     S.dist += v * dt;
-    for (const c of S.clouds) { c.x -= c.v * dt; if (c.x < -.2) { c.x = 1.2; c.y = rnd(.08, .32); } }
+    if (S.vil) {   // the evil guy's visit: everything else waits while he clubs Jamie
+      const was = S.vil.t; S.vil.t += dt;
+      if (was < .83 && S.vil.t >= .83) { S.ouch = .9; S.flashRed = .4; S.bits.push({ kind: 'ouch', t: 0 }); }
+      if (S.vil.t > 2.05) { S.vil = null; if (S.lives <= 0) { S.phase = 'over'; setTimeout(gameOver, 400); } }
+    }
+    if (slow) { S.dustT -= dt; if (S.dustT <= 0) { S.dustT = .22; S.bits.push({ kind: 'dust', i: [0, 1, 2, 4, 5][Math.floor(Math.random() * 5)], x: JX - .04 - Math.random() * .02, t: 0 }); } }
     if (S.invuln > 0) S.invuln -= dt; if (S.flashRed > 0) S.flashRed -= dt;
-    if (S.ouch > 0) S.ouch -= dt; if (S.villain > 0) S.villain -= dt;
+    if (S.ouch > 0) S.ouch -= dt;
     // signs
     S.nextSign -= dt;
     const gap = Math.max(1.5, 3.2 - S.t * .02);
     const lastX = S.signs.length ? Math.max(...S.signs.map(s => s.x)) : -1;
-    if (S.nextSign <= 0 && lastX < .62) { makeSign(); S.nextSign = gap; }
-    const CX = .28;
+    if (S.nextSign <= 0 && lastX < .62 && !S.vil) { makeSign(); S.nextSign = gap; }
+    const CX = JX + .04;
     for (const s of S.signs) {
       s.x -= v * dt; s.wob += dt;
       if (s.state === 'up' && s.x < CX - .09) {
         // it got past Jamie
         s.state = 'passed';
-        if (s.correct) { S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: s.x, t: 0 }); }
+        if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: s.x, t: 0 }); }
         else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.word}” doesn’t mean “${s.shown}” — you let it past!`); }
       }
     }
@@ -63,134 +69,181 @@ const Hammer = (() => {
         if (target) {
           target.state = 'smashed'; target.smashT = 0;
           for (let i = 0; i < 9; i++) S.bits.push({ kind: 'plank', x: target.x, y: .55, vx: rnd(-.25, .35), vy: rnd(-.9, -.3), r: rnd(0, 6), t: 0 });
-          if (!target.correct) { S.score += 25; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: target.x, t: 0, text: '+25' }); }
+          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: target.x, t: 0, text: '+' + pts }); }
           else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.word}” really does mean “${target.shown}” — don’t smash the right ones!`); }
         }
       }
       if (S.swing > .4) S.swing = -1;
     }
-    for (const b of S.bits) { b.t += dt; if (b.kind === 'plank') { b.x += b.vx * dt; b.vy += 2.2 * dt; b.y += b.vy * dt; b.r += 3 * dt; } }
-    S.bits = S.bits.filter(b => b.t < (b.kind === 'plank' ? 1.2 : .9));
+    for (const b of S.bits) { b.t += dt; if (b.kind === 'plank') { b.x += b.vx * dt; b.vy += 2.2 * dt; b.y += b.vy * dt; b.r += 3 * dt; } else if (b.kind === 'dust') b.x -= v * dt * .6; }
+    S.bits = S.bits.filter(b => b.t < (b.kind === 'plank' ? 1.2 : b.kind === 'dust' ? .6 : .9));
     for (const s of S.signs) if (s.state === 'smashed') s.smashT += dt;
     S.signs = S.signs.filter(s => !(s.state === 'smashed' && s.smashT > .1));
     refreshUI();
   }
   function hurt(why) {
-    if (S.invuln > 0) return;
-    S.lives--; S.invuln = 2; S.ouch = .9; S.villain = 1.3; S.flashRed = .4;
+    if (S.invuln > 0 || S.vil) return;
+    S.lives--; S.invuln = 3; S.combo = 0; S.vil = { t: 0 }; S.swing = -1;
     ui.why.textContent = why; ui.why.classList.remove('show'); void ui.why.offsetWidth; ui.why.classList.add('show');
-    if (S.lives <= 0) { S.phase = 'over'; setTimeout(gameOver, 900); }
   }
   function gameOver() {
     const sv = store.get(saveKey, { best: 0 });
     const best = Math.max(sv.best || 0, S.score); const isBest = S.score > (sv.best || 0);
     store.set(saveKey, { ...sv, best, plays: (sv.plays || 0) + 1 });
-    showOverlay(`${isBest ? '🏆 New best score!' : 'Ouch!'}`, `Score ${S.score} · best ${best}<br>${S.right} right, ${S.wrong} wrong`, 'Run again', () => { newGame(); start(); });
+    showOverlay(`${isBest ? '🏆 New best score!' : 'Ouch!'}`, `Score ${S.score} · best ${best}<br>${S.right} right, ${S.wrong} wrong · best combo ×${S.bestCombo}`, 'Run again', () => { newGame(); start(); });
     if (isBest) Celebrate(innerWidth / 2, innerHeight / 3, 2);
   }
   function tap() {
-    if (!S || S.phase !== 'play' || S.swing >= 0) return;
-    S.swing = 0; S.hitDone = false;
+    if (!S || S.phase !== 'play' || S.swing >= 0 || S.vil) return;
+    S.swing = 0; S.hitDone = false; S.taps++;
   }
 
-  /* ---------- drawing (stand-in art until the real set arrives) ---------- */
+  /* ---------- art: the artist's pixel rigs, drawn part by part ---------- */
+  const ART = 'art/jh/', IMG = {};
+  const img = n => { if (!IMG[n]) { const i = new Image(); i.src = ART + n + '.png'; IMG[n] = i; } return IMG[n]; };
+  const ok = i => i.complete && i.naturalWidth > 0;
+  // part boxes in the rig's own pixel space [x0, y0, x1, y1]
+  const JAC = { head: [11, 9, 88, 79], eyesopen: [55, 61, 69, 68], eyesclosed: [55, 63, 69, 66], chest: [35, 74, 77, 102], legs: [19, 95, 95, 125], hittinglegs: [265, 100, 328, 131],
+    run1: [6, 135, 79, 166], run2: [86, 135, 127, 166], run3: [134, 135, 204, 166], run4: [213, 135, 256, 166], leftarm: [23, 75, 49, 100], lefthand: [26, 89, 49, 106], rightarm: [69, 74, 91, 95], righthand: [70, 63, 88, 82] };
+  const JPIV = [57, 125], HAND = [79, 72], HGRIP = [117, 105];                    // feet centre, right hand, where the hammer image is held
+  const DEC = { body: [7, 102, 162, 221], head: [29, 62, 106, 142], eyes: [40, 101, 71, 107], smile2: [44, 110, 68, 115], leftarm: [20, 128, 61, 214], lefthand: [32, 150, 62, 215], rightarm: [75, 121, 123, 201], weapon: [44, 4, 177, 211], righthand: [62, 151, 103, 213] };
+  const DHAND = [82, 182], DENTER = { 1: [24, 74, 149, 106], 2: [4, 43, 149, 106], 3: [11, 50, 149, 106], 4: [25, 55, 147, 106], 5: [28, 29, 139, 106], 6: [28, 8, 123, 106], 7: [29, 1, 123, 106] };
+  const DOG = { tail: [8, 21, 29, 43], run1: [8, 26, 74, 68], run2: [3, 26, 73, 68], run3: [13, 26, 79, 68], run4: [2, 26, 74, 68], legs: [12, 26, 72, 68], head: [42, 13, 83, 39], leftear: [47, 8, 63, 18], rightear: [65, 7, 77, 19],
+    chin: [65, 36, 80, 44], inside: [65, 31, 79, 41], tongue: [72, 36, 80, 47], openlefteye: [65, 26, 68, 31], openrighteye: [76, 25, 79, 29], lefteyebrow: [63, 21, 69, 26], righteyebrow: [75, 21, 79, 26] };
+  const PRELOAD = ['bg_road', 'w_hammer', 'fx_ready', 'fx_tap1', 'fx_tap2', 'fx_star2', 'fx_redstar', 'fx_smallstar', 'ui_combo', ...Object.keys(JAC).map(p => 'j_standard_' + p), ...Object.keys(DEC).map(p => 'd_' + p),
+    ...[1, 2, 3, 4, 5, 6, 7].map(n => 'd_enter' + n), ...Object.keys(DOG).map(p => 'g_' + p), ...[0, 1, 2, 4, 5].map(n => 'fx_dust' + n)];
+  // draw one rig part: box is in rig pixels, (px,py) the rig point that sits at screen (sx,sy), k the scale
+  function part(name, box, px, py, sx, sy, k) {
+    const i = img(name); if (!ok(i)) return;
+    ctx.drawImage(i, sx + (box[0] - px) * k, sy + (box[1] - py) * k, (box[2] - box[0]) * k, (box[3] - box[1]) * k);
+  }
+  const GROUND = .955;
+  const jScale = () => H * .42 / 116;
+
   function drawBackground() {
-    const g = ctx;
-    const sky = g.createLinearGradient(0, 0, 0, H); sky.addColorStop(0, '#8FD3FF'); sky.addColorStop(.7, '#DFF4FF'); sky.addColorStop(.72, '#7DBE50'); sky.addColorStop(1, '#5E9E3A');
-    g.fillStyle = sky; g.fillRect(0, 0, W, H);
-    // distant hills, scrolling slowly
-    g.fillStyle = '#A9D98A';
-    g.beginPath(); g.moveTo(0, H * .72);
-    for (let x = 0; x <= W; x += 8) g.lineTo(x, H * .62 + Math.sin((x + S.dist * W * .25) / 90) * H * .04 + Math.sin((x + S.dist * W * .25) / 37) * H * .015);
-    g.lineTo(W, H * .72); g.closePath(); g.fill();
-    // clouds
-    g.fillStyle = 'rgba(255,255,255,.9)';
-    for (const c of S.clouds) { const x = c.x * W, y = c.y * H, s = c.s * W; g.beginPath(); g.ellipse(x, y, s, s * .45, 0, 0, 7); g.ellipse(x - s * .5, y + s * .1, s * .55, s * .35, 0, 0, 7); g.ellipse(x + s * .5, y + s * .12, s * .5, s * .32, 0, 0, 7); g.fill(); }
-    // ground stripes
-    const off = (S.dist * W) % (W * .12);
-    g.fillStyle = 'rgba(0,0,0,.07)';
-    for (let x = -off; x < W; x += W * .12) g.fillRect(x, H * .72, W * .06, H * .28);
-    g.fillStyle = '#4C8A2E'; g.fillRect(0, H * .72, W, H * .012);
+    const g = ctx, bg = img('bg_road');
+    if (!ok(bg)) { g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); return; }
+    const sb = H / bg.naturalHeight, tw = bg.naturalWidth * sb;
+    const off = (S.dist * W * .9) % tw;
+    for (let x = -off; x < W; x += tw - .5) g.drawImage(bg, x, 0, tw + 1, H);
   }
   function drawJamie() {
-    const g = ctx, x = W * .28, ground = H * .72, s = H * .32;
-    const run = S.phase === 'play' ? Math.sin(S.t * 14) : 0, bob = Math.abs(run) * s * .06;
-    const stumble = S.ouch > 0 ? Math.sin(S.ouch * 12) * .18 : 0;
-    g.save(); g.translate(x, ground - bob); g.rotate(stumble);
+    const g = ctx, k = jScale(), x = W * JX, ground = H * GROUND;
+    const running = S.phase === 'play' && S.vil == null;
+    const cyc = running ? S.t * 10 : 0, bob = running ? Math.abs(Math.sin(cyc * Math.PI / 2)) * 2.5 : 0;
+    const stumble = S.ouch > 0 ? Math.sin(S.ouch * 12) * .14 : 0;
+    g.save(); g.translate(x, ground); g.rotate(stumble);
     if (S.invuln > 0 && Math.floor(S.t * 12) % 2) g.globalAlpha = .45;
-    // legs
-    g.strokeStyle = '#2B1A3A'; g.lineWidth = s * .09; g.lineCap = 'round';
-    g.beginPath(); g.moveTo(-s * .06, -s * .32); g.lineTo(-s * .06 + run * s * .18, 0); g.stroke();
-    g.beginPath(); g.moveTo(s * .06, -s * .32); g.lineTo(s * .06 - run * s * .18, 0); g.stroke();
-    // body
-    g.fillStyle = '#E8A0B4'; rr(g, -s * .18, -s * .72, s * .36, s * .44, s * .1); g.fill();
-    // head
-    g.fillStyle = '#F6C8A0'; g.beginPath(); g.arc(0, -s * .9, s * .19, 0, 7); g.fill();
-    g.fillStyle = '#5A3A1E'; g.beginPath(); g.arc(0, -s * .98, s * .19, Math.PI, 0); g.fill();   // hair
-    g.fillStyle = '#222'; g.beginPath(); g.arc(s * .07, -s * .9, s * .025, 0, 7); g.fill();
-    g.strokeStyle = '#8E2F4A'; g.lineWidth = s * .02; g.beginPath(); g.arc(s * .05, -s * .86, s * .06, .2, Math.PI - .4); g.stroke();  // smile
-    // arm + hammer
-    const swingA = S.swing >= 0 ? (S.swing < .14 ? -1.6 + S.swing / .14 * 2.4 : .8 - (S.swing - .14) / .26 * 2.4) : -1.2 + Math.sin(S.t * 14) * .08;
-    g.save(); g.translate(s * .16, -s * .6); g.rotate(swingA);
-    g.strokeStyle = '#F6C8A0'; g.lineWidth = s * .08; g.beginPath(); g.moveTo(0, 0); g.lineTo(s * .3, 0); g.stroke();
-    g.fillStyle = '#8B5E34'; rr(g, s * .28, -s * .03, s * .34, s * .06, s * .02); g.fill();            // handle
-    g.fillStyle = '#6B6B7E'; rr(g, s * .55, -s * .14, s * .18, s * .28, s * .04); g.fill();            // head
-    g.fillStyle = '#9A9AAE'; rr(g, s * .57, -s * .12, s * .06, s * .24, s * .02); g.fill();
+    const swinging = S.swing >= 0;
+    const legs = swinging ? 'hittinglegs' : running ? 'run' + (1 + Math.floor(cyc) % 4) : 'legs';
+    const P = (n, dy = 0) => part('j_standard_' + n, JAC[n], JPIV[0], JPIV[1], 0, -bob + dy, k);
+    const L = JAC[legs], lw = (L[2] - L[0]) * k, lh = (L[3] - L[1]) * k;       // leg frames are centred under him
+    const li = img('j_standard_' + legs); if (ok(li)) g.drawImage(li, -lw / 2, -lh, lw, lh);
+    P('leftarm'); P('lefthand'); P('chest'); P('head');
+    P((S.t % 3.3) < .14 ? 'eyesclosed' : 'eyesopen');
+    P('rightarm');
+    // the hammer swings about his right hand: resting over the shoulder, then whipped down in front
+    const a = swinging ? (S.swing < .14 ? S.swing / .14 * 2.05 : Math.max(0, 2.05 - (S.swing - .14) / .26 * 2.05)) : Math.sin(S.t * 10) * .04;
+    const hx = (HAND[0] - JPIV[0]) * k, hy = (HAND[1] - JPIV[1]) * k - bob;
+    g.save(); g.translate(hx + (HAND[0] - HAND[0]) * k + 2 * k, hy + 4 * k); g.rotate(a);
+    const hm = img('w_hammer'); if (ok(hm)) g.drawImage(hm, -HGRIP[0] * k, -HGRIP[1] * k, hm.naturalWidth * k, hm.naturalHeight * k);
     g.restore();
+    P('righthand');
     g.restore();
   }
+  function drawDog() {
+    const g = ctx, k = jScale() * .95, x = W * JX - W * .13, ground = H * GROUND;
+    const running = S.phase === 'play' && S.vil == null;
+    const cyc = running ? S.t * 10 + 1.5 : 0, bob = running ? Math.abs(Math.sin(cyc * Math.PI / 2)) * 2 : 0;
+    g.save(); g.translate(x, ground - bob);
+    const P = n => part('g_' + n, DOG[n], 43, 68, 0, 0, k);
+    P('tail'); P(running ? 'run' + (1 + Math.floor(cyc) % 4) : 'legs'); P('head'); P('leftear'); P('rightear'); P('chin'); P('inside'); P('tongue');
+    P('openlefteye'); P('openrighteye'); P('lefteyebrow'); P('righteyebrow');
+    g.restore();
+  }
+  // the evil guy: rises out of the ground to the right, clubs Jamie with his signpost, sinks back
   function drawVillain() {
-    if (S.villain <= 0) return;
-    const g = ctx, p = 1 - S.villain / 1.3, ground = H * .72, s = H * .34;
-    const x = W * .28 + W * .22 - Math.sin(Math.min(1, p * 3) * Math.PI / 2) * W * .12;   // leaps in, then backs off
-    g.save(); g.translate(x, ground);
-    g.fillStyle = '#7B3FB5'; g.beginPath(); g.ellipse(0, -s * .4, s * .3, s * .42, 0, 0, 7); g.fill();
-    for (let i = 0; i < 6; i++) { const a = -2.6 + i * .5; g.beginPath(); g.moveTo(Math.cos(a) * s * .25, -s * .4 + Math.sin(a) * s * .36); g.lineTo(Math.cos(a) * s * .42, -s * .4 + Math.sin(a) * s * .58); g.lineTo(Math.cos(a + .25) * s * .25, -s * .4 + Math.sin(a + .25) * s * .36); g.fill(); }
-    g.fillStyle = '#FFD23F'; g.beginPath(); g.arc(-s * .12, -s * .5, s * .06, 0, 7); g.arc(s * .02, -s * .5, s * .06, 0, 7); g.fill();
-    g.fillStyle = '#222'; g.beginPath(); g.arc(-s * .14, -s * .5, s * .03, 0, 7); g.arc(0, -s * .5, s * .03, 0, 7); g.fill();
-    g.strokeStyle = '#222'; g.lineWidth = s * .03; g.beginPath(); g.moveTo(-s * .2, -s * .6); g.lineTo(-s * .06, -s * .55); g.moveTo(s * .1, -s * .55); g.lineTo(-s * .02, -s * .6); g.stroke();   // angry brows
-    g.fillStyle = '#fff'; g.beginPath(); g.moveTo(-s * .14, -s * .3); for (let i = 0; i < 5; i++) { g.lineTo(-s * .14 + i * s * .06 + s * .03, -s * .22); g.lineTo(-s * .14 + (i + 1) * s * .06, -s * .3); } g.fill();   // teeth
-    // club
-    g.save(); g.translate(-s * .2, -s * .5); g.rotate(p < .4 ? -1.2 + p * 5 : .8 - (p - .4) * 1.5);
-    g.fillStyle = '#5A3A1E'; rr(g, -s * .04, -s * .4, s * .08, s * .42, s * .03); g.fill(); g.fillStyle = '#4A2A12'; g.beginPath(); g.arc(0, -s * .42, s * .1, 0, 7); g.fill(); g.restore();
+    const v = S.vil; if (!v) return;
+    const g = ctx, kd = H * .5 / 160, ground = H * GROUND, vx = W * JX + 88 * jScale();
+    const t = v.t;
+    if (t < .56 || t > 1.5) {
+      const f = t < .56 ? 1 + Math.min(6, Math.floor(t / .08)) : 7 - Math.min(6, Math.floor((t - 1.5) / .08));
+      const b = DENTER[f], i = img('d_enter' + f); if (!ok(i)) return;
+      const k2 = kd * 2;
+      g.drawImage(i, vx + (b[0] * 2 - 50) * kd, ground - (106 - b[1]) * k2, (b[2] - b[0]) * k2, (b[3] - b[1]) * k2);
+      return;
+    }
+    g.save(); g.translate(vx, ground);
+    const P = n => part('d_' + n, DEC[n], 0, 221, 0, 0, kd);
+    P('leftarm'); P('lefthand'); P('body'); P('head'); P('eyes'); P('smile2'); P('rightarm');
+    // swing: wind up, whack, recover
+    const u = t - .56, a = u < .12 ? u / .12 * .35 : u < .27 ? .35 - (u - .12) / .15 * 2.35 : u < .6 ? -2 : -2 + (u - .6) / .34 * 2;
+    g.save(); g.translate(DHAND[0] * kd, (DHAND[1] - 221) * kd); g.rotate(a);
+    part('d_weapon', DEC.weapon, DHAND[0], DHAND[1], 0, 0, kd); part('d_righthand', DEC.righthand, DHAND[0], DHAND[1], 0, 0, kd);
+    g.restore();
     g.restore();
   }
   function wrap(g, text, maxW, size) {
-    g.font = `600 ${size}px system-ui, sans-serif`;
+    g.font = `700 ${size}px system-ui, sans-serif`;
     const words = text.split(' '), lines = []; let line = '';
     for (const w of words) { const t = line ? line + ' ' + w : w; if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }
     if (line) lines.push(line); return lines;
   }
   function drawSign(s) {
-    const g = ctx, x = s.x * W, ground = H * .72, sw = Math.min(W * .25, H * .62), sh = sw * .62;
-    g.save(); g.translate(x, ground);
-    if (s.state === 'smashed') { g.restore(); return; }
-    g.fillStyle = '#6B4423'; g.fillRect(-sw * .04, -sh * 1.05, sw * .08, sh * 1.05);                    // post
-    g.fillStyle = s.state === 'passed' && s.correct ? '#C9E6A4' : '#E8C27A'; g.strokeStyle = '#6B4423'; g.lineWidth = sw * .025;
-    rr(g, -sw / 2, -sh * 1.95, sw, sh, sw * .05); g.fill(); g.stroke();
+    const g = ctx, x = s.x * W, ground = H * GROUND, sw = Math.min(W * .26, H * .6), sh = sw * .58, top = ground - sh * 2.05;
+    if (s.state === 'smashed') return;
+    g.save(); g.translate(x, 0);
+    const px = Math.max(3, sw * .02);
+    g.fillStyle = '#2a1a10'; g.fillRect(-sw * .045 - px, top + sh * .8, sw * .09 + px * 2, ground - top - sh * .8);   // post
+    g.fillStyle = '#8a5a2a'; g.fillRect(-sw * .045, top + sh * .8, sw * .09, ground - top - sh * .8);
+    g.fillStyle = '#5a3a1a'; g.fillRect(sw * .01, top + sh * .8, sw * .03, ground - top - sh * .8);
+    g.fillStyle = '#2a1a10'; g.fillRect(-sw / 2 - px, top - px, sw + px * 2, sh + px * 2);                              // board
+    g.fillStyle = s.state === 'passed' && s.correct ? '#b9e08c' : '#e8c27a'; g.fillRect(-sw / 2, top, sw, sh);
+    g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(-sw / 2, top + sh * .33, sw, px); g.fillRect(-sw / 2, top + sh * .66, sw, px);
+    g.fillStyle = '#fff3cf'; g.fillRect(-sw / 2, top, sw, px);
     g.fillStyle = '#2B1A3A'; g.textAlign = 'center'; g.textBaseline = 'middle';
     const lat = Math.round(sw * .17);
     g.font = `700 ${lat}px Georgia, serif`;
-    let w0 = s.w.word, f = lat; while (g.measureText(w0).width > sw * .9 && f > 10) { f--; g.font = `700 ${f}px Georgia, serif`; }
-    g.fillText(w0, 0, -sh * 1.95 + sh * .3);
-    g.fillStyle = '#6B4423'; g.fillRect(-sw * .4, -sh * 1.95 + sh * .5, sw * .8, 1.5);
-    const lines = wrap(g, s.shown, sw * .9, Math.round(sw * .11));
-    lines.slice(0, 2).forEach((ln, i) => g.fillText(ln, 0, -sh * 1.95 + sh * .68 + i * sw * .12));
+    let f = lat; while (g.measureText(s.w.word).width > sw * .9 && f > 10) { f--; g.font = `700 ${f}px Georgia, serif`; }
+    g.fillText(s.w.word, 0, top + sh * .25);
+    const lines = wrap(g, s.shown, sw * .9, Math.round(sw * .105));
+    lines.slice(0, 2).forEach((ln, i) => g.fillText(ln, 0, top + sh * (lines.length > 1 ? .55 : .66) + i * sw * .115));
     g.restore();
   }
+  function sprite(n, x, y, k, alpha = 1, rot = 0) {
+    const i = img(n); if (!ok(i)) return;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.translate(x, y); ctx.rotate(rot); ctx.drawImage(i, -i.naturalWidth * k / 2, -i.naturalHeight * k / 2, i.naturalWidth * k, i.naturalHeight * k); ctx.restore();
+  }
+  function drawHud() {
+    const g = ctx;
+    if (S.phase === 'play' && S.t < 1.2) sprite('fx_ready', W * .55, H * .16, Math.min(W / 420, H / 180), S.t < 1 ? 1 : (1.2 - S.t) / .2);
+    else if (S.phase === 'play' && !S.taps && S.signs.length) sprite(Math.floor(S.t * 3) % 2 ? 'fx_tap1' : 'fx_tap2', W * .55, H * .16, Math.min(W / 420, H / 180) * .8);
+    if (S.combo >= 3) {
+      const i = img('ui_combo'), k = Math.min(W * .2 / 227, H * .1 / 58);
+      if (ok(i)) {
+        const w = i.naturalWidth * k, h = i.naturalHeight * k, x = W - w - 8 - h * 1.4, y = 6;
+        g.drawImage(i, x, y, w, h);
+        g.font = `900 ${h * .95}px system-ui, sans-serif`; g.textAlign = 'left'; g.textBaseline = 'middle'; g.lineWidth = h * .14; g.strokeStyle = '#2a1a10'; g.fillStyle = '#FFD23F';
+        g.strokeText('×' + S.combo, x + w + 6, y + h / 2); g.fillText('×' + S.combo, x + w + 6, y + h / 2);
+      }
+    }
+  }
   function draw() {
+    ctx.imageSmoothingEnabled = false;
     drawBackground();
     for (const s of S.signs) drawSign(s);
-    drawVillain();
-    drawJamie();
+    const k = jScale() * .8;
+    for (const b of S.bits) if (b.kind === 'dust') sprite('fx_dust' + b.i, b.x * W, H * GROUND - 6 * k, k * (.6 + b.t), .7 * (1 - b.t / .6));
+    drawDog(); drawJamie(); drawVillain();
     for (const b of S.bits) {
-      if (b.kind === 'plank') { ctx.save(); ctx.translate(b.x * W, b.y * H); ctx.rotate(b.r); ctx.globalAlpha = 1 - b.t / 1.2; ctx.fillStyle = '#E8C27A'; ctx.fillRect(-W * .03, -H * .012, W * .06, H * .024); ctx.restore(); }
-      else if (b.kind === 'pop') { ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#2E7D4F'; ctx.font = `800 ${H * .08}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText(b.text, b.x * W, H * .3 - b.t * H * .15); ctx.globalAlpha = 1; }
-      else if (b.kind === 'tick') { ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#2E7D4F'; ctx.font = `800 ${H * .09}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('✓', b.x * W, H * .3 - b.t * H * .1); ctx.globalAlpha = 1; }
+      if (b.kind === 'plank') { ctx.save(); ctx.translate(b.x * W, b.y * H); ctx.rotate(b.r); ctx.globalAlpha = 1 - b.t / 1.2; ctx.fillStyle = '#E8C27A'; ctx.fillRect(-W * .03, -H * .012, W * .06, H * .024); ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 2; ctx.strokeRect(-W * .03, -H * .012, W * .06, H * .024); ctx.restore(); }
+      else if (b.kind === 'pop') { sprite('fx_star2', b.x * W, H * .5, k * (1 + b.t * .6), 1 - b.t, b.t * 2); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#FFD23F'; ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 4; ctx.font = `900 ${H * .09}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.strokeText(b.text, b.x * W, H * .3 - b.t * H * .15); ctx.fillText(b.text, b.x * W, H * .3 - b.t * H * .15); ctx.globalAlpha = 1; }
+      else if (b.kind === 'tick') { sprite('fx_smallstar', b.x * W, H * .3 - b.t * H * .1, k * 1.2, 1 - b.t, b.t * 3); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#2E7D4F'; ctx.font = `900 ${H * .08}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('✓', b.x * W + H * .07, H * .3 - b.t * H * .1); ctx.globalAlpha = 1; }
+      else if (b.kind === 'ouch') sprite('fx_redstar', W * JX + 10, H * GROUND - jScale() * 70, k * (1.2 + b.t), 1 - b.t / .9, -b.t);
     }
+    drawHud();
     if (S.flashRed > 0) { ctx.fillStyle = `rgba(255,40,40,${S.flashRed * .6})`; ctx.fillRect(0, 0, W, H); }
   }
-  function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
 
   /* ---------- DOM ---------- */
   function refreshUI() {
@@ -240,11 +293,12 @@ const Hammer = (() => {
     cv = root.querySelector('#hcv'); ctx = cv.getContext('2d');
     document.body.classList.add('noscroll');
     root.querySelector('#hhome').onclick = () => { if (opts.home) opts.home(); };
+    PRELOAD.forEach(img);
     newGame(); layout(); refreshUI();
     cv.addEventListener('pointerdown', e => { e.preventDefault(); tap(); });
     addEventListener('resize', layout);
     const keys = e => { if (e.code === 'Space' || e.key === 'ArrowUp') tap(); }; document.addEventListener('keydown', keys); ui.keys = keys;
-    showOverlay("Jamie's Hammer", 'Signs come running at you with a Latin word and a meaning. If the meaning is <b>wrong</b>, tap to smash it with the hammer. If it’s <b>right</b>, let it go by. Get it wrong and the evil guy comes out!', "Let's run!", start);
+    showOverlay(`<img src="${ART}icon.png" alt="" style="width:64px;height:64px;border-radius:14px;vertical-align:middle;margin-right:8px">Jamie's Hammer`, 'Signs come running at you with a Latin word and a meaning. If the meaning is <b>wrong</b>, tap to smash it with the hammer. If it’s <b>right</b>, let it go by. Get it wrong and the evil guy comes out!', "Let's run!", start);
     last = performance.now(); raf = requestAnimationFrame(frame);
   }
   function unmount() {

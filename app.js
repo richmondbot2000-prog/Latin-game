@@ -266,7 +266,8 @@ function renderHome(u) {
       <div class="small">${(() => { const sv = store.get('latin.practice.' + u.id, { best: 1 }); return (sv.best || 1) > 1 ? `Best: level ${sv.best} · ${sv.kills || 0} squishies squished` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
       <div class="orgbtns"><button class="btn ghost" id="trophGo">🏆 Trophies ${(() => { const sv = store.get('latin.practice.' + u.id, {}); return Practice.trophies(sv).filter(t => t.got).length; })()}/20</button><button class="btn" id="pracGo">Play</button></div>
     </div>
-    <div class="tile org" id="ham">
+    <div class="tile org prac" id="ham">
+      <img class="pracico" src="art/jh/icon.png" alt="">
       <h2>Jamie's Hammer</h2>
       <p>Run past the signs. Smash the wrong meanings, let the right ones by.</p>
       <div class="small">${(() => { const sv = store.get('latin.hammer.' + u.id, { best: 0 }); return sv.best ? `Best score ${sv.best}` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
