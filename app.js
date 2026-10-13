@@ -98,7 +98,8 @@ function route() {
   const u = current();
   const h = location.hash.slice(1);
   if (!u) return renderSignIn();
-  if (h === 'organise') return renderOrganise(u);
+  if (h === 'list' || h === 'play') return renderOrganise(u, h);
+  if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
 }
 window.addEventListener('hashchange', route);
@@ -184,19 +185,30 @@ function renderHome(u) {
     <div class="bar"><span class="title"></span><button class="iconbtn" id="who">Switch</button></div>
     <div class="hello"><div class="small">Salve,</div><div class="who"></div></div>
     ${installTip('home')}
-    <button class="tile" id="org">
+    <div class="tile org" id="org">
       <h2>Organise</h2>
-      <p>${levelName(levelOf(u))}: ${total} words to learn with swipe cards.</p>
+      <p>Learn the words with swipe cards. Which words?</p>
+      <div class="levels" role="radiogroup" aria-label="Which words">
+        ${LEVELS.map(([k, n]) => `<button role="radio" data-l="${k}" aria-checked="${k === levelOf(u)}"><b>${n}</b><span>${WORDS.filter(w => inLevel(w, k)).length} words</span></button>`).join('')}
+      </div>
       ${meterHTML(c, total)}
       <div class="small">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
-    </button>
+      <div class="orgbtns"><button class="btn ghost" data-t="list">Word list</button><button class="btn" data-t="play">Play</button></div>
+    </div>
     <div class="tile locked"><h2>Coming soon</h2><p>Reading sentences</p></div>
     <div class="tile locked"><h2>Coming soon</h2><p>Reading stories</p></div>
     <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
   </div>`;
   $('.who').textContent = u.name + ' ' + u.emojis.join('');
   wireTip();
-  $('#org').onclick = () => { location.hash = 'organise'; };
+  $('#org .levels').onclick = e => {
+    const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
+    store.set(levelKey(u), b.dataset.l); renderHome(u);
+  };
+  $('#org .orgbtns').onclick = e => {
+    const b = e.target.closest('button'); if (!b) return;
+    store.set('latin.orgTab', b.dataset.t); location.hash = b.dataset.t;
+  };
   $('#who').onclick = () => { store.del('latin.current'); route(); };
   $('#del').onclick = () => {
     if (!confirm(`Delete ${u.name} and all their stars on this device? This can't be undone.`)) return;
@@ -207,30 +219,14 @@ function renderHome(u) {
 }
 
 /* ---------- organise ---------- */
-function renderOrganise(u) {
+function renderOrganise(u, tab) {
   Celebrate.stop();
-  const tab = store.get('latin.orgTab', 'list');
   app.innerHTML = `
   <div class="wrap">
-    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Organise</span><span style="min-width:72px"></span></div>
-    <div class="levels" role="radiogroup" aria-label="Which words">
-      ${LEVELS.map(([k, n]) => `<button role="radio" data-l="${k}" aria-checked="${k === levelOf(u)}"><b>${n}</b><span>${WORDS.filter(w => inLevel(w, k)).length} words</span></button>`).join('')}
-    </div>
-    <div class="tabs" role="tablist">
-      <button role="tab" data-t="list" aria-selected="${tab === 'list'}">Word list</button>
-      <button role="tab" data-t="play" aria-selected="${tab === 'play'}">Play</button>
-    </div>
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">${tab === 'play' ? 'Play' : 'Word list'}</span><span class="lvtag">${levelName(levelOf(u))}</span></div>
     <div id="pane" class="play"></div>
   </div>`;
   $('#back').onclick = () => { location.hash = ''; };
-  app.querySelector('.levels').onclick = e => {
-    const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
-    store.set(levelKey(u), b.dataset.l); renderOrganise(u);
-  };
-  app.querySelector('.tabs').onclick = e => {
-    const b = e.target.closest('button'); if (!b) return;
-    store.set('latin.orgTab', b.dataset.t); renderOrganise(u);
-  };
   (tab === 'play' ? renderPlay : renderList)(u, $('#pane'));
 }
 
