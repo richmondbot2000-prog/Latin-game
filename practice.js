@@ -5,13 +5,25 @@
 const Practice = (() => {
   const ROWS = 6, COLS = 9;
   const START_MONEY = 150, MATCH_COINS = 25, FREEZE_SECS = 5;
+  // the artist's weapon set (art/weapons). kind: shoot = bullets along the row; beam = slows everything in front; ring = a sonic ring
+  // that knocks the whole row back; lob = lobbed shells (Solar Blast anywhere, Miner along its row); mine = explodes when touched;
+  // bomb = explodes after a fuse; brain = turns the squishy that bites it; wall = just soaks up bites. tiers[1..2] carry the upgrade cost.
   const GUNS = {
-    shooter: { name: 'Blaster', cost: 100, every: 2, dmg: 20, speed: 7, recharge: 5, hp: 100, blurb: 'a bullet every 2 s; upgrade it for more barrels' },
-    mortar:  { name: 'Mortar', cost: 225, every: 7, dmg: 90, splash: 1.4, recharge: 12, hp: 100, blurb: 'big blast every 7 s' },
+    shooter:      { name: 'Blaster', cost: 100, hp: 100, recharge: 5, art: 'blaster', kind: 'shoot', proj: 'bullet', dmg: 20, speed: 7, tiers: [{ every: 2, shots: 1 }, { every: 2, shots: 2, cost: 150 }, { every: 1 / 3, shots: 1, cost: 250 }], blurb: 'a bullet every 2 s; upgrades add barrels' },
+    handy:        { name: 'Handy Turret', cost: 150, hp: 100, recharge: 8, art: 'handy', kind: 'shoot', proj: 'bullet', small: true, dmg: 7, speed: 9, tiers: [{ every: .5, shots: 1 }, { every: .33, shots: 1, cost: 150 }, { every: .2, shots: 1, cost: 250 }], blurb: 'sprays little bullets' },
+    freezeturret: { name: 'Freeze Turret', cost: 175, hp: 100, recharge: 10, art: 'freezeturret', kind: 'shoot', proj: 'ice', dmg: 15, speed: 8, tiers: [{ every: 3, shots: 1, freeze: 1.5 }, { every: 2.2, shots: 1, freeze: 2, cost: 150 }, { every: 1.5, shots: 1, freeze: 2.5, cost: 250 }], blurb: 'ice shards freeze a squishy on the spot' },
+    freezeray:    { name: 'Freeze Ray', cost: 150, hp: 100, recharge: 8, art: 'freezeray', kind: 'beam', range: 3.5, dmg: 6, tiers: [{}], blurb: 'a cold beam: everything in front crawls at half speed' },
+    sonic:        { name: 'Sonic Boom', cost: 200, hp: 100, recharge: 12, art: 'sonic', kind: 'ring', tiers: [{ every: 5, push: .8, dmg: 25 }, { every: 4, push: 1.2, dmg: 35, cost: 150 }, { every: 3, push: 1.6, dmg: 45, cost: 250 }], blurb: 'a ring that knocks the whole row back' },
+    mortar:       { name: 'Solar Blast', cost: 225, hp: 100, recharge: 12, art: 'solar', kind: 'lob', proj: 'lava', tiers: [{ every: 7, dmg: 90, splash: 1.4 }], blurb: 'lobs a fireball at the squishy nearest your gnomes' },
+    miner:        { name: 'Miner Shoot', cost: 150, hp: 100, recharge: 8, art: 'miner', kind: 'lob', lane: true, proj: 'rock', tiers: [{ every: 4, dmg: 45, splash: .8 }, { every: 3, dmg: 55, splash: .9, cost: 150 }, { every: 2.2, dmg: 70, splash: 1, cost: 250 }], blurb: 'flings rocks along its row' },
+    mine:         { name: 'Detonate Bomb', cost: 125, hp: 60, recharge: 14, art: 'mine', kind: 'mine', arm: 4, tiers: [{ dmg: 300, splash: 1 }, { dmg: 420, splash: 1.4, cost: 120 }, { dmg: 600, splash: 1.8, cost: 200 }], blurb: 'arms in 4 s, then blows up the first squishy to touch it' },
+    plasma:       { name: 'Plasma Bomb', cost: 150, hp: 9999, recharge: 20, art: 'plasma', kind: 'bomb', fuse: 1.5, tiers: [{ dmg: 500, splash: 1.7 }], blurb: 'goes off after 1.5 s and clears the area' },
+    brain:        { name: 'Brain Wash', cost: 175, hp: 80, recharge: 15, art: 'brain', kind: 'brain', tiers: [{ uses: 1 }, { uses: 2, cost: 150 }, { uses: 3, cost: 250 }], blurb: 'the squishy that bites it turns round and fights for you' },
+    shield:       { name: 'Shield', cost: 50, hp: 400, recharge: 8, art: 'shield', kind: 'wall', tiers: [{ hp: 400 }, { hp: 800, cost: 75 }, { hp: 1400, cost: 125 }], blurb: 'a tough wall that keeps them busy' },
   };
-  // Bumble Blaster tiers: more barrels, more bullets
-  const TIERS = [null, { every: 2, shots: 1 }, { every: 2, shots: 2, cost: 150 }, { every: 1 / 3, shots: 1, cost: 250 }];
-  const tierCost = g => g && g.type === 'shooter' && (g.tier || 1) < 3 ? TIERS[(g.tier || 1) + 1].cost : 0;
+  const tierOf = g => GUNS[g.type].tiers[(g.tier || 1) - 1] || GUNS[g.type].tiers[0];
+  const tierCost = g => { if (!g) return 0; const t = GUNS[g.type].tiers[g.tier || 1]; return t ? t.cost : 0; };
+  const gunHp = g => tierOf(g).hp || GUNS[g.type].hp;
   // the squishies (art in art/squishies, drawn facing left as supplied). size is relative to a cell;
   // 'from' is the first level they appear; look.hurt shows once they are below half health; the Kings, the Queen and Sharky are bosses
   const SQUISHIES = {
@@ -56,8 +68,9 @@ const Practice = (() => {
   const UI_NAMES = ['blaster1', 'blaster2', 'blaster3', 'bullet', 'planet', 'bolt', 'bolt2', 'ice', 'title_gameover', 'title_youwin', 'laurel_l', 'laurel_r', 'spaceman_sad', 'star', 'star_dark',
     'pose_stand', 'pose_wave', 'pose_arms', 'pose_hips', 'pose_thumbs', 'pose_facepalm', 'emo_neutral', 'emo_xx', 'emo_happy', 'emo_sleepy', 'emo_shock', 'emo_sad', 'emo_confused', 'emo_qqq', 'emo_v', 'emo_bear', 'emo_stare', 'emo_love', 'emo_grin', 'wave1', 'wave2', 'wave3', 'wave4'];
   const uiImg = n => { const im = UI[n]; return im && im.complete && im.naturalWidth ? im : null; };
-  const GUN_ART = { shooter: 'blaster1', mortar: 'mortar' };
-  const gunArt = g => g.type === 'shooter' ? 'blaster' + (g.tier || 1) : null;
+  const WEAPONS = {};   // art/weapons: every gun tier and the projectiles
+  const wImg = n => { const im = WEAPONS[n]; return im && im.complete && im.naturalWidth ? im : null; };
+  const gunArt = g => { const k = GUNS[g.type]; return wImg(k.art + (g.tier || 1)) ? k.art + (g.tier || 1) : k.art + '1'; };
   const rnd = (a, b) => a + Math.random() * (b - a);
   const pickWeighted = w => { let t = 0; for (const k in w) t += w[k]; let r = Math.random() * t; for (const k in w) { r -= w[k]; if (r <= 0) return k; } return Object.keys(w)[0]; };
 
@@ -75,7 +88,7 @@ const Practice = (() => {
       gnomes: Array(ROWS).fill(true), gnomeRuns: [],
       squishies: [], bullets: [], shells: [], fx: [], floats: [],
       spawned: 0, nextSpawn: spec.grace, hugeDone: false, banner: null,
-      sel: null, recharge: { shooter: 0, mortar: 0 }, lastRows: [], shake: 0, kills: 0, correct: 0, asked: 0, streak: 0, power: null, frozen: 0 };
+      sel: null, recharge: Object.fromEntries(Object.keys(GUNS).map(k => [k, 0])), rings: [], lastRows: [], shake: 0, kills: 0, correct: 0, asked: 0, streak: 0, power: null, frozen: 0 };
   }
 
   /* ---------- squishies ---------- */
@@ -147,7 +160,16 @@ const Practice = (() => {
     // squishies move / chomp (not while the lawn is frozen)
     for (const sq of S.squishies) {
       if (S.frozen > 0) { sq.eating = null; continue; }
+      if (sq.frozenT > 0) { sq.frozenT -= dt; sq.eating = null; if (sq.flash > 0) sq.flash -= dt; continue; }   // iced by a Freeze Turret
+      if (sq.stun > 0) { sq.stun -= dt; continue; }
       sq.wob += dt; if (sq.flash > 0) sq.flash -= dt; if (sq.rise > 0) sq.rise -= dt;
+      if (sq.hypno) {                  // brain-washed: walks back the way it came, biting the others
+        sq.eating = null; sq.x += sq.k.speed * 1.4 * dt;
+        for (const o of S.squishies) if (o !== sq && !o.hypno && !o.dead && o.row === sq.row && Math.abs(o.x - sq.x) < .5) { hurt(o, 60 * dt); sq.hp -= 10 * dt; }
+        if (sq.x > COLS + 1.2 || sq.hp <= 0) { sq.dead = true; if (sq.hp <= 0) S.fx.push({ kind: 'splat', x: sq.x, row: sq.row, t: 0, color: sq.k.color, size: sq.k.size }); }
+        continue;
+      }
+      const slow = sq.slowT > 0 ? .5 : 1; if (sq.slowT > 0) sq.slowT -= dt;
       if (sq.under) {                  // drilling: only a moving mound shows; bullets pass over, mortar blasts still hurt
         sq.x -= sq.k.dig * dt;
         sq.dirtT = (sq.dirtT || 0) - dt;
@@ -168,12 +190,24 @@ const Practice = (() => {
         continue;
       }
       if (g && sq.pass > 0 && sq.passedCol !== col) { sq.pass--; sq.passedCol = col; }   // ghosts and flyers float over guns
+      if (g && GUNS[g.type].kind === 'brain' && !sq.k.boss && sq.passedCol !== col) {   // Brain Wash: one bite and the squishy is yours
+        sq.hypno = true; sq.eating = null; sq.flash = .3; g.uses--; S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: .4 }); S.floats.push({ x: col + .5, row: sq.row, t: 0, text: 'Brainwashed!' });
+        buddy('pose_thumbs', 'emo_grin', 1.5);
+        if (g.uses <= 0) { S.grid[sq.row][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 }); }
+        continue;
+      }
+      if (g && GUNS[g.type].kind === 'mine' && g.armed && sq.passedCol !== col) {   // Detonate Bomb: boom
+        const t = tierOf(g); S.grid[sq.row][col] = null; S.shake = .4;
+        S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: t.splash });
+        for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (col + .5), (o.row - sq.row) * 1.15) < t.splash) hurt(o, t.dmg);
+        continue;
+      }
       if (g && sq.passedCol !== col) {
         sq.eating = g; g.hp -= sq.k.chomp * dt; g.bitten = .25;
         if (g.hp <= 0) { S.grid[sq.row][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 }); sq.eating = null; buddy('pose_arms', 'emo_shock', 1.6); }
       } else {
         sq.eating = null;
-        if (sq.rise <= 0) sq.x -= sq.k.speed * dt;
+        if (sq.rise <= 0) sq.x -= sq.k.speed * slow * dt;
         if (sq.x < -.25) {
           if (S.gnomes[sq.row]) { S.gnomes[sq.row] = false; S.gnomeRuns.push({ row: sq.row, x: -.6 }); S.shake = .3; }
           else if (!S.gnomeRuns.some(r => r.row === sq.row)) { lose(); return; }
@@ -187,26 +221,52 @@ const Practice = (() => {
     }
     S.gnomeRuns = S.gnomeRuns.filter(gr => gr.x < COLS + 1);
 
-    // guns fire
+    // guns act
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const g = S.grid[r][c]; if (!g) continue;
+      const k = GUNS[g.type], tier = tierOf(g);
       if (g.bitten > 0) g.bitten -= dt;
+      if (k.kind === 'wall') continue;
+      if (k.kind === 'mine') { if (!g.armed) { g.arm -= dt; if (g.arm <= 0) { g.armed = true; S.floats.push({ x: c + .5, row: r, t: 0, text: 'Armed!' }); } } continue; }
+      if (k.kind === 'bomb') {
+        g.fuse -= dt;
+        if (g.fuse <= 0) {
+          S.grid[r][c] = null; S.shake = .6; S.fx.push({ kind: 'boom', x: c + .5, row: r, t: 0, r: tier.splash });
+          for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (c + .5), (o.row - r) * 1.15) < tier.splash) hurt(o, tier.dmg);
+        }
+        continue;
+      }
+      if (k.kind === 'brain') continue;
+      if (k.kind === 'beam') {   // everything in front crawls, and takes a little cold damage
+        let any = false;
+        for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === r && sq.x > c + .3 && sq.x < c + .3 + k.range) { sq.slowT = .25; hurt(sq, k.dmg * dt); any = true; }
+        g.beam = any; continue;
+      }
       g.cool -= dt;
       if (g.cool > 0) continue;
-      // bullets only fly along the gun's own row; the mortar lobs at the most advanced squishy on the whole lawn
-      const targets = S.squishies.filter(s => !s.dead && s.x < COLS + .6 && (g.type === 'mortar' ? s.x > .5 : s.row === r && s.x > c + .2 && !s.under));
+      // bullets, rings and rocks fly along the gun's own row; the Solar Blast lobs at the most advanced squishy on the whole lawn
+      const targets = S.squishies.filter(s => !s.dead && !s.hypno && s.x < COLS + .6 && (k.kind === 'lob' && !k.lane ? s.x > .5 : s.row === r && s.x > c + .2 && !s.under));
       if (!targets.length) continue;
       const first = targets.reduce((a, b) => a.x < b.x ? a : b);
-      const k = GUNS[g.type], tier = TIERS[g.tier || 1];
-      g.cool = g.type === 'shooter' ? tier.every : k.every; g.kick = .12;
-      if (g.type === 'mortar') S.shells.push({ x0: c + .5, row0: r, x1: first.x, row: first.row, t: 0, dur: Math.max(.7, Math.hypot(first.x - c, first.row - r) / 6 + .4), dmg: k.dmg, splash: k.splash });
-      else for (let s = 0; s < tier.shots; s++) S.bullets.push({ x: c + .75 - s * .22, row: r, speed: k.speed, dmg: k.dmg, big: (g.tier || 1) < 3 });
+      g.cool = tier.every; g.kick = .12;
+      if (k.kind === 'lob') S.shells.push({ x0: c + .5, row0: r, x1: first.x, row: first.row, t: 0, dur: Math.max(.6, Math.hypot(first.x - c, first.row - r) / 6 + .4), dmg: tier.dmg, splash: tier.splash, proj: k.proj });
+      else if (k.kind === 'ring') S.rings.push({ x: c + .6, row: r, speed: 4.5, push: tier.push, dmg: tier.dmg, hit: new Set(), t: 0 });
+      else for (let i = 0; i < tier.shots; i++) S.bullets.push({ x: c + .75 - i * .22, row: r, speed: k.speed, dmg: k.dmg, proj: k.proj, small: !!k.small, freeze: tier.freeze || 0, big: g.type === 'shooter' && (g.tier || 1) < 3 });
     }
+    // sonic rings: pass through every squishy in the row, knocking it back
+    for (const rg of S.rings) {
+      rg.x += rg.speed * dt; rg.t += dt;
+      for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === rg.row && !rg.hit.has(sq) && sq.x < rg.x + .2 && sq.x > rg.x - .6) {
+        rg.hit.add(sq); hurt(sq, rg.dmg); sq.stun = .25; sq.x = Math.min(COLS + .4, sq.x + rg.push * (sq.k.boss ? .3 : 1)); sq.eating = null;
+      }
+      if (rg.x > COLS + 1) rg.gone = true;
+    }
+    S.rings = S.rings.filter(r => !r.gone);
     // bullets
     for (const b of S.bullets) {
       b.x += b.speed * dt;
-      const hit = S.squishies.find(s => s.row === b.row && !s.dead && !s.under && Math.abs(s.x - b.x) < s.k.size * .45);
-      if (hit) { hurt(hit, b.dmg); b.gone = true; }
+      const hit = S.squishies.find(s => s.row === b.row && !s.dead && !s.hypno && !s.under && Math.abs(s.x - b.x) < s.k.size * .45);
+      if (hit) { hurt(hit, b.dmg); b.gone = true; if (b.freeze && !hit.k.boss) { hit.frozenT = b.freeze; hit.eating = null; } else if (b.freeze) hit.slowT = 1; }
       if (b.x > COLS + 1) b.gone = true;
     }
     S.bullets = S.bullets.filter(b => !b.gone);
@@ -309,11 +369,21 @@ const Practice = (() => {
   function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
   function drawGun(g, type, x, y, s, kick = 0, hp = 1) {
     // x,y = centre; s = cell size
-    const im = uiImg(typeof type === 'object' ? gunArt(type) : GUN_ART[type]);
-    if (typeof type === 'object') type = type.type;
+    const gun = typeof type === 'object' ? type : { type, tier: 1 };
+    const im = wImg(gunArt(gun)), k = GUNS[gun.type];
+    type = gun.type;
     if (im) {
-      const w = s * (type === 'mortar' ? 1.0 : .9), h = w * im.naturalHeight / im.naturalWidth;
+      const w = s * (k.kind === 'wall' ? .8 : .92), h = w * im.naturalHeight / im.naturalWidth;
+      if (k.kind === 'mine' && !gun.armed) g.globalAlpha = .55;
+      if (k.kind === 'bomb') { const p = gun.fuse != null ? Math.max(0, gun.fuse) / k.fuse : 1; g.save(); g.translate(x, y + s * .42); g.scale(1 + .15 * Math.sin(S.t * 25) * (1 - p), 1 + .15 * Math.sin(S.t * 25) * (1 - p)); g.translate(-x, -(y + s * .42)); }
       g.drawImage(im, x - w / 2 - kick * s * .6, y + s * .42 - h, w, h);
+      if (k.kind === 'bomb') g.restore();
+      g.globalAlpha = 1;
+      if (k.kind === 'beam' && gun.beam) {   // the cold beam, flickering
+        const bx = x + s * .35, by = y + s * .1;
+        const gr = g.createLinearGradient(bx, 0, bx + k.range * s, 0); gr.addColorStop(0, 'rgba(180,240,255,.85)'); gr.addColorStop(1, 'rgba(180,240,255,0)');
+        g.fillStyle = gr; g.fillRect(bx, by - s * .07 * (1 + .3 * Math.sin(S.t * 30)), k.range * s, s * .14 * (1 + .3 * Math.sin(S.t * 30)));
+      }
       if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
       return;
     }
@@ -399,6 +469,7 @@ const Practice = (() => {
     const air = Math.max(0, -mo.dy); g.fillStyle = 'rgba(0,0,0,.16)'; g.beginPath(); g.ellipse(x, foot, w * .38 * (1 - air * .4), w * .1 * (1 - air * .4), 0, 0, 7); g.fill();
     g.translate(x, foot + mo.dy * s);
     if (sq.rise > 0) { g.beginPath(); g.rect(-w, -w * 2, w * 2, w * 2 * (1 - sq.rise)); g.clip(); g.translate(0, w * sq.rise); }   // moley rising out of the ground
+    if (sq.hypno) g.scale(-1, 1);   // brain-washed squishies face the other way
     if (k.motion === 'roll') { g.translate(0, -w * .45); g.rotate(mo.rot); g.translate(0, w * .45); } else g.rotate(mo.rot);
     g.scale(mo.sx, mo.sy);
     if (k.alpha) g.globalAlpha = k.alpha;
@@ -406,7 +477,7 @@ const Practice = (() => {
     else if (!drawSprite(g, lookOf(sq), 0, 0, w, k.alpha || 1)) { g.fillStyle = k.color; g.beginPath(); g.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); g.fill(); }
     if (sq.flash > 0 && !k.rig) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
     g.restore();
-    if (S.frozen > 0) { g.fillStyle = 'rgba(160,220,255,.45)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); }
+    if (S.frozen > 0 || sq.frozenT > 0) { g.fillStyle = 'rgba(160,220,255,.45)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); }
     const crown = uiImg('crown');
     if (k.boss && crown) { const cw = s * .4, ch = cw * crown.naturalHeight / crown.naturalWidth; g.drawImage(crown, x - cw / 2, foot - w * .95 - ch + Math.sin(sq.wob * 3) * s * .04 + mo.dy * s, cw, ch); }
     if (k.boss) {   // boss health bar
@@ -437,12 +508,12 @@ const Practice = (() => {
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const g = S.grid[r][c]; if (!g) continue;
       if (g.kick > 0) g.kick -= .016;
-      drawGun(ctx, g, c * cell + cell / 2 + (g.bitten > 0 ? rnd(-1.5, 1.5) : 0), r * cell + cell * .5, cell, Math.max(0, g.kick), g.hp / GUNS[g.type].hp);
+      drawGun(ctx, g, c * cell + cell / 2 + (g.bitten > 0 ? rnd(-1.5, 1.5) : 0), r * cell + cell * .5, cell, Math.max(0, g.kick), g.hp / gunHp(g));
     }
     // bullets
-    const bul = uiImg('bullet');
     for (const b of S.bullets) {
-      if (bul) { const w = cell * (b.big ? .34 : .22), h = w * bul.naturalHeight / bul.naturalWidth; ctx.drawImage(bul, b.x * cell - w / 2, b.row * cell + cell * .42 - h / 2, w, h); continue; }
+      const bul = wImg('proj_' + (b.proj || 'bullet')) || uiImg('bullet');
+      if (bul) { const w = cell * (b.proj === 'ice' ? .55 : b.small ? .18 : b.big ? .34 : .22), h = w * bul.naturalHeight / bul.naturalWidth; ctx.drawImage(bul, b.x * cell - w / 2, b.row * cell + cell * .42 - h / 2, w, h); continue; }
       ctx.fillStyle = b.big ? '#2F5F2C' : '#FFB347';
       ctx.beginPath(); ctx.arc(b.x * cell, b.row * cell + cell * .42, b.big ? cell * .09 : cell * .055, 0, 7); ctx.fill();
     }
@@ -451,10 +522,13 @@ const Practice = (() => {
       const p = sh.t / sh.dur, x = sh.x0 + (sh.x1 - sh.x0) * p, rowY = (sh.row0 + (sh.row - sh.row0) * p) * cell;
       const y = rowY + cell * .5 - Math.sin(p * Math.PI) * cell * 1.6;
       ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.beginPath(); ctx.ellipse(x * cell, rowY + cell * .8, cell * .12, cell * .05, 0, 0, 7); ctx.fill();
-      const pl = uiImg('planet');
-      if (pl) { const w = cell * .34; ctx.save(); ctx.translate(x * cell, y); ctx.rotate(p * 6); ctx.drawImage(pl, -w / 2, -w / 2, w, w); ctx.restore(); }
+      const pl = wImg('proj_' + (sh.proj || 'lava')) || uiImg('planet');
+      if (pl) { const w = cell * (sh.proj === 'rock' ? .3 : .36); ctx.save(); ctx.translate(x * cell, y); ctx.rotate(p * 6); ctx.drawImage(pl, -w / 2, -w / 2, w, w); ctx.restore(); }
       else { ctx.fillStyle = '#2C2C36'; ctx.beginPath(); ctx.arc(x * cell, y, cell * .13, 0, 7); ctx.fill(); }
     }
+    // sonic rings
+    const ringIm = wImg('proj_ring');
+    for (const rg of S.rings) { const w = cell * (.5 + rg.t * .4); ctx.globalAlpha = .9; if (ringIm) ctx.drawImage(ringIm, rg.x * cell - w / 2, rg.row * cell + cell * .42 - w / 2, w, w); else { ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(rg.x * cell, rg.row * cell + cell * .42, w / 2, 0, 7); ctx.stroke(); } ctx.globalAlpha = 1; }
     // squishies, lower rows drawn later so they overlap properly
     for (const sq of S.squishies.slice().sort((a, b) => a.row - b.row)) drawSquishy(ctx, sq, sq.x * cell, sq.row * cell + cell * .5, cell);
     // effects
@@ -525,14 +599,13 @@ const Practice = (() => {
     for (const key of Object.keys(GUNS)) {
       const k = GUNS[key];
       const b = document.createElement('button'); b.className = 'gun'; b.dataset.g = key;
-      b.innerHTML = `<div class="ico">${key === 'shooter' ? '<img src="art/ui/blaster1.png" alt="">' : ''}</div><b>${k.name}</b><span class="cost"><i class="coin"></i>${k.cost}</span><div class="cool"></div>`;
-      if (key === 'mortar') b.querySelector('.ico').appendChild(iconCanvas('mortar'));
+      b.innerHTML = `<div class="ico"><img src="art/weapons/${k.art}1.png" alt=""></div><b>${k.name}</b><span class="cost"><i class="coin"></i>${k.cost}</span><div class="cool"></div>`;
       b.title = k.blurb;
       shop.appendChild(b);
     }
     const up = document.createElement('button'); up.className = 'gun'; up.dataset.g = 'upgrade';
-    up.innerHTML = '<div class="ico"><img src="art/ui/blaster3.png" alt=""></div><b>Upgrade</b><span class="cost"><i class="coin"></i>150+</span>';
-    up.title = 'tap a Blaster to give it more barrels'; shop.appendChild(up);
+    up.innerHTML = '<div class="ico"><img src="art/weapons/blaster3.png" alt=""></div><b>Upgrade</b><span class="cost"><i class="coin"></i>75+</span>';
+    up.title = 'tap a gun to upgrade it'; shop.appendChild(up);
     const sh = document.createElement('button'); sh.className = 'gun shovel'; sh.dataset.g = 'shovel';
     sh.innerHTML = '<div class="ico">⛏️</div><b>Dig up</b><span class="cost">½ back</span>';
     shop.appendChild(sh);
@@ -573,7 +646,7 @@ const Practice = (() => {
       const g = S.grid[r][c]; const cost = tierCost(g);
       if (!cost) { if (g) flashShop('upgrade'); return; }
       if (S.money < cost) { flashShop('upgrade'); return; }
-      S.money -= cost; g.tier = (g.tier || 1) + 1; g.hp = GUNS.shooter.hp; S.sel = null;
+      S.money -= cost; g.tier = (g.tier || 1) + 1; g.hp = gunHp(g); if (GUNS[g.type].kind === 'brain') g.uses = tierOf(g).uses; S.sel = null;
       S.fx.push({ kind: 'boom', x: c + .5, row: r, t: 0, r: .5 }); S.floats.push({ x: c + .5, row: r, t: 0, text: 'Tier ' + g.tier });
       refreshShop(); return;
     }
@@ -584,7 +657,7 @@ const Practice = (() => {
     } else {
       if (S.grid[r][c] || !S.spec.rows.includes(r)) return;
       const k = GUNS[S.sel]; if (S.money < k.cost || S.recharge[S.sel] > 0) return;
-      S.grid[r][c] = { type: S.sel, hp: k.hp, cool: .3, kick: 0, bitten: 0, tier: 1 };
+      S.grid[r][c] = { type: S.sel, hp: k.tiers[0].hp || k.hp, cool: .3, kick: 0, bitten: 0, tier: 1, arm: k.arm || 0, armed: false, fuse: k.fuse != null ? k.fuse : null, uses: k.tiers[0].uses || 0, beam: false };
       S.money -= k.cost; S.recharge[S.sel] = k.recharge; S.sel = null;
     }
     refreshShop();
@@ -669,7 +742,7 @@ const Practice = (() => {
   function ready() {
     const fresh = Object.keys(SQUISHIES).filter(k => SQUISHIES[k].from === S.level && !SQUISHIES[k].boss).map(k => SQUISHIES[k].name);
     const w = S.spec.world;
-    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. Keep the squishies away from your gnomes!'
+    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. Scroll the shop for more weapons. Keep the squishies away from your gnomes!'
       : (S.level === w.from ? `Welcome to ${w.name}! ` : '') + `${S.spec.count} squishies are on their way.` + (fresh.length ? ` New: ${fresh.join(', ')}!` : '') + (S.spec.boss ? ` Boss level — ${SQUISHIES[S.spec.boss].name} leads the final wave!` : '');
     showOverlay({ kind: 'ready', title: `${w.name === 'the Moon' ? 'The Moon' : w.name} · Level ${S.level}`, sub: first, btn: S.level === 1 ? "Let's go!" : 'Ready!' }, start);
     if (S.level > 1) {
@@ -725,6 +798,8 @@ const Practice = (() => {
     for (let i = 1; i <= 9; i++) arts.push('antbun/death' + i);
     for (const a of arts) if (!SPRITES[a]) { const im = new Image(); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
     for (const n of UI_NAMES) if (!UI[n]) { const im = new Image(); im.src = 'art/ui/' + n + '.png'; UI[n] = im; }
+    for (const key in GUNS) for (let t = 1; t <= GUNS[key].tiers.length; t++) { const n = GUNS[key].art + t; if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; } }
+    for (const n of ['proj_bullet', 'proj_lava', 'proj_ice', 'proj_ring', 'proj_rock']) if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; }
     S = null; newLevel(sv.level || 1);
     renderShop(); layout(); refreshShop();
     cv.addEventListener('pointerdown', onCanvasTap);

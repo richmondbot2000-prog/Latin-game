@@ -31,6 +31,13 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Blaster upgrades through three tiers (tier 3 = machine gun); 5 right answers
   in a row arm a Freeze, 10 a Lightning storm; 1–3 stars per level from the
   correct-answer ratio; a trophy cabinet (`#trophies`) of 20 trophies.
+  **Weapons** (the owner's Weapons folder, rendered from the Spine rigs with
+  `scratchpad/sq2/spine.py`, exported to `art/weapons/`): Blaster, Handy
+  Turret, Freeze Turret, Freeze Ray, Sonic Boom, Solar Blast (key `mortar`),
+  Miner Shoot, Detonate Bomb, Plasma Bomb, Brain Wash, Shield, most with
+  three upgrade tiers; `GUNS` in `practice.js` holds their behaviour
+  (`kind`: shoot / beam / ring / lob / mine / bomb / brain / wall). Not used
+  yet: Floaty, Generators (sketch only).
   Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
   `art/ui/`, `art/trophies/`. Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
