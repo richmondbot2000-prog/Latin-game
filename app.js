@@ -463,8 +463,8 @@ function renderPlay(u, pane) {
     const p = getProg(u), now = Date.now();
     const active = activeWords(u);
     let pool = active.filter(w => !resting(p[w.id], now));
-    // nothing due yet: carry on with the words due soonest rather than stopping the session
-    if (!pool.length) pool = active.slice().sort((a, b) => ((p[a.id] && p[a.id].r) || 0) - ((p[b.id] && p[b.id].r) || 0)).slice(0, 12);
+    // nothing due yet: cycle through every word again rather than stopping the session
+    if (!pool.length) pool = active.slice();
     if (!pool.length) return null;
     if (pool.length > 8) pool = pool.filter(w => !recent.includes(w.id));
     let total = 0;
