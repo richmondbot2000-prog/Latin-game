@@ -283,3 +283,26 @@ body.noscroll { overflow: hidden; }
 .syncline { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px dashed var(--line); background: none; border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; font-size: 14px; color: var(--muted); text-align: left; }
 .syncline b { color: var(--ink); letter-spacing: .04em; font-family: system-ui, sans-serif; }
 .memo .code { font: 800 1.6rem/1.2 system-ui, sans-serif; letter-spacing: .06em; background: var(--chip); border-radius: 12px; padding: 10px; margin: 6px 0 12px; user-select: all; -webkit-user-select: all; overflow-wrap: anywhere; }
+
+/* Practice: art from the Squishygeddon set */
+.pshop .gun .ico img { height: 36px; width: auto; max-width: 70px; }
+.buddy { position: relative; height: 36px; width: 46px; margin-left: 4px; }
+.buddy img { position: absolute; bottom: -2px; left: 0; height: 36px; width: auto; }
+.buddy img.emo { height: 16px; left: 24px; top: -4px; bottom: auto; filter: drop-shadow(0 0 2px #fff); }
+.buddy img.emo.pop { animation: pop .4s ease; }
+.ovbox.won, .ovbox.lost { background: linear-gradient(180deg, #3a2a66, #262050); color: #fff; border: 3px solid #58f2ff; box-shadow: 0 0 0 3px #2a6a7a, 0 10px 30px rgba(0,0,0,.4); padding-top: 8px; }
+.ovbox.won p, .ovbox.lost p { color: #cfe9ff; }
+.ovart { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.ovart img { height: 44px; width: auto; }
+.ovart img.ttl { height: 40px; }
+.ovart.lost img.ttl { height: 34px; }
+.ovart img.sad { height: 64px; }
+.ovstats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0 2px; }
+.ovstats div { background: linear-gradient(180deg, #6ff7ff, #26bcc9); color: #103a40; border-radius: 8px; padding: 4px 8px; font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; }
+.ovstats span { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; opacity: .8; }
+.ovstats b { font-size: 18px; }
+.ovbox.won .ovbtn, .ovbox.lost .ovbtn { background: linear-gradient(180deg, #7ff9ff, #2aa9b8); color: #0c3338; font-family: system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; }
+.ice { background-image: url('art/ui/ice.png'), linear-gradient(160deg, rgba(220, 240, 255, .9), rgba(170, 215, 250, .94)); background-repeat: no-repeat; background-position: center; background-size: 55% auto, auto; }
+.tile.prac { position: relative; padding-left: 92px; min-height: 120px; }
+.tile.prac .pracico { position: absolute; left: 16px; top: 16px; width: 64px; height: 64px; border-radius: 14px; }
+@media (min-height: 700px) and (min-width: 900px) { .buddy { height: 44px; width: 56px; } .buddy img { height: 44px; } .buddy img.emo { height: 20px; left: 30px; } .ovart img { height: 60px; } .ovart img.ttl { height: 54px; } .ovart img.sad { height: 90px; } }

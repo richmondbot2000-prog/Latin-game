@@ -244,10 +244,11 @@ function renderHome(u) {
       <div class="small">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
       <div class="orgbtns"><button class="btn ghost" data-t="list">Word list</button><button class="btn" data-t="play">Play</button></div>
     </div>
-    <div class="tile org" id="prac">
+    <div class="tile org prac" id="prac">
+      <img class="pracico" src="art/ui/icon_practice.png" alt="">
       <h2>Practice</h2>
       <p>Defend the garden from the squishies. Match words to earn coins for guns.</p>
-      <div class="small">${(store.get('latin.practice.' + u.id, { best: 1 }).best || 1) > 1 ? 'Best: level ' + store.get('latin.practice.' + u.id, { best: 1 }).best : 'Not played yet'} · uses your ${levelName(levelOf(u))} words</div>
+      <div class="small">${(() => { const sv = store.get('latin.practice.' + u.id, { best: 1 }); return (sv.best || 1) > 1 ? `Best: level ${sv.best} · ${sv.kills || 0} squishies squished` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
       <div class="orgbtns"><span></span><button class="btn" id="pracGo">Play</button></div>
     </div>
     <div class="tile locked"><h2>Coming soon</h2><p>Reading stories</p></div>

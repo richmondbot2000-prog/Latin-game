@@ -50,7 +50,11 @@ const Sync = (() => {
     const ls = store.get('latin.streak.' + u.id, null), rs = remote.streak;
     if (rs && (!ls || rs.best > ls.best)) { store.set('latin.streak.' + u.id, { cur: ls ? ls.cur : rs.cur, best: Math.max(rs.best, ls ? ls.best : 0) }); changed = true; }
     const lp = store.get('latin.practice.' + u.id, null), rp = remote.practice;
-    if (rp && (!lp || rp.best > (lp.best || 0) || rp.level > (lp.level || 0))) { store.set('latin.practice.' + u.id, { best: Math.max(rp.best || 1, lp ? lp.best || 1 : 1), level: Math.max(rp.level || 1, lp ? lp.level || 1 : 1) }); changed = true; }
+    if (rp) {   // best level, current level and every counter: the bigger value wins
+      const m = { ...(lp || {}) }; let ch = false;
+      for (const k in rp) if (typeof rp[k] === 'number' && (m[k] == null || rp[k] > m[k])) { m[k] = rp[k]; ch = true; }
+      if (ch) { store.set('latin.practice.' + u.id, m); changed = true; }
+    }
     if (remote.level && !store.get('latin.level.' + u.id, null)) { store.set('latin.level.' + u.id, remote.level); changed = true; }
     return changed;
   }

@@ -23,15 +23,21 @@ const Practice = (() => {
     moley:      { name: 'Mole King',  hp: 220, speed: .11, chomp: 30, size: .95,  from: 8, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .17 },
     broodqueen: { name: 'Brood Queen', hp: 900, speed: .05, chomp: 40, size: 1.4, from: 6, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
     ghostking:  { name: 'Ghost King', hp: 700, speed: .08, chomp: 35, size: 1.35, from: 9, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
+    sharky:     { name: 'Sharky',     hp: 1100, speed: .055, chomp: 90, size: 1.5, from: 12, look: { ok: 'sharky' }, motion: 'float', color: '#d9c48a', boss: true },
   };
   // the Antbun is a rigged character: separate parts in a 320-wide box, positions from the artist's PSD
   const ANTBUN = {"parts": {"dead_leftarm": [65, 18, 88, 116], "dead_body": [0, 43, 242, 210], "dead_skull": [16, 91, 177, 127], "dead_arm": [155, 189, 46, 40], "dead_rightear": [153, 31, 167, 106], "hurt_leftear": [65, 20, 88, 116], "hurt_body": [0, 43, 243, 210], "hurt_righteyeclose": [98, 161, 31, 10], "hurt_righteyeopen": [98, 154, 30, 30], "hurt_arm": [165, 170, 48, 53], "hurt_rightear": [140, 31, 177, 131], "leftear": [68, 0, 132, 131], "body": [0, 55, 250, 198], "body2": [10, 87, 239, 179], "body3": [10, 87, 242, 176], "eyesopen": [31, 149, 98, 36], "rightear": [140, 31, 177, 131], "eyepopping": [96, 141, 58, 58], "eyesclose": [32, 155, 98, 15], "arm": [166, 171, 45, 52]}, "box": [320, 266], "death": {"w": 320, "h": 322, "body": [50, 95, 234, 187]}};
   const ANTBUN_PARTS = Object.keys(ANTBUN.parts);
   const SPRITES = {};   // art key -> Image
+  const UI = {};        // art/ui pieces: guns, projectiles, screens, the spaceman
+  const UI_NAMES = ['blaster1', 'blaster2', 'blaster3', 'bullet', 'planet', 'bolt', 'bolt2', 'ice', 'title_gameover', 'title_youwin', 'laurel_l', 'laurel_r', 'spaceman_sad', 'star', 'star_dark',
+    'pose_stand', 'pose_wave', 'pose_arms', 'pose_hips', 'pose_thumbs', 'pose_facepalm', 'emo_neutral', 'emo_xx', 'emo_happy', 'emo_sleepy', 'emo_shock', 'emo_sad', 'emo_confused', 'emo_qqq', 'emo_v', 'emo_bear', 'emo_stare', 'emo_love', 'emo_grin', 'wave1', 'wave2', 'wave3', 'wave4'];
+  const uiImg = n => { const im = UI[n]; return im && im.complete && im.naturalWidth ? im : null; };
+  const GUN_ART = { shooter: 'blaster1', mg: 'blaster2', mortar: 'blaster3' };
   function levelSpec(n) {
     const weights = {};
     for (const k in SQUISHIES) { const s = SQUISHIES[k]; if (s.boss || n < s.from) continue; weights[k] = k === 'chomp' ? 1 : .22 + .04 * (n - s.from); }
-    const boss = n >= 9 ? (n % 2 ? 'ghostking' : 'broodqueen') : n >= 6 ? 'broodqueen' : null;
+    const boss = n >= 12 ? ['broodqueen', 'ghostking', 'sharky'][n % 3] : n >= 9 ? (n % 2 ? 'ghostking' : 'broodqueen') : n >= 6 ? 'broodqueen' : null;
     // early levels use fewer rows, like the original's first lawns
     const rows = n === 1 ? [2, 3] : n === 2 ? [1, 2, 3, 4] : [0, 1, 2, 3, 4, 5];
     return { count: 16 + 5 * (n - 1), rows, grace: n === 1 ? 12 : 8, gap0: Math.max(4, 10 - n), gap1: Math.max(2.2, 6.5 - .45 * (n - 1)), weights, huge: n >= 2, boss };
@@ -53,7 +59,7 @@ const Practice = (() => {
       gnomes: Array(ROWS).fill(true), gnomeRuns: [],
       squishies: [], bullets: [], shells: [], fx: [], floats: [],
       spawned: 0, nextSpawn: spec.grace, hugeDone: false, banner: null,
-      sel: null, recharge: { shooter: 0, mortar: 0, mg: 0 }, lastRows: [], shake: 0 };
+      sel: null, recharge: { shooter: 0, mortar: 0, mg: 0 }, lastRows: [], shake: 0, kills: 0, correct: 0, asked: 0 };
   }
 
   /* ---------- squishies ---------- */
@@ -79,7 +85,8 @@ const Practice = (() => {
     else sq.hp -= dmg;
     sq.flash = .12;
     if (sq.hp <= 0 && !sq.dead) {
-      sq.dead = true;
+      sq.dead = true; S.kills++; tally('kills', 1); tally('by_' + sq.type, 1);
+      if (sq.k.boss) buddy('pose_thumbs', 'emo_grin', 2.5); else if (Math.random() < .15) buddy('pose_thumbs', 'emo_happy', 1.2);
       S.fx.push({ kind: 'splat', x: sq.x, row: sq.row, t: 0, color: sq.k.color, size: sq.k.size });
       if (sq.k.rig) S.fx.push({ kind: 'abdeath', x: sq.x, row: sq.row, t: 0, size: sq.k.size });
       else S.fx.push({ kind: 'melt', x: sq.x, row: sq.row, t: 0, art: lookOf(sq), size: sq.k.size, fly: !!sq.k.fly });
@@ -138,14 +145,14 @@ const Practice = (() => {
           if (r < 0 || r >= ROWS || c < 0 || c >= COLS || !S.grid[r][c]) continue;
           S.grid[r][c] = null; S.fx.push({ kind: 'crunch', x: c + .5, row: r, t: 0 });
         }
-        sq.hp = 0; sq.dead = true; S.shake = .5;
+        sq.hp = 0; sq.dead = true; S.shake = .5; buddy('pose_arms', 'emo_shock', 1.6);
         S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: 1.8 });
         continue;
       }
       if (g && sq.pass > 0 && sq.passedCol !== col) { sq.pass--; sq.passedCol = col; }   // ghosts and flyers float over guns
       if (g && sq.passedCol !== col) {
         sq.eating = g; g.hp -= sq.k.chomp * dt; g.bitten = .25;
-        if (g.hp <= 0) { S.grid[sq.row][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 }); sq.eating = null; }
+        if (g.hp <= 0) { S.grid[sq.row][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 }); sq.eating = null; buddy('pose_arms', 'emo_shock', 1.6); }
       } else {
         sq.eating = null;
         if (sq.rise <= 0) sq.x -= sq.k.speed * dt;
@@ -204,16 +211,25 @@ const Practice = (() => {
 
     if (S.spawned >= sp.count && !S.squishies.length && !S.shells.length) win();
   }
+  function tally(key, n) {   // persistent counters for the player (also feed the trophies)
+    const sv = store.get(saveKey, { best: 1, level: 1 });
+    sv[key] = (sv[key] || 0) + n; store.set(saveKey, sv);
+  }
+  function statsHTML() {
+    return `<div class="ovstats"><div><span>Squishies killed</span><b>${S.kills}</b></div><div><span>Correct answers</span><b>${S.correct}/${S.asked}</b></div></div>`;
+  }
   function win() {
     S.phase = 'won';
     const sv = store.get(saveKey, { best: 1, level: 1 });
-    sv.level = S.level + 1; sv.best = Math.max(sv.best || 1, S.level + 1); store.set(saveKey, sv);
-    showOverlay(`🏆 Garden saved!`, `Level ${S.level} done!`, 'Next level', () => { newLevel(S.level + 1); start(); });
+    sv.level = S.level + 1; sv.best = Math.max(sv.best || 1, S.level + 1); sv.won = (sv.won || 0) + 1; store.set(saveKey, sv);
+    buddy('pose_wave', 'emo_grin', 8);
+    showOverlay({ kind: 'won', title: 'You win', sub: `Level ${S.level} done!`, btn: 'Next level' }, () => { newLevel(S.level + 1); start(); });
     Celebrate(innerWidth / 2, innerHeight / 3, 2.4);
   }
   function lose() {
     S.phase = 'lost';
-    showOverlay('😱 The squishies ate your garden!', `You reached level ${S.level}`, 'Try again', () => { S.money = START_MONEY; newLevel(S.level); start(); });
+    buddy('pose_facepalm', 'emo_sad', 8);
+    showOverlay({ kind: 'lost', title: 'Game over', sub: `The squishies ate your garden on level ${S.level}`, btn: 'Try again' }, () => { S.money = START_MONEY; newLevel(S.level); start(); });
   }
 
   /* ---------- drawing ---------- */
@@ -269,6 +285,13 @@ const Practice = (() => {
   function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
   function drawGun(g, type, x, y, s, kick = 0, hp = 1) {
     // x,y = centre; s = cell size
+    const im = uiImg(GUN_ART[type]);
+    if (im) {
+      const w = s * (type === 'mortar' ? 1.0 : .9), h = w * im.naturalHeight / im.naturalWidth;
+      g.drawImage(im, x - w / 2 - kick * s * .6, y + s * .42 - h, w, h);
+      if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
+      return;
+    }
     g.save(); g.translate(x, y);
     if (type === 'shooter') {
       g.fillStyle = '#3E7D3A'; rr(g, -s * .18, s * .05, s * .36, s * .3, s * .08); g.fill();            // base
@@ -389,7 +412,9 @@ const Practice = (() => {
       drawGun(ctx, g.type, c * cell + cell / 2 + (g.bitten > 0 ? rnd(-1.5, 1.5) : 0), r * cell + cell * .5, cell, Math.max(0, g.kick), g.hp / GUNS[g.type].hp);
     }
     // bullets
+    const bul = uiImg('bullet');
     for (const b of S.bullets) {
+      if (bul) { const w = cell * (b.big ? .34 : .22), h = w * bul.naturalHeight / bul.naturalWidth; ctx.drawImage(bul, b.x * cell - w / 2, b.row * cell + cell * .42 - h / 2, w, h); continue; }
       ctx.fillStyle = b.big ? '#2F5F2C' : '#FFB347';
       ctx.beginPath(); ctx.arc(b.x * cell, b.row * cell + cell * .42, b.big ? cell * .09 : cell * .055, 0, 7); ctx.fill();
     }
@@ -398,8 +423,9 @@ const Practice = (() => {
       const p = sh.t / sh.dur, x = sh.x0 + (sh.x1 - sh.x0) * p, rowY = (sh.row0 + (sh.row - sh.row0) * p) * cell;
       const y = rowY + cell * .5 - Math.sin(p * Math.PI) * cell * 1.6;
       ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.beginPath(); ctx.ellipse(x * cell, rowY + cell * .8, cell * .12, cell * .05, 0, 0, 7); ctx.fill();
-      ctx.fillStyle = '#2C2C36'; ctx.beginPath(); ctx.arc(x * cell, y, cell * .13, 0, 7); ctx.fill();
-      ctx.fillStyle = '#FF5D8F'; ctx.beginPath(); ctx.arc(x * cell + cell * .05, y - cell * .05, cell * .04, 0, 7); ctx.fill();
+      const pl = uiImg('planet');
+      if (pl) { const w = cell * .34; ctx.save(); ctx.translate(x * cell, y); ctx.rotate(p * 6); ctx.drawImage(pl, -w / 2, -w / 2, w, w); ctx.restore(); }
+      else { ctx.fillStyle = '#2C2C36'; ctx.beginPath(); ctx.arc(x * cell, y, cell * .13, 0, 7); ctx.fill(); }
     }
     // squishies, lower rows drawn later so they overlap properly
     for (const sq of S.squishies.slice().sort((a, b) => a.row - b.row)) drawSquishy(ctx, sq, sq.x * cell, sq.row * cell + cell * .5, cell);
@@ -411,6 +437,8 @@ const Practice = (() => {
         ctx.strokeStyle = `rgba(255,120,40,${1 - p})`; ctx.lineWidth = cell * .12 * (1 - p) + 1;
         ctx.beginPath(); ctx.arc(x, y, f.r * cell * p, 0, 7); ctx.stroke();
         ctx.fillStyle = `rgba(255,220,80,${.7 * (1 - p)})`; ctx.beginPath(); ctx.arc(x, y, f.r * cell * p * .6, 0, 7); ctx.fill();
+        const bolt = uiImg(p < .5 ? 'bolt' : 'bolt2');
+        if (bolt) { const w = f.r * cell * (.6 + p * .8), h = w * bolt.naturalHeight / bolt.naturalWidth; ctx.globalAlpha = 1 - p; ctx.save(); ctx.translate(x, y); ctx.rotate(f.x * 3); ctx.drawImage(bolt, -w / 2, -h / 2, w, h); ctx.restore(); ctx.globalAlpha = 1; }
       } else if (f.kind === 'splat') {
         const p = f.t / .6;
         ctx.fillStyle = f.color; ctx.globalAlpha = 1 - p;
@@ -444,6 +472,8 @@ const Practice = (() => {
     ctx.restore();
     // banner
     if (S.banner) {
+      const wv = uiImg('wave' + (1 + Math.floor(S.t * 6) % 4));
+      if (wv) { const h = cell * 2.2, w = h * wv.naturalWidth / wv.naturalHeight; ctx.globalAlpha = .9; ctx.drawImage(wv, W * .5 - w / 2 + Math.sin(S.t * 8) * 6, H * .4 + cell * .55 - h * .8, w, h); ctx.globalAlpha = 1; }
       ctx.fillStyle = 'rgba(60,20,40,.75)'; rr(ctx, W * .08, H * .4, W * .84, cell * 1.1, 12); ctx.fill();
       ctx.fillStyle = '#FFD23F'; ctx.font = `700 ${Math.max(14, cell * .4)}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(S.banner.text, W / 2, H * .4 + cell * .55);
@@ -461,8 +491,7 @@ const Practice = (() => {
     for (const key of Object.keys(GUNS)) {
       const k = GUNS[key];
       const b = document.createElement('button'); b.className = 'gun'; b.dataset.g = key;
-      b.innerHTML = `<div class="ico"></div><b>${k.name}</b><span class="cost"><i class="coin"></i>${k.cost}</span><div class="cool"></div>`;
-      b.querySelector('.ico').appendChild(iconCanvas(key));
+      b.innerHTML = `<div class="ico"><img src="art/ui/${GUN_ART[key]}.png" alt=""></div><b>${k.name}</b><span class="cost"><i class="coin"></i>${k.cost}</span><div class="cool"></div>`;
       b.title = k.blurb;
       shop.appendChild(b);
     }
@@ -507,6 +536,16 @@ const Practice = (() => {
     refreshShop();
   }
 
+  /* the spaceman in the top bar reacts to what happens */
+  let buddyTimer = 0;
+  function buddy(pose, emo, secs) {
+    if (!ui || !ui.buddyPose) return;
+    ui.buddyPose.src = 'art/ui/' + pose + '.png'; ui.buddyEmo.src = 'art/ui/' + emo + '.png';
+    ui.buddyEmo.classList.remove('pop'); void ui.buddyEmo.offsetWidth; ui.buddyEmo.classList.add('pop');
+    clearTimeout(buddyTimer);
+    buddyTimer = setTimeout(() => { if (ui && ui.buddyPose) { ui.buddyPose.src = 'art/ui/pose_stand.png'; ui.buddyEmo.src = 'art/ui/emo_neutral.png'; } }, secs * 1000);
+  }
+
   /* word matching: the only way to earn coins */
   let quiz = null;
   function askWord() {
@@ -525,13 +564,15 @@ const Practice = (() => {
     if (!quiz || quiz.frozen > 0 || S.phase !== 'play') return;
     const ok = quiz.opts[i] === quiz.w.english;
     const btns = ui.qopts.querySelectorAll('button');
+    S.asked++; tally('asked', 1);
     if (ok) {
       btns[i].classList.add('good');
+      S.correct++; tally('correct', 1); buddy('pose_thumbs', ['emo_happy', 'emo_love', 'emo_grin'][Math.floor(Math.random() * 3)], 1.4);
       S.money += MATCH_COINS; refreshShop();
       ui.coinPop.textContent = '+' + MATCH_COINS; ui.coinPop.classList.remove('go'); void ui.coinPop.offsetWidth; ui.coinPop.classList.add('go');
       setTimeout(askWord, 220);
     } else {
-      btns[i].classList.add('bad');
+      btns[i].classList.add('bad'); buddy('pose_facepalm', 'emo_xx', FREEZE_SECS);
       btns.forEach((b, j) => { if (quiz.opts[j] === quiz.w.english) b.classList.add('good'); });
       quiz.frozen = FREEZE_SECS;
       ui.ice.hidden = false; ui.iceN.textContent = FREEZE_SECS;
@@ -542,9 +583,12 @@ const Practice = (() => {
     }
   }
 
-  function showOverlay(title, sub, btn, fn) {
+  function showOverlay(o, fn) {
     ui.overlay.hidden = false;
-    ui.overlay.innerHTML = `<div class="ovbox"><h3>${title}</h3><p>${sub}</p><button class="btn" id="ovBtn">${btn}</button></div>`;
+    const art = o.kind === 'won' ? `<div class="ovart won"><img src="art/ui/laurel_l.png" alt=""><img class="ttl" src="art/ui/title_youwin.png" alt="You win"><img src="art/ui/laurel_r.png" alt=""></div>`
+      : o.kind === 'lost' ? `<div class="ovart lost"><img class="ttl" src="art/ui/title_gameover.png" alt="Game over"><img class="sad" src="art/ui/spaceman_sad.png" alt=""></div>`
+      : `<h3>${o.title}</h3>`;
+    ui.overlay.innerHTML = `<div class="ovbox ${o.kind || ''}">${art}<p>${o.sub}</p>${o.kind === 'won' || o.kind === 'lost' ? statsHTML() : ''}<button class="btn ovbtn" id="ovBtn">${o.btn}</button></div>`;
     ui.overlay.querySelector('#ovBtn').onclick = () => { ui.overlay.hidden = true; fn(); };
   }
   function start() {
@@ -555,7 +599,7 @@ const Practice = (() => {
     const fresh = Object.keys(SQUISHIES).filter(k => SQUISHIES[k].from === S.level && !SQUISHIES[k].boss).map(k => SQUISHIES[k].name);
     const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Shooter, then tap a square to plant it. Keep the squishies away from your gnomes!'
       : `${S.spec.count} squishies are on their way.` + (fresh.length ? ` New: ${fresh.join(', ')}!` : '') + (S.spec.boss && S.level === SQUISHIES[S.spec.boss].from ? ` Watch out for the ${SQUISHIES[S.spec.boss].name}…` : '');
-    showOverlay(`Level ${S.level}`, first, S.level === 1 ? "Let's go!" : 'Ready!', start);
+    showOverlay({ kind: 'ready', title: `Level ${S.level}`, sub: first, btn: S.level === 1 ? "Let's go!" : 'Ready!' }, start);
     if (S.level > 1) {
       const a = document.createElement('button'); a.className = 'linkbtn'; a.textContent = 'start again from level 1';
       a.onclick = () => { if (confirm('Go back to level 1? Your best level is kept.')) restartFromOne(); };
@@ -584,6 +628,7 @@ const Practice = (() => {
         <span class="plev" id="plevel"></span>
         <div class="pbar"><div id="pprog"></div><span class="flag">🚩</span></div>
         <span class="ptag">${esc(opts.tag || '')}</span>
+        <div class="buddy"><img id="buddyPose" src="art/ui/pose_stand.png" alt=""><img id="buddyEmo" class="emo" src="art/ui/emo_neutral.png" alt=""></div>
         <div class="pcash"><i class="coin big"></i><span class="lbl">cash</span><b id="pmoney">0</b><span class="coinpop" id="pcoin"></span></div>
       </div>
       <div class="pmain">
@@ -597,7 +642,8 @@ const Practice = (() => {
       </div>`;
     ui = { garden: root.querySelector('#pgarden'), canvasWrap: root.querySelector('#pwrap'), shop: root.querySelector('#pshop'), money: root.querySelector('#pmoney'),
       level: root.querySelector('#plevel'), prog: root.querySelector('#pprog'), overlay: root.querySelector('#pover'), qword: root.querySelector('#pqword'),
-      qopts: root.querySelector('#pqopts'), ice: root.querySelector('#pice'), iceN: root.querySelector('#piceN'), coinPop: root.querySelector('#pcoin') };
+      qopts: root.querySelector('#pqopts'), ice: root.querySelector('#pice'), iceN: root.querySelector('#piceN'), coinPop: root.querySelector('#pcoin'),
+      buddyPose: root.querySelector('#buddyPose'), buddyEmo: root.querySelector('#buddyEmo') };
     cv = root.querySelector('#pcv'); ctx = cv.getContext('2d');
     document.body.classList.add('noscroll');
     root.querySelector('#phome').onclick = () => { if (opts.home) opts.home(); };
@@ -606,6 +652,7 @@ const Practice = (() => {
     for (const n of ANTBUN_PARTS) arts.push('antbun/' + n);
     for (let i = 1; i <= 9; i++) arts.push('antbun/death' + i);
     for (const a of arts) if (!SPRITES[a]) { const im = new Image(); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
+    for (const n of UI_NAMES) if (!UI[n]) { const im = new Image(); im.src = 'art/ui/' + n + '.png'; UI[n] = im; }
     S = null; newLevel(sv.level || 1);
     renderShop(); layout(); refreshShop();
     cv.addEventListener('pointerdown', onCanvasTap);
@@ -618,6 +665,7 @@ const Practice = (() => {
     if (raf) cancelAnimationFrame(raf); raf = 0;
     removeEventListener('resize', layout);
     document.body.classList.remove('noscroll');
+    clearTimeout(buddyTimer);
     S = null; ui = null; quiz = null; stage = null;
   }
   function restartFromOne() { if (!S) return; S.money = START_MONEY; S = null; newLevel(1); ui.overlay.hidden = true; ready(); }
