@@ -572,13 +572,15 @@ function renderPlay(u, pane) {
   function pick() {
     const p = getProg(u), now = Date.now();
     const active = activeWords(u);
+    // words due back first; once none are due, every word is in play (the recently-missed ones more often).
+    // A word never comes back until at least GAP others have been shown, except when there is nothing else to show.
+    const gapFor = n => Math.min(GAP, Math.max(0, n - 3));
     let pool = active.filter(w => !resting(p[w.id], now));
-    // nothing due yet: cycle through every word again rather than stopping the session
+    pool = pool.filter(w => !recent.slice(-gapFor(pool.length)).includes(w.id));
+    if (!pool.length) { pool = active.filter(w => !recent.slice(-gapFor(active.length)).includes(w.id)); }
+    if (!pool.length) pool = active.filter(w => w.id !== recent[recent.length - 1]);
     if (!pool.length) pool = active.slice();
     if (!pool.length) return null;
-    // a word never comes back until at least GAP others have been shown (fewer when the pool is small)
-    const gap = Math.min(GAP, Math.max(0, pool.length - 3)), block = recent.slice(-gap);
-    pool = pool.filter(w => !block.includes(w.id));
     let total = 0;
     const wts = pool.map(w => { const t = weightOf(p[w.id]); total += t; return t; });
     let r = Math.random() * total;
