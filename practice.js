@@ -3,7 +3,7 @@
 /* ---------- Practice: defend the garden from squishies; earn coins by matching words ----------
    Positions are in cells: squishies walk from x = COLS (right) towards x = 0 (left). */
 const Practice = (() => {
-  const ROWS = 6, COLS = 8;
+  const ROWS = 6, COLS = 9;
   const START_MONEY = 150, MATCH_COINS = 25, FREEZE_SECS = 5;
   const GUNS = {
     shooter: { name: 'Shooter', cost: 100, every: 2, dmg: 20, speed: 7, recharge: 5, hp: 100, blurb: 'a bullet every 2 s' },
@@ -176,15 +176,29 @@ const Practice = (() => {
   }
 
   /* ---------- drawing ---------- */
-  let cv, ctx, cell = 40, W = 0, H = 0, bg = null;
+  let cv, ctx, cell = 40, W = 0, H = 0, bg = null, stage = null;
+  const rotated = () => stage && stage.classList.contains('rot');
   function layout() {
-    const w = ui.canvasWrap.clientWidth;
-    cell = w / COLS; W = w; H = cell * ROWS;
+    if (!stage) return;
+    // portrait phone: turn the whole stage sideways so the game is always landscape
+    const rot = innerHeight > innerWidth;
+    stage.classList.toggle('rot', rot);
+    stage.style.width = (rot ? innerHeight : innerWidth) + 'px';
+    stage.style.height = (rot ? innerWidth : innerHeight) + 'px';
+    const box = ui.garden;
+    cell = Math.max(24, Math.floor(Math.min(box.clientWidth / COLS, box.clientHeight / ROWS)));
+    W = cell * COLS; H = cell * ROWS;
     const dpr = Math.min(devicePixelRatio || 1, 2);
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ui.canvasWrap.style.width = W + 'px'; ui.canvasWrap.style.height = H + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     bg = null;
+  }
+  // pointer position in canvas pixels, allowing for the rotated stage
+  function canvasPoint(e) {
+    const r = cv.getBoundingClientRect();
+    return rotated() ? { x: e.clientY - r.top, y: r.right - e.clientX } : { x: e.clientX - r.left, y: e.clientY - r.top };
   }
   function drawBackground() {
     bg = document.createElement('canvas');
@@ -342,7 +356,7 @@ const Practice = (() => {
 
   /* ---------- DOM: status, shop, quiz, overlay ---------- */
   function iconCanvas(type) {
-    const c = document.createElement('canvas'); const s = 44, dpr = 2; c.width = s * dpr; c.height = s * dpr; c.style.width = c.style.height = s + 'px';
+    const c = document.createElement('canvas'); const s = 38, dpr = 2; c.width = s * dpr; c.height = s * dpr; c.style.width = c.style.height = s + 'px';
     const g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
     drawGun(g, type, s / 2, s / 2 + 2, s * 1.3); return c;
   }
@@ -351,7 +365,7 @@ const Practice = (() => {
     for (const key of Object.keys(GUNS)) {
       const k = GUNS[key];
       const b = document.createElement('button'); b.className = 'gun'; b.dataset.g = key;
-      b.innerHTML = `<div class="ico"></div><b>${k.name}</b><span class="cost">🪙 ${k.cost}</span><div class="cool"></div>`;
+      b.innerHTML = `<div class="ico"></div><b>${k.name}</b><span class="cost"><i class="coin"></i>${k.cost}</span><div class="cool"></div>`;
       b.querySelector('.ico').appendChild(iconCanvas(key));
       b.title = k.blurb;
       shop.appendChild(b);
@@ -381,8 +395,8 @@ const Practice = (() => {
   }
   function onCanvasTap(e) {
     if (S.phase !== 'play' || !S.sel) return;
-    const rect = cv.getBoundingClientRect();
-    const c = Math.floor((e.clientX - rect.left) / cell), r = Math.floor((e.clientY - rect.top) / cell);
+    const pt = canvasPoint(e);
+    const c = Math.floor(pt.x / cell), r = Math.floor(pt.y / cell);
     if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
     if (S.sel === 'shovel') {
       const g = S.grid[r][c]; if (!g) return;
@@ -444,6 +458,11 @@ const Practice = (() => {
   function ready() {
     const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Shooter, then tap a square to plant it. Keep the squishies away from your gnomes!' : `${S.spec.count} squishies are on their way.`;
     showOverlay(`Level ${S.level}`, first, S.level === 1 ? "Let's go!" : 'Ready!', start);
+    if (S.level > 1) {
+      const a = document.createElement('button'); a.className = 'linkbtn'; a.textContent = 'start again from level 1';
+      a.onclick = () => { if (confirm('Go back to level 1? Your best level is kept.')) restartFromOne(); };
+      ui.overlay.querySelector('.ovbox').appendChild(a);
+    }
   }
 
   /* ---------- loop ---------- */
@@ -457,36 +476,46 @@ const Practice = (() => {
   }
 
   /* ---------- mount / unmount ---------- */
-  function mount(root, u) {
-    user = u; saveKey = 'latin.practice.' + u.id;
+  function mount(root, u, opts = {}) {
+    user = u; saveKey = 'latin.practice.' + u.id; stage = root;
     const sv = store.get(saveKey, { best: 1, level: 1 });
+    root.className = 'pstage';
     root.innerHTML = `
-      <div class="pstatus"><span id="plevel"></span><div class="pbar"><div id="pprog"></div><span class="flag">🚩</span></div><span class="pmoney">🪙 <b id="pmoney"></b></span></div>
-      <div class="pcanvas" id="pwrap"><canvas id="pcv"></canvas><div class="overlay" id="pover" hidden></div></div>
-      <div class="shop" id="pshop"></div>
-      <div class="quiz" id="pquiz">
-        <div class="qtop"><span class="qlbl">What does this mean?</span><span class="coinpop" id="pcoin"></span></div>
-        <div class="qword" id="pqword"></div>
+      <div class="ptop">
+        <button class="iconbtn" id="phome">← Home</button>
+        <span class="plev" id="plevel"></span>
+        <div class="pbar"><div id="pprog"></div><span class="flag">🚩</span></div>
+        <span class="ptag">${esc(opts.tag || '')}</span>
+        <div class="pcash"><i class="coin big"></i><span class="lbl">cash</span><b id="pmoney">0</b><span class="coinpop" id="pcoin"></span></div>
+      </div>
+      <div class="pmain">
+        <div class="pgarden" id="pgarden"><div class="pcanvas" id="pwrap"><canvas id="pcv"></canvas><div class="overlay" id="pover" hidden></div></div></div>
+        <div class="pshop" id="pshop"></div>
+      </div>
+      <div class="pquiz" id="pquiz">
+        <div class="qword" id="pqword">…</div>
         <div class="qopts" id="pqopts"></div>
         <div class="ice" id="pice" hidden><div>❄️ Frozen! <b id="piceN">5</b></div></div>
       </div>`;
-    ui = { canvasWrap: root.querySelector('#pwrap'), shop: root.querySelector('#pshop'), money: root.querySelector('#pmoney'), level: root.querySelector('#plevel'),
-      prog: root.querySelector('#pprog'), overlay: root.querySelector('#pover'), qword: root.querySelector('#pqword'), qopts: root.querySelector('#pqopts'),
-      ice: root.querySelector('#pice'), iceN: root.querySelector('#piceN'), coinPop: root.querySelector('#pcoin') };
+    ui = { garden: root.querySelector('#pgarden'), canvasWrap: root.querySelector('#pwrap'), shop: root.querySelector('#pshop'), money: root.querySelector('#pmoney'),
+      level: root.querySelector('#plevel'), prog: root.querySelector('#pprog'), overlay: root.querySelector('#pover'), qword: root.querySelector('#pqword'),
+      qopts: root.querySelector('#pqopts'), ice: root.querySelector('#pice'), iceN: root.querySelector('#piceN'), coinPop: root.querySelector('#pcoin') };
     cv = root.querySelector('#pcv'); ctx = cv.getContext('2d');
+    document.body.classList.add('noscroll');
+    root.querySelector('#phome').onclick = () => { if (opts.home) opts.home(); };
     S = null; newLevel(sv.level || 1);
-    layout(); renderShop(); refreshShop();
+    renderShop(); layout(); refreshShop();
     cv.addEventListener('pointerdown', onCanvasTap);
     ui.qopts.addEventListener('click', e => { const b = e.target.closest('button'); if (b) answer(+b.dataset.i); });
     addEventListener('resize', layout);
-    ui.qword.textContent = '…';
     ready();
     last = performance.now(); raf = requestAnimationFrame(frame);
   }
   function unmount() {
     if (raf) cancelAnimationFrame(raf); raf = 0;
     removeEventListener('resize', layout);
-    S = null; ui = null; quiz = null;
+    document.body.classList.remove('noscroll');
+    S = null; ui = null; quiz = null; stage = null;
   }
   function restartFromOne() { if (!S) return; S.money = START_MONEY; S = null; newLevel(1); ui.overlay.hidden = true; ready(); }
   // test hook: run the game forward without waiting

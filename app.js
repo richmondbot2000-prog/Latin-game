@@ -230,15 +230,8 @@ function renderHome(u) {
 
 /* ---------- practice (garden defence) ---------- */
 function renderPractice(u) {
-  app.innerHTML = `
-  <div class="wrap practice">
-    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Practice</span><span class="lvtag">${levelName(levelOf(u))}</span></div>
-    <div id="practice"></div>
-    <p class="small" style="text-align:center;margin-top:14px"><button class="linkbtn" id="pracReset">Start again from level 1</button></p>
-  </div>`;
-  $('#back').onclick = () => { location.hash = ''; };
-  $('#pracReset').onclick = () => { if (confirm('Go back to level 1? Your best level is kept.')) Practice.restartFromOne(); };
-  Practice.mount($('#practice'), u);
+  app.innerHTML = '<div id="pstage"></div>';
+  Practice.mount($('#pstage'), u, { home: () => { location.hash = ''; }, tag: levelName(levelOf(u)) });
 }
 
 /* ---------- organise ---------- */
