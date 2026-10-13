@@ -298,15 +298,15 @@ function renderHome(u) {
     <div class="bar"><span class="title"></span><span class="userbox"><button class="linkbtn" id="who">Log out</button><button class="avatarbtn" id="avatarBtn" title="${u.avatar ? 'Change your photo' : 'Add a photo'}">${avatarHTML(u)}</button></span></div>
     <div class="hello"><div class="small">Salve,</div><div class="who"></div></div>
     ${installTip('home')}
-    <div class="tile org" id="org">
+    <div class="levels top" id="levels" role="radiogroup" aria-label="Which words">
+      ${LEVELS.map(([k, n]) => `<button role="radio" data-l="${k}" aria-checked="${k === levelOf(u)}"><b>${n}</b><span>${WORDS.filter(w => inLevel(w, k)).length} words</span></button>`).join('')}
+    </div>
+    ${meterHTML(c, total)}
+    <div class="small meterline">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
+    <div class="tile prac2" id="org">
       <h2>Organise</h2>
-      <p>Learn the words with swipe cards. Which words?</p>
-      <div class="levels" role="radiogroup" aria-label="Which words">
-        ${LEVELS.map(([k, n]) => `<button role="radio" data-l="${k}" aria-checked="${k === levelOf(u)}"><b>${n}</b><span>${WORDS.filter(w => inLevel(w, k)).length} words</span></button>`).join('')}
-      </div>
-      ${meterHTML(c, total)}
-      <div class="small">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
-      <div class="orgbtns"><button class="btn ghost" data-t="list">Word list</button><button class="btn" data-t="play">Play</button></div>
+      <button class="gamebanner" data-t="play" style="background-image:url('art/banners/cards.jpg')"><span class="gname cards">Cards</span></button>
+      <button class="gamebanner" data-t="list" style="background-image:url('art/banners/wordlist.jpg')"><span class="gname list">Word list</span></button>
     </div>
     <div class="tile prac2" id="prac">
       <h2>Practice</h2>
@@ -327,11 +327,11 @@ function renderHome(u) {
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
-  $('#org .levels').onclick = e => {
+  $('#levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
     store.set(levelKey(u), b.dataset.l); renderHome(u);
   };
-  $('#org .orgbtns').onclick = e => {
+  $('#org').onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
     store.set('latin.orgTab', b.dataset.t); location.hash = b.dataset.t;
   };

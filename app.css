@@ -199,6 +199,7 @@ body { background: transparent; }
 .card { -webkit-touch-callout: none; }
 html, body { overscroll-behavior: none; }
 .wrap { padding-top: calc(16px + env(safe-area-inset-top, 0px)); }
+@media (display-mode: standalone) { .wrap { padding-top: max(calc(16px + env(safe-area-inset-top, 0px)), 62px); } .hstage .ptop { padding-top: max(2px, env(safe-area-inset-top, 0px)); height: auto; min-height: 38px; } }
 
 /* example phrase */
 .card .phrase { position: absolute; top: 58px; left: 40px; right: 40px; font-style: italic; font-size: 1.05rem; line-height: 1.35;
@@ -218,7 +219,8 @@ html, body { overscroll-behavior: none; }
 .card { padding-bottom: 40px; }
 
 /* Organise panel on the home screen */
-.tile.org .levels { margin: 12px 0 2px; }
+.levels.top { margin: 4px 0 2px; }
+.meterline { text-align: center; margin: 0 0 14px; }
 .orgbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .orgbtns .btn { margin-top: 14px; }
 .bar .lvtag { min-width: 72px; text-align: right; font-size: 13px; color: var(--muted); font-family: system-ui, sans-serif; }
@@ -409,3 +411,5 @@ body.noscroll { overflow: hidden; }
   text-shadow: 0 2px 0 #2a1a3a, 0 -2px 0 #2a1a3a, 2px 0 0 #2a1a3a, -2px 0 0 #2a1a3a, 2px 2px 0 #2a1a3a, -2px 2px 0 #2a1a3a, 2px -2px 0 #2a1a3a, -2px -2px 0 #2a1a3a, 0 6px 14px rgba(0,0,0,.6); font-family: system-ui, -apple-system, sans-serif; text-transform: uppercase; }
 .gname.squishy { color: #9BE564; font-style: italic; transform: rotate(-2deg); }
 .gname.hammer { color: #8FEBD6; }
+.gname.cards { color: #FFE9B0; }
+.gname.list { color: #FFD6E0; }
