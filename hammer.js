@@ -435,17 +435,30 @@ const Hammer = (() => {
   let itemsTab = 'costume';
   function openItems(onClose) {
     const sv = saved(); WEAR = wear();
+    img('ui_frame');
     for (const kind in CATALOGUE) for (const [id] of CATALOGUE[kind]) { if (kind === 'hammer') img('w_' + id); else if (kind === 'pup') for (const p in DOG) img(id + '_' + p); else if (META) for (const p in META.jacque[id] || {}) if (!SKIP.test(p)) img(`j_${id}_${p}`); }
     ui.overlay.hidden = false;
     ui.overlay.innerHTML = `<div class="hitems">
       <div class="hihead"><span class="hititle">ITEMS</span><span class="hicoins">🪙 <b id="hiCoins">${sv.coins || 0}</b></span><button class="hiclose" id="hiClose">close</button></div>
-      <div class="hiframe">
+      <div class="hiframe"><canvas class="hiframebg"></canvas>
         <div class="hitabs">${['costume', 'hammer', 'pup', 'shop'].map(t => `<button data-t="${t}" class="${t === itemsTab ? 'on' : ''}">${{ costume: 'JACQUE', hammer: 'HAMMER', pup: 'PUP', shop: 'SHOP' }[t]}</button>`).join('')}</div>
         <div class="hibody"><div class="hiwho"><span class="hilv">Lv.${sv.cleared || 0}</span><canvas id="hiMe"></canvas></div><div class="higrid" id="hiGrid"></div></div>
         <div class="hibar"><i id="hiBar"></i></div>
       </div>
       <div class="hinote" id="hiNote"></div></div>`;
+    // the big frame, painted as a nine-slice so it stretches to any size
+    const paintFrame = () => {
+      const fr = ui.overlay.querySelector('.hiframe'), c = fr && fr.querySelector('.hiframebg'), i = img('ui_frame'); if (!c || !ok(i)) return;
+      const w = fr.clientWidth, h = fr.clientHeight, d = Math.min(devicePixelRatio || 1, 2); if (!w || !h) return;
+      if (c.width === Math.round(w * d) && c.height === Math.round(h * d) && c.dataset.ok) return;
+      c.width = Math.round(w * d); c.height = Math.round(h * d); const g = c.getContext('2d'); g.setTransform(d, 0, 0, d, 0, 0); g.imageSmoothingEnabled = false;
+      const iw = i.naturalWidth, ih = i.naturalHeight, L = 34, R = 34, T = 60, B = 36, sL = 30, sR = 30, sT = 50, sB = 30;
+      const xs = [0, L, iw - R, iw], ys = [0, T, ih - B, ih], dx = [0, sL, w - sR, w], dy = [0, sT, h - sB, h];
+      for (let r = 0; r < 3; r++) for (let q = 0; q < 3; q++) g.drawImage(i, xs[q], ys[r], xs[q + 1] - xs[q], ys[r + 1] - ys[r], dx[q], dy[r], dx[q + 1] - dx[q] + .5, dy[r + 1] - dy[r] + .5);
+      c.dataset.ok = '1';
+    };
     const paint = () => {
+      paintFrame();
       const sv = saved(); WEAR = wear();
       ui.overlay.querySelector('#hiCoins').textContent = sv.coins || 0;
       const me = ui.overlay.querySelector('#hiMe'), th = thumb('costume', WEAR.skin, 120); me.width = th.width; me.height = th.height; me.getContext('2d').drawImage(th, 0, 0);
@@ -478,7 +491,7 @@ const Hammer = (() => {
     paint();
     if (!META) fetch(ART + 'meta.json').then(r => r.json()).then(m => { META = m; paint(); });
     let lastN = -1;   // repaint as pictures finish loading
-    const tick = setInterval(() => { if (ui == null || ui.overlay.hidden || !ui.overlay.querySelector('.hitems')) { clearInterval(tick); return; } const n = Object.values(IMG).filter(ok).length; if (n !== lastN) { lastN = n; paint(); } }, 250);
+    const tick = setInterval(() => { if (ui == null || ui.overlay.hidden || !ui.overlay.querySelector('.hitems')) { clearInterval(tick); return; } const n = Object.values(IMG).filter(ok).length; if (n !== lastN) { lastN = n; paint(); } else paintFrame(); }, 250);
   }
   function start() { S.t = 0; refreshUI(); if (S.level === 1) { S.phase = 'intro'; S.vil = { t: 0, line: 0, typed: 0, talk: true }; } else S.phase = 'play'; }
   function layout() {

@@ -343,34 +343,37 @@ body.noscroll { overflow: hidden; }
 .hwhy.show { opacity: 1; transform: translate(-50%, 0); animation: whyout 3.2s forwards; }
 @keyframes whyout { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
 
-/* Jacques Hammer items screen, built from the artist's ShopUI pieces (art/jh/ui_*) */
+/* Jacques Hammer items screen, built from the artist's ShopUI pieces (art/jh/ui_*).
+   Plain stretched backgrounds and a canvas-painted frame: iOS Safari drops CSS border-image on these. */
 .hitems { position: absolute; inset: 0; background: #6d8f6f url('art/jh/title_tall.jpg') center / cover; display: flex; flex-direction: column; padding: 6px 6px 4px; gap: 0; font-family: system-ui, sans-serif; image-rendering: pixelated; }
 .hitems::before { content: ''; position: absolute; inset: 0; background: rgba(60,40,30,.5); }
 .hitems > * { position: relative; }
+.hitems button { -webkit-appearance: none; appearance: none; font-family: system-ui, sans-serif; }
 .hihead { display: flex; align-items: flex-end; gap: 6px; margin: 0 10px -2px; z-index: 2; }
-.hititle { width: 150px; height: 33px; background: url('art/jh/ui_title.png') no-repeat center / 100% 100%; color: #fff; text-shadow: 0 2px 0 #7a4a1e; font-weight: 900; letter-spacing: .12em; font-size: 17px; display: flex; align-items: center; justify-content: center; padding-bottom: 4px; }
-.hicoins { height: 30px; border: 10px solid transparent; border-image: url('art/jh/ui_panel.png') 12 fill / 10px round; padding: 0 4px 2px; display: flex; align-items: center; font-weight: 900; color: #7a4a1e; font-size: 15px; min-width: 70px; }
-.hiclose { margin-left: auto; width: 38px; height: 36px; border: 0; background: url('art/jh/ui_close.png') no-repeat center / 100% 100%; color: transparent; font-size: 0; }
-.hiframe { flex: 1; min-height: 0; position: relative; border: 60px solid transparent; border-width: 56px 30px 32px 30px; border-image: url('art/jh/ui_frame.png') 60 34 36 34 fill / 56px 30px 32px 30px stretch; padding: 0 0 2px; display: flex; flex-direction: column; gap: 6px; }
-.hitabs { position: absolute; top: -48px; left: -20px; right: -20px; display: flex; gap: 3px; height: 36px; }
-.hitabs button { flex: 1; border: 8px solid transparent; border-image: url('art/jh/ui_tab.png') 10 fill / 8px stretch; padding: 0 0 2px; background: none; font-weight: 900; letter-spacing: .02em; color: #4b3fa8; font-size: 12px; font-family: system-ui, sans-serif; }
-.hitabs button.on { border-image: url('art/jh/ui_tab_on.png') 10 fill / 8px stretch; color: #e8902b; }
+.hititle { width: 150px; height: 33px; background: url('art/jh/ui_title.png') no-repeat center; background-size: 100% 100%; color: #fff; text-shadow: 0 2px 0 #7a4a1e; font-weight: 900; letter-spacing: .12em; font-size: 17px; display: flex; align-items: center; justify-content: center; padding-bottom: 4px; }
+.hicoins { height: 30px; background: url('art/jh/ui_panel.png') no-repeat center; background-size: 100% 100%; padding: 0 14px 2px; display: flex; align-items: center; font-weight: 900; color: #7a4a1e; font-size: 15px; min-width: 70px; }
+.hiclose { margin-left: auto; width: 38px; height: 36px; border: 0; background: url('art/jh/ui_close.png') no-repeat center; background-size: 100% 100%; color: transparent; font-size: 0; }
+.hiframe { flex: 1; min-height: 0; position: relative; padding: 50px 24px 26px; display: flex; flex-direction: column; gap: 6px; }
+.hiframe canvas.hiframebg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.hiframe > :not(.hiframebg):not(.hitabs) { position: relative; z-index: 1; }
+.hitabs { position: absolute; top: 8px; left: 10px; right: 10px; display: flex; gap: 3px; height: 36px; z-index: 1; }
+.hitabs button { flex: 1; border: 0; background: url('art/jh/ui_tab.png') no-repeat center; background-size: 100% 100%; padding: 0 0 2px; font-weight: 900; letter-spacing: .02em; color: #4b3fa8; font-size: 12px; }
+.hitabs button.on { background-image: url('art/jh/ui_tab_on.png'); color: #e8902b; }
 .hibody { flex: 1; min-height: 0; display: flex; gap: 6px; padding: 0 0 6px; }
-.hiwho { width: 33%; border: 10px solid transparent; border-image: url('art/jh/ui_panel.png') 12 fill / 10px stretch; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; padding: 6px 4px; position: relative; }
-.hilv { position: absolute; top: 8px; left: 10px; font-weight: 900; color: #5a3a1a; font-size: 14px; }
+.hiwho { width: 33%; background: url('art/jh/ui_panel.png') no-repeat center; background-size: 100% 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; padding: 14px 8px 12px; position: relative; }
+.hilv { position: absolute; top: 10px; left: 12px; font-weight: 900; color: #5a3a1a; font-size: 14px; }
 .hiwho canvas { width: 100%; max-width: 150px; height: auto; image-rendering: pixelated; }
 .higrid { flex: 1; min-width: 0; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 6px; align-content: start; padding: 2px; }
-.hislot { border: 10px solid transparent; border-image: url('art/jh/ui_slot.png') 14 fill / 10px stretch; background: none; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 104px; cursor: pointer; color: #5a3a1a; font-family: system-ui, sans-serif; }
+.hislot { border: 0; background: url('art/jh/ui_slot.png') no-repeat center; background-size: 100% 100%; padding: 8px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 104px; cursor: pointer; color: #5a3a1a; }
 .hislot canvas { width: 60px; height: 60px; image-rendering: pixelated; }
-.hislot.worn { border-image: url('art/jh/ui_slot_on.png') 14 fill / 10px stretch; }
+.hislot.worn { background-image: url('art/jh/ui_slot_on.png'); }
 .hislot.poor { opacity: .55; }
 .hiname { font-size: 11px; font-weight: 800; text-align: center; line-height: 1.1; }
 .hiprice { font-size: 11px; font-weight: 900; color: #e8902b; }
-.hibar { height: 18px; margin: 0 2px; border: 7px solid transparent; border-image: url('art/jh/ui_track.png') 8 fill / 7px stretch; position: relative; }
-.hibar i { position: absolute; left: -7px; top: -7px; bottom: -7px; min-width: 16px; border: 7px solid transparent; border-image: url('art/jh/ui_fill.png') 8 fill / 7px stretch; }
+.hibar { height: 18px; margin: 0 2px; background: url('art/jh/ui_track.png') no-repeat center; background-size: 100% 100%; position: relative; }
+.hibar i { position: absolute; left: 0; top: 0; bottom: 0; min-width: 16px; background: url('art/jh/ui_fill.png') no-repeat center; background-size: 100% 100%; }
 .hinote { text-align: center; color: #fff; font-weight: 700; font-size: 12px; text-shadow: 0 1px 2px rgba(0,0,0,.7); min-height: 1.2em; padding-top: 4px; }
 .hiopen { position: absolute; top: 10px; right: 10px; width: auto; font-size: 14px; padding: 8px 12px; min-height: 36px; }
-@media (max-width: 520px) { .hiwho { width: 31%; } .higrid { grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 5px; } .hislot { min-height: 98px; } .hislot canvas { width: 54px; height: 54px; } }
 .hcoin { color: #e8902b; font-weight: 900; }
 @media (max-width: 520px) { .hiwho { width: 30%; } .higrid { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 6px; } .hislot { min-height: 100px; } .hislot canvas { width: 56px; height: 56px; } }
 
