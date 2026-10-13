@@ -35,28 +35,23 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   `art/ui/`, `art/trophies/`. Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
 - **Jacques Hammer** — a runner (`hammer.js`), portrait like the artist's mockup
-  (works either way up). One wide board at a time scrolls
-  in with a Latin word and a meaning; tap to smash the wrong ones, let the right
-  ones pass. The bad guy (the "Decoy") opens the game saying he has changed
-  the town's signs, and comes back out of the ground to club Jacques on a
-  mistake; three lives, score with a combo bonus. **Levels**: each is a scene
-  with its matching outfit and 'hammer' (`LEVELS` in `hammer.js`: road +
-  hammer, pier + shark, farmer + pitchfork …); 10 + 2/level signs to clear.
-  Seven costumes (disco, suit, samurai, astronaut, cowboy, karate, turban) came
-  only as flat pictures (PixelOutfits), so their `body` is one cut-out and their
-  legs are the standard run frames recoloured.
-  Signs are the artist's eight boards (`sign0-7`, with `_l`/`_r` halves that fly
-  apart on a smash): six wooden styles cycle by level, green = judged right,
-  red = judged wrong; `meta.json.signs` holds their geometry.
-  Only two backgrounds exist so far (road, pier), so most outfits run on the
-  road until the owner sends their scenes. Progress in `latin.hammer.<id>`
-  {best, level, cleared, plays}.
-  Art from the owner's "Jacques Hammer" folder in `art/jh/`: pixel rigs drawn part
-  by part (`meta.json` holds every part's box — Jacque has 19 outfit skins and
-  there are 22 weapons, only `standard` + the hammer are used so far), the dog,
-  the Decoy's enter/dead frames, effect pieces (`fx_*`), UI pieces (`ui_*`),
-  chest art, and `bg_road`/`bg_pier` backgrounds. Outfits, weapons, the shop and
-  chests are still unused ideas from the artist's set.
+  (works either way up). One wide board at a time scrolls in with a Latin word
+  and a meaning; tap to smash the wrong ones, let the right ones pass. The bad
+  guy (the "Decoy") opens the game saying he has changed the town's signs, and
+  comes back out of the ground to club Jacques on a mistake; three lives, score
+  with a combo bonus. **Levels** alternate the two scenes (road, pier); 10 + 2
+  per level signs to clear. Clearing a level pays **coins**; the **Items**
+  screen (JACQUE / HAMMER / PUP / SHOP tabs, after the artist's mockup) sells
+  26 costumes, 23 'hammers' and 5 pups, owned for ever and worn whenever.
+  Art in `art/jh/`: pixel rigs drawn part by part (`meta.json` holds every
+  part's box per outfit); seven costumes (disco, suit, samurai, astronaut,
+  cowboy, karate, turban) came only as flat pictures, so their `body` is one
+  cut-out on recoloured standard legs; pups `gb/gc/gg/gp_*` are recolours of
+  the dog `g_*`; signs `sign0-7` (+ `_l`/`_r` halves) with six wooden styles
+  cycling by level and green/red once judged; `title_tall/wide.jpg` start
+  screen. Progress in `latin.hammer.<id>` {best, level, cleared, coins,
+  earned, owned[], wear{skin, weapon, pup}}. Only two backgrounds exist; more
+  scenes would need pictures from the owner.
 - Installable as a home-screen app (`manifest.webmanifest`, `sw.js`; bump the
   cache name in `sw.js` when files change).
 

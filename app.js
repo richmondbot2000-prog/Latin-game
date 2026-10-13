@@ -118,6 +118,7 @@ function route() {
   if (h === 'practice') return renderPractice(u);
   if (h === 'trophies') return renderTrophies(u);
   if (h === 'hammer') return renderHammer(u);
+  if (h === 'hammer-items') return renderHammer(u, true);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
@@ -270,8 +271,8 @@ function renderHome(u) {
       <img class="pracico" src="art/jh/icon.png" alt="">
       <h2>Jacques Hammer</h2>
       <p>Run past the signs. Smash the wrong meanings, let the right ones by.</p>
-      <div class="small">${(() => { const sv = store.get('latin.hammer.' + u.id, { best: 0 }); return sv.best ? `Level ${sv.level || 1} · best score ${sv.best}` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
-      <div class="orgbtns"><span></span><button class="btn" id="hamGo">Play</button></div>
+      <div class="small">${(() => { const sv = store.get('latin.hammer.' + u.id, { best: 0 }); return sv.best ? `Level ${sv.level || 1} · best score ${sv.best} · 🪙 ${sv.coins || 0} coins` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
+      <div class="orgbtns"><button class="btn ghost" id="hamItems">🛍️ Items</button><button class="btn" id="hamGo">Play</button></div>
     </div>
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
     <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
@@ -288,6 +289,7 @@ function renderHome(u) {
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#trophGo').onclick = () => { location.hash = 'trophies'; };
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
+  $('#hamItems').onclick = () => { location.hash = 'hammer-items'; };
   $('#org .levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
     store.set(levelKey(u), b.dataset.l); renderHome(u);
@@ -312,9 +314,9 @@ function renderPractice(u) {
 }
 
 /* ---------- Jacques Hammer ---------- */
-function renderHammer(u) {
+function renderHammer(u, items) {
   app.innerHTML = '<div id="hstage"></div>';
-  Hammer.mount($('#hstage'), u, { home: () => { location.hash = ''; }, tag: levelName(levelOf(u)) });
+  Hammer.mount($('#hstage'), u, { home: () => { location.hash = ''; }, tag: levelName(levelOf(u)), items });
 }
 
 /* ---------- trophy cabinet ---------- */

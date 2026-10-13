@@ -4,36 +4,24 @@
    Tap to smash the wrong ones; let the right ones pass. Get it wrong and the evil guy comes out. ---------- */
 const Hammer = (() => {
   const LIVES = 3;
-  // each level is a scene with the outfit and 'hammer' that go with it (the artist's sets)
-  const LEVELS = [
-    { scene: 'Town road', bg: 'bg_road', skin: 'standard', weapon: 'hammer', outfit: 'Jacques and his hammer' },
-    { scene: 'Fish pier', bg: 'bg_pier', skin: 'coolbeach', weapon: 'shark', outfit: 'beach gear and a shark' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'farmer', weapon: 'pitchfork', outfit: 'farmer with a pitchfork' },
-    { scene: 'Fish pier', bg: 'bg_pier', skin: 'beach', weapon: 'whaleshark', outfit: 'swim shorts and a whale shark' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'biker', weapon: 'bat', outfit: 'biker with a spiked bat' },
-    { scene: 'Fish pier', bg: 'bg_pier', skin: 'coolbeachyellow', weapon: 'whale', outfit: 'yellow beach gear and a whale' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'lumberjacque', weapon: 'axe', outfit: 'lumberjack with an axe' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'hotdog', weapon: 'spatula', outfit: 'hot dog with a spatula' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'bunny', weapon: 'carrot', outfit: 'bunny with a carrot' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'greek', weapon: 'spear', outfit: 'Roman with a spear' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'monkey', weapon: 'monkeystick', outfit: 'monkey with a monkey stick' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'banana', weapon: 'scythebanana', outfit: 'banana with a banana scythe' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'dino', weapon: 'legmeat', outfit: 'dinosaur with a leg of meat' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'peapod', weapon: 'spoon', outfit: 'pea pod with a spoon' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'dragqueen', weapon: 'brushpink', outfit: 'glamour and a pink hairbrush' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'farmerdenim', weapon: 'hoe', outfit: 'denim farmer with a hoe' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'lumberjacquebearded', weapon: 'tree', outfit: 'bearded lumberjack with a whole tree' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'cowboy', weapon: 'banana', outfit: 'cowboy with a banana' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'karate', weapon: 'bat', outfit: 'karate kid with a bat' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'disco', weapon: 'brushyellow', outfit: 'disco Jacques with a yellow hairbrush' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'suit', weapon: 'hammersilver', outfit: 'secret agent with the silver hammer' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'samurai', weapon: 'spear', outfit: 'samurai with a spear' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'turban', weapon: 'brushblue', outfit: 'wise old Jacques with a blue hairbrush' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'astronaut', weapon: 'hammergold', outfit: 'astronaut with the gold hammer' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'standardred', weapon: 'hammerred', outfit: 'red Jacques and the red hammer' },
-    { scene: 'Town road', bg: 'bg_road', skin: 'standardgold', weapon: 'hammergold', outfit: 'gold Jacques and the gold hammer' }];
-  const levelOf = n => LEVELS[(n - 1) % LEVELS.length];
+  // levels alternate between the scenes the artist made; what Jacques wears is up to the player (see the shop)
+  const SCENES = [{ scene: 'Town road', bg: 'bg_road' }, { scene: 'Fish pier', bg: 'bg_pier' }];
+  const levelOf = n => SCENES[Math.floor((n - 1) / 2) % SCENES.length];
   const quota = n => 10 + 2 * Math.min(10, n - 1);           // signs to get through on level n
+  // the shop: everything the artist drew, bought with coins earned by clearing levels; owned for ever
+  const COSTUMES = [['standard', 'Jacques', 0], ['beach', 'Beach', 120], ['coolbeach', 'Cool beach', 120], ['coolbeachyellow', 'Yellow beach', 120], ['farmer', 'Farmer', 120], ['farmerdenim', 'Denim farmer', 120],
+    ['lumberjacque', 'Lumberjacque', 140], ['lumberjacquebearded', 'Bearded Jacque', 160], ['biker', 'Biker', 150], ['greek', 'Roman', 150], ['suit', 'Secret agent', 160], ['cowboy', 'Cowboy', 160], ['karate', 'Karate', 160],
+    ['disco', 'Disco', 180], ['turban', 'Wise man', 180], ['dragqueen', 'Glamour', 180], ['hotdog', 'Hot dog', 200], ['bunny', 'Bunny', 200], ['peapod', 'Pea pod', 200], ['banana', 'Banana', 200], ['monkey', 'Monkey', 220],
+    ['dino', 'Dino', 240], ['samurai', 'Samurai', 260], ['astronaut', 'Astronaut', 280], ['standardred', 'Red Jacques', 300], ['standardgold', 'Gold Jacques', 400]];
+  const HAMMERS = [['hammer', 'Stone hammer', 0], ['spoon', 'Spoon', 60], ['spatula', 'Spatula', 60], ['carrot', 'Carrot', 70], ['banana', 'Banana', 70], ['hoe', 'Hoe', 80], ['pitchfork', 'Pitchfork', 90], ['bat', 'Spiked bat', 100],
+    ['brushblue', 'Blue brush', 100], ['brushyellow', 'Yellow brush', 100], ['brushpink', 'Pink brush', 100], ['axe', 'Axe', 120], ['spear', 'Spear', 120], ['legmeat', 'Leg of meat', 130], ['monkeystick', 'Monkey stick', 140],
+    ['scythebanana', 'Banana scythe', 150], ['tree', 'Whole tree', 180], ['shark', 'Shark', 200], ['whale', 'Whale', 220], ['whaleshark', 'Whale shark', 240], ['hammersilver', 'Silver hammer', 260], ['hammerred', 'Red hammer', 300], ['hammergold', 'Gold hammer', 400]];
+  const PUPS = [['g', 'Pup', 0], ['gc', 'Cream pup', 150], ['gb', 'Black pup', 150], ['gg', 'Grey pup', 150], ['gp', 'Pink pup', 200]];
+  const CATALOGUE = { costume: COSTUMES, hammer: HAMMERS, pup: PUPS };
+  const saved = () => store.get(saveKey, { best: 0 });
+  const owns = (kind, id) => { const it = CATALOGUE[kind].find(x => x[0] === id); return !!it && (it[2] === 0 || (saved().owned || []).includes(kind + ':' + id)); };
+  const wear = () => { const sv = saved(), w = sv.wear || {}; return { skin: owns('costume', w.skin || 'standard') ? (w.skin || 'standard') : 'standard', weapon: owns('hammer', w.weapon || 'hammer') ? (w.weapon || 'hammer') : 'hammer', pup: owns('pup', w.pup || 'g') ? (w.pup || 'g') : 'g' }; };
+  const coinsFor = (right, wrong) => 10 + 3 * right + (wrong === 0 ? 15 : 0);
   let S = null, ui = null, user = null, saveKey = '';
   let cv, ctx, W = 0, H = 0, stage = null, raf = 0, last = 0;
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -41,7 +29,7 @@ const Hammer = (() => {
   const boardW = () => Math.min(W * .8, H * .9);
 
   function newGame(level = 1, score = 0) {
-    S = { level, made: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
+    S = { level, made: 0, right0: 0, wrong0: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
       swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0, dogX: null, dogHop: 0,
       clouds: [...Array(6)].map((_, i) => ({ i: i % 5, x: Math.random() * 1.2 - .1, y: rnd(.1, .85), s: rnd(.9, 1.5), v: rnd(.012, .025) })) };
   }
@@ -129,17 +117,20 @@ const Hammer = (() => {
   }
   function levelClear() {
     const sv = store.get(saveKey, { best: 0 });
-    const next = S.level + 1, L = levelOf(next);
-    store.set(saveKey, { ...sv, best: Math.max(sv.best || 0, S.score), level: Math.max(sv.level || 1, next), cleared: Math.max(sv.cleared || 0, S.level) });
+    const next = S.level + 1, L = levelOf(next), r = S.right - S.right0, w = S.wrong - S.wrong0, coins = coinsFor(r, w);
+    store.set(saveKey, { ...sv, best: Math.max(sv.best || 0, S.score), level: Math.max(sv.level || 1, next), cleared: Math.max(sv.cleared || 0, S.level), coins: (sv.coins || 0) + coins, earned: (sv.earned || 0) + coins });
     Celebrate(innerWidth / 2, innerHeight / 3, 2);
-    showOverlay(`⭐ Level ${S.level} clear!`, `Score ${S.score} · ${S.right} right, ${S.wrong} wrong<br><br>Next: <b>Level ${next} — ${L.scene}</b><br>${L.outfit}`, `Level ${next}`, () => { newGame(next, S.score); preload(next); start(); });
+    const go = () => { const sc = S.score; newGame(next, sc); preload(next); start(); };
+    showOverlay(`⭐ Level ${S.level} clear!`, `<b class="hcoin">+${coins} coins</b>${w === 0 ? ' (perfect!)' : ''} · you have ${(sv.coins || 0) + coins}<br>${r} right, ${w} wrong<br><br>Next: <b>Level ${next} — ${L.scene}</b>`, `Level ${next}`, go, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
+    ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(go); };
   }
   function gameOver() {
     const sv = store.get(saveKey, { best: 0 });
     const best = Math.max(sv.best || 0, S.score); const isBest = S.score > (sv.best || 0);
     store.set(saveKey, { ...sv, best, plays: (sv.plays || 0) + 1 });
     const lv = S.level;
-    showOverlay(`${isBest ? '🏆 New best score!' : 'Ouch!'}`, `Score ${S.score} · best ${best}<br>${S.right} right, ${S.wrong} wrong · best combo ×${S.bestCombo}<br><br>Level ${lv} — ${levelOf(lv).scene}`, `Try level ${lv} again`, () => { newGame(lv); start(); });
+    showOverlay(`${isBest ? '🏆 New best score!' : 'Ouch!'}`, `Score ${S.score} · best ${best}<br>${S.right} right, ${S.wrong} wrong · best combo ×${S.bestCombo}<br><br>Level ${lv} — ${levelOf(lv).scene}`, `Try level ${lv} again`, () => { newGame(lv); start(); }, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
+    ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(() => { newGame(lv); start(); }); };
     if (isBest) Celebrate(innerWidth / 2, innerHeight / 3, 2);
   }
   function tap() {
@@ -158,6 +149,7 @@ const Hammer = (() => {
   const ART = 'art/jh/', IMG = {};
   let META = null;   // art/jh/meta.json: every rig part's box, per outfit
   const lev = () => levelOf(S ? S.level : 1);
+  let WEAR = { skin: 'standard', weapon: 'hammer', pup: 'g' };
   const img = n => { if (!IMG[n]) { const i = new Image(); i.src = ART + n + '.png'; IMG[n] = i; } return IMG[n]; };
   const ok = i => i.complete && i.naturalWidth > 0;
   // part boxes in the rig's own pixel space [x0, y0, x1, y1]
@@ -170,9 +162,10 @@ const Hammer = (() => {
     ...[1, 2, 3, 4, 5, 6, 7].map(n => 'd_enter' + n), ...Object.keys(DOG).map(p => 'g_' + p), ...[0, 1, 2, 4, 5].map(n => 'fx_dust' + n)];
   const SKIP = /^layer /;
   function preload(n) {
-    const L = levelOf(n); img(L.bg); img('w_' + L.weapon);
+    const L = levelOf(n); img(L.bg); WEAR = wear(); img('w_' + WEAR.weapon);
     for (const st of [(n - 1) % 6, 6, 7]) { img('sign' + st); img('sign' + st + '_l'); img('sign' + st + '_r'); }
-    if (META) for (const p in META.jacque[L.skin]) if (!SKIP.test(p)) img(`j_${L.skin}_${p}`);
+    if (META) for (const p in META.jacque[WEAR.skin]) if (!SKIP.test(p)) img(`j_${WEAR.skin}_${p}`);
+    for (const p in DOG) img(WEAR.pup + '_' + p);
   }
   // draw one rig part: box is in rig pixels, (px,py) the rig point that sits at screen (sx,sy), k the scale
   function part(name, box, px, py, sx, sy, k) {
@@ -216,7 +209,7 @@ const Hammer = (() => {
     const stumble = S.ouch > 0 ? Math.sin(S.ouch * 12) * .14 : 0;
     g.save(); g.translate(x, ground); g.rotate(stumble);
     if (S.invuln > 0 && Math.floor(S.t * 12) % 2) g.globalAlpha = .45;
-    const swinging = S.swing >= 0, skin = lev().skin, RIG = META && META.jacque[skin];
+    const swinging = S.swing >= 0, skin = WEAR.skin, RIG = META && META.jacque[skin];
     if (!RIG) { g.restore(); return; }
     const legs = swinging ? 'hittinglegs' : running ? 'run' + (1 + Math.floor(cyc) % 4) : 'legs';
     const P = (n, dy = 0) => { if (RIG[n]) part(`j_${skin}_${n}`, RIG[n], JPIV[0], JPIV[1], 0, -bob + dy, k); };
@@ -229,7 +222,7 @@ const Hammer = (() => {
     const a = swinging ? (S.swing < .14 ? S.swing / .14 * 2.05 : Math.max(0, 2.05 - (S.swing - .14) / .26 * 2.05)) : Math.sin(S.t * 10) * .04;
     const hx = (HAND[0] - JPIV[0]) * k, hy = (HAND[1] - JPIV[1]) * k - bob;
     g.save(); g.translate(hx + (HAND[0] - HAND[0]) * k + 2 * k, hy + 4 * k); g.rotate(a);
-    const hm = img('w_' + lev().weapon); if (ok(hm)) g.drawImage(hm, -(hm.naturalWidth - 9) * k, -(hm.naturalHeight - 11) * k, hm.naturalWidth * k, hm.naturalHeight * k);   // every weapon is held by its bottom-right corner
+    const hm = img('w_' + WEAR.weapon); if (ok(hm)) g.drawImage(hm, -(hm.naturalWidth - 9) * k, -(hm.naturalHeight - 11) * k, hm.naturalWidth * k, hm.naturalHeight * k);   // every weapon is held by its bottom-right corner
     g.restore();
     P('righthand');
     g.restore();
@@ -246,11 +239,32 @@ const Hammer = (() => {
     const x = W * JX + S.dogX * jScale();
     const cyc = running ? S.t * 10 + 1.5 : 0, bob = running ? Math.abs(Math.sin(cyc * Math.PI / 2)) * 2 : 0;
     g.save(); g.translate(x, ground - (bob + hop) * k);
-    const P = n => part('g_' + n, DOG[n], 43, 68, 0, 0, k);
+    const P = n => part(WEAR.pup + '_' + n, DOG[n], 43, 68, 0, 0, k);
     P('tail'); P(running ? 'run' + (1 + Math.floor(cyc) % 4) : S.dogHop > 0 ? 'run2' : 'sitting2'); P('head'); P('leftear'); P('rightear'); P('chin'); P('inside'); P('tongue');
     if ((S.t % 4) > .12) { P('openlefteye'); P('openrighteye'); }
     P('lefteyebrow'); P('righteyebrow');
     g.restore();
+  }
+  // still pictures for the items screen: Jacques in a costume, a hammer, or a pup
+  function thumb(kind, id, size = 96) {
+    const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); g.imageSmoothingEnabled = false;
+    const saveCtx = ctx; ctx = g;
+    try {
+      if (kind === 'costume' && META && META.jacque[id]) {
+        const RIG = META.jacque[id], k = size * .72 / 116, x = size * .46, y = size * .96;
+        const P = n => { if (RIG[n]) part(`j_${id}_${n}`, RIG[n], JPIV[0], JPIV[1], x, y, k); };
+        if (RIG.tail) P('tail'); if (RIG.tails) P('tails'); P('legs');
+        if (RIG.body) P('body'); else { P('leftarm'); P('lefthand'); P('chest'); P('head'); P('eyesopen'); P('rightarm'); }
+        P('righthand');
+      } else if (kind === 'hammer') {
+        const i = img('w_' + id); if (ok(i)) { const k = size * .8 / Math.max(i.naturalWidth, i.naturalHeight); g.drawImage(i, (size - i.naturalWidth * k) / 2, (size - i.naturalHeight * k) / 2, i.naturalWidth * k, i.naturalHeight * k); }
+      } else if (kind === 'pup') {
+        const k = size * .8 / 80, x = size * .5, y = size * .9;
+        const P = n => part(id + '_' + n, DOG[n], 43, 68, x, y, k);
+        P('tail'); P('legs'); P('head'); P('leftear'); P('rightear'); P('chin'); P('inside'); P('tongue'); P('openlefteye'); P('openrighteye'); P('lefteyebrow'); P('righteyebrow');
+      }
+    } finally { ctx = saveCtx; }
+    return c;
   }
   // the evil guy: rises out of the ground to the right, clubs Jacques with his signpost, sinks back
   function drawVillain() {
@@ -387,10 +401,56 @@ const Hammer = (() => {
     if (ui.lev) ui.lev.textContent = `L${S.level} · ${S.made}/${quota(S.level)}`;
     ui.lives.textContent = '❤️'.repeat(Math.max(0, S.lives)) + '🖤'.repeat(Math.max(0, LIVES - S.lives));
   }
-  function showOverlay(title, sub, btn, fn) {
+  function showOverlay(title, sub, btn, fn, extra = '') {
     ui.overlay.hidden = false;
-    ui.overlay.innerHTML = `<div class="ovbox"><h3>${title}</h3><p>${sub}</p><button class="btn ovbtn" id="hvBtn">${btn}</button></div>`;
+    ui.overlay.innerHTML = `<div class="ovbox"><h3>${title}</h3><p>${sub}</p><button class="btn ovbtn" id="hvBtn">${btn}</button>${extra}</div>`;
     ui.overlay.querySelector('#hvBtn').onclick = () => { ui.overlay.hidden = true; fn(); };
+  }
+  /* ---------- items: wear what you own, buy what you don't ---------- */
+  let itemsTab = 'costume';
+  function openItems(onClose) {
+    const sv = saved(); WEAR = wear();
+    for (const kind in CATALOGUE) for (const [id] of CATALOGUE[kind]) { if (kind === 'hammer') img('w_' + id); else if (kind === 'pup') for (const p in DOG) img(id + '_' + p); else if (META) for (const p in META.jacque[id] || {}) if (!SKIP.test(p)) img(`j_${id}_${p}`); }
+    ui.overlay.hidden = false;
+    ui.overlay.innerHTML = `<div class="hitems">
+      <div class="hihead"><span class="hititle">ITEMS</span><span class="hicoins">🪙 <b id="hiCoins">${sv.coins || 0}</b></span><button class="hiclose" id="hiClose">✕</button></div>
+      <div class="hitabs">${['costume', 'hammer', 'pup', 'shop'].map(t => `<button data-t="${t}" class="${t === itemsTab ? 'on' : ''}">${{ costume: 'JACQUE', hammer: 'HAMMER', pup: 'PUP', shop: 'SHOP' }[t]}</button>`).join('')}</div>
+      <div class="hibody"><div class="hiwho"><span class="hilv">Lv.${sv.cleared || 0}</span><canvas id="hiMe"></canvas><div class="hibar"><i id="hiBar"></i></div></div><div class="higrid" id="hiGrid"></div></div>
+      <div class="hinote" id="hiNote"></div></div>`;
+    const paint = () => {
+      const sv = saved(); WEAR = wear();
+      ui.overlay.querySelector('#hiCoins').textContent = sv.coins || 0;
+      const me = ui.overlay.querySelector('#hiMe'), th = thumb('costume', WEAR.skin, 120); me.width = th.width; me.height = th.height; me.getContext('2d').drawImage(th, 0, 0);
+      const total = COSTUMES.length + HAMMERS.length + PUPS.length - 3, got = (sv.owned || []).length;
+      ui.overlay.querySelector('#hiBar').style.width = Math.round(100 * got / total) + '%';
+      ui.overlay.querySelectorAll('.hitabs button').forEach(b => b.classList.toggle('on', b.dataset.t === itemsTab));
+      const grid = ui.overlay.querySelector('#hiGrid'); grid.innerHTML = '';
+      const list = itemsTab === 'shop' ? [].concat(...Object.keys(CATALOGUE).map(k => CATALOGUE[k].filter(x => !owns(k, x[0])).map(x => [k, ...x]))) : CATALOGUE[itemsTab].filter(x => owns(itemsTab, x[0])).map(x => [itemsTab, ...x]);
+      ui.overlay.querySelector('#hiNote').textContent = itemsTab === 'shop' ? (list.length ? 'Tap something to buy it. Coins come from clearing levels.' : 'You own everything! 🎉') : 'Tap to wear it.';
+      for (const [kind, id, name, price] of list) {
+        const worn = (kind === 'costume' ? WEAR.skin : kind === 'hammer' ? WEAR.weapon : WEAR.pup) === id;
+        const d = document.createElement('button'); d.className = 'hislot' + (worn ? ' worn' : '') + (itemsTab === 'shop' && (sv.coins || 0) < price ? ' poor' : '');
+        d.appendChild(thumb(kind, id, 72));
+        d.insertAdjacentHTML('beforeend', `<span class="hiname">${name}</span>${itemsTab === 'shop' ? `<span class="hiprice">🪙 ${price}</span>` : worn ? '<span class="hiprice">wearing</span>' : ''}`);
+        d.onclick = () => {
+          const sv = saved(), slot = kind === 'costume' ? 'skin' : kind === 'hammer' ? 'weapon' : 'pup';
+          if (itemsTab === 'shop') {
+            if ((sv.coins || 0) < price) { ui.overlay.querySelector('#hiNote').textContent = `You need ${price - (sv.coins || 0)} more coins for the ${name}.`; return; }
+            const w = { ...(sv.wear || {}) }; w[slot] = id;
+            store.set(saveKey, { ...sv, coins: (sv.coins || 0) - price, owned: [...(sv.owned || []), kind + ':' + id], wear: w });
+            Celebrate(innerWidth / 2, innerHeight / 2, 1); itemsTab = kind;
+          } else { const w = { ...(sv.wear || {}) }; w[slot] = id; store.set(saveKey, { ...sv, wear: w }); }
+          preload(S ? S.level : 1); paint();
+        };
+        grid.appendChild(d);
+      }
+    };
+    ui.overlay.querySelector('.hitabs').onclick = e => { const b = e.target.closest('button'); if (b) { itemsTab = b.dataset.t; paint(); } };
+    ui.overlay.querySelector('#hiClose').onclick = () => { ui.overlay.hidden = true; preload(S ? S.level : 1); if (onClose) onClose(); };
+    paint();
+    if (!META) fetch(ART + 'meta.json').then(r => r.json()).then(m => { META = m; paint(); });
+    let lastN = -1;   // repaint as pictures finish loading
+    const tick = setInterval(() => { if (ui == null || ui.overlay.hidden || !ui.overlay.querySelector('.hitems')) { clearInterval(tick); return; } const n = Object.values(IMG).filter(ok).length; if (n !== lastN) { lastN = n; paint(); } }, 250);
   }
   function start() { S.t = 0; refreshUI(); if (S.level === 1) { S.phase = 'intro'; S.vil = { t: 0, line: 0, typed: 0, talk: true }; } else S.phase = 'play'; }
   function layout() {
@@ -438,8 +498,14 @@ const Hammer = (() => {
     const keys = e => { if (e.code === 'Space' || e.key === 'ArrowUp') tap(); }; document.addEventListener('keydown', keys); ui.keys = keys;
     // the artist's start screen: tap anywhere on it to begin
     ui.overlay.hidden = false;
-    ui.overlay.innerHTML = `<div class="htitle"><div class="htsub">Level ${lv} — ${levelOf(lv).scene}<br><span>${levelOf(lv).outfit}</span></div></div>`;
-    ui.overlay.querySelector('.htitle').onclick = () => { ui.overlay.hidden = true; start(); };
+    const title = () => {
+      ui.overlay.hidden = false;
+      ui.overlay.innerHTML = `<div class="htitle"><div class="htsub">Level ${lv} — ${levelOf(lv).scene}<br><span>🪙 ${saved().coins || 0} coins</span></div><button class="btn hiopen" id="hiOpen">🛍️ Items</button></div>`;
+      ui.overlay.querySelector('.htitle').onclick = () => { ui.overlay.hidden = true; start(); };
+      ui.overlay.querySelector('#hiOpen').onclick = e => { e.stopPropagation(); ui.overlay.hidden = true; openItems(title); };
+    };
+    title();
+    if (opts.items) { ui.overlay.hidden = true; openItems(title); }
     last = performance.now(); raf = requestAnimationFrame(frame);
   }
   function unmount() {
@@ -450,5 +516,5 @@ const Hammer = (() => {
     S = null; ui = null; stage = null;
   }
   const step = secs => { for (let t = 0; t < secs; t += 1 / 60) update(1 / 60); };
-  return { mount, unmount, debug: { step, state: () => S, tap, makeSign } };
+  return { mount, unmount, openItems, CATALOGUE, debug: { step, state: () => S, tap, makeSign } };
 })();
