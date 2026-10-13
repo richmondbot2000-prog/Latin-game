@@ -754,7 +754,7 @@ const Practice = (() => {
     const ds = distractors(w, words).slice().sort(() => Math.random() - .5);
     const opts = [w.english, ds[0].english, ds[1] ? ds[1].english : ds[0].english].sort(() => Math.random() - .5);
     quiz = { w, opts, frozen: 0 };
-    ui.qword.textContent = w.word;
+    ui.qword.textContent = w.show;
     ui.qopts.innerHTML = opts.map((o, i) => `<button data-i="${i}">${esc(o)}</button>`).join('');
   }
   function answer(i) {

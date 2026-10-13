@@ -38,11 +38,13 @@ const KIND = pos => {
 };
 const STOP = new Set('a an the of to be is it i he she they his her their its one my your our self s and or on in by as at for with not no'.split(' '));
 const tokens = s => new Set(s.toLowerCase().replace(/\(.*?\)/g, ' ').split(/[^a-z]+/).filter(t => t && !STOP.has(t)));
-const WORDS = VOCAB.map((v, i) => ({ ...v, id: v.word, kind: KIND(v.pos), toks: tokens(v.english), i }));
+// what the player sees: the plain word, with every form listed (a/ab -> "a, ab") and the grammar notes dropped
+const showWord = w => w.replace(/\s*\+\s*(abl|acc)\.?$/, '').replace(/\s*\((verb|adverb|noun)\)$/, '').split('/').join(', ');
+const WORDS = VOCAB.map((v, i) => ({ ...v, id: v.word, show: showWord(v.word), kind: KIND(v.pos), toks: tokens(v.english), i }));
 const phraseFor = w => (typeof PHRASES !== 'undefined' && PHRASES[w.word]) || null;
 // Latin phrase with the card's word (marked *like this*) highlighted
 const phraseHTML = la => esc(la).replace(/\*([^*]+)\*/g, '<mark>$1</mark>');
-const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.word} means ${w.english}.` };
+const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.show} means ${w.english}.` };
 
 function distractors(w, pool = WORDS) {
   // a wrong answer must be clearly different: no shared words, no shared meaning group (vocab.js "sense"),
@@ -391,11 +393,11 @@ function renderList(u, pane) {
     const shown = sorted.filter(w => {
       const s = (p[w.id] && p[w.id].s) || 0;
       if (filter === 'rest' ? !resting(p[w.id], now) : filter !== 'all' && String(s) !== filter) return false;
-      return !term || w.word.toLowerCase().includes(term) || w.english.toLowerCase().includes(term);
+      return !term || w.show.toLowerCase().includes(term) || w.english.toLowerCase().includes(term);
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.word)}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">😴 resting until ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">😴 resting until ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
     $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word to see how to remember it';
   };
@@ -418,11 +420,11 @@ function renderList(u, pane) {
 function openMemo(w, stars, verdict, onClose, btnLabel) {
   const m = memoFor(w);
   sheet.innerHTML = `
-    <div class="panel" role="dialog" aria-modal="true" aria-label="How do we remember ${esc(w.word)}?">
+    <div class="panel" role="dialog" aria-modal="true" aria-label="How do we remember ${esc(w.show)}?">
       ${verdict ? `<div class="verdict bad">${verdict}</div>` : ''}
       <div class="memo">
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
-        <div class="lat">${esc(w.word)}</div>
+        <div class="lat">${esc(w.show)}</div>
         <div class="en">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
         ${phraseFor(w) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w).la)}</p><p class="tr">${esc(phraseFor(w).en)}</p></div>` : ''}
@@ -486,7 +488,7 @@ function renderPlay(u, pane) {
         ${phraseFor(w) ? `<div class="phrase">${phraseHTML(phraseFor(w).la)}</div>` : ''}
         <div class="kind">${w.kind}</div>
         <span class="stamp yes">RIGHT</span><span class="stamp no">WRONG</span>
-        <div class="lat">${esc(w.word)}</div>
+        <div class="lat">${esc(w.show)}</div>
         <div class="means">means</div>
         <div class="en">${esc(shown)}</div>
       </div>`;
@@ -509,7 +511,7 @@ function renderPlay(u, pane) {
       const r = deck.getBoundingClientRect();
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
       right++;
-      if (pw.s === 5) flash(`🏆 ${w.word} mastered! Resting for a month`);
+      if (pw.s === 5) flash(`🏆 ${w.show} mastered! Resting for a month`);
     } else st.cur = 0;
     store.set(streakKey(u), st);
     showStreak(ok);
@@ -517,8 +519,8 @@ function renderPlay(u, pane) {
     if (ok) setTimeout(next, 120);
     else {
       const v = (match
-        ? `Oops — “${esc(w.word)}” really does mean “${esc(shown)}”.`
-        : `Not quite — “${esc(w.word)}” doesn’t mean “${esc(shown)}”.`) + (hadStars ? ' Back to zero stars for this one.' : '');
+        ? `Oops — “${esc(w.show)}” really does mean “${esc(shown)}”.`
+        : `Not quite — “${esc(w.show)}” doesn’t mean “${esc(shown)}”.`) + (hadStars ? ' Back to zero stars for this one.' : '');
       setTimeout(() => openMemo(w, pw.s, v, next), 120);
     }
   }

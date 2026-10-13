@@ -93,7 +93,7 @@ const Hammer = (() => {
         // it got past Jacques
         s.state = 'passed';
         if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: Math.max(.2, s.x + bw / 2), t: 0 }); }
-        else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.word}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
+        else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.show}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
       }
     }
     S.signs = S.signs.filter(s => s.x > -.4);
@@ -108,7 +108,7 @@ const Hammer = (() => {
           target.state = 'smashed'; target.smashT = 0;
           const hx = Math.max(target.x, CX + .05); smashSign(target);
           if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '+' + pts }); }
-          else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.word}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
+          else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.show}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
         }
       }
       if (S.swing > .55) S.swing = -1;
@@ -364,8 +364,8 @@ const Hammer = (() => {
     g.save(); g.translate(x, 0);
     g.fillStyle = st === 7 ? '#5a1010' : st === 6 ? '#143d14' : '#2B1A3A'; g.textAlign = 'center'; g.textBaseline = 'middle';
     let fs = Math.round(faceH * .42); g.font = `700 ${fs}px Georgia, serif`;
-    while (g.measureText(s.w.word).width > sw * .84 && fs > 10) { fs--; g.font = `700 ${fs}px Georgia, serif`; }
-    g.fillText(s.w.word, sw / 2, faceTop + faceH * .3);
+    while (g.measureText(s.w.show).width > sw * .84 && fs > 10) { fs--; g.font = `700 ${fs}px Georgia, serif`; }
+    g.fillText(s.w.show, sw / 2, faceTop + faceH * .3);
     let f2 = Math.round(faceH * .3); g.font = `700 ${f2}px system-ui, sans-serif`;
     while (g.measureText(s.shown).width > sw * .86 && f2 > 9) { f2--; g.font = `700 ${f2}px system-ui, sans-serif`; }
     g.fillText(s.shown, sw / 2, faceTop + faceH * .74);
