@@ -433,7 +433,7 @@ function renderList(u, pane) {
 }
 
 /* memory card sheet */
-function openMemo(w, stars, verdict, onClose) {
+function openMemo(w, stars, verdict, onClose, btnLabel) {
   const m = memoFor(w);
   sheet.innerHTML = `
     <div class="panel" role="dialog" aria-modal="true" aria-label="How do we remember ${esc(w.word)}?">
@@ -446,7 +446,7 @@ function openMemo(w, stars, verdict, onClose) {
         ${phraseFor(w) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w).la)}</p><p class="tr">${esc(phraseFor(w).en)}</p></div>` : ''}
         <div class="meta">${starsHTML(stars)} <span class="small">· ${w.kind} · Level ${w.level}</span></div>
       </div>
-      <button class="btn" id="memoOk">${verdict ? 'Got it — next card' : 'Close'}</button>
+      <button class="btn" id="memoOk">${btnLabel || (verdict ? 'Got it — next card' : 'Close')}</button>
     </div>`;
   sheet.hidden = false;
   const done = () => { closeSheet(); if (onClose) onClose(); };

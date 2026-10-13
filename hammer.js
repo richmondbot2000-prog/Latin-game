@@ -30,7 +30,7 @@ const Hammer = (() => {
 
   function newGame(level = 1, score = 0) {
     S = { level, made: 0, right0: 0, wrong0: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
-      swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0, dogX: null, dogHop: 0,
+      swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0, dogX: null, dogHop: 0, shake: 0, card: null,
       clouds: [...Array(6)].map((_, i) => ({ i: i % 5, x: Math.random() * 1.2 - .1, y: rnd(.1, .85), s: rnd(.9, 1.5), v: rnd(.012, .025) })) };
   }
 
@@ -66,12 +66,20 @@ const Hammer = (() => {
     if (S.vil) {   // the evil guy's visit: everything else waits while he clubs Jacques
       const was = S.vil.t; S.vil.t += dt;
       if (was < .83 && S.vil.t >= .83) { S.ouch = .9; S.flashRed = .4; S.bits.push({ kind: 'ouch', t: 0 }); }
-      if (S.vil.t > 2.05) { S.vil = null; if (S.lives <= 0) { S.phase = 'over'; setTimeout(gameOver, 400); } }
+      if (S.vil.t > 2.05) {
+        S.vil = null;
+        const after = () => { if (S.lives <= 0) { S.phase = 'over'; setTimeout(gameOver, 300); } else S.phase = 'play'; };
+        if (S.card && typeof openMemo === 'function') {   // the game waits while the word's memory card is read
+          const c = S.card; S.card = null; S.phase = 'card';
+          const p = getProg(user)[c.w.id];
+          openMemo(c.w, p ? p.s || 0 : 0, c.why, () => { if (S) after(); }, 'Got it — keep running!');
+        } else after();
+      }
     }
     for (const c of S.clouds) { c.x -= c.v * dt * (slow || .3); if (c.x < -.25) { c.x = 1.05; c.y = rnd(.1, .85); } }
     if (slow) { S.dustT -= dt; if (S.dustT <= 0) { S.dustT = .22; S.bits.push({ kind: 'dust', i: [0, 1, 2, 4, 5][Math.floor(Math.random() * 5)], x: JX - .04 - Math.random() * .02, t: 0 }); } }
     if (S.invuln > 0) S.invuln -= dt; if (S.flashRed > 0) S.flashRed -= dt;
-    if (S.ouch > 0) S.ouch -= dt;
+    if (S.ouch > 0) S.ouch -= dt; if (S.shake > 0) S.shake -= dt;
     // signs
     S.nextSign -= dt;
     const gap = Math.max(1.2, 2.6 - S.t * .02);
@@ -85,24 +93,25 @@ const Hammer = (() => {
         // it got past Jacques
         s.state = 'passed';
         if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: Math.max(.2, s.x + bw / 2), t: 0 }); }
-        else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.word}” doesn’t mean “${s.shown}” — you let it past!`); }
+        else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.word}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
       }
     }
     S.signs = S.signs.filter(s => s.x > -.4);
     // hammer swing: impact a moment after the tap
     if (S.swing >= 0) {
       S.swing += dt;
-      if (!S.hitDone && S.swing >= .14) {
-        S.hitDone = true;
+      if (!S.hitDone && S.swing >= .32) {
+        S.hitDone = true; S.shake = .22;
+        for (let i = 0; i < 4; i++) S.bits.push({ kind: 'dust', i: [0, 1, 2, 4, 5][i], x: JX + .08 + i * .04, t: 0 });
         const target = S.signs.find(s => s.state === 'up' && s.x < CX + .3 && s.x + bw > CX);
         if (target) {
           target.state = 'smashed'; target.smashT = 0;
           const hx = Math.max(target.x, CX + .05); smashSign(target);
           if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '+' + pts }); }
-          else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.word}” really does mean “${target.shown}” — don’t smash the right ones!`); }
+          else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.word}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
         }
       }
-      if (S.swing > .4) S.swing = -1;
+      if (S.swing > .55) S.swing = -1;
     }
     for (const b of S.bits) { b.t += dt; if (b.kind === 'plank') { b.x += b.vx * dt; b.vy += 2.2 * dt; b.y += b.vy * dt; b.r += 3 * dt; } else if (b.kind === 'dust') b.x -= v * dt * .6; else if (b.kind === 'half') { b.x += b.vx * dt; b.vy += H * 2.2 * dt; b.y += b.vy * dt; b.rot += b.vr * dt; } }
     S.bits = S.bits.filter(b => b.t < (b.kind === 'plank' || b.kind === 'half' ? 1.2 : b.kind === 'dust' ? .6 : .9));
@@ -110,9 +119,9 @@ const Hammer = (() => {
     S.signs = S.signs.filter(s => !(s.state === 'smashed' && s.smashT > .1));
     refreshUI();
   }
-  function hurt(why) {
+  function hurt(why, w) {
     if (S.invuln > 0 || S.vil) return;
-    S.lives--; S.invuln = 3; S.combo = 0; S.vil = { t: 0 }; S.swing = -1;
+    S.lives--; S.invuln = 3; S.combo = 0; S.vil = { t: 0 }; S.swing = -1; S.card = { w, why };
     ui.why.textContent = why; ui.why.classList.remove('show'); void ui.why.offsetWidth; ui.why.classList.add('show');
   }
   function levelClear() {
@@ -207,11 +216,19 @@ const Hammer = (() => {
     const running = S.phase === 'play' && S.vil == null;
     const cyc = running ? S.t * 10 : 0, bob = running ? Math.abs(Math.sin(cyc * Math.PI / 2)) * 2.5 : 0;
     const stumble = S.ouch > 0 ? Math.sin(S.ouch * 12) * .14 : 0;
-    g.save(); g.translate(x, ground); g.rotate(stumble);
+    // the swing: he leaps up, winds the hammer back over his head, then brings it down with all his weight as he lands
+    const sw = S.swing, swinging = sw >= 0;
+    const jump = !swinging ? 0 : sw < .2 ? Math.sin(sw / .2 * Math.PI / 2) * 38 : sw < .32 ? 38 * (1 - (sw - .2) / .12) : 0;
+    const squash = swinging && sw >= .32 && sw < .45 ? 1 - .12 * Math.sin((sw - .32) / .13 * Math.PI) : 1;
+    if (swinging && sw >= .2 && sw < .36) {   // speed lines down the hammer's path
+      g.strokeStyle = 'rgba(40,20,20,.55)'; g.lineWidth = Math.max(1.5, k * 1.2);
+      for (let i = 0; i < 5; i++) { const lx = x + (70 + i * 14) * k, top = ground - (150 - i * 12) * k; g.beginPath(); g.moveTo(lx, top); g.lineTo(lx - 10 * k, top + (60 + i * 10) * k); g.stroke(); }
+    }
+    g.save(); g.translate(x, ground - jump * k); g.scale(1 / squash, squash); g.rotate(stumble);
     if (S.invuln > 0 && Math.floor(S.t * 12) % 2) g.globalAlpha = .45;
-    const swinging = S.swing >= 0, skin = WEAR.skin, RIG = META && META.jacque[skin];
+    const skin = WEAR.skin, RIG = META && META.jacque[skin];
     if (!RIG) { g.restore(); return; }
-    const legs = swinging ? 'hittinglegs' : running ? 'run' + (1 + Math.floor(cyc) % 4) : 'legs';
+    const legs = swinging ? (sw < .3 && RIG.jumplegs ? 'jumplegs' : 'hittinglegs') : running ? 'run' + (1 + Math.floor(cyc) % 4) : 'legs';
     const P = (n, dy = 0) => { if (RIG[n]) part(`j_${skin}_${n}`, RIG[n], JPIV[0], JPIV[1], 0, -bob + dy, k); };
     const L = RIG[legs], lw = (L[2] - L[0]) * k, lh = (L[3] - L[1]) * k;       // leg frames are centred under him
     if (RIG.tail) P('tail'); if (RIG.tails) P('tails');
@@ -219,7 +236,7 @@ const Hammer = (() => {
     if (RIG.body) P('body');                                                   // costumes that came as one picture
     else { P('leftarm'); P('lefthand'); P('chest'); P('head'); P((S.t % 3.3) < .14 ? 'eyesclosed' : 'eyesopen'); P('rightarm'); }
     // the hammer swings about his right hand: resting over the shoulder, then whipped down in front
-    const a = swinging ? (S.swing < .14 ? S.swing / .14 * 2.05 : Math.max(0, 2.05 - (S.swing - .14) / .26 * 2.05)) : Math.sin(S.t * 10) * .04;
+    const a = !swinging ? Math.sin(S.t * 10) * .04 : sw < .2 ? -sw / .2 * .9 : sw < .32 ? -.9 + (sw - .2) / .12 * 3.2 : Math.max(0, 2.3 - (sw - .32) / .23 * 2.3);
     const hx = (HAND[0] - JPIV[0]) * k, hy = (HAND[1] - JPIV[1]) * k - bob;
     g.save(); g.translate(hx + (HAND[0] - HAND[0]) * k + 2 * k, hy + 4 * k); g.rotate(a);
     const hm = img('w_' + WEAR.weapon); if (ok(hm)) g.drawImage(hm, -(hm.naturalWidth - 9) * k, -(hm.naturalHeight - 11) * k, hm.naturalWidth * k, hm.naturalHeight * k);   // every weapon is held by its bottom-right corner
@@ -379,6 +396,8 @@ const Hammer = (() => {
   }
   function draw() {
     ctx.imageSmoothingEnabled = false;
+    ctx.save();
+    if (S.shake > 0) ctx.translate(rnd(-4, 4) * S.shake / .22, rnd(-3, 3) * S.shake / .22);
     drawBackground();
     for (const s of S.signs) drawSign(s);
     const k = jScale() * .8;
@@ -391,6 +410,7 @@ const Hammer = (() => {
       else if (b.kind === 'tick') { const ty = H * GROUND - 170 * jScale() - b.t * H * .1; sprite('fx_smallstar', b.x * W, ty, k * 1.2, 1 - b.t, b.t * 3); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#2E7D4F'; ctx.font = `900 ${jScale() * 40}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('✓', b.x * W + jScale() * 36, ty); ctx.globalAlpha = 1; }
       else if (b.kind === 'ouch') sprite('fx_redstar', W * JX + 10, H * GROUND - jScale() * 70, k * (1.2 + b.t), 1 - b.t / .9, -b.t);
     }
+    ctx.restore();
     drawHud();
     if (S.flashRed > 0) { ctx.fillStyle = `rgba(255,40,40,${S.flashRed * .6})`; ctx.fillRect(0, 0, W, H); }
   }
