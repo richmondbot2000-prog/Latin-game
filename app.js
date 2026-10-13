@@ -96,10 +96,12 @@ const sheet = $('#sheet');
 
 function route() {
   Celebrate.stop();
+  if (typeof Practice !== 'undefined') Practice.unmount();
   closeSheet();
   const u = current();
   const h = location.hash.slice(1);
   if (!u) return renderSignIn();
+  if (h === 'practice') return renderPractice(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
@@ -197,12 +199,18 @@ function renderHome(u) {
       <div class="small">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
       <div class="orgbtns"><button class="btn ghost" data-t="list">Word list</button><button class="btn" data-t="play">Play</button></div>
     </div>
-    <div class="tile locked"><h2>Coming soon</h2><p>Reading sentences</p></div>
+    <div class="tile org" id="prac">
+      <h2>Practice</h2>
+      <p>Defend the garden from the squishies. Match words to earn coins for guns.</p>
+      <div class="small">${(store.get('latin.practice.' + u.id, { best: 1 }).best || 1) > 1 ? 'Best: level ' + store.get('latin.practice.' + u.id, { best: 1 }).best : 'Not played yet'} · uses your ${levelName(levelOf(u))} words</div>
+      <div class="orgbtns"><span></span><button class="btn" id="pracGo">Play</button></div>
+    </div>
     <div class="tile locked"><h2>Coming soon</h2><p>Reading stories</p></div>
     <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
   </div>`;
   $('.who').textContent = u.name + ' ' + u.emojis.join('');
   wireTip();
+  $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#org .levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
     store.set(levelKey(u), b.dataset.l); renderHome(u);
@@ -218,6 +226,19 @@ function renderHome(u) {
     store.del(progressKey(u)); store.del(streakKey(u)); store.del(levelKey(u)); store.del('latin.current');
     route();
   };
+}
+
+/* ---------- practice (garden defence) ---------- */
+function renderPractice(u) {
+  app.innerHTML = `
+  <div class="wrap practice">
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Practice</span><span class="lvtag">${levelName(levelOf(u))}</span></div>
+    <div id="practice"></div>
+    <p class="small" style="text-align:center;margin-top:14px"><button class="linkbtn" id="pracReset">Start again from level 1</button></p>
+  </div>`;
+  $('#back').onclick = () => { location.hash = ''; };
+  $('#pracReset').onclick = () => { if (confirm('Go back to level 1? Your best level is kept.')) Practice.restartFromOne(); };
+  Practice.mount($('#practice'), u);
 }
 
 /* ---------- organise ---------- */
