@@ -299,19 +299,10 @@ function renderHome(u) {
       <div class="small">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
       <div class="orgbtns"><button class="btn ghost" data-t="list">Word list</button><button class="btn" data-t="play">Play</button></div>
     </div>
-    <div class="tile org prac" id="prac">
-      <img class="pracico" src="art/ui/icon_practice.png" alt="">
+    <div class="tile prac2" id="prac">
       <h2>Practice</h2>
-      <p>Defend the garden from the squishies. Match words to earn coins for guns.</p>
-      <div class="small">${(() => { const sv = store.get('latin.practice.' + u.id, { best: 1 }); return (sv.best || 1) > 1 ? `Best: level ${sv.best} · ${sv.kills || 0} squishies squished` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
-      <div class="orgbtns"><button class="btn ghost" id="trophGo">🏆 Trophies ${(() => { const sv = store.get('latin.practice.' + u.id, {}); return Practice.trophies(sv).filter(t => t.got).length; })()}/20</button><button class="btn" id="pracGo">Play</button></div>
-    </div>
-    <div class="tile org prac" id="ham">
-      <img class="pracico" src="art/jh/icon.png" alt="">
-      <h2>Jacques Hammer</h2>
-      <p>Run past the signs. Smash the wrong meanings, let the right ones by.</p>
-      <div class="small">${(() => { const sv = store.get('latin.hammer.' + u.id, { best: 0 }); return sv.best ? `Level ${sv.level || 1} · best score ${sv.best} · 🪙 ${sv.coins || 0} coins` : 'Not played yet'; })()} · uses your ${levelName(levelOf(u))} words</div>
-      <div class="orgbtns"><button class="btn ghost" id="hamItems">🛍️ Items</button><button class="btn" id="hamGo">Play</button></div>
+      <button class="gamebanner" id="pracGo" style="background-image:url('art/banners/squishygeddon.jpg')"><span class="gname squishy">Squishygeddon</span></button>
+      <button class="gamebanner" id="hamGo" style="background-image:url('art/banners/hammer.jpg')"><span class="gname hammer">Jacques Hammer</span></button>
     </div>
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
     <button class="btn ghost" id="del" style="margin-top:auto">Delete this player</button>
@@ -327,9 +318,7 @@ function renderHome(u) {
     if (pulledFor !== u.id) { pulledFor = u.id; Sync.pull(u).then(changed => { if (changed && current() && current().id === u.id && location.hash === '') renderHome(u); }); }
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
-  $('#trophGo').onclick = () => { location.hash = 'trophies'; };
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
-  $('#hamItems').onclick = () => { location.hash = 'hammer-items'; };
   $('#org .levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;
     store.set(levelKey(u), b.dataset.l); renderHome(u);

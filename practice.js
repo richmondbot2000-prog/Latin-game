@@ -773,6 +773,9 @@ const Practice = (() => {
     const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. Scroll the shop for more weapons. Keep the squishies away from your lawnmowers!'
       : (S.level === w.from ? `Welcome to ${w.name}! ` : '') + `${S.spec.count} squishies are on their way.` + (fresh.length ? ` New: ${fresh.join(', ')}!` : '') + (S.spec.boss ? ` Boss level — ${SQUISHIES[S.spec.boss].name} leads the final wave!` : '');
     showOverlay({ kind: 'ready', title: `${w.name === 'the Moon' ? 'The Moon' : w.name} · Level ${S.level}`, sub: first, btn: S.level === 1 ? "Let's go!" : 'Ready!' }, start);
+    const tr = document.createElement('button'); tr.className = 'linkbtn'; tr.textContent = '🏆 Trophy cabinet';
+    tr.onclick = () => { location.hash = 'trophies'; };
+    ui.overlay.querySelector('.ovbox').appendChild(tr);
     if (S.level > 1) {
       const a = document.createElement('button'); a.className = 'linkbtn'; a.textContent = 'start again from level 1';
       a.onclick = () => { if (confirm('Go back to level 1? Your best level is kept.')) restartFromOne(); };
