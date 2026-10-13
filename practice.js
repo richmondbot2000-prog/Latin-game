@@ -10,19 +10,23 @@ const Practice = (() => {
     mortar:  { name: 'Mortar', cost: 225, every: 7, dmg: 90, splash: 1.4, recharge: 12, hp: 100, blurb: 'big blast every 7 s' },
     mg:      { name: 'Machine gun', cost: 300, every: 1 / 3, dmg: 10, speed: 9, recharge: 12, hp: 100, blurb: '3 bullets a second' },
   };
-  // the squishies (art in art/squishies). size is relative to a cell; 'from' is the first level they appear
+  // the squishies (art in art/squishies, drawn facing left as supplied). size is relative to a cell;
+  // 'from' is the first level they appear; look.hurt shows once they are below half health
   const SQUISHIES = {
-    chomp:      { name: 'Chomp',      hp: 100, speed: .20, chomp: 25, size: 1.0,  from: 1, art: ['chomp1', 'chomp2'], color: '#b8d0a8' },
-    skitter:    { name: 'Skitter',    hp: 60,  speed: .42, chomp: 25, size: .74,  from: 2, art: ['skitter1', 'skitter2'], color: '#d49496' },
-    chompking:  { name: 'ChompKing',  hp: 320, speed: .14, chomp: 35, size: 1.3,  from: 3, art: ['chompking'], color: '#9ec9c0' },
-    antbun:     { name: 'Antbun',     hp: 200, speed: .26, chomp: 25, size: 1.0,  from: 4, art: ['antbun1', 'antbun3'], dead: 'antbunskelly', color: '#bda7cd' },
-    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .30, chomp: 0,  size: .92,  from: 5, art: ['kamikaze1', 'kamikaze2'], color: '#ddb8a4', boom: true },
-    ghost:      { name: 'Ghost',      hp: 80,  speed: .30, chomp: 25, size: 1.0,  from: 6, art: ['ghost1', 'ghost2'], color: '#a6a0aa', pass: 1, alpha: .85 },
-    flying:     { name: 'Flyer',      hp: 70,  speed: .36, chomp: 0,  size: .9,   from: 7, art: ['flying1', 'flying2'], color: '#b9bcc5', pass: 99, fly: true },
-    moley:      { name: 'Moley',      hp: 150, speed: .22, chomp: 30, size: .95,  from: 8, art: ['moley'], color: '#e0c888', digs: true },
-    broodqueen: { name: 'Brood Queen', hp: 900, speed: .10, chomp: 40, size: 1.4, from: 6, art: ['broodqueen1', 'broodqueen2'], color: '#c0acb6', boss: true, brood: 9 },
-    ghostking:  { name: 'Ghost King', hp: 700, speed: .16, chomp: 35, size: 1.35, from: 9, art: ['ghostking'], color: '#aca9a2', boss: true, pass: 2, alpha: .85 },
+    chomp:      { name: 'Chomp',      hp: 100, speed: .20, chomp: 25, size: 1.0,  from: 1, look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8' },
+    skitter:    { name: 'Skitter',    hp: 60,  speed: .42, chomp: 25, size: .74,  from: 2, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496' },
+    chompking:  { name: 'ChompKing',  hp: 320, speed: .14, chomp: 35, size: 1.3,  from: 3, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0' },
+    antbun:     { name: 'Antbun',     hp: 200, speed: .26, chomp: 25, size: 1.05, from: 4, look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd' },
+    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .30, chomp: 0,  size: .92,  from: 5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true },
+    ghost:      { name: 'Ghost',      hp: 80,  speed: .30, chomp: 25, size: 1.0,  from: 6, look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
+    flying:     { name: 'Flyer',      hp: 70,  speed: .36, chomp: 0,  size: .9,   from: 7, look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
+    moley:      { name: 'Moley',      hp: 150, speed: .22, chomp: 30, size: .95,  from: 8, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true },
+    broodqueen: { name: 'Brood Queen', hp: 900, speed: .10, chomp: 40, size: 1.4, from: 6, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
+    ghostking:  { name: 'Ghost King', hp: 700, speed: .16, chomp: 35, size: 1.35, from: 9, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
   };
+  // the Antbun is a rigged character: separate parts in a 320-wide box, positions from the artist's PSD
+  const ANTBUN = {"parts": {"dead_leftarm": [65, 18, 88, 116], "dead_body": [0, 43, 242, 210], "dead_skull": [16, 91, 177, 127], "dead_arm": [155, 189, 46, 40], "dead_rightear": [153, 31, 167, 106], "hurt_leftear": [65, 20, 88, 116], "hurt_body": [0, 43, 243, 210], "hurt_righteyeclose": [98, 161, 31, 10], "hurt_righteyeopen": [98, 154, 30, 30], "hurt_arm": [165, 170, 48, 53], "hurt_rightear": [140, 31, 177, 131], "leftear": [68, 0, 132, 131], "body": [0, 55, 250, 198], "body2": [10, 87, 239, 179], "body3": [10, 87, 242, 176], "eyesopen": [31, 149, 98, 36], "rightear": [140, 31, 177, 131], "eyepopping": [96, 141, 58, 58], "eyesclose": [32, 155, 98, 15], "arm": [166, 171, 45, 52]}, "box": [320, 266], "death": {"w": 320, "h": 322, "body": [50, 95, 234, 187]}};
+  const ANTBUN_PARTS = Object.keys(ANTBUN.parts);
   const SPRITES = {};   // art key -> Image
   function levelSpec(n) {
     const weights = {};
@@ -63,7 +67,7 @@ const Practice = (() => {
       S.lastRows.push(row); if (S.lastRows.length > 2) S.lastRows.shift();
     }
     const x = opts.x != null ? opts.x : k.digs ? 3 + Math.random() * (COLS - 5) : COLS + .4 + Math.random() * .3;
-    const sq = { type, k, row, x, hp: k.hp, art: k.art[Math.floor(Math.random() * k.art.length)], phase: Math.random() * 7,
+    const sq = { type, k, row, x, hp: k.hp, phase: Math.random() * 7, blink: 2 + Math.random() * 3,
       eating: null, flash: 0, wob: 0, pass: k.pass || 0, passedCol: -1, brood: k.brood || 0, rise: k.digs ? 1 : 0 };
     S.squishies.push(sq);
     if (k.digs) S.fx.push({ kind: 'dirt', x, row, t: 0 });
@@ -77,7 +81,8 @@ const Practice = (() => {
     if (sq.hp <= 0 && !sq.dead) {
       sq.dead = true;
       S.fx.push({ kind: 'splat', x: sq.x, row: sq.row, t: 0, color: sq.k.color, size: sq.k.size });
-      S.fx.push({ kind: 'melt', x: sq.x, row: sq.row, t: 0, art: sq.k.dead || sq.art, size: sq.k.size, bones: !!sq.k.dead, fly: !!sq.k.fly });
+      if (sq.k.rig) S.fx.push({ kind: 'abdeath', x: sq.x, row: sq.row, t: 0, size: sq.k.size });
+      else S.fx.push({ kind: 'melt', x: sq.x, row: sq.row, t: 0, art: lookOf(sq), size: sq.k.size, fly: !!sq.k.fly });
     }
   }
 
@@ -181,7 +186,7 @@ const Practice = (() => {
     S.shells = S.shells.filter(s => !s.gone);
     // effects
     for (const f of S.fx) f.t += dt;
-    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'splat' || f.kind === 'melt' ? .6 : .8));
+    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : .8));
     for (const f of S.floats) f.t += dt;
     S.floats = S.floats.filter(f => f.t < 1);
     S.squishies = S.squishies.filter(s => !s.dead);
@@ -283,22 +288,57 @@ const Practice = (() => {
     g.globalAlpha = alpha; g.drawImage(im, x - iw / 2, y - ih, iw, ih); g.globalAlpha = 1;
     return true;
   }
+  const lookOf = sq => (sq.k.look.hurt && sq.hp < sq.k.hp * .5) ? sq.k.look.hurt : sq.k.look.ok;
+  // how each kind of squishy moves: returns {dy (cells), rot, sx, sy}
+  function motionOf(sq) {
+    const t = sq.wob, k = sq.k, m = k.motion;
+    if (sq.eating) return { dy: 0, rot: Math.sin(t * 16) * .06, sx: 1, sy: 1 };
+    if (m === 'hop' || m === 'stomp') {
+      const P = m === 'hop' ? (k.rig ? .55 : .42) : 1.1, hopH = m === 'hop' ? .2 : .12;
+      const ph = ((t + sq.phase) / P) % 1, land = Math.max(0, 1 - ph * 5), air = Math.sin(ph * Math.PI);
+      return { dy: -air * hopH, rot: 0, sx: 1 + .14 * land - .05 * air, sy: 1 - .18 * land + .07 * air, ph };
+    }
+    if (m === 'waddle') { const s = Math.sin(t * 7 + sq.phase); return { dy: -Math.abs(s) * .04, rot: s * .07, sx: 1 + .03 * Math.abs(s), sy: 1 - .03 * Math.abs(s) }; }
+    if (m === 'float') return { dy: -.1 - .1 * Math.sin(t * 2.5 + sq.phase), rot: .05 * Math.sin(t * 1.7 + sq.phase), sx: 1, sy: 1 };
+    if (m === 'fly') return { dy: -.28 - .08 * Math.sin(t * 5 + sq.phase), rot: -.08, sx: 1, sy: 1 };
+    if (m === 'roll') return { dy: -Math.abs(Math.sin(t * 6)) * .03, rot: -(COLS - sq.x) * 3.2, sx: 1, sy: 1 };
+    return { dy: 0, rot: 0, sx: 1, sy: 1 };
+  }
+  // the rigged Antbun: parts drawn in order, ears flopping with the hop, blinking, hit reaction, hurt set below half health
+  function drawAntbun(g, sq, w, mo) {
+    const f = w / ANTBUN.box[0], hurt = sq.hp < sq.k.hp * .5, hit = sq.flash > 0;
+    const part = (name, rot = 0, px = 0, py = 0) => {
+      const b = ANTBUN.parts[name], im = SPRITES['antbun/' + name]; if (!b || !im || !im.complete) return;
+      g.save(); g.translate((b[0] + px) * f, (b[1] + py) * f); g.rotate(rot); g.drawImage(im, -px * f, -py * f, b[2] * f, b[3] * f); g.restore();
+    };
+    const flop = mo.ph == null ? 0 : Math.sin(mo.ph * Math.PI * 2 - .8) * .18;
+    g.save(); g.translate(-ANTBUN.box[0] * f / 2, -ANTBUN.box[1] * f);   // parts are placed from the box's top-left; we draw from the feet
+    if (hurt) {
+      part('hurt_rightear', -flop * .8, 12, 118); part('hurt_body'); part('hurt_leftear', flop, 20, 112); part('hurt_arm');
+      part(sq.blink < .15 ? 'hurt_righteyeclose' : 'hurt_righteyeopen');
+    } else {
+      part('rightear', -flop * .8, 12, 118);
+      part(hit ? 'body3' : mo.ph != null && mo.ph < .2 ? 'body2' : 'body');
+      part('leftear', flop, 20, 128); part('arm');
+      if (hit) part('eyepopping'); else part(sq.blink < .15 ? 'eyesclose' : 'eyesopen');
+    }
+    g.restore();
+  }
   function drawSquishy(g, sq, x, y, s) {
-    const k = sq.k, w = s * k.size;
-    const bob = k.fly ? Math.sin(sq.wob * 5 + sq.phase) * s * .12 - s * .35 : 0;
-    const sx = 1 + .06 * Math.sin(sq.wob * 7 + sq.phase), sy = 1 - .06 * Math.sin(sq.wob * 7 + sq.phase);
+    const k = sq.k, w = s * k.size, mo = motionOf(sq);
+    if (sq.rise <= 0) sq.blink -= 1 / 60; if (sq.blink < 0) sq.blink = 2 + Math.random() * 3;
     const foot = y + s * .42;
     g.save();
-    // shadow
-    g.fillStyle = 'rgba(0,0,0,.16)'; g.beginPath(); g.ellipse(x, foot, w * .38, w * .1, 0, 0, 7); g.fill();
-    g.translate(x, foot + bob);
+    // shadow stays on the ground; smaller when the squishy is in the air
+    const air = Math.max(0, -mo.dy); g.fillStyle = 'rgba(0,0,0,.16)'; g.beginPath(); g.ellipse(x, foot, w * .38 * (1 - air * .4), w * .1 * (1 - air * .4), 0, 0, 7); g.fill();
+    g.translate(x, foot + mo.dy * s);
     if (sq.rise > 0) { g.beginPath(); g.rect(-w, -w * 2, w * 2, w * 2 * (1 - sq.rise)); g.clip(); g.translate(0, w * sq.rise); }   // moley rising out of the ground
-    if (sq.eating) g.rotate(Math.sin(sq.wob * 16) * .06);
-    g.scale(sx, sy);
-    if (!drawSprite(g, sq.art, 0, 0, w, k.alpha || 1)) {
-      g.fillStyle = k.color; g.beginPath(); g.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); g.fill();
-    }
-    if (sq.flash > 0) { g.globalCompositeOperation = 'lighter'; drawSprite(g, sq.art, 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
+    if (k.motion === 'roll') { g.translate(0, -w * .45); g.rotate(mo.rot); g.translate(0, w * .45); } else g.rotate(mo.rot);
+    g.scale(mo.sx, mo.sy);
+    if (k.alpha) g.globalAlpha = k.alpha;
+    if (k.rig) drawAntbun(g, sq, w, mo);
+    else if (!drawSprite(g, lookOf(sq), 0, 0, w, k.alpha || 1)) { g.fillStyle = k.color; g.beginPath(); g.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); g.fill(); }
+    if (sq.flash > 0 && !k.rig) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
     g.restore();
     if (k.boss) {   // boss health bar
       g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - w * .35, foot + s * .08, w * .7, s * .07);
@@ -359,11 +399,20 @@ const Practice = (() => {
         for (let i = 0; i < 7; i++) { const a = i * .9 + f.x, d = cell * f.size * (.2 + p * .6); ctx.beginPath(); ctx.arc(x + Math.cos(a) * d, y + Math.sin(a) * d * .6, cell * .08 * (1 - p) + 1, 0, 7); ctx.fill(); }
         ctx.globalAlpha = 1;
       } else if (f.kind === 'melt') {
-        const p = f.t / .6, w = cell * f.size, foot = y + cell * .42 - (f.fly ? cell * .35 : 0);
+        const p = f.t / .6, w = cell * f.size, foot = y + cell * .42 - (f.fly ? cell * .28 : 0);
         ctx.save(); ctx.translate(x, foot);
         if (f.bones) { drawSprite(ctx, f.art, 0, 0, w, 1 - p); }
         else { ctx.scale(1 + p * .5, Math.max(.05, 1 - p)); drawSprite(ctx, f.art, 0, 0, w, 1 - p * .7); }
         ctx.restore();
+      } else if (f.kind === 'abdeath') {
+        // nine frames from the artist's death animation, then the puddle fades
+        const n = Math.min(9, 1 + Math.floor(f.t / .1)), im = SPRITES['antbun/death' + n];
+        if (im && im.complete) {
+          const w = cell * f.size, fd = w / ANTBUN.death.body[2], bb = ANTBUN.death.body, foot = y + cell * .42;
+          ctx.globalAlpha = f.t > 1 ? Math.max(0, 1 - (f.t - 1) / .4) : 1;
+          ctx.drawImage(im, x - (bb[0] + bb[2] / 2) * fd, foot - (bb[1] + bb[3]) * fd, ANTBUN.death.w * fd, ANTBUN.death.h * fd);
+          ctx.globalAlpha = 1;
+        }
       } else if (f.kind === 'dirt') {
         const p = f.t / .8; ctx.fillStyle = `rgba(110,75,40,${1 - p})`;
         for (let i = 0; i < 8; i++) { const a = i * .8 + .3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * p * cell * .7, y + cell * .3 - Math.sin(a) * p * cell * .9 + p * p * cell * .8, cell * .07, 0, 7); ctx.fill(); }
@@ -534,7 +583,11 @@ const Practice = (() => {
     cv = root.querySelector('#pcv'); ctx = cv.getContext('2d');
     document.body.classList.add('noscroll');
     root.querySelector('#phome').onclick = () => { if (opts.home) opts.home(); };
-    for (const k in SQUISHIES) for (const a of [...SQUISHIES[k].art, SQUISHIES[k].dead].filter(Boolean)) if (!SPRITES[a]) { const im = new Image(); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
+    const arts = [];
+    for (const k in SQUISHIES) arts.push(...Object.values(SQUISHIES[k].look));
+    for (const n of ANTBUN_PARTS) arts.push('antbun/' + n);
+    for (let i = 1; i <= 9; i++) arts.push('antbun/death' + i);
+    for (const a of arts) if (!SPRITES[a]) { const im = new Image(); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
     S = null; newLevel(sv.level || 1);
     renderShop(); layout(); refreshShop();
     cv.addEventListener('pointerdown', onCanvasTap);
