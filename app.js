@@ -56,6 +56,18 @@ function distractors(w, pool = WORDS) {
   return c;
 }
 
+/* ---------- the star rule, shared by Organise and Practice ----------
+   right answer: one more star (a word at 5 rests for a month); wrong answer: back to zero */
+function recordAnswer(u, w, ok) {
+  const p = getProg(u);
+  const pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
+  if (ok) { pw.ok = (pw.ok || 0) + 1; pw.s = Math.min(5, (pw.s || 0) + 1); if (pw.s === 5) pw.r = Date.now() + RETIRE_DAYS * DAY; }
+  else { pw.bad = (pw.bad || 0) + 1; pw.s = 0; delete pw.r; }
+  pw.t = Date.now();
+  p[w.id] = pw; saveProg(u, p);
+  return pw;
+}
+
 /* ---------- players ---------- */
 const users = () => store.get('latin.users', []);
 const keyOf = (name, emojis) => name.trim().toLowerCase() + '|' + [...emojis].sort().join('');
@@ -449,33 +461,25 @@ function renderPlay(u, pane) {
     const { w, match, shown } = card;
     card = null;
     const ok = saysMatch === match;
-    const p = getProg(u);
-    const pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
     seen++;
+    const hadStars = (getProg(u)[w.id] || {}).s || 0;
+    const pw = recordAnswer(u, w, ok);
     if (ok) {
       st.cur++; st.best = Math.max(st.best, st.cur);
       const big = st.cur % 10 === 0 ? 2.4 : st.cur % 5 === 0 ? 1.7 : 1;
       const r = deck.getBoundingClientRect();
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
-      right++; pw.ok = (pw.ok || 0) + 1;
-      pw.s = Math.min(5, (pw.s || 0) + 1);
-      if (pw.s === 5) { pw.r = Date.now() + RETIRE_DAYS * DAY; flash(`🏆 ${w.word} mastered! Resting for a month`); }
-    } else {
-      st.cur = 0;
-      pw.bad = (pw.bad || 0) + 1;
-      pw.s = Math.max(0, (pw.s || 0) - 1);
-      delete pw.r;
-    }
-    pw.t = Date.now();
-    p[w.id] = pw; saveProg(u, p);
+      right++;
+      if (pw.s === 5) flash(`🏆 ${w.word} mastered! Resting for a month`);
+    } else st.cur = 0;
     store.set(streakKey(u), st);
     showStreak(ok);
     $('#sc', pane).textContent = `${right} / ${seen} right this time`;
     if (ok) setTimeout(next, 120);
     else {
-      const v = match
+      const v = (match
         ? `Oops — “${esc(w.word)}” really does mean “${esc(shown)}”.`
-        : `Not quite — “${esc(w.word)}” doesn’t mean “${esc(shown)}”.`;
+        : `Not quite — “${esc(w.word)}” doesn’t mean “${esc(shown)}”.`) + (hadStars ? ' Back to zero stars for this one.' : '');
       setTimeout(() => openMemo(w, pw.s, v, next), 120);
     }
   }

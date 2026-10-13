@@ -629,6 +629,7 @@ const Practice = (() => {
   function answer(i) {
     if (!quiz || quiz.frozen > 0 || S.phase !== 'play') return;
     const ok = quiz.opts[i] === quiz.w.english;
+    recordAnswer(user, quiz.w, ok);   // the same star rule as Organise
     const btns = ui.qopts.querySelectorAll('button');
     S.asked++; tally('asked', 1);
     if (ok) {
