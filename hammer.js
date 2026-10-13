@@ -42,7 +42,7 @@ const Hammer = (() => {
 
   function newGame(level = 1, score = 0) {
     S = { level, made: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
-      swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0,
+      swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0, dogX: null, dogHop: 0,
       clouds: [...Array(6)].map((_, i) => ({ i: i % 5, x: Math.random() * 1.2 - .1, y: rnd(.1, .85), s: rnd(.9, 1.5), v: rnd(.012, .025) })) };
   }
 
@@ -164,7 +164,7 @@ const Hammer = (() => {
   const JPIV = [57, 125], HAND = [79, 72];                                        // feet centre and right hand, in rig pixels
   const DEC = { body: [7, 102, 162, 221], head: [29, 62, 106, 142], eyes: [40, 101, 71, 107], smile2: [44, 110, 68, 115], leftarm: [20, 128, 61, 214], lefthand: [32, 150, 62, 215], rightarm: [75, 121, 123, 201], weapon: [44, 4, 177, 211], righthand: [62, 151, 103, 213] };
   const DHAND = [82, 182], DENTER = { 1: [24, 74, 149, 106], 2: [4, 43, 149, 106], 3: [11, 50, 149, 106], 4: [25, 55, 147, 106], 5: [28, 29, 139, 106], 6: [28, 8, 123, 106], 7: [29, 1, 123, 106] };
-  const DOG = { tail: [8, 21, 29, 43], run1: [8, 26, 74, 68], run2: [3, 26, 73, 68], run3: [13, 26, 79, 68], run4: [2, 26, 74, 68], legs: [12, 26, 72, 68], head: [42, 13, 83, 39], leftear: [47, 8, 63, 18], rightear: [65, 7, 77, 19],
+  const DOG = { sitting2: [17, 26, 73, 68], tail: [8, 21, 29, 43], run1: [8, 26, 74, 68], run2: [3, 26, 73, 68], run3: [13, 26, 79, 68], run4: [2, 26, 74, 68], legs: [12, 26, 72, 68], head: [42, 13, 83, 39], leftear: [47, 8, 63, 18], rightear: [65, 7, 77, 19],
     chin: [65, 36, 80, 44], inside: [65, 31, 79, 41], tongue: [72, 36, 80, 47], openlefteye: [65, 26, 68, 31], openrighteye: [76, 25, 79, 29], lefteyebrow: [63, 21, 69, 26], righteyebrow: [75, 21, 79, 26] };
   const PRELOAD = ['bg_road', 'fx_ready', 'fx_tap1', 'fx_tap2', 'fx_star2', 'fx_redstar', 'fx_smallstar', 'ui_combo', ...Object.keys(DEC).map(p => 'd_' + p),
     ...[1, 2, 3, 4, 5, 6, 7].map(n => 'd_enter' + n), ...Object.keys(DOG).map(p => 'g_' + p), ...[0, 1, 2, 4, 5].map(n => 'fx_dust' + n)];
@@ -234,14 +234,22 @@ const Hammer = (() => {
     P('righthand');
     g.restore();
   }
+  // the dog follows Jacques: trots behind him, drops back and catches up, hops when he swings, sits when he stops
   function drawDog() {
-    const g = ctx, k = jScale() * .95, x = W * JX - 70 * jScale(), ground = H * GROUND;
+    const g = ctx, k = jScale() * .95, ground = H * GROUND;
     const running = S.phase === 'play' && S.vil == null;
+    const want = running ? -72 + Math.sin(S.t * .6) * 9 + Math.sin(S.t * 1.7) * 3 : -66;
+    S.dogX = S.dogX == null ? want : S.dogX + (want - S.dogX) * .04;
+    if (S.swing >= 0 && S.swing < .02 && S.dogHop <= 0) S.dogHop = .4;
+    if (S.dogHop > 0) S.dogHop -= 1 / 60;
+    const hop = S.dogHop > 0 ? Math.sin((1 - S.dogHop / .4) * Math.PI) * 14 : 0;
+    const x = W * JX + S.dogX * jScale();
     const cyc = running ? S.t * 10 + 1.5 : 0, bob = running ? Math.abs(Math.sin(cyc * Math.PI / 2)) * 2 : 0;
-    g.save(); g.translate(x, ground - bob);
+    g.save(); g.translate(x, ground - (bob + hop) * k);
     const P = n => part('g_' + n, DOG[n], 43, 68, 0, 0, k);
-    P('tail'); P(running ? 'run' + (1 + Math.floor(cyc) % 4) : 'legs'); P('head'); P('leftear'); P('rightear'); P('chin'); P('inside'); P('tongue');
-    P('openlefteye'); P('openrighteye'); P('lefteyebrow'); P('righteyebrow');
+    P('tail'); P(running ? 'run' + (1 + Math.floor(cyc) % 4) : S.dogHop > 0 ? 'run2' : 'sitting2'); P('head'); P('leftear'); P('rightear'); P('chin'); P('inside'); P('tongue');
+    if ((S.t % 4) > .12) { P('openlefteye'); P('openrighteye'); }
+    P('lefteyebrow'); P('righteyebrow');
     g.restore();
   }
   // the evil guy: rises out of the ground to the right, clubs Jacques with his signpost, sinks back
