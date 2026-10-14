@@ -1,6 +1,6 @@
 // Offline support. Always tries the network first so updates appear straight
 // away; falls back to the saved copy when there is no connection.
-const CACHE = 'latin-v60';
+const CACHE = 'latin-v61';
 const CORE = ['./', 'index.html', 'app.css', 'app.js', 'vocab.js', 'memory.js', 'phrases.js', 'effects.js', 'practice.js', 'hammer.js', 'read.js', 'forms.js', 'sync.js', 'manifest.webmanifest', ...["blaster1.png", "blaster2.png", "blaster3.png", "brain1.png", "brain2.png", "brain3.png", "freezeray1.png", "freezeturret1.png", "freezeturret2.png", "freezeturret3.png", "handy1.png", "handy2.png", "handy3.png", "mine1.png", "mine2.png", "mine3.png", "miner1.png", "miner2.png", "miner3.png", "plasma1.png", "proj_bullet.png", "proj_ice.png", "proj_lava.png", "proj_ring.png", "proj_rock.png", "shield1.png", "shield2.png", "shield3.png", "solar1.png", "sonic1.png", "sonic2.png", "sonic3.png"].map(a => 'art/weapons/' + a), ...['grass', 'soil', 'path', 'mower', 'bush', 'fence'].map(a => 'art/lawn/' + a + '.png'), 'art/lawn/grass_real.jpg', 'art/banners/sentences.jpg', 'art/banners/cards.jpg', 'art/banners/wordlist.jpg', 'art/banners/squishygeddon.jpg', 'art/banners/hammer.jpg', 'rig.js', ...["blaster1.json", "blaster1.png", "blaster3.json", "blaster3.png", "freezeray1.json", "freezeray1.png", "freezeturret2.json", "freezeturret2.png", "freezeturret3.json", "freezeturret3.png", "handy1.json", "handy1.png", "handy3.json", "handy3.png", "mine1.json", "mine1.png", "mine2.json", "mine2.png", "mine3.json", "mine3.png", "miner1.json", "miner1.png", "miner2.json", "miner2.png", "miner3.json", "miner3.png", "solar1.json", "solar1.png", "sonic1.json", "sonic1.png", "sonic2.json", "sonic2.png", "sonic3.json", "sonic3.png"].map(a => 'art/rigs/' + a), 'art/ui/paper.jpg', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/favicon-32.png'];
 const FILES = ['./', 'index.html', 'app.css', 'app.js', 'vocab.js', 'memory.js', 'phrases.js', 'effects.js', 'practice.js', 'hammer.js', 'sync.js',
   'manifest.webmanifest',
@@ -26,10 +26,18 @@ async function warm() {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
-  e.respondWith(
-    fetch(req, { cache: 'no-cache' }).then(res => {
+  const path = new URL(req.url).pathname.replace(/^.*\//, '') || 'index.html';
+  const core = req.mode === 'navigate' || CORE.includes(path);   // the app's own files are always checked against the server; art can come from the saved copy
+  e.respondWith((async () => {
+    try {
+      if (!core) { const hit = await caches.match(req, { ignoreSearch: true }); if (hit) return hit; }
+      const res = await fetch(req.url, { cache: core ? 'no-cache' : 'default', credentials: 'same-origin' });
       if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
       return res;
-    }).catch(() => caches.match(req, { ignoreSearch: true }).then(r => r || caches.match('index.html')))
-  );
+    } catch (err) {
+      const hit = await caches.match(req, { ignoreSearch: true }); if (hit) return hit;
+      if (req.mode === 'navigate') { const i = await caches.match('index.html'); if (i) return i; }
+      return Response.error();
+    }
+  })());
 });
