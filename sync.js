@@ -4,7 +4,7 @@
    Each player gets a random sync code like APPLE-TIGER-2481. Progress (stars, streaks, levels)
    is saved under the SHA-256 of that code on a tiny Cloudflare Worker (sync/worker.js).
    No names or anything personal leave the device. Switched off until SYNC_URL is set. */
-const SYNC_URL = '';   // e.g. 'https://latin-sync.example.workers.dev' once the worker is deployed
+const SYNC_URL = 'https://sync.musicalmagic.uk';   // the Cloudflare Worker in sync/ (also at latin-sync.richmondbot2000.workers.dev)
 
 const Sync = (() => {
   const WORDS = ('apple tiger moon river stone cloud lemon panda otter robin maple candle pepper rocket violet amber'

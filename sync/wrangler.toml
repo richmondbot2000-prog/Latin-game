@@ -6,4 +6,6 @@ compatibility_date = "2025-01-01"
 
 [[kv_namespaces]]
 binding = "LATIN"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "b87820ca1ffc49b08b84f223f8c02550"
+
+routes = [{ pattern = "sync.musicalmagic.uk", custom_domain = true }]

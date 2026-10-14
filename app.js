@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '70';
+const APP_VERSION = '71';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -221,7 +221,8 @@ function renderSignIn(mode) {
     <div class="emojis">${EMOJIS.map(e => `<button type="button" aria-pressed="false">${e}</button>`).join('')}</div>
     <p class="err" id="err"></p>
     <button class="btn" id="go" disabled>Create my player</button>
-    <p class="small" style="text-align:center">Remember your two emojis — they are how the game knows it’s you. You can add a photo on the next page. Everything stays on this device.</p>`}
+    ${Sync.enabled() ? '<button class="btn ghost" id="link">I have a sync code from another device</button>' : ''}
+    <p class="small" style="text-align:center">Remember your two emojis — they are how the game knows it’s you. You can add a photo on the next page.${Sync.enabled() ? ' Your stars are saved in the cloud under a code, never your name.' : ' Everything stays on this device.'}</p>`}
   </div>`;
   wireTip();
   const back = $('#back'); if (back) back.onclick = () => renderSignIn('pick');
@@ -267,6 +268,14 @@ function renderSignIn(mode) {
   };
   const link = $('#link');
   if (link) link.onclick = async () => {
+    // a new device: the player types the code from the old one and their progress comes across
+    let base = who;
+    if (mode === 'new') {
+      const nm = name.value.trim().replace(/\s+/g, ' ');
+      if (!nm || picked.length !== 2) { err.textContent = 'Type your name and pick your two emojis first, then tap this.'; return; }
+      if (all.find(x => keyOf(x.name, x.emojis) === keyOf(nm, picked))) { err.textContent = 'That player already exists — go back and tap their face.'; return; }
+      base = { id: 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), name: nm, emojis: picked, created: Date.now() };
+    }
     const code = prompt('Type the sync code shown on your other device (like APPLE-TIGER-2481):');
     if (code == null) return;
     if (!Sync.valid(code)) { err.textContent = 'That doesn’t look like a sync code. It has two words and four numbers.'; return; }
@@ -274,7 +283,8 @@ function renderSignIn(mode) {
     try {
       const blob = await Sync.link(code);
       if (!blob) { err.textContent = 'No player found with that code. Check it on the other device (Home → sync code).'; return; }
-      const u = { ...who, code: Sync.normalise(code) }; store.set('latin.users', all.map(x => x.id === u.id ? u : x));
+      const u = { ...base, code: Sync.normalise(code) };
+      store.set('latin.users', mode === 'new' ? [...all, u] : all.map(x => x.id === u.id ? u : x));
       store.set('latin.current', u.id);
       Sync.merge(u, blob);
       location.hash = ''; route();

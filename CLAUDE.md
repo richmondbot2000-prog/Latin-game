@@ -109,24 +109,26 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   refreshes by itself when it is newer (once per session; the version line at
   the bottom of the home page does the same by hand).
 
-## Cloud sync (built, not yet switched on)
+## Cloud sync (switched on)
 
-`sync.js` + `sync/worker.js` (Cloudflare Worker + KV). Each player gets a code
-like `APPLE-TIGER-2481`; progress is stored under SHA-256 of the code. It is
-off until `SYNC_URL` in `sync.js` is set. To switch it on, from a session that
-has the env var **`CLOUDFLARE_API_TOKEN`** (token made from Cloudflare's
-"Edit Cloudflare Workers" template):
-
-1. `cd sync && npx wrangler kv namespace create LATIN` → put the id in
-   `wrangler.toml`.
-2. `npx wrangler deploy` → note the `https://latin-sync.<account>.workers.dev` URL.
-3. Set `SYNC_URL` in `sync.js` to that URL, bump the `sw.js` cache name, push to
-   `main`. (Optional later: a custom domain such as `sync.latin.musicalmagic.uk`.)
-4. Test: `localStorage['latin.syncUrl']` can override the URL for local testing;
-   `scratch` tests used a stand-in server with the same two routes.
-
-The worker allows only `GET`/`PUT /p/<64 hex>` from `latin.musicalmagic.uk`
-(and localhost), 64 KB max, JSON only.
+`sync.js` + `sync/worker.js` (Cloudflare Worker `latin-sync` + KV namespace
+`LATIN`, in the owner's Cloudflare account, the one that also holds
+musicalmagic.uk). Live at **https://sync.musicalmagic.uk** (custom domain on
+the worker; also latin-sync.richmondbot2000.workers.dev). `SYNC_URL` in
+`sync.js` points at it. Each player gets a code like `APPLE-TIGER-2481` on
+the profile screen (shown once when the player is created, and behind the
+☁️ line on the home page); progress is stored under SHA-256 of the code,
+stars/levels/coins only, never a name. A new device: "I have a sync code
+from another device" on the new-player or sign-in screen, type the code,
+progress merges in. The worker allows only `GET`/`PUT /p/<64 hex>` from
+`latin.musicalmagic.uk` (and localhost:8765), 64 KB max, JSON only.
+Redeploy from `sync/` with `npx wrangler deploy` in a session that has
+`CLOUDFLARE_API_TOKEN` (never commit it, never ask for it in chat;
+the owner stores it as a network secret on the Claude environment).
+A two-level name (sync.latin.musicalmagic.uk) failed TLS, so the worker
+sits at sync.musicalmagic.uk. `localStorage['latin.syncUrl']` (JSON string)
+overrides the URL for local testing; `scratchpad/synctest.js` is the
+two-device test.
 
 ## How it deploys
 
