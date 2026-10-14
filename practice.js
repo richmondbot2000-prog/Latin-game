@@ -347,10 +347,11 @@ const Practice = (() => {
   function layout() {
     if (!stage) return;
     // portrait phone: turn the whole stage sideways so the game is always landscape
-    const rot = innerHeight > innerWidth;
+    const vv = window.visualViewport, vw = Math.round(Math.min(innerWidth, vv ? vv.width : innerWidth)), vh = Math.round(Math.min(innerHeight, vv ? vv.height : innerHeight));
+    const rot = vh > vw;
     stage.classList.toggle('rot', rot);
-    stage.style.width = (rot ? innerHeight : innerWidth) + 'px';
-    stage.style.height = (rot ? innerWidth : innerHeight) + 'px';
+    // landscape: the stage just fills the screen (CSS inset 0, so the status bar and home bar are allowed for); portrait phone: sized by hand, then turned
+    stage.style.width = rot ? vh + 'px' : ''; stage.style.height = rot ? vw + 'px' : '';
     const box = ui.garden;
     cell = Math.max(24, Math.floor(Math.min(box.clientWidth / (COLS + PADL + PADR), box.clientHeight / (ROWS + PADB))));
     OX = Math.round(cell * PADL); W = OX + cell * COLS + Math.round(cell * PADR); H = cell * ROWS + Math.round(cell * PADB);
@@ -960,12 +961,14 @@ const Practice = (() => {
     cv.addEventListener('pointerdown', onCanvasTap);
     ui.qopts.addEventListener('click', e => { const b = e.target.closest('button'); if (b) answer(+b.dataset.i); });
     addEventListener('resize', layout);
+    addEventListener('orientationchange', () => setTimeout(layout, 300));
+    if (window.visualViewport) { visualViewport.addEventListener('resize', layout); ui.vvLayout = layout; }
     ready();
     last = performance.now(); raf = requestAnimationFrame(frame);
   }
   function unmount() {
     if (raf) cancelAnimationFrame(raf); raf = 0;
-    removeEventListener('resize', layout);
+    removeEventListener('resize', layout); if (window.visualViewport && ui && ui.vvLayout) visualViewport.removeEventListener('resize', ui.vvLayout);
     document.body.classList.remove('noscroll');
     clearTimeout(buddyTimer);
     S = null; ui = null; quiz = null; stage = null;
