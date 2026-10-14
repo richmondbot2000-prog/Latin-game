@@ -547,7 +547,7 @@ const Practice = (() => {
     const im = lawnImg('mower');
     g.save(); g.translate(x, y);
     if (running) { g.rotate(Math.sin(S.t * 40) * .06); g.translate(0, Math.sin(S.t * 60) * 1.5); }
-    if (im) { const w = s * .98, h = w * im.naturalHeight / im.naturalWidth; g.drawImage(im, -w * .55, s * .34 - h, w, h); }
+    if (im) { const w = s * .9, h = w * im.naturalHeight / im.naturalWidth; g.drawImage(im, -w * .42, s * .36 - h, w, h); }
     else { g.fillStyle = '#C4242E'; rr(g, -s * .3, -s * .1, s * .5, s * .25, s * .06); g.fill(); g.fillStyle = '#222'; g.beginPath(); g.arc(-s * .2, s * .18, s * .09, 0, 7); g.arc(s * .12, s * .18, s * .09, 0, 7); g.fill(); }
     g.restore();
   }
@@ -560,7 +560,7 @@ const Practice = (() => {
     // selected gun: show where it can go
     if (S.sel && S.sel !== 'shovel') { ctx.fillStyle = 'rgba(255,255,255,.14)'; for (const r of S.spec.rows) for (let c = 0; c < COLS; c++) if (!S.grid[r][c]) ctx.fillRect(c * cell + 2, r * cell + 2, cell - 4, cell - 4); }
     // gnomes
-    for (const r of S.spec.rows) if (S.gnomes[r]) drawGnome(ctx, -cell * .38, r * cell + cell * .62, cell, false);
+    for (const r of S.spec.rows) if (S.gnomes[r]) drawGnome(ctx, -cell * .36, r * cell + cell * .62, cell, false);
     for (const gr of S.gnomeRuns) drawGnome(ctx, gr.x * cell + cell * .5, gr.row * cell + cell * .62, cell, true);
     // guns
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
