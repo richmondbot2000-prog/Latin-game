@@ -453,10 +453,17 @@ const Practice = (() => {
       if (k.kind === 'beam') {
         if (gun.beam) {
           const bx = x + s * .35, by = y + s * .1, len = Math.max(0, COLS * s - bx), w = 1 + .3 * Math.sin(S.t * 30);
-          const gr = g.createLinearGradient(bx, 0, bx + len, 0); gr.addColorStop(0, 'rgba(220,250,255,.95)'); gr.addColorStop(.7, 'rgba(160,230,255,.8)'); gr.addColorStop(1, 'rgba(160,230,255,.4)');
-          g.fillStyle = gr; g.fillRect(bx, by - s * .11 * w, len, s * .22 * w);
-          g.fillStyle = 'rgba(255,255,255,.8)'; g.fillRect(bx, by - s * .03 * w, len, s * .06 * w);
+          g.save(); g.globalCompositeOperation = 'lighter';
+          const gl = g.createLinearGradient(0, by - s * .3, 0, by + s * .3); gl.addColorStop(0, 'rgba(120,200,255,0)'); gl.addColorStop(.5, 'rgba(140,210,255,.55)'); gl.addColorStop(1, 'rgba(120,200,255,0)');
+          g.fillStyle = gl; g.fillRect(bx, by - s * .3, len, s * .6);   // soft glow
+          const gr = g.createLinearGradient(bx, 0, bx + len, 0); gr.addColorStop(0, 'rgba(230,250,255,.95)'); gr.addColorStop(1, 'rgba(170,230,255,.7)');
+          g.fillStyle = gr; g.fillRect(bx, by - s * .09 * w, len, s * .18 * w);   // the beam
+          g.fillStyle = 'rgba(255,255,255,.9)'; g.fillRect(bx, by - s * .03 * w, len, s * .06 * w);   // white core
+          g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = Math.max(1, s * .02); g.lineJoin = 'round';   // crackling arcs along it
+          for (let a = 0; a < 2; a++) { g.beginPath(); const n = Math.max(4, Math.round(len / (s * .3))), ph = Math.floor(S.t * 18) * 7 + a * 13; for (let i = 0; i <= n; i++) { const px = bx + len * i / n, py = by + Math.sin(ph + i * 3.3 + a * 5) * s * .16 * (i && i < n ? 1 : .2); i ? g.lineTo(px, py) : g.moveTo(px, py); } g.stroke(); }
           for (let i = 0; i < 6; i++) { const px = bx + ((S.t * 300 + i * len / 6) % len), py = by + Math.sin(S.t * 9 + i * 2) * s * .14; g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.arc(px, py, s * .03, 0, 7); g.fill(); }
+          const fl = g.createRadialGradient(bx, by, 0, bx, by, s * .35); fl.addColorStop(0, 'rgba(255,255,255,.95)'); fl.addColorStop(1, 'rgba(150,220,255,0)'); g.fillStyle = fl; g.beginPath(); g.arc(bx, by, s * .35 * (1 + .15 * Math.sin(S.t * 40)), 0, 7); g.fill();   // muzzle flash
+          g.restore();
         }
       }
       if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
@@ -472,10 +479,17 @@ const Practice = (() => {
       if (k.kind === 'beam') {   // the cold beam, flickering
         if (gun.beam) {
           const bx = x + s * .35, by = y + s * .1, len = Math.max(0, COLS * s - bx), w = 1 + .3 * Math.sin(S.t * 30);
-          const gr = g.createLinearGradient(bx, 0, bx + len, 0); gr.addColorStop(0, 'rgba(220,250,255,.95)'); gr.addColorStop(.7, 'rgba(160,230,255,.8)'); gr.addColorStop(1, 'rgba(160,230,255,.4)');
-          g.fillStyle = gr; g.fillRect(bx, by - s * .11 * w, len, s * .22 * w);
-          g.fillStyle = 'rgba(255,255,255,.8)'; g.fillRect(bx, by - s * .03 * w, len, s * .06 * w);
+          g.save(); g.globalCompositeOperation = 'lighter';
+          const gl = g.createLinearGradient(0, by - s * .3, 0, by + s * .3); gl.addColorStop(0, 'rgba(120,200,255,0)'); gl.addColorStop(.5, 'rgba(140,210,255,.55)'); gl.addColorStop(1, 'rgba(120,200,255,0)');
+          g.fillStyle = gl; g.fillRect(bx, by - s * .3, len, s * .6);   // soft glow
+          const gr = g.createLinearGradient(bx, 0, bx + len, 0); gr.addColorStop(0, 'rgba(230,250,255,.95)'); gr.addColorStop(1, 'rgba(170,230,255,.7)');
+          g.fillStyle = gr; g.fillRect(bx, by - s * .09 * w, len, s * .18 * w);   // the beam
+          g.fillStyle = 'rgba(255,255,255,.9)'; g.fillRect(bx, by - s * .03 * w, len, s * .06 * w);   // white core
+          g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = Math.max(1, s * .02); g.lineJoin = 'round';   // crackling arcs along it
+          for (let a = 0; a < 2; a++) { g.beginPath(); const n = Math.max(4, Math.round(len / (s * .3))), ph = Math.floor(S.t * 18) * 7 + a * 13; for (let i = 0; i <= n; i++) { const px = bx + len * i / n, py = by + Math.sin(ph + i * 3.3 + a * 5) * s * .16 * (i && i < n ? 1 : .2); i ? g.lineTo(px, py) : g.moveTo(px, py); } g.stroke(); }
           for (let i = 0; i < 6; i++) { const px = bx + ((S.t * 300 + i * len / 6) % len), py = by + Math.sin(S.t * 9 + i * 2) * s * .14; g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.arc(px, py, s * .03, 0, 7); g.fill(); }
+          const fl = g.createRadialGradient(bx, by, 0, bx, by, s * .35); fl.addColorStop(0, 'rgba(255,255,255,.95)'); fl.addColorStop(1, 'rgba(150,220,255,0)'); g.fillStyle = fl; g.beginPath(); g.arc(bx, by, s * .35 * (1 + .15 * Math.sin(S.t * 40)), 0, 7); g.fill();   // muzzle flash
+          g.restore();
         }
       }
       if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
@@ -547,6 +561,8 @@ const Practice = (() => {
     }
     g.restore();
   }
+  const ICE_C = document.createElement('canvas');
+  function iceCanvas(P) { if (ICE_C.width !== P) ICE_C.width = ICE_C.height = P; return ICE_C; }
   function drawSquishy(g, sq, x, y, s) {
     const k = sq.k, w = s * k.size * 1.2, mo = motionOf(sq);
     if (sq.rise <= 0) sq.blink -= 1 / 60; if (sq.blink < 0) sq.blink = 2 + Math.random() * 3;
@@ -567,16 +583,42 @@ const Practice = (() => {
     if (k.motion === 'roll') { g.translate(0, -w * .45); g.rotate(mo.rot); g.translate(0, w * .45); } else g.rotate(mo.rot);
     g.scale(mo.sx, mo.sy);
     if (k.alpha) g.globalAlpha = k.alpha;
-    if (k.rig) drawAntbun(g, sq, w, mo);
-    else if (!drawSprite(g, lookOf(sq), 0, 0, w, k.alpha || 1)) { g.fillStyle = k.color; g.beginPath(); g.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); g.fill(); }
-    if (sq.flash > 0 && !k.rig) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
+    const iced = S.frozen > 0 || sq.frozenT > 0;
+    const paint = (c) => { if (k.rig) drawAntbun(c, sq, w, mo); else if (!drawSprite(c, lookOf(sq), 0, 0, w, k.alpha || 1)) { c.fillStyle = k.color; c.beginPath(); c.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); c.fill(); } };
+    if (iced) {   // frozen: the squishy itself goes cold blue, like a figure seen through ice
+      const P = Math.ceil(w * 2.6), oc = iceCanvas(P), og = oc.getContext('2d'); og.setTransform(1, 0, 0, 1, 0, 0); og.clearRect(0, 0, P, P); og.translate(P / 2, P * .78);
+      paint(og); og.globalCompositeOperation = 'source-atop'; og.fillStyle = 'rgba(90,150,230,.6)'; og.fillRect(-P, -P, 2 * P, 2 * P);
+      og.globalCompositeOperation = 'lighter'; og.fillStyle = 'rgba(120,200,255,.18)'; og.fillRect(-P, -P, 2 * P, 2 * P); og.globalCompositeOperation = 'source-over';
+      g.drawImage(oc, -P / 2, -P * .78);
+    } else paint(g);
+    if (sq.flash > 0 && !k.rig && !iced) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
     g.restore();
     if (sq.slowT > 0 && !(S.frozen > 0 || sq.frozenT > 0)) { g.fillStyle = 'rgba(150,215,255,.3)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); g.fillStyle = '#dff4ff'; g.font = `700 ${s * .22}px system-ui`; g.textAlign = 'center'; g.fillText('❄', x + w * .3, foot - w * .75 + mo.dy * s); }
-    if (S.frozen > 0 || sq.frozenT > 0) {   // a block of ice round the whole squishy
-      const bx = x - w * .5, by = foot - w * .95 + mo.dy * s, bw = w, bh = w * 1.02;
-      g.fillStyle = 'rgba(170,225,255,.55)'; g.beginPath(); g.roundRect(bx, by, bw, bh, w * .12); g.fill();
-      g.strokeStyle = 'rgba(255,255,255,.9)'; g.lineWidth = Math.max(1, s * .03); g.stroke();
-      g.fillStyle = 'rgba(255,255,255,.55)'; g.fillRect(bx + bw * .12, by + bh * .1, bw * .1, bh * .45); g.fillRect(bx + bw * .28, by + bh * .1, bw * .05, bh * .25);
+    if (iced) {   // a translucent shell of ice round the whole squishy, jagged on top, icicles below, a snow drift at the feet
+      const cx = x, fy = foot + mo.dy * s, hw = w * .5, top = fy - w * 1.02, seed = sq.seed || (sq.seed = Math.random() * 1000);
+      const jag = (i) => Math.sin(seed + i * 2.7) * w * .05;
+      g.save();
+      g.beginPath();
+      g.moveTo(cx - hw * .95, fy + w * .04);
+      g.lineTo(cx - hw * 1.02, fy - w * .3); g.lineTo(cx - hw * .9, fy - w * .7);
+      g.lineTo(cx - hw * .7, top + w * .06 + jag(1)); g.lineTo(cx - hw * .4, top - w * .02 + jag(2)); g.lineTo(cx - hw * .1, top + w * .05 + jag(3));
+      g.lineTo(cx + hw * .2, top - w * .04 + jag(4)); g.lineTo(cx + hw * .5, top + w * .04 + jag(5)); g.lineTo(cx + hw * .8, top + w * .1 + jag(6));
+      g.lineTo(cx + hw * 1.0, fy - w * .55); g.lineTo(cx + hw * .95, fy + w * .04); g.closePath();
+      const gr = g.createLinearGradient(cx - hw, top, cx + hw, fy); gr.addColorStop(0, 'rgba(225,245,255,.62)'); gr.addColorStop(.5, 'rgba(160,215,255,.38)'); gr.addColorStop(1, 'rgba(120,180,240,.55)');
+      g.fillStyle = gr; g.fill();
+      g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineWidth = Math.max(1, s * .035); g.lineJoin = 'round'; g.stroke();
+      // icicles hanging from the shell
+      g.fillStyle = 'rgba(210,240,255,.9)';
+      for (let i = 0; i < 4; i++) { const ix = cx - hw * .8 + i * hw * .53, iy = fy - w * (.25 + ((i * 7 + seed) % 5) * .06), L = w * (.12 + ((i * 3 + seed) % 4) * .05); g.beginPath(); g.moveTo(ix - w * .035, iy); g.lineTo(ix + w * .035, iy); g.lineTo(ix, iy + L); g.closePath(); g.fill(); }
+      // cracks and glints
+      g.strokeStyle = 'rgba(255,255,255,.7)'; g.lineWidth = Math.max(1, s * .018);
+      g.beginPath(); g.moveTo(cx - hw * .5, top + w * .25); g.lineTo(cx - hw * .2, top + w * .45); g.lineTo(cx - hw * .35, top + w * .7); g.moveTo(cx + hw * .3, top + w * .3); g.lineTo(cx + hw * .55, top + w * .55); g.stroke();
+      const tw = (i) => .5 + .5 * Math.sin(S.t * 6 + i * 2.1 + seed);
+      for (let i = 0; i < 3; i++) { const gx = cx + (i - 1) * hw * .55 + jag(i + 9) * 3, gy = top + w * (.2 + i * .25), r = s * .07 * tw(i); g.fillStyle = `rgba(255,255,255,${.5 + .5 * tw(i)})`; g.beginPath(); g.moveTo(gx, gy - r); g.quadraticCurveTo(gx, gy, gx + r, gy); g.quadraticCurveTo(gx, gy, gx, gy + r); g.quadraticCurveTo(gx, gy, gx - r, gy); g.quadraticCurveTo(gx, gy, gx, gy - r); g.fill(); }
+      // snow drift at the feet
+      g.fillStyle = 'rgba(245,252,255,.9)'; g.beginPath(); g.ellipse(cx, fy + w * .02, hw * 1.15, w * .09, 0, 0, 7); g.fill();
+      g.fillStyle = 'rgba(200,230,250,.6)'; g.beginPath(); g.ellipse(cx, fy + w * .06, hw * 1.2, w * .06, 0, 0, 7); g.fill();
+      g.restore();
     }
     const crown = uiImg('crown');
     if (k.boss && crown) { const cw = s * .4, ch = cw * crown.naturalHeight / crown.naturalWidth; g.drawImage(crown, x - cw / 2, foot - w * .95 - ch + Math.sin(sq.wob * 3) * s * .04 + mo.dy * s, cw, ch); }
