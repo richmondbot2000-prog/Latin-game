@@ -30,7 +30,11 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   wrong one zeroes it and brings it straight back; a word got wrong in the
   last 24 h comes up twice as often, twice or more three times as often
   (`boost`); all games use the rule);
-  memory cards (`memory.js`); example phrases
+  Cards show the word in a random form half the time (`forms.js`: noun
+  cases and plurals, adjective genders, present-tense persons, generated
+  from the dictionary entry) with the English, right or wrong, in the same
+  number or person (`inflectAll`); tap a card to flip it (word to 0 stars,
+  streak kept). Memory cards (`memory.js`); example phrases
   (`phrases.js`); fireworks (`effects.js`); vocabulary settings Beginner / Level
   1 / 2 / 3. Players = first name + two emojis, no passwords.
 - **Read** — "Sentences" (`read.js`, `renderRead` in `app.js`): 60 hand-written

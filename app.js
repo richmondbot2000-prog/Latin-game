@@ -370,17 +370,27 @@ function renderHome(u) {
 }
 
 /* ---------- read: sentences, one word at a time ---------- */
-// put a dictionary meaning into the shape a sentence needs: plural nouns, he/she verbs
-const IRREG = { be: ['is', 'are', 'am'], do: ['does', 'do', 'do'], go: ['goes', 'go', 'go'], have: ['has', 'have', 'have'], man: 'men', woman: 'women', child: 'children', foot: 'feet', tooth: 'teeth', mouse: 'mice', person: 'people', wife: 'wives', life: 'lives', knife: 'knives', sheep: 'sheep' };
-function inflect(english, shape) {
+// put a dictionary meaning into the shape a form needs: plural nouns, he/she verbs, and (with pronoun) I / you / we / they
+const IRREG = { be: ['is', 'are', 'am'], do: ['does', 'do', 'do'], go: ['goes', 'go', 'go'], have: ['has', 'have', 'have'], man: 'men', woman: 'women', child: 'children', foot: 'feet', tooth: 'teeth', mouse: 'mice', person: 'people', wife: 'wives', life: 'lives', knife: 'knives', sheep: 'sheep', ship: 'ships' };
+const PRON = { v1s: 'I', v2s: 'you', v3s: 'he/she', v1p: 'we', v2p: 'you', v3p: 'they' };
+function inflect(english, shape, pronoun = false) {
   let base = english.split(',')[0].trim().replace(/\s*\(.*\)$/, '');
-  if (shape === 'o' || shape === 'adj' || shape === 'n1') return base;
+  if (shape === 'o' || shape === 'adj' || shape === 'adjp' || shape === 'n1') return base;
   const words = base.split(' '), head = words[0], rest = words.slice(1).join(' ');
   const sfx = w => /(s|x|z|ch|sh)$/.test(w) ? w + 'es' : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + 'ies' : /[^aeiou]o$/.test(w) ? w + 'es' : w + 's';
   if (shape === 'n2') { const ir = IRREG[base]; const pl = typeof ir === 'string' ? ir : sfx(words[words.length - 1]); return words.length > 1 ? words.slice(0, -1).join(' ') + ' ' + pl : pl; }
   const ir = Array.isArray(IRREG[head]) ? IRREG[head] : null;
   const v = shape === 'v3s' ? (ir ? ir[0] : sfx(head)) : shape === 'v1s' ? (ir ? ir[2] : head) : (ir ? ir[1] : head);
-  return rest ? v + ' ' + rest : v;
+  const out = rest ? v + ' ' + rest : v;
+  return pronoun && PRON[shape] ? PRON[shape] + ' ' + out : out;
+}
+// the whole meaning list ("villa, house, farm" / "say, tell") in a shape; verb senses like "am afraid" are dropped
+function inflectAll(english, shape) {
+  if (shape === 'o' || shape === 'adj' || shape === 'adjp' || shape === 'n1' || /[()\/]/.test(english)) return english;
+  const parts = english.split(',').map(x => x.trim()).filter(x => x && !/^(am|is|are)\s/.test(x));
+  const isVerb = /^v/.test(shape);
+  const forms = parts.map(x => inflect(x, shape, false));
+  return (isVerb ? PRON[shape] + ' ' : '') + forms.join(', ');
 }
 function renderRead(u) {
   const byId = Object.fromEntries(WORDS.map(w => [w.id, w]));
@@ -593,8 +603,11 @@ function renderPlay(u, pane) {
     const w = pick(); if (!w) return null;
     recent.push(w.id); if (recent.length > GAP) recent.shift();
     const match = Math.random() < 0.5;
+    const form = typeof Forms !== 'undefined' ? Forms.pick(w) : { la: w.show, shape: 'o' };
     const ds = match ? null : distractors(w, activeWords(u));
-    return { w, match, shown: match ? w.english : ds[Math.floor(Math.random() * ds.length)].english };
+    const raw = match ? w.english : ds[Math.floor(Math.random() * ds.length)].english;
+    const shape = form.la === w.show ? 'o' : form.shape;   // the headword keeps its plain dictionary meaning
+    return { w, match, form, shown: inflectAll(raw, shape) };
   }
   const cardHTML = (c, p, top) => `
       <div class="card${top ? '' : ' under'}" ${top ? 'id="top"' : 'aria-hidden="true"'} data-kind="${c.w.kind}">
@@ -602,7 +615,7 @@ function renderPlay(u, pane) {
         ${phraseFor(c.w) ? `<div class="phrase">${phraseHTML(phraseFor(c.w).la)}</div>` : ''}
         <div class="kind">${c.w.kind}</div>
         ${top ? '<span class="stamp yes">RIGHT</span><span class="stamp no">WRONG</span>' : ''}
-        <div class="lat">${esc(c.w.show)}</div>
+        <div class="lat">${esc(c.form ? c.form.la : c.w.show)}</div>
         <div class="means">means</div>
         <div class="en">${esc(c.shown)}</div>
       </div>`;
@@ -623,7 +636,7 @@ function renderPlay(u, pane) {
   function answer(saysMatch) {
     if (!card) return;
     busy = true;
-    const { w, match, shown } = card;
+    const { w, match, shown, form } = card, la = form ? form.la : w.show;
     card = null;
     const ok = saysMatch === match;
     seen++;
@@ -643,8 +656,8 @@ function renderPlay(u, pane) {
     if (ok) setTimeout(next, 120);
     else {
       const v = (match
-        ? `Oops — “${esc(w.show)}” really does mean “${esc(shown)}”.`
-        : `Not quite — “${esc(w.show)}” doesn’t mean “${esc(shown)}”.`) + (hadStars ? ' Back to zero stars for this one.' : '');
+        ? `Oops — “${esc(la)}” really does mean “${esc(shown)}”.`
+        : `Not quite — “${esc(la)}” doesn’t mean “${esc(shown)}”.`) + (hadStars ? ' Back to zero stars for this one.' : '');
       setTimeout(() => openMemo(w, pw.s, v, next), 120);
     }
   }
