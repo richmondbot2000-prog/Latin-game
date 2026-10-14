@@ -60,7 +60,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   correct-answer ratio; a trophy cabinet (`#trophies`) of 20 trophies.
   **Weapons** (the owner's Weapons folder, rendered from the Spine rigs with
   `scratchpad/sq2/spine.py`, exported to `art/weapons/`): Blaster, Handy
-  Turret, Freeze Turret, Freeze Ray, Sonic Boom, Solar Blast (key `mortar`),
+  Turret, Freeze Turret, Freeze Ray (every 10 s a 2-second ray down the whole row that ices every squishy in it), Sonic Boom, Solar Blast (key `mortar`),
   Miner Shoot, Detonate Bomb, Plasma Bomb, Brain Wash, Shield, most with
   three upgrade tiers; `GUNS` in `practice.js` holds their behaviour
   (`kind`: shoot / beam / ring / lob / mine / bomb / brain / wall). Weapons

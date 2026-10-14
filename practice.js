@@ -12,7 +12,7 @@ const Practice = (() => {
     shooter:      { name: 'Blaster', cost: 100, hp: 100, recharge: 5, art: 'blaster', kind: 'shoot', proj: 'bullet', dmg: 20, speed: 7, tiers: [{ every: 1.5, shots: 1 }, { every: 1.5, shots: 2, cost: 150 }, { every: 1.5, shots: 3, cost: 250 }], blurb: 'a bullet every 1.5 s. Cheap and steady; half as good on armour, useless on Flyers' },
     handy:        { name: 'Handy Turret', cost: 150, hp: 100, recharge: 8, art: 'handy', kind: 'shoot', proj: 'bullet', small: true, dmg: 6, speed: 10, range: 3.5, tiers: [{ every: .3, shots: 1 }, { every: .22, shots: 1, cost: 150 }, { every: .15, shots: 1, cost: 250 }], blurb: 'a stream of little bullets, 3½ squares ahead. The thing for Flyers and Kamikazes' },
     freezeturret: { name: 'Freeze Turret', cost: 175, hp: 100, recharge: 10, art: 'freezeturret', kind: 'shoot', proj: 'ice', dmg: 15, speed: 8, tiers: [{ every: 3, shots: 1, freeze: 2 }, { every: 2.2, shots: 1, freeze: 2.5, cost: 150 }, { every: 1.5, shots: 1, freeze: 3, cost: 250 }], blurb: 'ice shards freeze a squishy on the spot. Ghosts and Sharky ignore it' },
-    freezeray:    { name: 'Freeze Ray', cost: 150, hp: 100, recharge: 8, art: 'freezeray', kind: 'beam', range: 4, dmg: 4, tiers: [{}], blurb: 'a cold beam: everything in front crawls at half speed (not ghosts)' },
+    freezeray:    { name: 'Freeze Ray', cost: 150, hp: 100, recharge: 8, art: 'freezeray', kind: 'beam', range: 9, dmg: 0, every: 10, burst: 2, tiers: [{}], blurb: 'every 10 s it fires a 2-second ray down the whole row, freezing every squishy in it solid (not ghosts)' },
     sonic:        { name: 'Sonic Boom', cost: 200, hp: 100, recharge: 12, art: 'sonic', kind: 'ring', tiers: [{ every: 6, push: 1, dmg: 20 }, { every: 5, push: 1.5, dmg: 30, cost: 150 }, { every: 4, push: 2, dmg: 40, cost: 250 }], blurb: 'a ring that knocks the whole row back (ghosts float through it)' },
     mortar:       { name: 'Solar Blast', cost: 225, hp: 100, recharge: 12, art: 'solar', kind: 'lob', proj: 'lava', tiers: [{ every: 8, dmg: 120, splash: 1.5 }], blurb: 'lobs a fireball anywhere on the lawn. Burns ghosts double' },
     miner:        { name: 'Miner Shoot', cost: 150, hp: 100, recharge: 8, art: 'miner', kind: 'lob', lane: true, proj: 'rock', tiers: [{ every: 4, dmg: 50, splash: .8 }, { every: 3, dmg: 60, splash: .9, cost: 150 }, { every: 2.2, dmg: 75, splash: 1, cost: 250 }], blurb: 'flings rocks along its row; they splash. Cracks armour, hits the Mole King underground' },
@@ -259,10 +259,14 @@ const Practice = (() => {
         continue;
       }
       if (k.kind === 'brain') continue;
-      if (k.kind === 'beam') {   // everything in front crawls, and takes a little cold damage
-        let any = false;
-        for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === r && sq.x > c + .3 && sq.x < c + .3 + k.range) { if (!sq.k.nofreeze) sq.slowT = .25; hurt(sq, k.dmg * dt, 'beam'); any = true; }
-        g.beam = any; continue;
+      if (k.kind === 'beam') {   // a 2-second ray every 10 s down the whole row: every squishy in it is iced solid while it fires
+        g.rayT = (g.rayT || 0) + dt; if (g.rayT >= k.every) g.rayT -= k.every;
+        g.beam = g.rayT < k.burst;
+        if (g.beam) for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === r && sq.x > c + .3) {
+          if (sq.k.nofreeze) continue;
+          if (sq.k.halfFreeze) sq.slowT = Math.max(sq.slowT || 0, .25); else sq.frozenT = Math.max(sq.frozenT || 0, .15);
+        }
+        continue;
       }
       g.cool -= dt;
       if (g.cool > 0) continue;
@@ -447,9 +451,13 @@ const Practice = (() => {
       Rig.draw(g, rig, anim, t, ox, oy, sc);
       g.restore(); g.globalAlpha = 1;
       if (k.kind === 'beam') {
-        const bx = x + s * .35, by = y + s * .1;
-        const a0 = gun.beam ? .85 : .25, gr = g.createLinearGradient(bx, 0, bx + k.range * s, 0); gr.addColorStop(0, `rgba(180,240,255,${a0})`); gr.addColorStop(1, 'rgba(180,240,255,0)');
-        g.fillStyle = gr; g.fillRect(bx, by - s * .07 * (1 + .3 * Math.sin(S.t * 30)), k.range * s, s * .14 * (1 + .3 * Math.sin(S.t * 30)));
+        if (gun.beam) {
+          const bx = x + s * .35, by = y + s * .1, len = Math.max(0, COLS * s - bx), w = 1 + .3 * Math.sin(S.t * 30);
+          const gr = g.createLinearGradient(bx, 0, bx + len, 0); gr.addColorStop(0, 'rgba(220,250,255,.95)'); gr.addColorStop(.7, 'rgba(160,230,255,.8)'); gr.addColorStop(1, 'rgba(160,230,255,.4)');
+          g.fillStyle = gr; g.fillRect(bx, by - s * .11 * w, len, s * .22 * w);
+          g.fillStyle = 'rgba(255,255,255,.8)'; g.fillRect(bx, by - s * .03 * w, len, s * .06 * w);
+          for (let i = 0; i < 6; i++) { const px = bx + ((S.t * 300 + i * len / 6) % len), py = by + Math.sin(S.t * 9 + i * 2) * s * .14; g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.arc(px, py, s * .03, 0, 7); g.fill(); }
+        }
       }
       if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
       return;
@@ -462,9 +470,13 @@ const Practice = (() => {
       if (k.kind === 'bomb') g.restore();
       g.globalAlpha = 1;
       if (k.kind === 'beam') {   // the cold beam, flickering
-        const bx = x + s * .35, by = y + s * .1;
-        const a0 = gun.beam ? .85 : .25, gr = g.createLinearGradient(bx, 0, bx + k.range * s, 0); gr.addColorStop(0, `rgba(180,240,255,${a0})`); gr.addColorStop(1, 'rgba(180,240,255,0)');
-        g.fillStyle = gr; g.fillRect(bx, by - s * .07 * (1 + .3 * Math.sin(S.t * 30)), k.range * s, s * .14 * (1 + .3 * Math.sin(S.t * 30)));
+        if (gun.beam) {
+          const bx = x + s * .35, by = y + s * .1, len = Math.max(0, COLS * s - bx), w = 1 + .3 * Math.sin(S.t * 30);
+          const gr = g.createLinearGradient(bx, 0, bx + len, 0); gr.addColorStop(0, 'rgba(220,250,255,.95)'); gr.addColorStop(.7, 'rgba(160,230,255,.8)'); gr.addColorStop(1, 'rgba(160,230,255,.4)');
+          g.fillStyle = gr; g.fillRect(bx, by - s * .11 * w, len, s * .22 * w);
+          g.fillStyle = 'rgba(255,255,255,.8)'; g.fillRect(bx, by - s * .03 * w, len, s * .06 * w);
+          for (let i = 0; i < 6; i++) { const px = bx + ((S.t * 300 + i * len / 6) % len), py = by + Math.sin(S.t * 9 + i * 2) * s * .14; g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.arc(px, py, s * .03, 0, 7); g.fill(); }
+        }
       }
       if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
       return;
@@ -560,7 +572,12 @@ const Practice = (() => {
     if (sq.flash > 0 && !k.rig) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
     g.restore();
     if (sq.slowT > 0 && !(S.frozen > 0 || sq.frozenT > 0)) { g.fillStyle = 'rgba(150,215,255,.3)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); g.fillStyle = '#dff4ff'; g.font = `700 ${s * .22}px system-ui`; g.textAlign = 'center'; g.fillText('❄', x + w * .3, foot - w * .75 + mo.dy * s); }
-    if (S.frozen > 0 || sq.frozenT > 0) { g.fillStyle = 'rgba(160,220,255,.45)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); }
+    if (S.frozen > 0 || sq.frozenT > 0) {   // a block of ice round the whole squishy
+      const bx = x - w * .5, by = foot - w * .95 + mo.dy * s, bw = w, bh = w * 1.02;
+      g.fillStyle = 'rgba(170,225,255,.55)'; g.beginPath(); g.roundRect(bx, by, bw, bh, w * .12); g.fill();
+      g.strokeStyle = 'rgba(255,255,255,.9)'; g.lineWidth = Math.max(1, s * .03); g.stroke();
+      g.fillStyle = 'rgba(255,255,255,.55)'; g.fillRect(bx + bw * .12, by + bh * .1, bw * .1, bh * .45); g.fillRect(bx + bw * .28, by + bh * .1, bw * .05, bh * .25);
+    }
     const crown = uiImg('crown');
     if (k.boss && crown) { const cw = s * .4, ch = cw * crown.naturalHeight / crown.naturalWidth; g.drawImage(crown, x - cw / 2, foot - w * .95 - ch + Math.sin(sq.wob * 3) * s * .04 + mo.dy * s, cw, ch); }
     if (k.boss) {   // boss health bar
