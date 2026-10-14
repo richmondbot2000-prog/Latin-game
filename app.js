@@ -20,6 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
+const APP_VERSION = '60';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -343,6 +344,7 @@ function renderHome(u) {
       <button class="gamebanner" id="hamGo" style="background-image:url('art/banners/hammer.jpg')"><span class="gname hammer">Jacques Hammer</span></button>
     </div>
     ${leaderboardHTML()}
+    <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
   </div>`;
   $('.who').textContent = u.name;
@@ -357,6 +359,11 @@ function renderHome(u) {
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#readGo').onclick = () => { location.hash = 'read'; };
+  $('#verline').onclick = async () => {   // throw away every saved copy of the app and fetch it fresh
+    $('#verline').textContent = 'updating…';
+    try { if (navigator.serviceWorker) for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister(); if (window.caches) for (const k of await caches.keys()) await caches.delete(k); } catch (e) {}
+    location.href = location.pathname + '?v=' + Date.now();
+  };
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
   $('#levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;

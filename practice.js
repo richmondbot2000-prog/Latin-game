@@ -259,7 +259,7 @@ const Practice = (() => {
       g.cool = tier.every; g.kick = .12; g.fired = S.t;
       if (k.kind === 'lob') S.shells.push({ x0: c + .5, row0: r, x1: first.x, row: first.row, t: 0, dur: Math.max(.6, Math.hypot(first.x - c, first.row - r) / 6 + .4), dmg: tier.dmg, splash: tier.splash, proj: k.proj });
       else if (k.kind === 'ring') S.rings.push({ x: c + .6, row: r, speed: 4.5, push: tier.push, dmg: tier.dmg, hit: new Set(), t: 0 });
-      else for (let i = 0; i < tier.shots; i++) S.bullets.push({ x: c + .75 - i * .22, row: r, speed: k.speed, dmg: k.dmg, proj: k.proj, small: !!k.small, freeze: tier.freeze || 0, big: g.type === 'shooter' && (g.tier || 1) < 3 });
+      else for (let i = 0; i < tier.shots; i++) S.bullets.push({ x: c + 1.0 - i * .3, row: r, speed: k.speed, dmg: k.dmg, proj: k.proj, small: !!k.small, freeze: tier.freeze || 0, big: g.type === 'shooter' && (g.tier || 1) < 3 });
     }
     // sonic rings: pass through every squishy in the row, knocking it back
     for (const rg of S.rings) {
@@ -570,7 +570,11 @@ const Practice = (() => {
     ctx.drawImage(bg, 0, 0, W, H);
     ctx.translate(OX, 0);   // everything else is drawn in lawn cells
     // selected gun: show where it can go
-    if (S.sel && S.sel !== 'shovel') { ctx.fillStyle = 'rgba(255,255,255,.14)'; for (const r of S.spec.rows) for (let c = 0; c < COLS; c++) if (!S.grid[r][c]) ctx.fillRect(c * cell + 2, r * cell + 2, cell - 4, cell - 4); }
+    if (S.sel === 'upgrade') {
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) { const g = S.grid[r][c], cost = tierCost(g); if (!cost) continue;
+        ctx.strokeStyle = S.money >= cost ? '#FFD23F' : 'rgba(255,255,255,.5)'; ctx.lineWidth = 3; ctx.strokeRect(c * cell + 2, r * cell + 2, cell - 4, cell - 4);
+        ctx.fillStyle = S.money >= cost ? '#FFD23F' : '#ccc'; ctx.font = `800 ${Math.max(10, cell * .22)}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('⬆ ' + cost, c * cell + cell / 2, r * cell + cell * .95); }
+    } else if (S.sel && S.sel !== 'shovel') { ctx.fillStyle = 'rgba(255,255,255,.14)'; for (const r of S.spec.rows) for (let c = 0; c < COLS; c++) if (!S.grid[r][c]) ctx.fillRect(c * cell + 2, r * cell + 2, cell - 4, cell - 4); }
     // gnomes
     for (const r of S.spec.rows) if (S.gnomes[r]) drawGnome(ctx, -cell * .36, r * cell + cell * .62, cell, false);
     for (const gr of S.gnomeRuns) drawGnome(ctx, gr.x * cell + cell * .5, gr.row * cell + cell * .62, cell, gr);
@@ -583,7 +587,7 @@ const Practice = (() => {
     // bullets
     for (const b of S.bullets) {
       const bul = wImg('proj_' + (b.proj || 'bullet')) || uiImg('bullet');
-      if (bul) { const w = cell * (b.proj === 'ice' ? .55 : b.small ? .18 : b.big ? .34 : .22), h = w * bul.naturalHeight / bul.naturalWidth; ctx.drawImage(bul, b.x * cell - w / 2, b.row * cell + cell * .42 - h / 2, w, h); continue; }
+      if (bul) { const w = cell * (b.proj === 'ice' ? 1.1 : b.small ? .7 : b.big ? 1.2 : 1.0), h = w * bul.naturalHeight / bul.naturalWidth; ctx.drawImage(bul, b.x * cell - w / 2, b.row * cell + cell * .3 - h / 2, w, h); continue; }
       ctx.fillStyle = b.big ? '#2F5F2C' : '#FFB347';
       ctx.beginPath(); ctx.arc(b.x * cell, b.row * cell + cell * .42, b.big ? cell * .09 : cell * .055, 0, 7); ctx.fill();
     }
@@ -670,6 +674,12 @@ const Practice = (() => {
   }
   function renderShop() {
     const shop = ui.shop; shop.innerHTML = '';
+    const up = document.createElement('button'); up.className = 'gun tool'; up.dataset.g = 'upgrade';
+    up.innerHTML = '<div class="ico"><img src="art/weapons/blaster3.png" alt=""></div><b>Upgrade</b><span class="cost"><i class="coin"></i>75+</span>';
+    up.title = 'tap a gun to upgrade it'; shop.appendChild(up);
+    const sh = document.createElement('button'); sh.className = 'gun shovel tool'; sh.dataset.g = 'shovel';
+    sh.innerHTML = '<div class="ico">⛏️</div><b>Dig up</b><span class="cost">½ back</span>';
+    shop.appendChild(sh);
     for (const key of Object.keys(GUNS)) {
       const k = GUNS[key];
       const b = document.createElement('button'); b.className = 'gun'; b.dataset.g = key;
@@ -677,12 +687,6 @@ const Practice = (() => {
       b.title = k.blurb;
       shop.appendChild(b);
     }
-    const up = document.createElement('button'); up.className = 'gun'; up.dataset.g = 'upgrade';
-    up.innerHTML = '<div class="ico"><img src="art/weapons/blaster3.png" alt=""></div><b>Upgrade</b><span class="cost"><i class="coin"></i>75+</span>';
-    up.title = 'tap a gun to upgrade it'; shop.appendChild(up);
-    const sh = document.createElement('button'); sh.className = 'gun shovel'; sh.dataset.g = 'shovel';
-    sh.innerHTML = '<div class="ico">⛏️</div><b>Dig up</b><span class="cost">½ back</span>';
-    shop.appendChild(sh);
     const pw = document.createElement('button'); pw.className = 'gun power'; pw.dataset.g = 'power'; pw.hidden = true; shop.appendChild(pw);
     shop.onclick = e => {
       const b = e.target.closest('button'); if (!b || S.phase !== 'play') return;
@@ -690,6 +694,8 @@ const Practice = (() => {
       if (key === 'power') return usePower();
       if (GUNS[key] && (S.money < GUNS[key].cost || S.recharge[key] > 0)) { b.classList.add('nope'); setTimeout(() => b.classList.remove('nope'), 400); return; }
       S.sel = S.sel === key ? null : key; refreshShop();
+      if (S.sel === 'upgrade') S.banner = { text: S.grid.flat().some(g => tierCost(g)) ? 'Tap a gun with a ⬆ to upgrade it' : 'Nothing to upgrade yet — plant a gun first', t: 2 };
+      if (S.sel === 'shovel') S.banner = { text: 'Tap a gun to dig it up', t: 1.5 };
     };
   }
   function flashShop(key) { const b = ui.shop.querySelector(`[data-g=${key}]`); if (b) { b.classList.add('nope'); setTimeout(() => b.classList.remove('nope'), 400); } }
