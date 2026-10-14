@@ -9,35 +9,37 @@ const Practice = (() => {
   // that knocks the whole row back; lob = lobbed shells (Solar Blast anywhere, Miner along its row); mine = explodes when touched;
   // bomb = explodes after a fuse; brain = turns the squishy that bites it; wall = just soaks up bites. tiers[1..2] carry the upgrade cost.
   const GUNS = {
-    shooter:      { name: 'Blaster', cost: 100, hp: 100, recharge: 5, art: 'blaster', kind: 'shoot', proj: 'bullet', dmg: 20, speed: 7, tiers: [{ every: 2, shots: 1 }, { every: 2, shots: 2, cost: 150 }, { every: 1 / 3, shots: 1, cost: 250 }], blurb: 'a bullet every 2 s; upgrades add barrels' },
-    handy:        { name: 'Handy Turret', cost: 150, hp: 100, recharge: 8, art: 'handy', kind: 'shoot', proj: 'bullet', small: true, dmg: 7, speed: 9, tiers: [{ every: .5, shots: 1 }, { every: .33, shots: 1, cost: 150 }, { every: .2, shots: 1, cost: 250 }], blurb: 'sprays little bullets' },
-    freezeturret: { name: 'Freeze Turret', cost: 175, hp: 100, recharge: 10, art: 'freezeturret', kind: 'shoot', proj: 'ice', dmg: 15, speed: 8, tiers: [{ every: 3, shots: 1, freeze: 1.5 }, { every: 2.2, shots: 1, freeze: 2, cost: 150 }, { every: 1.5, shots: 1, freeze: 2.5, cost: 250 }], blurb: 'ice shards freeze a squishy on the spot' },
-    freezeray:    { name: 'Freeze Ray', cost: 150, hp: 100, recharge: 8, art: 'freezeray', kind: 'beam', range: 3.5, dmg: 6, tiers: [{}], blurb: 'a cold beam: everything in front crawls at half speed' },
-    sonic:        { name: 'Sonic Boom', cost: 200, hp: 100, recharge: 12, art: 'sonic', kind: 'ring', tiers: [{ every: 5, push: .8, dmg: 25 }, { every: 4, push: 1.2, dmg: 35, cost: 150 }, { every: 3, push: 1.6, dmg: 45, cost: 250 }], blurb: 'a ring that knocks the whole row back' },
-    mortar:       { name: 'Solar Blast', cost: 225, hp: 100, recharge: 12, art: 'solar', kind: 'lob', proj: 'lava', tiers: [{ every: 7, dmg: 90, splash: 1.4 }], blurb: 'lobs a fireball at the squishy nearest your mowers' },
-    miner:        { name: 'Miner Shoot', cost: 150, hp: 100, recharge: 8, art: 'miner', kind: 'lob', lane: true, proj: 'rock', tiers: [{ every: 4, dmg: 45, splash: .8 }, { every: 3, dmg: 55, splash: .9, cost: 150 }, { every: 2.2, dmg: 70, splash: 1, cost: 250 }], blurb: 'flings rocks along its row' },
-    mine:         { name: 'Detonate Bomb', cost: 125, hp: 60, recharge: 14, art: 'mine', kind: 'mine', arm: 4, tiers: [{ dmg: 300, splash: 1 }, { dmg: 420, splash: 1.4, cost: 120 }, { dmg: 600, splash: 1.8, cost: 200 }], blurb: 'arms in 4 s, then blows up the first squishy to touch it' },
-    plasma:       { name: 'Plasma Bomb', cost: 150, hp: 9999, recharge: 20, art: 'plasma', kind: 'bomb', fuse: 1.5, tiers: [{ dmg: 500, splash: 1.7 }], blurb: 'goes off after 1.5 s and clears the area' },
+    shooter:      { name: 'Blaster', cost: 100, hp: 100, recharge: 5, art: 'blaster', kind: 'shoot', proj: 'bullet', dmg: 20, speed: 7, tiers: [{ every: 1.5, shots: 1 }, { every: 1.5, shots: 2, cost: 150 }, { every: 1.5, shots: 3, cost: 250 }], blurb: 'a bullet every 1.5 s, like a pea; upgrades add barrels' },
+    handy:        { name: 'Handy Turret', cost: 150, hp: 100, recharge: 8, art: 'handy', kind: 'shoot', proj: 'bullet', small: true, dmg: 6, speed: 10, range: 3.5, tiers: [{ every: .3, shots: 1 }, { every: .22, shots: 1, cost: 150 }, { every: .15, shots: 1, cost: 250 }], blurb: 'a stream of little bullets, hits hard but only 3 squares ahead' },
+    freezeturret: { name: 'Freeze Turret', cost: 175, hp: 100, recharge: 10, art: 'freezeturret', kind: 'shoot', proj: 'ice', dmg: 15, speed: 8, tiers: [{ every: 3, shots: 1, freeze: 2 }, { every: 2.2, shots: 1, freeze: 2.5, cost: 150 }, { every: 1.5, shots: 1, freeze: 3, cost: 250 }], blurb: 'ice shards freeze a squishy on the spot' },
+    freezeray:    { name: 'Freeze Ray', cost: 150, hp: 100, recharge: 8, art: 'freezeray', kind: 'beam', range: 4, dmg: 4, tiers: [{}], blurb: 'a cold beam: everything in front crawls at half speed' },
+    sonic:        { name: 'Sonic Boom', cost: 200, hp: 100, recharge: 12, art: 'sonic', kind: 'ring', tiers: [{ every: 6, push: 1, dmg: 20 }, { every: 5, push: 1.5, dmg: 30, cost: 150 }, { every: 4, push: 2, dmg: 40, cost: 250 }], blurb: 'a ring that knocks the whole row back' },
+    mortar:       { name: 'Solar Blast', cost: 225, hp: 100, recharge: 12, art: 'solar', kind: 'lob', proj: 'lava', tiers: [{ every: 8, dmg: 120, splash: 1.5 }], blurb: 'lobs a fireball at the squishy nearest your mowers, anywhere on the lawn' },
+    miner:        { name: 'Miner Shoot', cost: 150, hp: 100, recharge: 8, art: 'miner', kind: 'lob', lane: true, proj: 'rock', tiers: [{ every: 4, dmg: 50, splash: .8 }, { every: 3, dmg: 60, splash: .9, cost: 150 }, { every: 2.2, dmg: 75, splash: 1, cost: 250 }], blurb: 'flings rocks along its row; they splash' },
+    mine:         { name: 'Detonate Bomb', cost: 125, hp: 60, recharge: 14, art: 'mine', kind: 'mine', arm: 8, tiers: [{ dmg: 600, splash: 1 }, { dmg: 800, splash: 1.4, cost: 120 }, { dmg: 1200, splash: 1.8, cost: 200 }], blurb: 'arms in 8 s, then blows up the first squishy to touch it' },
+    plasma:       { name: 'Plasma Bomb', cost: 150, hp: 9999, recharge: 25, art: 'plasma', kind: 'bomb', fuse: 1.5, tiers: [{ dmg: 900, splash: 1.7 }], blurb: 'goes off after 1.5 s and clears the squares around it' },
     brain:        { name: 'Brain Wash', cost: 175, hp: 80, recharge: 15, art: 'brain', kind: 'brain', tiers: [{ uses: 1 }, { uses: 2, cost: 150 }, { uses: 3, cost: 250 }], blurb: 'the squishy that bites it turns round and fights for you' },
-    shield:       { name: 'Shield', cost: 50, hp: 400, recharge: 8, art: 'shield', kind: 'wall', tiers: [{ hp: 400 }, { hp: 800, cost: 75 }, { hp: 1400, cost: 125 }], blurb: 'a tough wall that keeps them busy' },
+    shield:       { name: 'Shield', cost: 50, hp: 1000, recharge: 10, art: 'shield', kind: 'wall', tiers: [{ hp: 1000 }, { hp: 2000, cost: 75 }, { hp: 3500, cost: 125 }], blurb: 'a wall that takes 40 s to chew through' },
   };
   const tierOf = g => GUNS[g.type].tiers[(g.tier || 1) - 1] || GUNS[g.type].tiers[0];
   const tierCost = g => { if (!g) return 0; const t = GUNS[g.type].tiers[g.tier || 1]; return t ? t.cost : 0; };
   const gunHp = g => tierOf(g).hp || GUNS[g.type].hp;
   // the squishies (art in art/squishies, drawn facing left as supplied). size is relative to a cell;
   // 'from' is the first level they appear; look.hurt shows once they are below half health; the Kings, the Queen and Sharky are bosses
+  // speed is in squares per second: a Chomp takes about 2 minutes to cross the lawn (the original's zombie took 45 s).
+  // 'from' is the minute of the level at which a kind starts to appear; bosses lead the final wave.
   const SQUISHIES = {
-    chomp:      { name: 'Chomp',      hp: 100, speed: .10, chomp: 25, size: 1.0,  from: 1, look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8' },
-    skitter:    { name: 'Skitter',    hp: 60,  speed: .21, chomp: 25, size: .74,  from: 2, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496' },
-    antbun:     { name: 'Antbun',     hp: 200, speed: .13, chomp: 25, size: 1.05, from: 3, look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd' },
-    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .15, chomp: 0,  size: .92,  from: 5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true },
-    ghost:      { name: 'Ghost',      hp: 80,  speed: .15, chomp: 25, size: 1.0,  from: 7, look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
-    flying:     { name: 'Flyer',      hp: 70,  speed: .18, chomp: 0,  size: .9,   from: 9, look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
-    moley:      { name: 'Mole King',  hp: 220, speed: .11, chomp: 30, size: .95,  from: 11, look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .17 },
-    chompking:  { name: 'ChompKing',  hp: 600, speed: .07, chomp: 50, size: 1.4,  from: 6, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0', boss: true },
-    broodqueen: { name: 'Brood Queen', hp: 900, speed: .05, chomp: 40, size: 1.4, from: 10, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
-    ghostking:  { name: 'Ghost King', hp: 800, speed: .08, chomp: 35, size: 1.35, from: 14, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
-    sharky:     { name: 'Sharky',     hp: 1100, speed: .055, chomp: 90, size: 1.5, from: 18, look: { ok: 'sharky' }, motion: 'float', color: '#d9c48a', boss: true },
+    chomp:      { name: 'Chomp',      hp: 100, speed: .075, chomp: 25, size: 1.0,  from: 0,   look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8' },
+    skitter:    { name: 'Skitter',    hp: 60,  speed: .15,  chomp: 25, size: .74,  from: 1.5, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496' },
+    antbun:     { name: 'Antbun',     hp: 280, speed: .09,  chomp: 25, size: 1.05, from: 3,   look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd' },
+    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true },
+    ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
+    flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
+    moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12 },
+    chompking:  { name: 'ChompKing',  hp: 900, speed: .05,  chomp: 50, size: 1.4,  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0', boss: true },
+    broodqueen: { name: 'Brood Queen', hp: 1300, speed: .04, chomp: 40, size: 1.4, from: 99, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
+    ghostking:  { name: 'Ghost King', hp: 1200, speed: .06, chomp: 35, size: 1.35, from: 99, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
+    sharky:     { name: 'Sharky',     hp: 2000, speed: .04, chomp: 90, size: 1.5, from: 99, look: { ok: 'sharky' }, motion: 'float', color: '#d9c48a', boss: true },
   };
   // the worlds, as the planet trophies name them; each ends with a boss level
   const WORLDS = [
@@ -48,17 +50,18 @@ const Practice = (() => {
     { key: 'saturn', name: 'Saturn', from: 15, to: 18, lanes: ['#D9B86A', '#E3C57D'], soil: ['#A3823F', '#B08E49'], boss: 'sharky', deco: 'rocks' },
     { key: 'neptune', name: 'Neptune', from: 19, to: 22, lanes: ['#4A6FB5', '#5A80C8'], soil: ['#2E4A80', '#38568E'], boss: 'all', deco: 'craters' },
   ];
-  const worldOf = n => WORLDS.find(w => n >= w.from && n <= w.to) || { ...WORLDS[WORLDS.length - 1], name: 'Deep space', key: 'deep', from: 23, to: 1e9, boss: 'all' };
+  const worldOf = () => WORLDS[1];   // one level for now: Earth, daytime
+  // the level: wave 1 builds from one squishy every 14 s to one every 1.2 s over 8 minutes (about 150 squishies),
+  // then the final wave pours in 250 more with the four bosses leading groups of it. About five times the old level.
+  const WAVE1_SECS = 480, WAVE1_MAX = 150, WAVE2 = 250, BOSS_AT = { 0: 'chompking', 70: 'broodqueen', 140: 'ghostking', 210: 'sharky' };
   function levelSpec(n) {
-    const world = worldOf(n);
-    const weights = {};
-    for (const k in SQUISHIES) { const s = SQUISHIES[k]; if (s.boss || n < s.from) continue; weights[k] = k === 'chomp' ? 1 : .22 + .04 * (n - s.from); }
-    const last = n === world.to || (world.key === 'deep' && (n - 23) % 4 === 3);
-    const bossOf = world.boss === 'all' ? ['chompking', 'broodqueen', 'ghostking', 'sharky'][n % 4] : world.boss;
-    const boss = last ? bossOf : null;
-    // early levels use fewer rows, like the original's first lawns
-    const rows = n === 1 ? [2, 3] : n === 2 ? [1, 2, 3, 4] : [0, 1, 2, 3, 4, 5];
-    return { count: 16 + 5 * (n - 1), rows, grace: n === 1 ? 12 : 8, gap0: Math.max(4, 10 - n), gap1: Math.max(2.2, 6.5 - .45 * (n - 1)), weights, huge: n >= 2, boss, world, last };
+    return { count: WAVE1_MAX + WAVE2, rows: [0, 1, 2, 3, 4, 5], grace: 10, world: worldOf(), last: true, boss: 'chompking', huge: true };
+  }
+  const gapAt = t => t < 240 ? 14 - 11 * (t / 240) : Math.max(1.2, 3 - 1.8 * ((t - 240) / 240));
+  function weightsAt(t) {   // which kinds can appear this far into the level
+    const m = t / 60, w = {};
+    for (const k in SQUISHIES) { const q = SQUISHIES[k]; if (q.boss || m < q.from) continue; w[k] = k === 'chomp' ? 1 : Math.min(.5, .12 + .06 * (m - q.from)); }
+    return w;
   }
   // the Antbun is a rigged character: separate parts in a 320-wide box, positions from the artist's PSD
   const ANTBUN = {"parts": {"dead_leftarm": [65, 18, 88, 116], "dead_body": [0, 43, 242, 210], "dead_skull": [16, 91, 177, 127], "dead_arm": [155, 189, 46, 40], "dead_rightear": [153, 31, 167, 106], "hurt_leftear": [65, 20, 88, 116], "hurt_body": [0, 43, 243, 210], "hurt_righteyeclose": [98, 161, 31, 10], "hurt_righteyeopen": [98, 154, 30, 30], "hurt_arm": [165, 170, 48, 53], "hurt_rightear": [140, 31, 177, 131], "leftear": [68, 0, 132, 131], "body": [0, 55, 250, 198], "body2": [10, 87, 239, 179], "body3": [10, 87, 242, 176], "eyesopen": [31, 149, 98, 36], "rightear": [140, 31, 177, 131], "eyepopping": [96, 141, 58, 58], "eyesclose": [32, 155, 98, 15], "arm": [166, 171, 45, 52]}, "box": [320, 266], "death": {"w": 320, "h": 322, "body": [50, 95, 234, 187]}};
@@ -92,7 +95,7 @@ const Practice = (() => {
       grid: Array.from({ length: ROWS }, () => Array(COLS).fill(null)),
       gnomes: Array(ROWS).fill(true), gnomeRuns: [],
       squishies: [], bullets: [], shells: [], fx: [], floats: [],
-      spawned: 0, nextSpawn: spec.grace, hugeDone: false, banner: null,
+      spawned: 0, nextSpawn: spec.grace, hugeDone: false, started: false, clock: 0, wave2: 0, banner: null,
       sel: null, recharge: Object.fromEntries(Object.keys(GUNS).map(k => [k, 0])), rings: [], lastRows: [], shake: 0, kills: 0, correct: 0, asked: 0, streak: 0, power: null, frozen: 0 };
   }
 
@@ -135,29 +138,24 @@ const Practice = (() => {
     if (S.shake > 0) S.shake -= dt;
     if (S.frozen > 0) S.frozen -= dt;
 
-    // spawning
+    // spawning: a slow trickle that thickens for eight minutes, then the huge final wave
     const sp = S.spec;
-    // level 1 waits for the first gun, like the original's first lawn
     const anyGun = S.grid.some(row => row.some(Boolean));
-    if (S.spawned < sp.count && (S.level > 1 || anyGun || S.spawned > 0)) {
+    if (!S.started && anyGun) S.started = true;   // the clock starts with the first gun
+    if (S.started && S.spawned < sp.count) {
+      S.clock = (S.clock || 0) + dt;
       S.nextSpawn -= dt;
-      const hugeAt = Math.floor(sp.count * .7);
-      if (sp.huge && !S.hugeDone && S.spawned >= hugeAt) {
-        S.hugeDone = true;
-        S.banner = { text: 'A huge wave of squishies is coming!', t: 2.4, wave: true };
-        S.nextSpawn = 2.4;
-        S.hugeLeft = Math.min(sp.count - S.spawned, 4 + Math.floor(S.level / 2));
+      if (!S.hugeDone && (S.clock >= WAVE1_SECS || S.spawned >= WAVE1_MAX)) {
+        S.hugeDone = true; S.wave2 = 0;
+        S.banner = { text: 'A huge wave of squishies is coming!', t: 3, wave: true }; S.nextSpawn = 3;
       }
       if (S.nextSpawn <= 0) {
-        if (S.hugeLeft > 0) {
-          if (sp.boss && !S.bossDone) { S.bossDone = true; spawn(sp.boss); } else spawn(pickWeighted(sp.weights));
-          S.hugeLeft--; S.nextSpawn = .45; if (!S.hugeLeft) S.banner = { text: 'Final wave!', t: 1.6, wave: true };
-        }
-        else {
-          spawn(pickWeighted(sp.weights));
-          const p = S.spawned / sp.count;
-          S.nextSpawn = sp.gap0 + (sp.gap1 - sp.gap0) * p;
-        }
+        if (S.hugeDone) {
+          const boss = BOSS_AT[S.wave2];
+          spawn(boss || pickWeighted(weightsAt(S.clock)));
+          S.wave2++; S.nextSpawn = boss ? 1.5 : .6;
+          if (S.wave2 === WAVE2 - 30) S.banner = { text: 'Final wave!', t: 1.6, wave: true };
+        } else { spawn(pickWeighted(weightsAt(S.clock))); S.nextSpawn = gapAt(S.clock); }
       }
     }
     if (S.banner) { S.banner.t -= dt; if (S.banner.t <= 0) S.banner = null; }
@@ -253,13 +251,13 @@ const Practice = (() => {
       g.cool -= dt;
       if (g.cool > 0) continue;
       // bullets, rings and rocks fly along the gun's own row; the Solar Blast lobs at the most advanced squishy on the whole lawn
-      const targets = S.squishies.filter(s => !s.dead && !s.hypno && s.x < COLS + .6 && (k.kind === 'lob' && !k.lane ? s.x > .5 : s.row === r && s.x > c + .2 && !s.under));
+      const targets = S.squishies.filter(s => !s.dead && !s.hypno && s.x < COLS + .6 && (k.kind === 'lob' && !k.lane ? s.x > .5 : s.row === r && s.x > c + .2 && !s.under && (!k.range || s.x < c + .5 + k.range)));
       if (!targets.length) continue;
       const first = targets.reduce((a, b) => a.x < b.x ? a : b);
       g.cool = tier.every; g.kick = .12; g.fired = S.t;
       if (k.kind === 'lob') S.shells.push({ x0: c + .5, row0: r, x1: first.x, row: first.row, t: 0, dur: Math.max(.6, Math.hypot(first.x - c, first.row - r) / 6 + .4), dmg: tier.dmg, splash: tier.splash, proj: k.proj });
       else if (k.kind === 'ring') S.rings.push({ x: c + .6, row: r, speed: 4.5, push: tier.push, dmg: tier.dmg, hit: new Set(), t: 0 });
-      else for (let i = 0; i < tier.shots; i++) S.bullets.push({ x: c + 1.0 - i * .3, row: r, speed: k.speed, dmg: k.dmg, proj: k.proj, small: !!k.small, freeze: tier.freeze || 0, big: g.type === 'shooter' && (g.tier || 1) < 3 });
+      else for (let i = 0; i < tier.shots; i++) S.bullets.push({ x: c + 1.0 - i * .3, row: r, speed: k.speed, dmg: k.dmg, range: k.range ? c + .5 + k.range : null, proj: k.proj, small: !!k.small, freeze: tier.freeze || 0, big: g.type === 'shooter' && (g.tier || 1) < 3 });
     }
     // sonic rings: pass through every squishy in the row, knocking it back
     for (const rg of S.rings) {
@@ -274,6 +272,7 @@ const Practice = (() => {
     for (const b of S.bullets) {
       b.x += b.speed * dt;
       const hit = S.squishies.find(s => s.row === b.row && !s.dead && !s.hypno && !s.under && Math.abs(s.x - b.x) < s.k.size * .45);
+      if (b.range != null && b.x > b.range) b.gone = true;
       if (hit) { hurt(hit, b.dmg); b.gone = true; if (b.freeze && !hit.k.boss) { hit.frozenT = b.freeze; hit.eating = null; } else if (b.freeze) hit.slowT = 1; }
       if (b.x > COLS + 1) b.gone = true;
     }
@@ -311,9 +310,8 @@ const Practice = (() => {
     sv.level = S.level + 1; sv.best = Math.max(sv.best || 1, S.level + 1); sv.won = (sv.won || 0) + 1;
     sv.stars = sv.stars || {}; sv.stars[S.level] = Math.max(sv.stars[S.level] || 0, stars); store.set(saveKey, sv);
     buddy('pose_wave', 'emo_grin', 8);
-    const w = S.spec.world, next = worldOf(S.level + 1);
-    const sub = `Level ${S.level} done!` + (S.spec.last && w.key !== 'deep' ? ` ${w.name === 'the Moon' ? 'The Moon is' : w.name + ' is'} safe — next stop ${next.name}!` : '');
-    showOverlay({ kind: 'won', title: 'You win', sub, btn: 'Next level', stars }, () => { newLevel(S.level + 1); start(); });
+    const sub = 'You held the lawn through the huge wave!';
+    showOverlay({ kind: 'won', title: 'You win', sub, btn: 'Play again', stars }, () => { newLevel(1); start(); });
     Celebrate(innerWidth / 2, innerHeight / 3, stars >= 3 ? 2.6 : 2);
   }
   function lose() {
@@ -713,7 +711,7 @@ const Practice = (() => {
       const cool = b.querySelector('.cool'); cool.style.height = (100 * S.recharge[key] / k.recharge) + '%';
     }
     ui.money.textContent = S.money;
-    ui.level.textContent = 'Level ' + S.level;
+    ui.level.textContent = S.hugeDone ? 'Final wave' : S.started ? `Wave 1 · ${Math.floor((S.clock || 0) / 60)}:${String(Math.floor((S.clock || 0) % 60)).padStart(2, '0')}` : 'Plant a gun';
     const p = Math.min(1, S.spawned / S.spec.count);
     ui.prog.style.width = (100 * p) + '%';
   }
@@ -821,19 +819,13 @@ const Practice = (() => {
     ui.ice.hidden = true; if (quiz) quiz.frozen = 0;
   }
   function ready() {
-    const fresh = Object.keys(SQUISHIES).filter(k => SQUISHIES[k].from === S.level && !SQUISHIES[k].boss).map(k => SQUISHIES[k].name);
-    const w = S.spec.world;
-    const first = S.level === 1 ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. Scroll the shop for more weapons. Keep the squishies away from your lawnmowers!'
-      : (S.level === w.from ? `Welcome to ${w.name}! ` : '') + `${S.spec.count} squishies are on their way.` + (fresh.length ? ` New: ${fresh.join(', ')}!` : '') + (S.spec.boss ? ` Boss level — ${SQUISHIES[S.spec.boss].name} leads the final wave!` : '');
-    showOverlay({ kind: 'ready', title: `${w.name === 'the Moon' ? 'The Moon' : w.name} · Level ${S.level}`, sub: first, btn: S.level === 1 ? "Let's go!" : 'Ready!' }, start);
+    const sub = S.level === 1 && !(store.get(saveKey, {}).won)
+      ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. The squishies start slowly and keep coming for a long time — then a huge wave. Keep them away from your lawnmowers!'
+      : 'A long day on the lawn: the squishies trickle in, thicken up, and then the huge wave comes with all four bosses. Match words, plant guns, hold out!';
+    showOverlay({ kind: 'ready', title: 'Squishygeddon', sub, btn: "Let's go!" }, start);
     const tr = document.createElement('button'); tr.className = 'linkbtn'; tr.textContent = '🏆 Trophy cabinet';
     tr.onclick = () => { location.hash = 'trophies'; };
     ui.overlay.querySelector('.ovbox').appendChild(tr);
-    if (S.level > 1) {
-      const a = document.createElement('button'); a.className = 'linkbtn'; a.textContent = 'start again from level 1';
-      a.onclick = () => { if (confirm('Go back to level 1? Your best level is kept.')) restartFromOne(); };
-      ui.overlay.querySelector('.ovbox').appendChild(a);
-    }
   }
 
   /* ---------- loop ---------- */

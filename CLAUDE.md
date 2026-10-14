@@ -44,9 +44,12 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   `latin.read.<id>` {done{n: time}, read}. Next: longer passages.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
-  Worlds through the solar system (Tutorial, Earth, Moon, Mars, Saturn,
-  Neptune, then Deep space) with a boss on each world's last level; the Bumble
-  Blaster upgrades through three tiers (tier 3 = machine gun); 5 right answers
+  For now one long daytime level on Earth (the owner dropped the worlds):
+  wave 1 trickles in for 8 min (gap 14 s → 1.2 s, ~150 squishies, kinds by
+  the minute), then a final wave of 250 led by the four bosses; ~10 min,
+  ~400 squishies. Numbers follow the original PvZ (Blaster = peashooter:
+  20 dmg / 1.5 s; Chomp 100 hp crosses in ~2 min; Shield 1000 hp ≈ 40 s of
+  chewing). The world/level code (`WORLDS`, trophies) is still there, unused; 5 right answers
   in a row arm a Freeze, 10 a Lightning storm; 1–3 stars per level from the
   correct-answer ratio; a trophy cabinet (`#trophies`) of 20 trophies.
   **Weapons** (the owner's Weapons folder, rendered from the Spine rigs with
