@@ -90,7 +90,13 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   earned, owned[], wear{skin, weapon, pup}}. Only two backgrounds exist; more
   scenes would need pictures from the owner.
 - Installable as a home-screen app (`manifest.webmanifest`, `sw.js`; bump the
-  cache name in `sw.js` when files change).
+  cache name in `sw.js` **and** `APP_VERSION` in `app.js` together on every
+  publish). Updates: the worker installs each core file on its own (one
+  failure never blocks a new version), `index.html` re-checks `sw.js` whenever
+  the app comes to the front and reloads once when a new worker takes over,
+  and `checkVersion()` in `app.js` reads the live `sw.js` on the home page and
+  refreshes by itself when it is newer (once per session; the version line at
+  the bottom of the home page does the same by hand).
 
 ## Cloud sync (built, not yet switched on)
 

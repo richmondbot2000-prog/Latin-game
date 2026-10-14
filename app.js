@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '68';
+const APP_VERSION = '69';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -317,6 +317,22 @@ function meterHTML(c, total) {
   const col = ['var(--line)', '#E9C46A', '#E9A23B', '#D97B3A', '#B85C8E', 'var(--good)'];
   return '<div class="meter">' + [5, 4, 3, 2, 1, 0].map(s => `<span style="width:${100 * c[s] / total}%;background:${col[s]}"></span>`).join('') + '</div>';
 }
+// throw away every saved copy of the app and fetch it fresh
+async function freshen() {
+  try { if (navigator.serviceWorker) for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister(); if (window.caches) for (const k of await caches.keys()) await caches.delete(k); } catch (e) {}
+  location.href = location.pathname + '?v=' + Date.now();
+}
+// ask the server which version is current; if it is newer than this one, refresh once by itself (and otherwise offer a button)
+async function checkVersion() {
+  if (!navigator.onLine) return;
+  let latest = 0;
+  try { const t = await (await fetch('sw.js?v=' + Date.now(), { cache: 'no-store' })).text(); const m = t.match(/latin-v(\d+)/); if (m) latest = +m[1]; } catch (e) { return; }
+  if (latest <= +APP_VERSION) return;
+  const line = $('#verline'); if (!line) return;
+  line.textContent = `version ${latest} is ready · tap to update`;
+  let tried = 0; try { tried = +sessionStorage.getItem('latin.upd') || 0; } catch (e) {}
+  if (tried < latest) { try { sessionStorage.setItem('latin.upd', String(latest)); } catch (e) {} freshen(); }
+}
 function renderHome(u) {
   const { c, total } = summary(u);
   app.innerHTML = `
@@ -359,11 +375,8 @@ function renderHome(u) {
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#readGo').onclick = () => { location.hash = 'read'; };
-  $('#verline').onclick = async () => {   // throw away every saved copy of the app and fetch it fresh
-    $('#verline').textContent = 'updating…';
-    try { if (navigator.serviceWorker) for (const r of await navigator.serviceWorker.getRegistrations()) await r.unregister(); if (window.caches) for (const k of await caches.keys()) await caches.delete(k); } catch (e) {}
-    location.href = location.pathname + '?v=' + Date.now();
-  };
+  $('#verline').onclick = () => { $('#verline').textContent = 'updating…'; freshen(); };
+  checkVersion();
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
   $('#levels').onclick = e => {
     const b = e.target.closest('button'); if (!b || b.dataset.l === levelOf(u)) return;

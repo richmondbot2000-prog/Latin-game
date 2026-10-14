@@ -31,7 +31,19 @@
 <script src="sync.js"></script>
 <script src="app.js"></script>
 <script>
-  if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  if ('serviceWorker' in navigator) addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js');
+      const check = () => reg.update().catch(() => {});
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });   // look for a new version whenever the app comes back to the front
+      let had = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {   // a new version has taken over: show it straight away
+        let done = false; try { done = sessionStorage.getItem('latin.swr') === '1'; sessionStorage.setItem('latin.swr', '1'); } catch (e) {}
+        if (had && !done) location.reload(); had = true;
+      });
+      try { sessionStorage.removeItem('latin.swr'); } catch (e) {}
+    } catch (e) {}
+  });
 </script>
 </body>
 </html>
