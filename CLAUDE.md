@@ -69,7 +69,18 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Fire plays after a shot, Idle between. Plasma Bomb and Brain Wash have no
   usable rig and stay as still pictures. Not used yet: Floaty, Generators.
   Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
-  `art/ui/`, `art/trophies/`. Per-player counters live in
+  `art/ui/`, `art/trophies/`. **Rigged squishies**: the Kamikaze is a Spine
+  rig (`art/rigs/kamikaze.json+.png`, from the owner's Squishies/Kamikaze
+  Drive folder: Walk = rolling, WalkSwell near a gun, Attack; played by
+  `drawSqRig`, mirrored because the artist rolls to the right) while
+  healthy; below half health it shows the bruised frames of the artist's
+  3×3 death sheet (`art/squishies/kamikaze/d4-6.png`, cut by a scratch
+  script into 320px cells) and on death plays frames 7-9 (`sqdeath` fx).
+  Other squishies came as two flat pictures each, so they only bob and
+  melt; give a kind `srig` + `sheet` in `SQUISHIES` to rig it the same way
+  once its Drive folder (`<Name>.json`, `.atlas.txt`, `.png`, `<Name>Death.png`)
+  is shared. `scratchpad/export_sq.py` (in the session scratchpad, not the
+  repo) turned the Spine files into the rig format. Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
 - **Jacques Hammer** — a runner (`hammer.js`), portrait like the artist's mockup
   (works either way up). One wide board at a time scrolls in with a Latin word

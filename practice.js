@@ -37,7 +37,7 @@ const Practice = (() => {
     chomp:      { name: 'Chomp',      hp: 100, speed: .075, chomp: 25, size: 1.0,  from: 0,   look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8', tip: 'Chomps eat your guns. A Blaster kills one in five shots.' },
     skitter:    { name: 'Skitter',    hp: 60,  speed: .15,  chomp: 25, size: .74,  from: 1.5, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496', res: { ice: 1.5 }, tip: 'Skitters are fast but flimsy. Ice stops them dead.' },
     antbun:     { name: 'Antbun',     hp: 280, speed: .09,  chomp: 25, size: 1.05, from: 3,   look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd', res: { bullet: .5, spray: .5, rock: 1.5, bomb: 1.5, blast: 1.5 }, tip: 'Antbuns wear armour: bullets only half work. Rocks and bombs crack it.' },
-    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true, res: { bullet: 1.5, spray: 1.5 }, tip: 'Kamikazes blow up the guns they touch. Shoot early, or brain-wash one and send it back into the crowd!' },
+    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, srig: 'kamikaze', sheet: { art: 'kamikaze/d', cell: 320, fig: 209, foot: .96 }, motion: 'roll', color: '#ddb8a4', boom: true, res: { bullet: 1.5, spray: 1.5 }, tip: 'Kamikazes blow up the guns they touch. Shoot early, or brain-wash one and send it back into the crowd!' },
     ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88, nofreeze: true, nobrain: true, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'Ghosts float over one gun. Ice and sound pass straight through them, but Solar Blast burns them double.' },
     flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true, res: { bullet: 0, rock: 0, bomb: 0, spray: 1.5 }, tip: 'Flyers sail over everything. Bullets and rocks go underneath; a Handy Turret or ice shards bring them down.' },
     moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12, res: { bomb: 1.5 }, tip: 'The Mole King drills underground: only blasts and rocks reach him until he pops up.' },
@@ -136,6 +136,7 @@ const Practice = (() => {
       if (sq.k.boss) buddy('pose_thumbs', 'emo_grin', 2.5); else if (Math.random() < .15) buddy('pose_thumbs', 'emo_happy', 1.2);
       S.fx.push({ kind: 'splat', x: sq.x, row: sq.row, t: 0, color: sq.k.color, size: sq.k.size });
       if (sq.k.rig) S.fx.push({ kind: 'abdeath', x: sq.x, row: sq.row, t: 0, size: sq.k.size });
+      else if (sq.k.sheet) S.fx.push({ kind: 'sqdeath', x: sq.x, row: sq.row, t: 0, size: sq.k.size, sheet: sq.k.sheet });
       else S.fx.push({ kind: 'melt', x: sq.x, row: sq.row, t: 0, art: lookOf(sq), size: sq.k.size, fly: !!sq.k.fly });
     }
   }
@@ -310,7 +311,7 @@ const Practice = (() => {
     S.shells = S.shells.filter(s => !s.gone);
     // effects
     for (const f of S.fx) { f.t += dt; if (f.kind === 'smoke') { f.x -= .4 * dt; f.row += f.drift * dt * .3; } }
-    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'icewave' ? .9 : .8));
+    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'sqdeath' ? 1.3 : f.kind === 'icewave' ? .9 : .8));
     for (const f of S.floats) f.t += dt;
     S.floats = S.floats.filter(f => f.t < 1);
     S.squishies = S.squishies.filter(s => !s.dead);
@@ -564,6 +565,25 @@ const Practice = (() => {
   }
   const ICE_C = document.createElement('canvas');
   function iceCanvas(P) { if (ICE_C.width !== P) ICE_C.width = ICE_C.height = P; return ICE_C; }
+  // a frame of an artist's sheet (3x3 cells cut to squares): bottom-centre of the figure at (x, y), the figure's width w
+  function drawSheet(g, sh, n, x, y, w) {
+    const im = SPRITES[sh.art + n]; if (!im || !im.complete || !im.naturalWidth) return false;
+    const sz = w * sh.cell / sh.fig; g.drawImage(im, x - sz / 2, y - sz * sh.foot, sz, sz); return true;
+  }
+  // a squishy with a Spine rig: Walk (timed by distance, so a roller rolls with the ground), WalkSwell near a gun, Attack while eating
+  function drawSqRig(g, rig, sq, w) {
+    const b = Rig.bounds(rig); if (!b) return false;
+    const bw = b[2] - b[0], bh = b[3] - b[1], sc = w / Math.max(bw, bh), ox = -(b[0] + b[2]) / 2 * sc, oy = b[1] * sc;
+    let anim = 'Walk', t = 0;
+    if (sq.eating && Rig.has(rig, 'Attack')) { anim = 'Attack'; t = (S.t + sq.phase) % Rig.duration(rig, 'Attack'); }
+    else {
+      let near = false; const row = S.grid[sq.row]; for (let c = Math.floor(sq.x) - 2; c <= Math.floor(sq.x); c++) if (c >= 0 && c < COLS && row[c] && sq.x - c < 1.6) near = true;
+      if (near && Rig.has(rig, 'WalkSwell')) anim = 'WalkSwell';
+      const d = Rig.duration(rig, anim) || 1; t = (((COLS + 2 - sq.x) / 2.8 + sq.phase / 7) * d) % d;
+    }
+    g.save(); g.scale(-1, 1);   // the artist's Walk rolls to the right; our squishies roll left
+    const okd = Rig.draw(g, rig, anim, t, -ox, oy, sc); g.restore(); return okd;
+  }
   function drawSquishy(g, sq, x, y, s) {
     const k = sq.k, w = s * k.size * 1.2, mo = motionOf(sq);
     if (sq.rise <= 0) sq.blink -= 1 / 60; if (sq.blink < 0) sq.blink = 2 + Math.random() * 3;
@@ -581,11 +601,12 @@ const Practice = (() => {
     g.translate(x, foot + mo.dy * s);
     if (sq.rise > 0) { g.beginPath(); g.rect(-w, -w * 2, w * 2, w * 2 * (1 - sq.rise)); g.clip(); g.translate(0, w * sq.rise); }   // moley rising out of the ground
     if (sq.hypno) g.scale(-1, 1);   // brain-washed squishies face the other way
-    if (k.motion === 'roll') { g.translate(0, -w * .45); g.rotate(mo.rot); g.translate(0, w * .45); } else g.rotate(mo.rot);
+    const rig = k.srig && typeof Rig !== 'undefined' ? Rig.load(k.srig) : null, useRig = !!(rig && Rig.ok(rig) && sq.hp >= k.hp * .5);   // the artist's rig while healthy (its own rolling / hopping), the bruised sheet frames when hurt
+    if (useRig) { /* the rig carries its own motion */ } else if (k.motion === 'roll') { g.translate(0, -w * .45); g.rotate(mo.rot); g.translate(0, w * .45); } else g.rotate(mo.rot);
     g.scale(mo.sx, mo.sy);
     if (k.alpha) g.globalAlpha = k.alpha;
     const iced = S.frozen > 0 || sq.frozenT > 0;
-    const paint = (c) => { if (k.rig) drawAntbun(c, sq, w, mo); else if (!drawSprite(c, lookOf(sq), 0, 0, w, k.alpha || 1)) { c.fillStyle = k.color; c.beginPath(); c.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); c.fill(); } };
+    const paint = (c) => { if (k.rig) drawAntbun(c, sq, w, mo); else if (useRig && drawSqRig(c, rig, sq, w)) { } else if (k.sheet && sq.hp < k.hp * .5 && drawSheet(c, k.sheet, sq.hp < k.hp * .15 ? 6 : sq.hp < k.hp * .3 ? 5 : 4, 0, 0, w)) { } else if (!drawSprite(c, lookOf(sq), 0, 0, w, k.alpha || 1)) { c.fillStyle = k.color; c.beginPath(); c.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); c.fill(); } };
     if (iced) {   // frozen: the squishy itself goes cold blue, like a figure seen through ice
       const P = Math.ceil(w * 2.6), oc = iceCanvas(P), og = oc.getContext('2d'); og.setTransform(1, 0, 0, 1, 0, 0); og.clearRect(0, 0, P, P); og.translate(P / 2, P * .78);
       paint(og); og.globalCompositeOperation = 'source-atop'; og.fillStyle = 'rgba(90,150,230,.6)'; og.fillRect(-P, -P, 2 * P, 2 * P);
@@ -702,6 +723,12 @@ const Practice = (() => {
         if (f.bones) { drawSprite(ctx, f.art, 0, 0, w, 1 - p); }
         else { ctx.scale(1 + p * .5, Math.max(.05, 1 - p)); drawSprite(ctx, f.art, 0, 0, w, 1 - p * .7); }
         ctx.restore();
+      } else if (f.kind === 'sqdeath') {
+        // the artist's death sheet: burst, bits fly, then the puddle fades
+        const n = f.t < .15 ? 7 : f.t < .35 ? 8 : 9, w = cell * f.size * 1.2, foot = y + cell * .42;
+        ctx.globalAlpha = f.t > .8 ? Math.max(0, 1 - (f.t - .8) / .5) : 1;
+        drawSheet(ctx, f.sheet, n, x, foot, w);
+        ctx.globalAlpha = 1;
       } else if (f.kind === 'abdeath') {
         // nine frames from the artist's death animation, then the puddle fades
         const n = Math.min(9, 1 + Math.floor(f.t / .1)), im = SPRITES['antbun/death' + n];
@@ -950,6 +977,7 @@ const Practice = (() => {
     for (const k in SQUISHIES) arts.push(...Object.values(SQUISHIES[k].look));
     for (const n of ANTBUN_PARTS) arts.push('antbun/' + n);
     for (let i = 1; i <= 9; i++) arts.push('antbun/death' + i);
+    for (const k in SQUISHIES) { const q = SQUISHIES[k]; if (q.sheet) for (let i = 1; i <= 9; i++) arts.push(q.sheet.art + i); if (q.srig && typeof Rig !== 'undefined') Rig.load(q.srig); }
     for (const a of arts) if (!SPRITES[a]) { const im = new Image(); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
     for (const n of UI_NAMES) if (!UI[n]) { const im = new Image(); im.src = 'art/ui/' + n + '.png'; UI[n] = im; }
     for (const key in GUNS) for (let t = 1; t <= GUNS[key].tiers.length; t++) { const n = GUNS[key].art + t; if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; } }
