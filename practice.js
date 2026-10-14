@@ -221,7 +221,10 @@ const Practice = (() => {
     }
     // gnomes charge across their row and flatten everything
     for (const gr of S.gnomeRuns) {
-      gr.x += 4.5 * dt;
+      gr.x += 4.5 * dt; gr.t = (gr.t || 0) + dt;
+      gr.puff = (gr.puff || 0) - dt;
+      if (gr.puff <= 0) { gr.puff = .07; S.fx.push({ kind: 'smoke', x: gr.x - .35, row: gr.row, t: 0, r: rnd(.08, .16), drift: rnd(-.3, .3) }); }
+      if (!gr.bumpT || gr.bumpT <= 0) { gr.bumpT = rnd(.08, .22); gr.jump = rnd(.25, 1); gr.tilt = rnd(-1, 1); } else gr.bumpT -= dt;
       for (const sq of S.squishies) if (sq.row === gr.row && !sq.dead && Math.abs(sq.x - gr.x) < .5) hurt(sq, 9999);
     }
     S.gnomeRuns = S.gnomeRuns.filter(gr => gr.x < COLS + 1);
@@ -286,8 +289,8 @@ const Practice = (() => {
     }
     S.shells = S.shells.filter(s => !s.gone);
     // effects
-    for (const f of S.fx) f.t += dt;
-    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'icewave' ? .9 : .8));
+    for (const f of S.fx) { f.t += dt; if (f.kind === 'smoke') { f.x -= .4 * dt; f.row += f.drift * dt * .3; } }
+    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'icewave' ? .9 : .8));
     for (const f of S.floats) f.t += dt;
     S.floats = S.floats.filter(f => f.t < 1);
     S.squishies = S.squishies.filter(s => !s.dead);
@@ -546,7 +549,10 @@ const Practice = (() => {
   function drawGnome(g, x, y, s, running) {   // the lawnmower (kept the old name inside the code)
     const im = lawnImg('mower');
     g.save(); g.translate(x, y);
-    if (running) { g.rotate(Math.sin(S.t * 40) * .06); g.translate(0, Math.sin(S.t * 60) * 1.5); }
+    if (running) {   // out of control: it leaps and tilts over the bumpy ground
+      const gr = running, ph = gr.bumpT != null ? Math.max(0, gr.bumpT) : 0, air = Math.sin(Math.min(1, ph / .2) * Math.PI) * (gr.jump || .5) * s * .22;
+      g.translate(0, -air + Math.sin(S.t * 70) * 1.2); g.rotate((gr.tilt || 0) * .16 * (air / (s * .22) + .3) + Math.sin(S.t * 50) * .04);
+    }
     if (im) { const w = s * .9, h = w * im.naturalHeight / im.naturalWidth; g.drawImage(im, -w * .42, s * .36 - h, w, h); }
     else { g.fillStyle = '#C4242E'; rr(g, -s * .3, -s * .1, s * .5, s * .25, s * .06); g.fill(); g.fillStyle = '#222'; g.beginPath(); g.arc(-s * .2, s * .18, s * .09, 0, 7); g.arc(s * .12, s * .18, s * .09, 0, 7); g.fill(); }
     g.restore();
@@ -561,7 +567,7 @@ const Practice = (() => {
     if (S.sel && S.sel !== 'shovel') { ctx.fillStyle = 'rgba(255,255,255,.14)'; for (const r of S.spec.rows) for (let c = 0; c < COLS; c++) if (!S.grid[r][c]) ctx.fillRect(c * cell + 2, r * cell + 2, cell - 4, cell - 4); }
     // gnomes
     for (const r of S.spec.rows) if (S.gnomes[r]) drawGnome(ctx, -cell * .36, r * cell + cell * .62, cell, false);
-    for (const gr of S.gnomeRuns) drawGnome(ctx, gr.x * cell + cell * .5, gr.row * cell + cell * .62, cell, true);
+    for (const gr of S.gnomeRuns) drawGnome(ctx, gr.x * cell + cell * .5, gr.row * cell + cell * .62, cell, gr);
     // guns
     for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
       const g = S.grid[r][c]; if (!g) continue;
@@ -623,6 +629,10 @@ const Practice = (() => {
         const pr = f.t / .9, ice = uiImg('ice');
         if (ice) { const w = cell * 3, h = w * ice.naturalHeight / ice.naturalWidth; ctx.globalAlpha = 1 - pr; for (let r = 0; r < ROWS; r++) ctx.drawImage(ice, W * pr - w / 2, r * cell + cell * .5 - h / 2, w, h); ctx.globalAlpha = 1; }
         ctx.fillStyle = `rgba(190,230,255,${.35 * (1 - pr)})`; ctx.fillRect(0, 0, W * pr, H);
+      } else if (f.kind === 'smoke') {
+        const p = f.t / 1.1, rad = cell * (f.r + p * .22);
+        ctx.fillStyle = `rgba(90,90,100,${.55 * (1 - p)})`; ctx.beginPath(); ctx.arc(x, y + cell * .1 - p * cell * .45, rad, 0, 7); ctx.fill();
+        ctx.fillStyle = `rgba(160,160,170,${.35 * (1 - p)})`; ctx.beginPath(); ctx.arc(x - rad * .3, y + cell * .05 - p * cell * .45, rad * .6, 0, 7); ctx.fill();
       } else if (f.kind === 'dirt') {
         const p = f.t / .8; ctx.fillStyle = `rgba(110,75,40,${1 - p})`;
         for (let i = 0; i < (f.small ? 3 : 8); i++) { const a = i * .8 + .3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * p * cell * .7, y + cell * .3 - Math.sin(a) * p * cell * .9 + p * p * cell * .8, cell * .07, 0, 7); ctx.fill(); }
