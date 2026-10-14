@@ -122,9 +122,11 @@ stars/levels/coins only, never a name. A new device: "I have a sync code
 from another device" on the new-player or sign-in screen, type the code,
 progress merges in. The worker allows only `GET`/`PUT /p/<64 hex>` from
 `latin.musicalmagic.uk` (and localhost:8765), 64 KB max, JSON only.
-Redeploy from `sync/` with `npx wrangler deploy` in a session that has
-`CLOUDFLARE_API_TOKEN` (never commit it, never ask for it in chat;
-the owner stores it as a network secret on the Claude environment).
+Redeploy from `sync/` with `npx wrangler deploy` with `CLOUDFLARE_API_TOKEN`
+set for that command only. Never commit the token or write it into any file
+in the repo. The owner finds the Claude environment-settings screens too
+fiddly and has chosen to paste the token into the chat when a redeploy is
+needed; ask for it only then, and use it only in the shell.
 A two-level name (sync.latin.musicalmagic.uk) failed TLS, so the worker
 sits at sync.musicalmagic.uk. `localStorage['latin.syncUrl']` (JSON string)
 overrides the URL for local testing; `scratchpad/synctest.js` is the
