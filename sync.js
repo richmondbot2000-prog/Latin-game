@@ -32,9 +32,10 @@ const Sync = (() => {
     store.set('latin.users', users().map(x => x.id === u.id ? { ...x, code: u.code } : x));
     return u.code;
   }
-  const KEYS = ['progress', 'streak', 'level', 'practice', 'stats'];
+  const KEYS = ['progress', 'streak', 'level', 'practice', 'stats', 'hammer', 'read'];
   const blobOf = u => ({ v: 1, updated: Date.now(), progress: store.get('latin.progress.' + u.id, {}), streak: store.get('latin.streak.' + u.id, null),
-    level: store.get('latin.level.' + u.id, null), practice: store.get('latin.practice.' + u.id, null), stats: store.get('latin.stats.' + u.id, null) });
+    level: store.get('latin.level.' + u.id, null), practice: store.get('latin.practice.' + u.id, null), stats: store.get('latin.stats.' + u.id, null),
+    hammer: store.get('latin.hammer.' + u.id, null), read: store.get('latin.read.' + u.id, null) });
 
   // merge what the cloud has into this device: per word, keep the more recent answer
   function merge(u, remote) {
@@ -63,6 +64,19 @@ const Sync = (() => {
       if (ch) { store.set('latin.stats.' + u.id, m); changed = true; }
     }
     if (remote.level && !store.get('latin.level.' + u.id, null)) { store.set('latin.level.' + u.id, remote.level); changed = true; }
+    const lh = store.get('latin.hammer.' + u.id, null), rh = remote.hammer;
+    if (rh) {   // Jacques Hammer: best scores and levels go up; items bought on either device are kept; coins follow whichever device has earned more
+      const a = lh || {}, newer = (rh.earned || 0) > (a.earned || 0) ? rh : a;
+      const m = { ...a, ...newer, best: Math.max(a.best || 0, rh.best || 0), level: Math.max(a.level || 1, rh.level || 1), cleared: Math.max(a.cleared || 0, rh.cleared || 0),
+        plays: Math.max(a.plays || 0, rh.plays || 0), earned: Math.max(a.earned || 0, rh.earned || 0), owned: [...new Set([...(a.owned || []), ...(rh.owned || [])])] };
+      if (JSON.stringify(m) !== JSON.stringify(lh)) { store.set('latin.hammer.' + u.id, m); changed = true; }
+    }
+    const lr = store.get('latin.read.' + u.id, null), rr = remote.read;
+    if (rr) {   // Read: a sentence done on either device counts as done
+      const a = lr || { done: {}, read: 0 }, m = { ...a, done: { ...(a.done || {}) }, read: Math.max(a.read || 0, rr.read || 0) };
+      for (const n in rr.done || {}) if (!m.done[n] || m.done[n] < rr.done[n]) m.done[n] = rr.done[n];
+      if (JSON.stringify(m) !== JSON.stringify(lr)) { store.set('latin.read.' + u.id, m); changed = true; }
+    }
     return changed;
   }
 

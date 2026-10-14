@@ -118,7 +118,12 @@ the worker; also latin-sync.richmondbot2000.workers.dev). `SYNC_URL` in
 `sync.js` points at it. Each player gets a code like `APPLE-TIGER-2481` on
 the profile screen (shown once when the player is created, and behind the
 ☁️ line on the home page); progress is stored under SHA-256 of the code,
-stars/levels/coins only, never a name. A new device: "I have a sync code
+never a name. The blob (`blobOf` in `sync.js`) holds `latin.progress`,
+`streak`, `level`, `practice`, `stats`, `hammer` and `read` for the player;
+`merge` keeps the best of both devices (stars by latest time, scores and
+levels by max, Hammer items as a union with coins from the device that has
+earned more, Read sentences as a union). Avatars and the player list itself
+(name + emojis) stay on the device. A new device: "I have a sync code
 from another device" on the new-player or sign-in screen, type the code,
 progress merges in. The worker allows only `GET`/`PUT /p/<64 hex>` from
 `latin.musicalmagic.uk` (and localhost:8765), 64 KB max, JSON only.
