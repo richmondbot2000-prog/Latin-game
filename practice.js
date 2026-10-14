@@ -367,12 +367,18 @@ const Practice = (() => {
     for (let r = 0; r < ROWS; r++) {
       const on = S.spec.rows.includes(r);
       for (let c = 0; c < COLS; c++) {
-        const base = on ? wd.lanes[0] : wd.soil[0];
+        const base = on ? wd.lanes[0] : wd.soil[0]; if (on && lawnImg('grass_real')) continue;
         g.fillStyle = shade(base, (r + c) % 2 ? 1 : .93);
         g.fillRect(OX + c * cell, r * cell, cell, cell);
       }
     }
-    texture(grass, OX, 0, cell * COLS, LH, gs);
+    const real = lawnImg('grass_real');
+    if (real) {   // the real lawn picture: one tile is two cells by two cells, so the checker lines up with the grid
+      g.save(); g.beginPath(); g.rect(OX, 0, cell * COLS, LH); g.clip();
+      for (let r = 0; r < ROWS; r += 2) for (let c = 0; c < COLS; c += 2) g.drawImage(real, OX + c * cell, r * cell, cell * 2 + 1, cell * 2 + 1);
+      if (wd.key !== 'tutorial' && wd.key !== 'earth') { g.globalCompositeOperation = 'color'; g.fillStyle = wd.lanes[0]; g.fillRect(OX, 0, cell * COLS, LH); g.globalCompositeOperation = 'multiply'; g.fillStyle = 'rgba(255,255,255,.9)'; g.fillRect(OX, 0, cell * COLS, LH); }
+      g.restore();
+    } else texture(grass, OX, 0, cell * COLS, LH, gs);
     for (let r = 0; r < ROWS; r++) if (!S.spec.rows.includes(r)) { g.fillStyle = 'rgba(80,50,20,.28)'; g.fillRect(OX, r * cell, cell * COLS, cell); texture(soil, OX, r * cell, cell * COLS, cell, gs); }
     // light from the top, a little darker at the bottom
     const lg = g.createLinearGradient(0, 0, 0, LH); lg.addColorStop(0, 'rgba(255,255,255,.10)'); lg.addColorStop(.5, 'rgba(255,255,255,0)'); lg.addColorStop(1, 'rgba(0,0,0,.10)');
@@ -401,7 +407,7 @@ const Practice = (() => {
     for (let i = 0; i < 40; i++) {
       const x = OX + rand() * cell * COLS, y = rand() * LH, col = ['#FFF0F5', '#FFE066', '#FFFFFF', '#FFB3C6'][i % 4];
       if (!S.spec.rows.includes(Math.floor(y / cell))) continue;
-      if (wd.deco === 'flowers') { g.fillStyle = col; g.beginPath(); g.arc(x, y, cell * .05, 0, 7); g.fill(); g.fillStyle = '#FFD23F'; g.beginPath(); g.arc(x, y, cell * .02, 0, 7); g.fill(); }
+      if (wd.deco === 'flowers') { if (lawnImg('grass_real')) continue; g.fillStyle = col; g.beginPath(); g.arc(x, y, cell * .05, 0, 7); g.fill(); g.fillStyle = '#FFD23F'; g.beginPath(); g.arc(x, y, cell * .02, 0, 7); g.fill(); }
       else if (wd.deco === 'craters') { g.fillStyle = 'rgba(0,0,0,.12)'; g.beginPath(); g.ellipse(x, y, cell * .12, cell * .07, 0, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.12)'; g.beginPath(); g.ellipse(x, y - cell * .02, cell * .1, cell * .05, 0, 0, 7); g.fill(); }
       else { g.fillStyle = 'rgba(0,0,0,.14)'; g.beginPath(); g.ellipse(x, y, cell * .07, cell * .045, rand(), 0, 7); g.fill(); }
     }
@@ -553,7 +559,7 @@ const Practice = (() => {
       const gr = running, ph = gr.bumpT != null ? Math.max(0, gr.bumpT) : 0, air = Math.sin(Math.min(1, ph / .2) * Math.PI) * (gr.jump || .5) * s * .22;
       g.translate(0, -air + Math.sin(S.t * 70) * 1.2); g.rotate((gr.tilt || 0) * .16 * (air / (s * .22) + .3) + Math.sin(S.t * 50) * .04);
     }
-    if (im) { const w = s * .9, h = w * im.naturalHeight / im.naturalWidth; g.drawImage(im, -w * .42, s * .36 - h, w, h); }
+    if (im) { const w = s * 1.08, h = w * im.naturalHeight / im.naturalWidth; g.drawImage(im, -w * .44, s * .38 - h, w, h); }
     else { g.fillStyle = '#C4242E'; rr(g, -s * .3, -s * .1, s * .5, s * .25, s * .06); g.fill(); g.fillStyle = '#222'; g.beginPath(); g.arc(-s * .2, s * .18, s * .09, 0, 7); g.arc(s * .12, s * .18, s * .09, 0, 7); g.fill(); }
     g.restore();
   }
@@ -873,7 +879,7 @@ const Practice = (() => {
     for (const key in GUNS) for (let t = 1; t <= GUNS[key].tiers.length; t++) { const n = GUNS[key].art + t; if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; } }
     for (const n of ['proj_bullet', 'proj_lava', 'proj_ice', 'proj_ring', 'proj_rock']) if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; }
     if (typeof Rig !== 'undefined') for (const n of RIG_KEYS) Rig.load(n);
-    for (const n of ['grass', 'soil', 'path', 'mower', 'bush', 'fence']) if (!LAWN[n]) { const im = new Image(); im.onload = () => { bg = null; }; im.src = 'art/lawn/' + n + '.png'; LAWN[n] = im; }
+    for (const n of ['grass', 'grass_real', 'soil', 'path', 'mower', 'bush', 'fence']) if (!LAWN[n]) { const im = new Image(); im.onload = () => { bg = null; }; im.src = 'art/lawn/' + n + (n === 'grass_real' ? '.jpg' : '.png'); LAWN[n] = im; }
     S = null; newLevel(sv.level || 1);
     renderShop(); layout(); refreshShop();
     cv.addEventListener('pointerdown', onCanvasTap);
