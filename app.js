@@ -675,10 +675,30 @@ function renderPlay(u, pane) {
       x0 = null; el.classList.remove('dragging');
       const v = Math.abs(dx) / Math.max(1, performance.now() - t0);
       if (Math.abs(dx) > 90 || (Math.abs(dx) > 30 && v > 0.5)) { busy = true; fly(el, dx > 0 ? 1 : -1); }
-      else { el.classList.add('anim'); el.style.transform = ''; yes.style.opacity = 0; no.style.opacity = 0; }
+      else { el.classList.add('anim'); el.style.transform = ''; yes.style.opacity = 0; no.style.opacity = 0; if (Math.abs(dx) < 8 && Math.abs(e.clientY - y0) < 8 && performance.now() - t0 < 400) flip(el); }
     };
     el.addEventListener('pointerup', end);
     el.addEventListener('pointercancel', end);
+  }
+  // tap the card to peek: it turns over to show the meaning and the memory tip. Peeking takes the word back to
+  // no stars (it clearly isn't known yet) but leaves the streak alone; the card then just moves on.
+  function flip(el) {
+    if (!card || busy) return;
+    busy = true;
+    const { w } = card; card = null;
+    const p = getProg(u), pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
+    pw.s = 0; delete pw.r; pw.t = Date.now(); p[w.id] = pw; saveProg(u, p);
+    const m = memoFor(w), ph = phraseFor(w);
+    el.classList.add('flipped');
+    el.insertAdjacentHTML('beforeend', `<div class="back">
+        <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
+        <div class="blat">${esc(w.show)}</div><div class="ben">${esc(w.english)}</div>
+        <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
+        ${ph ? `<div class="how said"><p class="la">${phraseHTML(ph.la)}</p><p class="tr">${esc(ph.en)}</p></div>` : ''}
+        <div class="small">Back to no stars for this one — now you know it!</div>
+        <button class="btn" id="flipNext">Next card</button></div>`);
+    $('#flipNext', el).onclick = e => { e.stopPropagation(); el.classList.add('anim'); el.style.opacity = 0; setTimeout(next, 250); };
+    $('#sc', pane).textContent = `${right} / ${seen} right this time`;
   }
   function button(dir) {
     const el = $('#top', deck);
