@@ -122,11 +122,16 @@ stars/levels/coins only, never a name. A new device: "I have a sync code
 from another device" on the new-player or sign-in screen, type the code,
 progress merges in. The worker allows only `GET`/`PUT /p/<64 hex>` from
 `latin.musicalmagic.uk` (and localhost:8765), 64 KB max, JSON only.
-Redeploy from `sync/` with `npx wrangler deploy` with `CLOUDFLARE_API_TOKEN`
-set for that command only. Never commit the token or write it into any file
-in the repo. The owner finds the Claude environment-settings screens too
-fiddly and has chosen to paste the token into the chat when a redeploy is
-needed; ask for it only then, and use it only in the shell.
+Redeploy from `sync/` with `npx wrangler deploy`. The Cloudflare token is
+stored as a **network secret** on the Claude cloud environment "Default"
+(name `CLOUDFLARE_API_TOKEN`, Bearer, allowed host `api.cloudflare.com`):
+the proxy adds the `Authorization` header to calls to that host, so the
+session never sees the value. If `$CLOUDFLARE_API_TOKEN` is empty, check
+`curl -s https://api.cloudflare.com/client/v4/user/tokens/verify` first, then
+run wrangler with a placeholder value (`CLOUDFLARE_API_TOKEN=x npx wrangler
+deploy`) and let the proxy supply the real one. Only if that fails, ask the
+owner to paste a token for that one job. Never commit a token or write it
+into any file in the repo.
 A two-level name (sync.latin.musicalmagic.uk) failed TLS, so the worker
 sits at sync.musicalmagic.uk. `localStorage['latin.syncUrl']` (JSON string)
 overrides the URL for local testing; `scratchpad/synctest.js` is the
