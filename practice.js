@@ -446,9 +446,9 @@ const Practice = (() => {
       if (k.kind === 'bomb') { const p = gun.fuse != null ? Math.max(0, gun.fuse) / k.fuse : 1; g.translate(x, bottom); g.scale(1 + .15 * Math.sin(S.t * 25) * (1 - p), 1 + .15 * Math.sin(S.t * 25) * (1 - p)); g.translate(-x, -bottom); }
       Rig.draw(g, rig, anim, t, ox, oy, sc);
       g.restore(); g.globalAlpha = 1;
-      if (k.kind === 'beam' && gun.beam) {
+      if (k.kind === 'beam') {
         const bx = x + s * .35, by = y + s * .1;
-        const gr = g.createLinearGradient(bx, 0, bx + k.range * s, 0); gr.addColorStop(0, 'rgba(180,240,255,.85)'); gr.addColorStop(1, 'rgba(180,240,255,0)');
+        const a0 = gun.beam ? .85 : .25, gr = g.createLinearGradient(bx, 0, bx + k.range * s, 0); gr.addColorStop(0, `rgba(180,240,255,${a0})`); gr.addColorStop(1, 'rgba(180,240,255,0)');
         g.fillStyle = gr; g.fillRect(bx, by - s * .07 * (1 + .3 * Math.sin(S.t * 30)), k.range * s, s * .14 * (1 + .3 * Math.sin(S.t * 30)));
       }
       if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
@@ -461,9 +461,9 @@ const Practice = (() => {
       g.drawImage(im, x - w / 2 - kick * s * .6, y + s * .42 - h, w, h);
       if (k.kind === 'bomb') g.restore();
       g.globalAlpha = 1;
-      if (k.kind === 'beam' && gun.beam) {   // the cold beam, flickering
+      if (k.kind === 'beam') {   // the cold beam, flickering
         const bx = x + s * .35, by = y + s * .1;
-        const gr = g.createLinearGradient(bx, 0, bx + k.range * s, 0); gr.addColorStop(0, 'rgba(180,240,255,.85)'); gr.addColorStop(1, 'rgba(180,240,255,0)');
+        const a0 = gun.beam ? .85 : .25, gr = g.createLinearGradient(bx, 0, bx + k.range * s, 0); gr.addColorStop(0, `rgba(180,240,255,${a0})`); gr.addColorStop(1, 'rgba(180,240,255,0)');
         g.fillStyle = gr; g.fillRect(bx, by - s * .07 * (1 + .3 * Math.sin(S.t * 30)), k.range * s, s * .14 * (1 + .3 * Math.sin(S.t * 30)));
       }
       if (hp < 1) { g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - s * .25, y + s * .38, s * .5, s * .06); g.fillStyle = hp > .4 ? '#9BE564' : '#FF5D8F'; g.fillRect(x - s * .25, y + s * .38, s * .5 * hp, s * .06); }
@@ -559,6 +559,7 @@ const Practice = (() => {
     else if (!drawSprite(g, lookOf(sq), 0, 0, w, k.alpha || 1)) { g.fillStyle = k.color; g.beginPath(); g.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); g.fill(); }
     if (sq.flash > 0 && !k.rig) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
     g.restore();
+    if (sq.slowT > 0 && !(S.frozen > 0 || sq.frozenT > 0)) { g.fillStyle = 'rgba(150,215,255,.3)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); g.fillStyle = '#dff4ff'; g.font = `700 ${s * .22}px system-ui`; g.textAlign = 'center'; g.fillText('❄', x + w * .3, foot - w * .75 + mo.dy * s); }
     if (S.frozen > 0 || sq.frozenT > 0) { g.fillStyle = 'rgba(160,220,255,.45)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); }
     const crown = uiImg('crown');
     if (k.boss && crown) { const cw = s * .4, ch = cw * crown.naturalHeight / crown.naturalWidth; g.drawImage(crown, x - cw / 2, foot - w * .95 - ch + Math.sin(sq.wob * 3) * s * .04 + mo.dy * s, cw, ch); }
