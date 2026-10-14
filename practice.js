@@ -9,16 +9,16 @@ const Practice = (() => {
   // that knocks the whole row back; lob = lobbed shells (Solar Blast anywhere, Miner along its row); mine = explodes when touched;
   // bomb = explodes after a fuse; brain = turns the squishy that bites it; wall = just soaks up bites. tiers[1..2] carry the upgrade cost.
   const GUNS = {
-    shooter:      { name: 'Blaster', cost: 100, hp: 100, recharge: 5, art: 'blaster', kind: 'shoot', proj: 'bullet', dmg: 20, speed: 7, tiers: [{ every: 1.5, shots: 1 }, { every: 1.5, shots: 2, cost: 150 }, { every: 1.5, shots: 3, cost: 250 }], blurb: 'a bullet every 1.5 s, like a pea; upgrades add barrels' },
-    handy:        { name: 'Handy Turret', cost: 150, hp: 100, recharge: 8, art: 'handy', kind: 'shoot', proj: 'bullet', small: true, dmg: 6, speed: 10, range: 3.5, tiers: [{ every: .3, shots: 1 }, { every: .22, shots: 1, cost: 150 }, { every: .15, shots: 1, cost: 250 }], blurb: 'a stream of little bullets, hits hard but only 3 squares ahead' },
-    freezeturret: { name: 'Freeze Turret', cost: 175, hp: 100, recharge: 10, art: 'freezeturret', kind: 'shoot', proj: 'ice', dmg: 15, speed: 8, tiers: [{ every: 3, shots: 1, freeze: 2 }, { every: 2.2, shots: 1, freeze: 2.5, cost: 150 }, { every: 1.5, shots: 1, freeze: 3, cost: 250 }], blurb: 'ice shards freeze a squishy on the spot' },
-    freezeray:    { name: 'Freeze Ray', cost: 150, hp: 100, recharge: 8, art: 'freezeray', kind: 'beam', range: 4, dmg: 4, tiers: [{}], blurb: 'a cold beam: everything in front crawls at half speed' },
-    sonic:        { name: 'Sonic Boom', cost: 200, hp: 100, recharge: 12, art: 'sonic', kind: 'ring', tiers: [{ every: 6, push: 1, dmg: 20 }, { every: 5, push: 1.5, dmg: 30, cost: 150 }, { every: 4, push: 2, dmg: 40, cost: 250 }], blurb: 'a ring that knocks the whole row back' },
-    mortar:       { name: 'Solar Blast', cost: 225, hp: 100, recharge: 12, art: 'solar', kind: 'lob', proj: 'lava', tiers: [{ every: 8, dmg: 120, splash: 1.5 }], blurb: 'lobs a fireball at the squishy nearest your mowers, anywhere on the lawn' },
-    miner:        { name: 'Miner Shoot', cost: 150, hp: 100, recharge: 8, art: 'miner', kind: 'lob', lane: true, proj: 'rock', tiers: [{ every: 4, dmg: 50, splash: .8 }, { every: 3, dmg: 60, splash: .9, cost: 150 }, { every: 2.2, dmg: 75, splash: 1, cost: 250 }], blurb: 'flings rocks along its row; they splash' },
-    mine:         { name: 'Detonate Bomb', cost: 125, hp: 60, recharge: 14, art: 'mine', kind: 'mine', arm: 8, tiers: [{ dmg: 600, splash: 1 }, { dmg: 800, splash: 1.4, cost: 120 }, { dmg: 1200, splash: 1.8, cost: 200 }], blurb: 'arms in 8 s, then blows up the first squishy to touch it' },
+    shooter:      { name: 'Blaster', cost: 100, hp: 100, recharge: 5, art: 'blaster', kind: 'shoot', proj: 'bullet', dmg: 20, speed: 7, tiers: [{ every: 1.5, shots: 1 }, { every: 1.5, shots: 2, cost: 150 }, { every: 1.5, shots: 3, cost: 250 }], blurb: 'a bullet every 1.5 s. Cheap and steady; half as good on armour, useless on Flyers' },
+    handy:        { name: 'Handy Turret', cost: 150, hp: 100, recharge: 8, art: 'handy', kind: 'shoot', proj: 'bullet', small: true, dmg: 6, speed: 10, range: 3.5, tiers: [{ every: .3, shots: 1 }, { every: .22, shots: 1, cost: 150 }, { every: .15, shots: 1, cost: 250 }], blurb: 'a stream of little bullets, 3½ squares ahead. The thing for Flyers and Kamikazes' },
+    freezeturret: { name: 'Freeze Turret', cost: 175, hp: 100, recharge: 10, art: 'freezeturret', kind: 'shoot', proj: 'ice', dmg: 15, speed: 8, tiers: [{ every: 3, shots: 1, freeze: 2 }, { every: 2.2, shots: 1, freeze: 2.5, cost: 150 }, { every: 1.5, shots: 1, freeze: 3, cost: 250 }], blurb: 'ice shards freeze a squishy on the spot. Ghosts and Sharky ignore it' },
+    freezeray:    { name: 'Freeze Ray', cost: 150, hp: 100, recharge: 8, art: 'freezeray', kind: 'beam', range: 4, dmg: 4, tiers: [{}], blurb: 'a cold beam: everything in front crawls at half speed (not ghosts)' },
+    sonic:        { name: 'Sonic Boom', cost: 200, hp: 100, recharge: 12, art: 'sonic', kind: 'ring', tiers: [{ every: 6, push: 1, dmg: 20 }, { every: 5, push: 1.5, dmg: 30, cost: 150 }, { every: 4, push: 2, dmg: 40, cost: 250 }], blurb: 'a ring that knocks the whole row back (ghosts float through it)' },
+    mortar:       { name: 'Solar Blast', cost: 225, hp: 100, recharge: 12, art: 'solar', kind: 'lob', proj: 'lava', tiers: [{ every: 8, dmg: 120, splash: 1.5 }], blurb: 'lobs a fireball anywhere on the lawn. Burns ghosts double' },
+    miner:        { name: 'Miner Shoot', cost: 150, hp: 100, recharge: 8, art: 'miner', kind: 'lob', lane: true, proj: 'rock', tiers: [{ every: 4, dmg: 50, splash: .8 }, { every: 3, dmg: 60, splash: .9, cost: 150 }, { every: 2.2, dmg: 75, splash: 1, cost: 250 }], blurb: 'flings rocks along its row; they splash. Cracks armour, hits the Mole King underground' },
+    mine:         { name: 'Detonate Bomb', cost: 125, hp: 60, recharge: 14, art: 'mine', kind: 'mine', arm: 8, tiers: [{ dmg: 600, splash: 1 }, { dmg: 800, splash: 1.4, cost: 120 }, { dmg: 1200, splash: 1.8, cost: 200 }], blurb: 'arms in 8 s, then blows up the first squishy to touch it. Cracks armour' },
     plasma:       { name: 'Plasma Bomb', cost: 150, hp: 9999, recharge: 25, art: 'plasma', kind: 'bomb', fuse: 1.5, tiers: [{ dmg: 900, splash: 1.7 }], blurb: 'goes off after 1.5 s and clears the squares around it' },
-    brain:        { name: 'Brain Wash', cost: 175, hp: 80, recharge: 15, art: 'brain', kind: 'brain', tiers: [{ uses: 1 }, { uses: 2, cost: 150 }, { uses: 3, cost: 250 }], blurb: 'the squishy that bites it turns round and fights for you' },
+    brain:        { name: 'Brain Wash', cost: 175, hp: 80, recharge: 15, art: 'brain', kind: 'brain', tiers: [{ uses: 1 }, { uses: 2, cost: 150 }, { uses: 3, cost: 250 }], blurb: 'the squishy that bites it turns round and fights for you. Turn a Kamikaze and it blows up in the crowd!' },
     shield:       { name: 'Shield', cost: 50, hp: 1000, recharge: 10, art: 'shield', kind: 'wall', tiers: [{ hp: 1000 }, { hp: 2000, cost: 75 }, { hp: 3500, cost: 125 }], blurb: 'a wall that takes 40 s to chew through' },
   };
   const tierOf = g => GUNS[g.type].tiers[(g.tier || 1) - 1] || GUNS[g.type].tiers[0];
@@ -28,19 +28,25 @@ const Practice = (() => {
   // 'from' is the first level they appear; look.hurt shows once they are below half health; the Kings, the Queen and Sharky are bosses
   // speed is in squares per second: a Chomp takes about 2 minutes to cross the lawn (the original's zombie took 45 s).
   // 'from' is the minute of the level at which a kind starts to appear; bosses lead the final wave.
+  // speed is in squares per second: a Chomp takes about 2 minutes to cross the lawn (the original's zombie took 45 s).
+  // 'from' is the minute of the level at which a kind starts to appear; bosses lead the final wave.
+  // res: how much of each kind of damage lands (1 = all, 0 = none). Kinds: bullet (Blaster), spray (Handy Turret),
+  // ice (Freeze Turret), beam (Freeze Ray), ring (Sonic Boom), blast (Solar Blast), rock (Miner), bomb (mines and bombs).
+  // nofreeze = ice and the beam don't slow it; nobrain = Brain Wash can't turn it.
   const SQUISHIES = {
-    chomp:      { name: 'Chomp',      hp: 100, speed: .075, chomp: 25, size: 1.0,  from: 0,   look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8' },
-    skitter:    { name: 'Skitter',    hp: 60,  speed: .15,  chomp: 25, size: .74,  from: 1.5, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496' },
-    antbun:     { name: 'Antbun',     hp: 280, speed: .09,  chomp: 25, size: 1.05, from: 3,   look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd' },
-    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true },
-    ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88 },
-    flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true },
-    moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12 },
-    chompking:  { name: 'ChompKing',  hp: 900, speed: .05,  chomp: 50, size: 1.4,  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0', boss: true },
-    broodqueen: { name: 'Brood Queen', hp: 1300, speed: .04, chomp: 40, size: 1.4, from: 99, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, brood: 9 },
-    ghostking:  { name: 'Ghost King', hp: 1200, speed: .06, chomp: 35, size: 1.35, from: 99, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, pass: 2, alpha: .88 },
-    sharky:     { name: 'Sharky',     hp: 2000, speed: .04, chomp: 90, size: 1.5, from: 99, look: { ok: 'sharky' }, motion: 'float', color: '#d9c48a', boss: true },
+    chomp:      { name: 'Chomp',      hp: 100, speed: .075, chomp: 25, size: 1.0,  from: 0,   look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8', tip: 'Chomps eat your guns. A Blaster kills one in five shots.' },
+    skitter:    { name: 'Skitter',    hp: 60,  speed: .15,  chomp: 25, size: .74,  from: 1.5, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496', res: { ice: 1.5 }, tip: 'Skitters are fast but flimsy. Ice stops them dead.' },
+    antbun:     { name: 'Antbun',     hp: 280, speed: .09,  chomp: 25, size: 1.05, from: 3,   look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd', res: { bullet: .5, spray: .5, rock: 1.5, bomb: 1.5, blast: 1.5 }, tip: 'Antbuns wear armour: bullets only half work. Rocks and bombs crack it.' },
+    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, motion: 'roll', color: '#ddb8a4', boom: true, res: { bullet: 1.5, spray: 1.5 }, tip: 'Kamikazes blow up the guns they touch. Shoot early, or brain-wash one and send it back into the crowd!' },
+    ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88, nofreeze: true, nobrain: true, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'Ghosts float over one gun. Ice and sound pass straight through them, but Solar Blast burns them double.' },
+    flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true, res: { bullet: 0, rock: 0, bomb: 0, spray: 1.5 }, tip: 'Flyers sail over everything. Bullets and rocks go underneath; a Handy Turret or ice shards bring them down.' },
+    moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12, res: { bomb: 1.5 }, tip: 'The Mole King drills underground: only blasts and rocks reach him until he pops up.' },
+    chompking:  { name: 'ChompKing',  hp: 900, speed: .05,  chomp: 50, size: 1.4,  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0', boss: true, nobrain: true, res: { bomb: .5, ice: .5 }, halfFreeze: true, tip: 'ChompKing is huge: bombs only half-work and ice barely slows him. Keep shooting!' },
+    broodqueen: { name: 'Brood Queen', hp: 1300, speed: .04, chomp: 40, size: 1.4, from: 99, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, nobrain: true, brood: 9, res: { rock: 1.5, ring: .5 }, tip: 'The Brood Queen lays Skitters as she comes. Rocks hurt her most.' },
+    ghostking:  { name: 'Ghost King', hp: 1200, speed: .06, chomp: 35, size: 1.35, from: 99, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, nobrain: true, nofreeze: true, pass: 2, alpha: .88, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'The Ghost King floats over two guns and shrugs off ice and sound. Light hurts him: Solar Blast!' },
+    sharky:     { name: 'Sharky',     hp: 2000, speed: .04, chomp: 90, size: 1.5, from: 99, look: { ok: 'sharky' }, motion: 'float', color: '#d9c48a', boss: true, nobrain: true, nofreeze: true, res: { bullet: .25, spray: .25, ice: 0, beam: 0, bomb: 1.5, blast: 1.5, rock: 1.25 }, tip: 'Sharky has thick skin: bullets barely scratch him. Bombs, blasts and rocks do the work.' },
   };
+  const resist = (sq, kind) => sq.k.res && sq.k.res[kind] != null ? sq.k.res[kind] : 1;
   // the worlds, as the planet trophies name them; each ends with a boss level
   const WORLDS = [
     { key: 'tutorial', name: 'Tutorial', from: 1, to: 2, lanes: ['#7DBE50', '#8CCB5E'], soil: ['#9C7D4F', '#A98A5B'], boss: null, deco: 'flowers' },
@@ -115,9 +121,13 @@ const Practice = (() => {
       under: !!k.digs, target: 2.5 + Math.random() * 3.5 };   // the Mole King drills underground until he reaches his target column
     S.squishies.push(sq);
     if (!opts.extra) S.spawned++;
+    S.seen = S.seen || {}; if (!S.seen[type] && k.tip) { S.seen[type] = 1; S.banner = { text: k.tip, t: 4.5 }; }
     return sq;
   }
-  function hurt(sq, dmg) {
+  function hurt(sq, dmg, kind = 'other') {
+    const m = resist(sq, kind); if (m === 0) { sq.ping = (sq.ping || 0) - 1; if (sq.ping <= 0) { sq.ping = 40; S.floats.push({ x: sq.x, row: sq.row, t: 0, text: 'no effect' }); } return; }
+    dmg *= m;
+    if (m > 1 && dmg >= 5 && Math.random() < .3) S.floats.push({ x: sq.x, row: sq.row, t: 0, text: 'ouch!' });
     if (sq.helmet > 0) { sq.helmet -= dmg; if (sq.helmet < 0) { sq.hp += sq.helmet; sq.helmet = 0; S.fx.push({ kind: 'pot', x: sq.x, row: sq.row, t: 0 }); } }
     else sq.hp -= dmg;
     sq.flash = .12;
@@ -168,7 +178,13 @@ const Practice = (() => {
       sq.wob += dt; if (sq.flash > 0) sq.flash -= dt; if (sq.rise > 0) sq.rise -= dt;
       if (sq.hypno) {                  // brain-washed: walks back the way it came, biting the others
         sq.eating = null; sq.x += sq.k.speed * 1.4 * dt;
-        for (const o of S.squishies) if (o !== sq && !o.hypno && !o.dead && o.row === sq.row && Math.abs(o.x - sq.x) < .5) { hurt(o, 60 * dt); sq.hp -= 10 * dt; }
+        for (const o of S.squishies) if (o !== sq && !o.hypno && !o.dead && o.row === sq.row && Math.abs(o.x - sq.x) < .5) {
+          if (sq.k.boom) {   // a brain-washed Kamikaze goes off in the crowd
+            S.shake = .5; S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: 1.5 });
+            for (const q of S.squishies) if (q !== sq && !q.dead && !q.hypno && Math.hypot(q.x - sq.x, (q.row - sq.row) * 1.15) < 1.5) hurt(q, 300, 'bomb');
+            sq.hp = 0; break;
+          }
+          hurt(o, 60 * dt, 'bite'); sq.hp -= 10 * dt; }
         if (sq.x > COLS + 1.2 || sq.hp <= 0) { sq.dead = true; if (sq.hp <= 0) S.fx.push({ kind: 'splat', x: sq.x, row: sq.row, t: 0, color: sq.k.color, size: sq.k.size }); }
         continue;
       }
@@ -193,7 +209,7 @@ const Practice = (() => {
         continue;
       }
       if (g && sq.pass > 0 && sq.passedCol !== col) { sq.pass--; sq.passedCol = col; }   // ghosts and flyers float over guns
-      if (g && GUNS[g.type].kind === 'brain' && !sq.k.boss && sq.passedCol !== col) {   // Brain Wash: one bite and the squishy is yours
+      if (g && GUNS[g.type].kind === 'brain' && !sq.k.nobrain && sq.passedCol !== col) {   // Brain Wash: one bite and the squishy is yours
         sq.hypno = true; sq.eating = null; sq.flash = .3; g.uses--; S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: .4 }); S.floats.push({ x: col + .5, row: sq.row, t: 0, text: 'Brainwashed!' });
         buddy('pose_thumbs', 'emo_grin', 1.5);
         if (g.uses <= 0) { S.grid[sq.row][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 }); }
@@ -202,7 +218,7 @@ const Practice = (() => {
       if (g && GUNS[g.type].kind === 'mine' && g.armed && sq.passedCol !== col) {   // Detonate Bomb: boom
         const t = tierOf(g); S.grid[sq.row][col] = null; S.shake = .4;
         S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: t.splash });
-        for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (col + .5), (o.row - sq.row) * 1.15) < t.splash) hurt(o, t.dmg);
+        for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (col + .5), (o.row - sq.row) * 1.15) < t.splash) hurt(o, t.dmg, 'bomb');
         continue;
       }
       if (g && sq.passedCol !== col) {
@@ -223,7 +239,7 @@ const Practice = (() => {
       gr.puff = (gr.puff || 0) - dt;
       if (gr.puff <= 0) { gr.puff = .07; S.fx.push({ kind: 'smoke', x: gr.x - .35, row: gr.row, t: 0, r: rnd(.08, .16), drift: rnd(-.3, .3) }); }
       if (!gr.bumpT || gr.bumpT <= 0) { gr.bumpT = rnd(.08, .22); gr.jump = rnd(.25, 1); gr.tilt = rnd(-1, 1); } else gr.bumpT -= dt;
-      for (const sq of S.squishies) if (sq.row === gr.row && !sq.dead && Math.abs(sq.x - gr.x) < .5) hurt(sq, 9999);
+      for (const sq of S.squishies) if (sq.row === gr.row && !sq.dead && Math.abs(sq.x - gr.x) < .5) hurt(sq, 9999, 'mower');
     }
     S.gnomeRuns = S.gnomeRuns.filter(gr => gr.x < COLS + 1);
 
@@ -238,14 +254,14 @@ const Practice = (() => {
         g.fuse -= dt;
         if (g.fuse <= 0) {
           S.grid[r][c] = null; S.shake = .6; S.fx.push({ kind: 'boom', x: c + .5, row: r, t: 0, r: tier.splash });
-          for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (c + .5), (o.row - r) * 1.15) < tier.splash) hurt(o, tier.dmg);
+          for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (c + .5), (o.row - r) * 1.15) < tier.splash) hurt(o, tier.dmg, 'bomb');
         }
         continue;
       }
       if (k.kind === 'brain') continue;
       if (k.kind === 'beam') {   // everything in front crawls, and takes a little cold damage
         let any = false;
-        for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === r && sq.x > c + .3 && sq.x < c + .3 + k.range) { sq.slowT = .25; hurt(sq, k.dmg * dt); any = true; }
+        for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === r && sq.x > c + .3 && sq.x < c + .3 + k.range) { if (!sq.k.nofreeze) sq.slowT = .25; hurt(sq, k.dmg * dt, 'beam'); any = true; }
         g.beam = any; continue;
       }
       g.cool -= dt;
@@ -263,7 +279,7 @@ const Practice = (() => {
     for (const rg of S.rings) {
       rg.x += rg.speed * dt; rg.t += dt;
       for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === rg.row && !rg.hit.has(sq) && sq.x < rg.x + .2 && sq.x > rg.x - .6) {
-        rg.hit.add(sq); hurt(sq, rg.dmg); sq.stun = .25; sq.x = Math.min(COLS + .4, sq.x + rg.push * (sq.k.boss ? .3 : 1)); sq.eating = null;
+        rg.hit.add(sq); if (resist(sq, 'ring') === 0) { hurt(sq, 0, 'ring'); continue; } hurt(sq, rg.dmg, 'ring'); sq.stun = .25; sq.x = Math.min(COLS + .4, sq.x + rg.push * (sq.k.boss ? .3 : 1) * resist(sq, 'ring')); sq.eating = null;
       }
       if (rg.x > COLS + 1) rg.gone = true;
     }
@@ -271,9 +287,10 @@ const Practice = (() => {
     // bullets
     for (const b of S.bullets) {
       b.x += b.speed * dt;
-      const hit = S.squishies.find(s => s.row === b.row && !s.dead && !s.hypno && !s.under && Math.abs(s.x - b.x) < s.k.size * .45);
+      const kind = b.proj === 'ice' ? 'ice' : b.small ? 'spray' : 'bullet';
+      const hit = S.squishies.find(s => s.row === b.row && !s.dead && !s.hypno && !s.under && resist(s, kind) > 0 && Math.abs(s.x - b.x) < s.k.size * .45);   // a bullet flies on past what it can't touch
       if (b.range != null && b.x > b.range) b.gone = true;
-      if (hit) { hurt(hit, b.dmg); b.gone = true; if (b.freeze && !hit.k.boss) { hit.frozenT = b.freeze; hit.eating = null; } else if (b.freeze) hit.slowT = 1; }
+      if (hit) { hurt(hit, b.dmg, kind); b.gone = true; if (b.freeze && !hit.k.nofreeze) { if (hit.k.halfFreeze || hit.k.boss) hit.slowT = b.freeze; else { hit.frozenT = b.freeze; hit.eating = null; } } }
       if (b.x > COLS + 1) b.gone = true;
     }
     S.bullets = S.bullets.filter(b => !b.gone);
@@ -283,7 +300,7 @@ const Practice = (() => {
       if (sh.t >= sh.dur) {
         sh.gone = true; S.shake = .25;
         S.fx.push({ kind: 'boom', x: sh.x1, row: sh.row, t: 0, r: sh.splash });
-        for (const s of S.squishies) if (!s.dead && Math.hypot(s.x - sh.x1, (s.row - sh.row) * 1.15) < sh.splash) hurt(s, sh.dmg);
+        for (const s of S.squishies) if (!s.dead && Math.hypot(s.x - sh.x1, (s.row - sh.row) * 1.15) < sh.splash) hurt(s, sh.dmg, sh.proj === 'rock' ? 'rock' : 'blast');
       }
     }
     S.shells = S.shells.filter(s => !s.gone);
@@ -748,7 +765,7 @@ const Practice = (() => {
       S.frozen = 6; S.fx.push({ kind: 'icewave', t: 0 }); buddy('pose_hips', 'emo_grin', 2);
     } else {
       S.shake = .6; buddy('pose_thumbs', 'emo_grin', 2);
-      for (const sq of S.squishies) if (!sq.dead) { hurt(sq, 150); S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: .7 }); }
+      for (const sq of S.squishies) if (!sq.dead) { hurt(sq, 150, 'storm'); S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: .7 }); }
     }
     S.power = null; refreshShop();
   }

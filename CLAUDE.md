@@ -49,7 +49,13 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   the minute), then a final wave of 250 led by the four bosses; ~10 min,
   ~400 squishies. Numbers follow the original PvZ (Blaster = peashooter:
   20 dmg / 1.5 s; Chomp 100 hp crosses in ~2 min; Shield 1000 hp ≈ 40 s of
-  chewing). The world/level code (`WORLDS`, trophies) is still there, unused; 5 right answers
+  chewing). Squishies have `res` (damage multipliers per kind: bullet, spray,
+  ice, beam, ring, blast, rock, bomb), `nofreeze`, `nobrain` and a `tip` shown
+  the first time they appear, so guns and squishies counter each other
+  (Flyers only fall to Handy/ice/ring/blast; ghosts ignore ice and sound but
+  burn to Solar Blast; Antbun armour halves bullets; a brain-washed Kamikaze
+  explodes in the crowd). The world/level code (`WORLDS`, trophies) is still
+  there, unused; 5 right answers
   in a row arm a Freeze, 10 a Lightning storm; 1–3 stars per level from the
   correct-answer ratio; a trophy cabinet (`#trophies`) of 20 trophies.
   **Weapons** (the owner's Weapons folder, rendered from the Spine rigs with
