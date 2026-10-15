@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '88';
+const APP_VERSION = '89';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -572,7 +572,8 @@ function renderPassages(u) {
       <button class="mic" id="mic" aria-label="Listen">🎤</button>
       <div class="micside"><div class="small" id="micmsg"></div><div class="heard" id="heard"></div></div>
     </div>
-    <form class="typerow" id="typeform"><input type="text" id="typed" placeholder="…or type a word" autocomplete="off" autocapitalize="off"><button class="btn ghost" type="submit">Say</button></form>
+    <form class="typerow" id="typeform"><input type="text" id="typed" placeholder="…or type / dictate here" autocomplete="off" autocapitalize="off" autocorrect="off"><button class="btn ghost" type="submit">Say</button></form>
+    <p class="small" style="margin:4px 0 0;text-align:center">On an iPhone the keyboard’s own 🎤 key dictates straight into the box.</p>
     <p class="rmsg" id="pmsg"></p>
   </div>`;
   $('#back').onclick = () => { stopRec(); location.hash = ''; };
@@ -622,29 +623,49 @@ function renderPassages(u) {
     }
   }
   $('#pbox').onclick = e => { const b = e.target.closest('.pw'); if (!b || done) return; const i = +b.dataset.i; if (!flipped[i]) { flipped[i] = true; say(words()[i][2]); show(); check(); } };   // a tap flips a word too
-  $('#typeform').onsubmit = e => { e.preventDefault(); const v = $('#typed').value; $('#typed').value = ''; v.split(/\s+/).forEach(say); $('#heard').textContent = v; };
+  $('#typeform').onsubmit = e => { e.preventDefault(); const v = $('#typed').value; $('#typed').value = ''; typedAt = 0; v.split(/\s+/).forEach(say); $('#heard').textContent = v; };
+  // the typing box also takes the keyboard's own dictation (the 🎤 key on the iPhone keyboard): words are used as they appear
+  let typedAt = 0;
+  $('#typed').oninput = () => {
+    const v = $('#typed').value, ws = v.split(/\s+/).filter(Boolean), complete = /\s$/.test(v) ? ws.length : ws.length - 1;   // the last word may still be being typed
+    for (; typedAt < complete; typedAt++) say(ws[typedAt]);
+    if (done) { $('#typed').value = ''; typedAt = 0; }
+  };
   // speech: continuous, in English; the words of each result are handed to say() once
-  function setMic() {
+  // the status line under the microphone says exactly what the recogniser is doing, so a problem can be named
+  let note = '';
+  function setMic(text) {
     const m = $('#mic'), msg = $('#micmsg'); if (!m) return;
+    if (text != null) note = text;
     m.classList.toggle('on', listening);
-    if (!SR) { m.disabled = true; msg.textContent = 'This browser can’t hear you — type the words instead.'; }
-    else msg.textContent = listening ? 'Listening… say the English words' : 'Tap the microphone, then say the English words';
+    if (!SR) { m.disabled = true; msg.textContent = (navigator.standalone ? 'The home-screen app can’t use the microphone — open latin.musicalmagic.uk in Safari, ' : 'This browser can’t hear you — ') + 'or tap the box below and use the keyboard’s 🎤 dictation.'; }
+    else msg.textContent = note || (listening ? 'Listening… say the English words' : 'Tap the microphone, then say the English words');
   }
+  const ERRORS = { 'not-allowed': 'The microphone is blocked for this site. Settings → Safari → Microphone → Allow, or use the keyboard’s 🎤 dictation in the box below.',
+    'service-not-allowed': 'Speech recognition is switched off on this phone (Settings → Siri & Search → Enable Dictation). The keyboard’s 🎤 dictation in the box below works instead.',
+    'audio-capture': 'No microphone could be opened.', 'network': 'The speech service could not be reached — check the connection.', 'language-not-supported': 'English speech is not available on this phone.' };
   function startRec() {
     if (!SR || listening) return;
-    rec = new SR(); rec.lang = 'en-GB'; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1; heard = 0;
+    rec = new SR(); rec.lang = 'en-GB'; rec.interimResults = true; rec.maxAlternatives = 1; heard = 0;
+    rec.continuous = !isIOS;   // iPhone Safari drops a continuous session after a few seconds: short sessions, restarted after each result, are steadier
+    rec.onstart = () => setMic('Listening… say the English words');
+    rec.onaudiostart = () => setMic('Listening… (microphone open)');
+    rec.onspeechstart = () => setMic('Hearing you…');
     rec.onresult = e => {
       const all = []; for (let i = 0; i < e.results.length; i++) all.push(...e.results[i][0].transcript.split(/\s+/).filter(Boolean));
       const fresh = all.slice(heard); heard = all.length;
       $('#heard').textContent = all.slice(-8).join(' ');
       fresh.forEach(say);
+      setMic('Listening… say the English words');
     };
-    rec.onend = () => { heard = 0; if (listening) { try { rec.start(); } catch (err) {} } };
-    rec.onerror = ev => { if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') { listening = false; setMic(); $('#micmsg').textContent = 'The microphone is blocked — allow it for this site, or type the words.'; } };
-    try { rec.start(); listening = true; } catch (err) { listening = false; }
-    setMic();
+    rec.onend = () => { heard = 0; if (listening) setTimeout(() => { if (listening && rec) { try { rec.start(); } catch (err) { setMic('Could not restart listening (' + err.message + ') — tap the microphone again.'); listening = false; setMic(); } } }, 150); else setMic(''); };
+    rec.onerror = ev => {
+      if (ev.error === 'no-speech' || ev.error === 'aborted') { setMic('Nothing heard yet — keep going'); return; }   // the session simply ends and restarts
+      listening = false; setMic(ERRORS[ev.error] || ('Speech error: ' + ev.error + ' — type the words or use the keyboard’s 🎤 dictation.'));
+    };
+    try { rec.start(); listening = true; setMic('Starting the microphone…'); } catch (err) { listening = false; setMic('The microphone would not start (' + err.message + '). Tap the box below and use the keyboard’s 🎤 dictation.'); }
   }
-  function stopRec() { listening = false; if (rec) { try { rec.stop(); } catch (err) {} rec = null; } setMic(); }
+  function stopRec() { listening = false; if (rec) { try { rec.stop(); } catch (err) {} rec = null; } setMic(''); }
   $('#mic').onclick = () => listening ? stopRec() : startRec();
   window.addEventListener('hashchange', stopRec, { once: true });
   pick();

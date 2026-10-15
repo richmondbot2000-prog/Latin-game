@@ -89,7 +89,11 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   audio to Apple to recognise — nothing goes to us) or types a word: each
   word heard fills its blank in the translation and flips the Latin word
   whose gloss contains it (`say`, `sameWord` allows a plural). Tapping a
-  Latin word flips it too. All blanks filled → next sentence; last
+  Latin word flips it too. On iPhone the session is not continuous (Safari
+  drops long sessions) and is restarted after each result; the status line
+  under the microphone names every state and error (`ERRORS`). The typing
+  box processes words live as they are typed or dictated with the keyboard's
+  own 🎤 key, which works on every iPhone, including the home-screen app. All blanks filled → next sentence; last
   sentence → fireworks and the next passage. Progress `latin.passages.<id>`
   {done{p: time}}, synced as a union.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
