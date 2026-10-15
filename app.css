@@ -646,6 +646,12 @@ body.noscroll { overflow: hidden; }
 .snapbox .pw .f { background: #FFF1C4; }
 .snapbox .pw .b { background: #FFE066; }
 .snaps { display: inline; }
+.snapzoom { overflow-x: auto; border-radius: 14px; box-shadow: var(--shadow); background: #fff; margin: 6px 0 4px; -webkit-overflow-scrolling: touch; }
+.snapphoto { position: relative; width: 100%; }
+.snapphoto img { display: block; width: 100%; height: 100%; }
+.pw.ph { position: absolute; display: flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 0 .25em; border-radius: .25em; background: rgba(255, 224, 102, .96); color: #2B1A3A; font-weight: 700; font-family: Georgia, 'Times New Roman', serif; line-height: 1; white-space: nowrap; box-shadow: 0 1px 3px rgba(0, 0, 0, .25); z-index: 1; perspective: none; }
+.pw.ph.flip { background: transparent; color: transparent; box-shadow: none; outline: 3px solid var(--good); outline-offset: 1px; }
+.btn.small { font-size: .95rem; padding: 8px 14px; }
 .booktitle { text-align: center; margin: 0 0 6px; line-height: 1.2; }
 .booktitle b { display: block; font-size: 1.2rem; }
 .pline .ptr { font-size: .8rem; font-style: italic; color: var(--muted); font-weight: 400; }

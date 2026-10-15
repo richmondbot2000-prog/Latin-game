@@ -137,10 +137,11 @@ const Snap = (() => {
   }
 
   // split text into sentences of tokens { t: text, w: word or null }
-  const tokens = text => text.replace(/[’‘]/g, "'").replace(/[“”]/g, '"').match(/[A-Za-z][A-Za-z'-]*|\d+|[^\sA-Za-z\d]+/g) || [];
+  // tokens keep their character offset in the text, so a word can be found again on the photo
+  const tokens = text => { const out = [], re = /[A-Za-z][A-Za-z'-]*|\d+|[^\sA-Za-z\d]+/g, t = text.replace(/[’‘]/g, "'").replace(/[“”]/g, '"'); let m; while ((m = re.exec(t))) out.push({ t: m[0], at: m.index }); return out; };
   function sentences(text) {
     const out = []; let cur = [];
-    for (const t of tokens(text)) { cur.push(t); if (/^[.!?]+["']?$/.test(t) || /^["']?[.!?]+$/.test(t)) { out.push(cur); cur = []; } }
+    for (const x of tokens(text)) { cur.push(x); if (/^[.!?]+["']?$/.test(x.t) || /^["']?[.!?]+$/.test(x.t)) { out.push(cur); cur = []; } }
     if (cur.length) out.push(cur);
     return out;
   }
@@ -314,7 +315,11 @@ const Snap = (() => {
   // the whole text → sentences of tokens { en, la, id }; `words` = the vocabulary in play
   function latinise(text, words) {
     const idx = build(words); idx.__words = Object.fromEntries(words.map(w => [w.word, w]));
-    return sentences(text).map(s => convert(s, idx)).filter(s => s.some(t => /[a-z]/i.test(t.en)));
+    return sentences(text).map(s => {
+      const r = convert(s.map(x => x.t), idx);
+      r.forEach((t, i) => { t.at = s[i].at; let a = i; while (a > 0 && r[a - 1].skip && !r[a - 1].la) a--; t.from = s[a].at; t.to = s[i + (t.len || 1) - 1].at + s[i + (t.len || 1) - 1].t.length; });   // from…to: the English this Latin stands for
+      return r;
+    }).filter(s => s.some(t => /[a-z]/i.test(t.en)));
   }
 
   // ---------- reading the photo on the phone ----------
@@ -330,7 +335,19 @@ const Snap = (() => {
     const g = c.getContext('2d'); g.drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
     const base = new URL('ocr', location.href).href;
     const worker = await Tesseract.createWorker('eng', 1, { workerPath: base + '/worker.min.js', corePath: base, langPath: base, logger: m => { if (m.status === 'recognizing text') progress('Reading the words…', m.progress || 0); else if (/loading|initializ/.test(m.status)) progress('Loading the reader…', 0); } });
-    try { const r = await worker.recognize(c); return r.data.text; } finally { worker.terminate(); }
+    try {
+      const r = await worker.recognize(c);
+      // the words with their boxes on the picture; the text is the words joined by spaces, each word knowing its offset
+      const words = []; let text = '';
+      for (const w of r.data.words || []) { const t = (w.text || '').trim(); if (!t) continue; if (text) text += ' '; words.push({ t, at: text.length, x0: w.bbox.x0, y0: w.bbox.y0, x1: w.bbox.x1, y1: w.bbox.y1 }); text += t; }
+      if (!words.length) return { text: r.data.text || '', words: [], image: null, w: 0, h: 0 };
+      // crop the picture to the text, with a margin, so the print is as large as the screen allows
+      const mx = c.width * .03, my = c.height * .02;
+      const X0 = Math.max(0, Math.min(...words.map(w => w.x0)) - mx), Y0 = Math.max(0, Math.min(...words.map(w => w.y0)) - my), X1 = Math.min(c.width, Math.max(...words.map(w => w.x1)) + mx), Y1 = Math.min(c.height, Math.max(...words.map(w => w.y1)) + my);
+      const cc = document.createElement('canvas'); cc.width = Math.round(X1 - X0); cc.height = Math.round(Y1 - Y0); cc.getContext('2d').drawImage(c, X0, Y0, cc.width, cc.height, 0, 0, cc.width, cc.height);
+      words.forEach(w => { w.x0 -= X0; w.x1 -= X0; w.y0 -= Y0; w.y1 -= Y0; });
+      return { text, words, image: cc.toDataURL('image/jpeg', .85), w: cc.width, h: cc.height };
+    } finally { worker.terminate(); }
   }
   return { latinise, ocr, noun, adj, verb, parts };
 })();

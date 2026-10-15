@@ -181,8 +181,16 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   walking"); is/are/was/were → est/sunt/erat/erant when not a helper;
   has/have/had as a main verb → habeo. `BLOCK` lists English words never
   converted (too many meanings: like, well, even, so, there, left, kind…).
-  Text is cut into parts of ~45 words at sentence ends; all Latin words
-  flipped → next part; last part → celebration and "Another page". Progress
+  **A photographed page is shown as the picture itself**, cropped to its
+  text, with the Latin words as yellow chips laid over the English words
+  (`Snap.ocr` returns the word boxes; tokens carry `at/from/to` character
+  offsets so `boxOf` finds the words a Latin word stands for, helpers
+  included; chip type shrinks to fit the word's box, `fit()`; a flipped
+  chip goes clear with a green outline so the English shows through);
+  🔍 Bigger zooms the picture 1×/2×/3× in a side-scrolling box, 📄 As text
+  switches to the text view. Pasted text is shown as text, cut into parts
+  of ~45 words at sentence ends; all Latin words flipped → next part; last
+  part → celebration and "Another page". Progress
   `latin.snap.<id>` {pages, words, last} (the last text, for "The last page
   again"; not synced). Tested by `scratchpad/snap.js` (paste path, taps,
   typed words, and the OCR path on a rendered PNG, ~2 s in Chromium).
