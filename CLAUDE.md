@@ -139,7 +139,9 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   end offers a re-read. Place kept in `latin.book.<id>` {at}, synced by max.
   Built by `scratchpad/build_book.py` (session scratchpad): one line per
   sentence in `form/gloss[=headword]` notation plus the translation; add
-  chapters there and rebuild. Two chapters so far (69 sentences).
+  chapters there and rebuild. Six chapters, 287 sentences, 1779 words, of
+  which only 39 (scio, disco, si, ut, satis, salve, gratias ago, saccus, saxum,
+  lapis, albus, pes, finis) fall outside the 403; everything else is Level 3.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Each level is one long day on a planet (`WORLDS` in `practice.js`,
