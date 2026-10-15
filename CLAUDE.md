@@ -110,7 +110,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   `art/ui/`, `art/trophies/`. **Rigged squishies** (the artist's Squishies
 Drive folder, id 1P6XWDzXcu_AHl6ooNK0PwGwcLf3s-Obw, inside the shared art
 root 1kSOzKEnj5_GiJhmTwQmwOnf6G2mL2iar): Chomp, Skitter, Flyer (FlyingFiend),
-Chomp King, Brood Queen, Ghost King, Sharky (SharkyBoss) and Kamikaze play
+Chomp King, Brood Queen, Ghost King, Sharky (SharkyBoss), Kamikaze and Unicorn play
 their Spine rigs (`art/rigs/<key>.json+.png`) through `drawSqRig` while
 healthy: Walk on the squishy's own clock (`sq.wob`; a roller by distance),
 WalkSwell next to a gun, Attack while eating. Only the Kamikaze is mirrored
@@ -122,8 +122,11 @@ animation file / no atlas), so they walk as their flat pictures but still
 bruise and burst. Artist-drawn bosses wear their own crown, so the game's
 crown is skipped for them. The Antbun keeps its own parts rig. The rigs were
 converted by `scratchpad/export_sq2.py` (session scratchpad, not the repo):
-it straightens rotated atlas regions and repacks them at 0.25 scale. Not
-used yet from that folder: Unicorn, MoleKings, the small Sharky.
+it straightens rotated atlas regions and repacks them at 0.25 scale. The
+**Unicorn** (Walk/WalkSwell only) appears from minute 5½: below half health
+it bolts at 2.4× speed (`gallop`, dust-and-sparkle `gallop` fx), Brain Wash
+can't turn it, ice hurts it 1.5× and bullets 0.75× — freeze it before it
+runs, or kill it in one go. Not used yet from that folder: MoleKings.
 Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
 - **Jacques Hammer** — a runner (`hammer.js`), portrait like the artist's mockup
