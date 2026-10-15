@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '84';
+const APP_VERSION = '85';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -413,11 +413,11 @@ function renderBeasts(u) {
   $('#back').onclick = () => { location.hash = ''; };
   Beasts.load().then(() => {
     const pane = $('#pane'); if (!pane) return;
-    const s = Beasts.state(u), c = Beasts.companion(u);
+    const s = Beasts.state(u), l = Beasts.latest(u);
     $('#bcount').textContent = Beasts.count(u) + ' / ' + Beasts.totalStages();
     const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy"></button>`;
     pane.innerHTML = `
-      ${c ? `<button class="pal big" id="buddy"><img class="bpic" src="${Beasts.img(c.beast, c.stage)}" alt=""><span class="btxt"><b>${esc(c.beast.stages[c.stage].name)}</b>${c.last ? '<span class="small">Fully grown!</span>' : `<span class="xp"><i style="width:${Math.round(100 * c.xp / c.need)}%"></i></span><span class="small">${c.xp} / ${c.need} right answers ${c.beast.stages[c.stage].s === 'egg' ? 'to hatch' : 'to grow'}</span>`}</span></button>` : `<p class="small" style="text-align:center">Every right answer on the cards hatches and grows your beasts. ${Beasts.totalStages()} to collect!</p>`}
+      ${l ? `<div class="pal big"><img class="bpic" src="${Beasts.img(l.beast, l.stage)}" alt=""><span class="btxt"><b>${esc(l.beast.stages[l.stage].name)}</b><span class="small">Latest find · ${Beasts.list().length} monsters, ${Beasts.totalStages()} stages to collect. Eggs drop while you play the cards; find a monster again and it evolves.</span></span></div>` : `<p class="small" style="text-align:center">Monster eggs drop at random while you play the cards. Find the same monster again and it evolves: egg, baby, teen, adult. ${Beasts.totalStages()} to collect!</p>`}
       <div class="bgrid">${Beasts.list().map(b => b.stages.map((st, i) => circ(b, i, b.key in s.have && (s.have[b.key] || 0) >= i)).join('')).join('')}</div>`;
     pane.onclick = e => {
       const bt = e.target.closest('.bc'); if (!bt) return;
@@ -649,10 +649,10 @@ function renderPlay(u, pane) {
   const setScene = () => { pane.className = 'play scene-' + Beasts.scene(u); };
   function buddy() {
     const el = $('#buddy', pane); if (!el) return;
-    const c = Beasts.companion(u);
-    if (!c) { el.innerHTML = Beasts.list().length ? `<span class="bpic egg">🥚</span><span class="btxt"><b>Your next egg is waiting</b><span class="small">Get a card right to find it</span></span>` : ''; return; }
-    const st = c.beast.stages[c.stage], to = c.last ? '' : (st.s === 'egg' ? 'to hatch' : 'to grow');
-    el.innerHTML = `<img class="bpic" src="${Beasts.img(c.beast, c.stage)}" alt=""><span class="btxt"><b>${esc(st.name)}</b>${c.last ? '<span class="small">Fully grown! Keep going for a new egg.</span>' : `<span class="xp"><i style="width:${Math.round(100 * c.xp / c.need)}%"></i></span><span class="small">${c.xp} / ${c.need} ${to}</span>`}</span>`;
+    const l = Beasts.latest(u);
+    if (!l) { el.innerHTML = Beasts.list().length ? `<span class="bpic egg">🥚</span><span class="btxt"><b>Monster eggs drop as you play</b><span class="small">Right answers and combos find them · duplicates evolve</span></span>` : ''; return; }
+    const st = l.beast.stages[l.stage];
+    el.innerHTML = `<img class="bpic" src="${Beasts.img(l.beast, l.stage)}" alt=""><span class="btxt"><b>${esc(st.name)}</b><span class="small">Latest find · ${Beasts.count(u)} / ${Beasts.totalStages()} in your Beastpedia</span></span>`;
   }
   $('#buddy', pane).onclick = () => { location.hash = 'beasts'; };
   Beasts.load().then(() => { if (document.body.contains(pane)) { setScene(); buddy(); } });
@@ -671,10 +671,10 @@ function renderPlay(u, pane) {
         <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt="${esc(st.name)}">${prev ? `<img class="bold" src="${prev}" alt="">` : ''}<span class="glow"></span></div>
         <div class="ribbon"><span>${esc(st.name)}</span></div>
         <div class="belem" title="${el[1]}">${el[0]}</div>
-        <div class="small btap">Tap to carry on</div>
+        <div class="small btap">${ev.kind === 'grow' ? 'Found again — it evolves! Tap to carry on' : 'Tap to carry on'}</div>
       </div>${ev.kind === 'egg' ? `<img class="trumpets l" src="art/beasts/trumpets_l.png" alt=""><img class="trumpets r" src="art/beasts/trumpets_r.png" alt="">` : ''}`;
     const r = deck.getBoundingClientRect();
-    if (ev.kind === 'egg') { Celebrate(r.left + r.width / 2, r.top + 10, 2.6); flash(ev.stage === 0 ? '🥚 You found an egg!' : ''); }
+    if (ev.kind === 'egg') { Celebrate(r.left + r.width / 2, r.top + 10, 2.6); flash('🥚 You found an egg!'); }
     else setTimeout(() => Celebrate(r.left + r.width / 2, r.top + r.height * .4, 1.8), 700);
     setScene(); buddy();
     const go = () => { deck.onclick = null; done(); };
@@ -756,7 +756,7 @@ function renderPlay(u, pane) {
       const r = deck.getBoundingClientRect();
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
       right++; combo(st.cur);
-      ev = Beasts.onRight(u);
+      ev = Beasts.onRight(u, st.cur);
       if (pw.s === 5) flash(`🏆 ${w.show} mastered! Resting for a month`); else if (pw.s >= 2) flash(`⭐ ${pw.s} stars — back in ${restText(REST[pw.s])}`);
     } else st.cur = 0;
     store.set(streakKey(u), st);

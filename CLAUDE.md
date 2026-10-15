@@ -47,12 +47,17 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   artist's 48 MemiBeasts monsters, each up to four stages (egg, baby, teen,
   adult; 175 pictures as 360px WebP, names and one-line ecologies from the
   artist's `Monster Ecologies` sheet in `art/beasts/beasts.json`, element by
-  colour). A right answer on the cards finds the first egg (fanfare: the
-  artist's trumpets, `trumpets_l/r.png`, cut from a screenshot, plus confetti);
-  every further right answer grows the beast being raised (`NEED` = 15 to
-  hatch, 25 to grow, 30 to grow fully, a white "EVOLVING" glow), and a fully
-  grown beast makes the next right answer bring a new egg. `latin.beasts.<id>`
-  = { have: { key: stage }, order, cur, xp, total }, synced (union, furthest
+  colour). **Eggs drop at random while you play the cards**, like cards from
+  a pack (`Beasts.onRight(u, streak)`: about one right answer in twelve,
+  always on a combo — 3, 5, 8, 10 in a row, then every 5 — and always on a
+  new player's first right answer). A new monster shows the "NEW … Egg"
+  fanfare (the artist's trumpets, `trumpets_l/r.png`, cut from a screenshot,
+  plus confetti); finding a monster you already have is a **duplicate, and a
+  duplicate evolves it one stage** (egg → baby → teen → adult, the white
+  "EVOLVING" glow). A duplicate of a fully grown monster re-rolls once for one
+  that can still grow. The bar above the cards shows the latest find and the
+  Beastpedia count. `latin.beasts.<id>`
+  = { have: { key: stage }, order, last, finds, total }, synced (union, furthest
   stage). The **Beastpedia** (`#beasts`, banner on the home page) shows every
   stage as a circle, silhouettes for the ones still to find, and a sheet with
   the picture, stage, element and ecology for the found ones.
