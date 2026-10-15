@@ -38,12 +38,12 @@ const Practice = (() => {
     skitter:    { name: 'Skitter',    hp: 60,  speed: .15,  chomp: 25, size: .74,  from: 1.5, look: { ok: 'skitter1', hurt: 'skitter2' }, srig: 'skitter', sheet: { art: 'skitter/d', cell: 320, fig: 169, foot: 0.969 }, motion: 'hop', color: '#d49496', res: { ice: 1.5 }, tip: 'Skitters are fast but flimsy. Ice stops them dead.' },
     antbun:     { name: 'Antbun',     hp: 280, speed: .09,  chomp: 25, size: 1.05, from: 3,   look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd', res: { bullet: .5, spray: .5, rock: 1.5, bomb: 1.5, blast: 1.5 }, tip: 'Antbuns wear armour: bullets only half work. Rocks and bombs crack it.' },
     kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, srig: 'kamikaze', rigFlip: true, sheet: { art: 'kamikaze/d', cell: 320, fig: 209, foot: .96 }, motion: 'roll', color: '#ddb8a4', boom: true, res: { bullet: 1.5, spray: 1.5 }, tip: 'Kamikazes blow up the guns they touch. Shoot early, or brain-wash one and send it back into the crowd!' },
-    ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, sheet: { art: 'ghost/d', cell: 320, fig: 173, foot: 0.853 }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88, nofreeze: true, nobrain: true, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'Ghosts float over one gun. Ice and sound pass straight through them, but Solar Blast burns them double.' },
+    ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, sheet: { art: 'ghost/d', cell: 320, fig: 173, foot: 0.853 }, motion: 'float', mist: true, color: '#a6a0aa', pass: 1, alpha: .88, nofreeze: true, nobrain: true, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'Ghosts float over one gun. Ice and sound pass straight through them, but Solar Blast burns them double.' },
     flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, srig: 'flying', sheet: { art: 'flying/d', cell: 320, fig: 253, foot: 0.781 }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true, res: { bullet: 0, rock: 0, bomb: 0, spray: 1.5 }, tip: 'Flyers sail over everything. Bullets and rocks go underneath; a Handy Turret or ice shards bring them down.' },
     moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, sheet: { art: 'moley/d', cell: 320, fig: 243, foot: 0.853 }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12, res: { bomb: 1.5 }, tip: 'The Mole King drills underground: only blasts and rocks reach him until he pops up.' },
     chompking:  { name: 'ChompKing',  hp: 3000, speed: .045, chomp: 60, size: 2.5,  big: 3, spawns: { kind: 'chomp', every: 9 },  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, srig: 'chompking', sheet: { art: 'chompking/d', cell: 320, fig: 216, foot: 0.991 }, motion: 'stomp', color: '#9ec9c0', boss: true, nobrain: true, res: { bomb: .5, ice: .5 }, halfFreeze: true, tip: 'ChompKing is huge and spits out Chomps: bombs only half-work and ice barely slows him. Guns in all three of his rows can hit him!' },
     broodqueen: { name: 'Brood Queen', hp: 3600, speed: .04, chomp: 50, size: 2.5,  big: 3, spawns: { kind: 'skitter', every: 6 }, from: 99, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, srig: 'broodqueen', sheet: { art: 'broodqueen/d', cell: 320, fig: 228, foot: 0.981 }, motion: 'stomp', color: '#c0acb6', boss: true, nobrain: true, res: { rock: 1.5, ring: .5 }, tip: 'The Brood Queen is three rows tall and lays Skitters as she comes. Rocks hurt her most.' },
-    ghostking:  { name: 'Ghost King', hp: 4000, speed: .05,  chomp: 45, size: 2.4,  big: 3, spawns: { kind: 'ghost', every: 10 }, from: 99, look: { ok: 'ghostking' }, srig: 'ghostking', sheet: { art: 'ghostking/d', cell: 320, fig: 236, foot: 0.909 }, motion: 'float', color: '#aca9a2', boss: true, nobrain: true, nofreeze: true, pass: 2, alpha: .88, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'The Ghost King floats over two guns, breathes out Ghosts, and shrugs off ice and sound. Light hurts him: Solar Blast!' },
+    ghostking:  { name: 'Ghost King', hp: 4000, speed: .05,  chomp: 45, size: 2.4,  big: 3, spawns: { kind: 'ghost', every: 10 }, from: 99, look: { ok: 'ghostking' }, srig: 'ghostking', sheet: { art: 'ghostking/d', cell: 320, fig: 236, foot: 0.909 }, motion: 'float', mist: true, color: '#aca9a2', boss: true, nobrain: true, nofreeze: true, pass: 2, alpha: .88, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'The Ghost King floats over two guns, breathes out Ghosts, and shrugs off ice and sound. Light hurts him: Solar Blast!' },
     sharky:     { name: 'Sharky',     hp: 6000, speed: .035, chomp: 90, size: 2.6,  big: 3, spawns: { kind: 'sharkling', every: 9 }, from: 99, look: { ok: 'sharky' }, srig: 'sharky', sheet: { art: 'sharky/d', cell: 320, fig: 281, foot: 0.959 }, motion: 'float', color: '#d9c48a', boss: true, nobrain: true, nofreeze: true, res: { bullet: .25, spray: .25, ice: 0, beam: 0, bomb: 1.5, blast: 1.5, rock: 1.25 }, tip: 'Sharky has thick skin and spawns little Sharklings: bullets barely scratch him. Bombs, blasts and rocks do the work.' },
     sharkling:  { name: 'Sharkling',  hp: 150, speed: .1,   chomp: 30, size: .95,  from: 99, look: { ok: 'sharky' }, srig: 'sharkling', sheet: { art: 'sharky/d', cell: 320, fig: 281, foot: 0.959 }, motion: 'float', color: '#d9c48a', res: { bullet: .6, spray: .6 }, tip: 'Sharklings are Sharky\'s little ones: tough skin, but a bomb or a rock sorts them out.' },
   };
@@ -74,6 +74,9 @@ const Practice = (() => {
   const ANTBUN = {"parts": {"dead_leftarm": [65, 18, 88, 116], "dead_body": [0, 43, 242, 210], "dead_skull": [16, 91, 177, 127], "dead_arm": [155, 189, 46, 40], "dead_rightear": [153, 31, 167, 106], "hurt_leftear": [65, 20, 88, 116], "hurt_body": [0, 43, 243, 210], "hurt_righteyeclose": [98, 161, 31, 10], "hurt_righteyeopen": [98, 154, 30, 30], "hurt_arm": [165, 170, 48, 53], "hurt_rightear": [140, 31, 177, 131], "leftear": [68, 0, 132, 131], "body": [0, 55, 250, 198], "body2": [10, 87, 239, 179], "body3": [10, 87, 242, 176], "eyesopen": [31, 149, 98, 36], "rightear": [140, 31, 177, 131], "eyepopping": [96, 141, 58, 58], "eyesclose": [32, 155, 98, 15], "arm": [166, 171, 45, 52]}, "box": [320, 266], "death": {"w": 320, "h": 322, "body": [50, 95, 234, 187]}};
   const ANTBUN_PARTS = Object.keys(ANTBUN.parts);
   const SPRITES = {};   // art key -> Image
+  const FX = {};        // art/fx: the artist's effect frames (bursts in three colours, trails, waves, slime, mist, sparkles, meteors)
+  const FX_NAMES = [...['c', 'w', 'y'].flatMap(c => ['burst1_', 'burst2_', 'burst3_', 'burst4_', 'trail1_', 'trail2_', 'trail3_', 'drop1_', 'drop2_'].map(n => n + c)), 'wave1', 'wave2', 'wave3', 'wave4', 'bubble1', 'bubble2', 'slime1', 'slime2', 'slime3', 'slime4', 'mist', 'sparkles', 'meteor1', 'meteor2', 'meteor3', 'meteor4'];
+  const fxImg = n => { const im = FX[n]; return im && im.complete && im.naturalWidth ? im : null; };
   const UI = {};        // art/ui pieces: guns, projectiles, screens, the spaceman
   const UI_NAMES = ['blaster1', 'blaster2', 'blaster3', 'bullet', 'planet', 'bolt', 'bolt2', 'ice', 'title_gameover', 'title_youwin', 'laurel_l', 'laurel_r', 'spaceman_sad', 'star', 'star_dark',
     'pose_stand', 'pose_wave', 'pose_arms', 'pose_hips', 'pose_thumbs', 'pose_facepalm', 'emo_neutral', 'emo_xx', 'emo_happy', 'emo_sleepy', 'emo_shock', 'emo_sad', 'emo_confused', 'emo_qqq', 'emo_v', 'emo_bear', 'emo_stare', 'emo_love', 'emo_grin', 'wave1', 'wave2', 'wave3', 'wave4'];
@@ -141,6 +144,7 @@ const Practice = (() => {
       const frow = sq.row + (sq.k.big ? (sq.k.big - 1) / 2 : 0);   // a huge boss's feet are on its bottom row
       S.fx.push({ kind: 'splat', x: sq.x, row: frow, t: 0, color: sq.k.color, size: sq.k.size });
       if (sq.k.big) S.shake = .8;
+      if (sq.k.mist) S.fx.push({ kind: 'slime', x: sq.x, row: frow, t: 0, size: sq.k.size, i: 1 + Math.floor(Math.random() * 4) });
       if (sq.k.rig) S.fx.push({ kind: 'abdeath', x: sq.x, row: frow, t: 0, size: sq.k.size });
       else if (sq.k.sheet) S.fx.push({ kind: 'sqdeath', x: sq.x, row: frow, t: 0, size: sq.k.size, sheet: sq.k.sheet });
       else S.fx.push({ kind: 'melt', x: sq.x, row: sq.row, t: 0, art: lookOf(sq), size: sq.k.size, fly: !!sq.k.fly });
@@ -190,7 +194,7 @@ const Practice = (() => {
         sq.eating = null; sq.x += sq.k.speed * 1.4 * dt;
         for (const o of S.squishies) if (o !== sq && !o.hypno && !o.dead && inRow(o, sq.row) && Math.abs(o.x - sq.x) < .5) {
           if (sq.k.boom) {   // a brain-washed Kamikaze goes off in the crowd
-            S.shake = .5; S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: 1.5 });
+            S.shake = .5; S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: 1.5, col: 'y' });
             for (const q of S.squishies) if (q !== sq && !q.dead && !q.hypno && Math.hypot(q.x - sq.x, (q.row - sq.row) * 1.15) < 1.5) hurt(q, 300, 'bomb');
             sq.hp = 0; break;
           }
@@ -223,7 +227,7 @@ const Practice = (() => {
           S.grid[r][c] = null; S.fx.push({ kind: 'crunch', x: c + .5, row: r, t: 0 });
         }
         sq.hp = 0; sq.dead = true; S.shake = .5; buddy('pose_arms', 'emo_shock', 1.6);
-        S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: 1.8 });
+        S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: 1.8, col: 'y' });
         continue;
       }
       if (g && sq.pass > 0 && sq.passedCol !== col) { sq.pass--; sq.passedCol = col; }   // ghosts and flyers float over guns
@@ -235,7 +239,7 @@ const Practice = (() => {
       }
       if (g && GUNS[g.type].kind === 'mine' && g.armed && sq.passedCol !== col) {   // Detonate Bomb: boom
         const t = tierOf(g); S.grid[gRow][col] = null; S.shake = .4;
-        S.fx.push({ kind: 'boom', x: col + .5, row: gRow, t: 0, r: t.splash });
+        S.fx.push({ kind: 'boom', x: col + .5, row: gRow, t: 0, r: t.splash, col: 'y' });
         for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (col + .5), (o.row - gRow) * 1.15) < t.splash) hurt(o, t.dmg, 'bomb');
         continue;
       }
@@ -272,7 +276,7 @@ const Practice = (() => {
       if (k.kind === 'bomb') {
         g.fuse -= dt;
         if (g.fuse <= 0) {
-          S.grid[r][c] = null; S.shake = .6; S.fx.push({ kind: 'boom', x: c + .5, row: r, t: 0, r: tier.splash });
+          S.grid[r][c] = null; S.shake = .6; S.fx.push({ kind: 'boom', x: c + .5, row: r, t: 0, r: tier.splash, col: 'y' });
           for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (c + .5), (o.row - r) * 1.15) < tier.splash) hurt(o, tier.dmg, 'bomb');
         }
         continue;
@@ -322,14 +326,14 @@ const Practice = (() => {
       sh.t += dt;
       if (sh.t >= sh.dur) {
         sh.gone = true; S.shake = .25;
-        S.fx.push({ kind: 'boom', x: sh.x1, row: sh.row, t: 0, r: sh.splash });
+        S.fx.push({ kind: 'boom', x: sh.x1, row: sh.row, t: 0, r: sh.splash, col: sh.proj === 'rock' ? 'w' : 'y' });
         for (const s of S.squishies) if (!s.dead && Math.hypot(s.x - sh.x1, (s.row - sh.row) * 1.15) < sh.splash) hurt(s, sh.dmg, sh.proj === 'rock' ? 'rock' : 'blast');
       }
     }
     S.shells = S.shells.filter(s => !s.gone);
     // effects
     for (const f of S.fx) { f.t += dt; if (f.kind === 'smoke') { f.x -= .4 * dt; f.row += f.drift * dt * .3; } }
-    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'sqdeath' ? 1.3 : f.kind === 'icewave' ? .9 : .8));
+    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'sqdeath' ? 1.3 : f.kind === 'slime' ? 1.6 : f.kind === 'icewave' ? .9 : .8));
     for (const f of S.floats) f.t += dt;
     S.floats = S.floats.filter(f => f.t < 1);
     S.squishies = S.squishies.filter(s => !s.dead);
@@ -452,6 +456,14 @@ const Practice = (() => {
     }
   }
   function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
+  // a puff of the artist's barrel smoke after each shot from a bullet gun
+  function drawMuzzleSmoke(g, gun, k, x, y, s) {
+    if (k.kind !== 'shoot' || gun.fired == null) return;
+    const rig = typeof Rig !== 'undefined' ? Rig.load('barrelsmoke') : null; if (!rig || !Rig.ok(rig)) return;
+    const since = S.t - gun.fired, dur = Rig.duration(rig, 'Fire'); if (since < 0 || since + .5 > dur) return;
+    const b = Rig.bounds(rig), sc = s * .55 / (b[2] - b[0]), cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+    g.save(); g.globalAlpha = .85; Rig.draw(g, rig, 'Fire', since + .5, x + s * .42 - b[0] * sc, y + s * .06 + cy * sc, sc); g.restore();   // the puff grows out to the right from the muzzle
+  }
   function drawGun(g, type, x, y, s, kick = 0, hp = 1) {
     // x,y = centre; s = cell size
     const gun = typeof type === 'object' ? type : { type, tier: 1 };
@@ -496,6 +508,7 @@ const Practice = (() => {
       g.drawImage(im, x - w / 2 - kick * s * .6, y + s * .42 - h, w, h);
       if (k.kind === 'bomb') g.restore();
       g.globalAlpha = 1;
+      drawMuzzleSmoke(g, gun, k, x, y, s);
       if (k.kind === 'beam') {   // the cold beam, flickering
         if (gun.beam) {
           const bx = x + s * .35, by = y + s * .1, len = Math.max(0, COLS * s - bx), w = 1 + .3 * Math.sin(S.t * 30);
@@ -632,6 +645,10 @@ const Practice = (() => {
       g.fillStyle = '#6E4526'; g.beginPath(); g.ellipse(x, foot, s * .36, s * .05, 0, 0, 7); g.fill();
       return;
     }
+    if (k.mist && !sq.under) {   // ghosts trail a wisp of mist that drifts off behind them
+      const mi = fxImg('mist');
+      if (mi) { const mh = w * .5, mw = mh * mi.naturalWidth / mi.naturalHeight * 1.6; g.save(); g.globalAlpha = .28 + .1 * Math.sin(sq.wob * 3); g.translate(x + w * .45, foot - w * .45 + Math.sin(sq.wob * 2) * w * .05); g.rotate(Math.PI / 2 + Math.sin(sq.wob * 1.3) * .15); g.drawImage(mi, -mh / 2, 0, mh, mw); g.restore(); }
+    }
     g.save();
     // shadow stays on the ground; smaller when the squishy is in the air
     const air = Math.max(0, -mo.dy); g.fillStyle = 'rgba(0,0,0,.16)'; g.beginPath(); g.ellipse(x, foot, w * .38 * (1 - air * .4), w * .1 * (1 - air * .4), 0, 0, 7); g.fill();
@@ -731,12 +748,16 @@ const Practice = (() => {
       const y = rowY + cell * .5 - Math.sin(p * Math.PI) * cell * 1.6;
       ctx.fillStyle = 'rgba(0,0,0,.2)'; ctx.beginPath(); ctx.ellipse(x * cell, rowY + cell * .8, cell * .12, cell * .05, 0, 0, 7); ctx.fill();
       const pl = wImg('proj_' + (sh.proj || 'lava')) || uiImg('planet');
+      if (sh.proj !== 'rock') {   // the Solar Blast's fiery trail, pointing back along its arc
+        const tr = fxImg('trail2_y'); if (tr && p > .05) { const dx = (sh.x1 - sh.x0) * cell * .02, dy = -Math.cos(p * Math.PI) * Math.PI * cell * 1.6 * .02 + (sh.row - sh.row0) * cell * .02; const ang = Math.atan2(dy, dx), tw = cell * 1.1, th = tw * tr.naturalHeight / tr.naturalWidth; ctx.save(); ctx.translate(x * cell, y); ctx.rotate(ang); ctx.globalAlpha = .8; ctx.drawImage(tr, -tw, -th / 2, tw, th); ctx.restore(); ctx.globalAlpha = 1; }
+      }
       if (pl) { const w = cell * (sh.proj === 'rock' ? .3 : .36); ctx.save(); ctx.translate(x * cell, y); ctx.rotate(p * 6); ctx.drawImage(pl, -w / 2, -w / 2, w, w); ctx.restore(); }
       else { ctx.fillStyle = '#2C2C36'; ctx.beginPath(); ctx.arc(x * cell, y, cell * .13, 0, 7); ctx.fill(); }
     }
     // sonic rings
+    if (S.frozen > 0) { const sp = fxImg('sparkles'); if (sp) { const h = cell * ROWS, w = h * sp.naturalWidth / sp.naturalHeight; ctx.globalAlpha = Math.min(1, S.frozen) * .7; for (let x0 = OX - ((S.t * 20) % w); x0 < W; x0 += w) ctx.drawImage(sp, x0, 0, w, h); ctx.globalAlpha = 1; } }
     const ringIm = wImg('proj_ring');
-    for (const rg of S.rings) { const w = cell * (.5 + rg.t * .4); ctx.globalAlpha = .9; if (ringIm) ctx.drawImage(ringIm, rg.x * cell - w / 2, rg.row * cell + cell * .42 - w / 2, w, w); else { ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(rg.x * cell, rg.row * cell + cell * .42, w / 2, 0, 7); ctx.stroke(); } ctx.globalAlpha = 1; }
+    for (const rg of S.rings) { const w = cell * (.5 + rg.t * .4), wv = fxImg('wave' + (1 + Math.floor(rg.t * 12) % 4)); ctx.globalAlpha = .9; if (wv) { const h = cell * (.8 + rg.t * .3), ww = h * wv.naturalWidth / wv.naturalHeight; ctx.drawImage(wv, rg.x * cell - ww * .3, rg.row * cell + cell * .42 - h * .55, ww, h); } else if (ringIm) ctx.drawImage(ringIm, rg.x * cell - w / 2, rg.row * cell + cell * .42 - w / 2, w, w); else { ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(rg.x * cell, rg.row * cell + cell * .42, w / 2, 0, 7); ctx.stroke(); } ctx.globalAlpha = 1; }
     // squishies, lower rows drawn later so they overlap properly
     const drawRow = q => q.rows ? q.rows[q.rows.length - 1] + .5 : q.row;   // a huge boss is drawn after the row its feet are on
     for (const sq of S.squishies.slice().sort((a, b) => drawRow(a) - drawRow(b))) drawSquishy(ctx, sq, sq.x * cell, (sq.rows ? sq.rows[sq.rows.length - 1] : sq.row) * cell + cell * .5, cell);
@@ -745,12 +766,22 @@ const Practice = (() => {
     for (const f of S.fx) {
       const x = f.x * cell, y = f.row * cell + cell * .5;
       if (f.kind === 'boom') {
-        const p = f.t / .5;
-        ctx.strokeStyle = `rgba(255,120,40,${1 - p})`; ctx.lineWidth = cell * .12 * (1 - p) + 1;
-        ctx.beginPath(); ctx.arc(x, y, f.r * cell * p, 0, 7); ctx.stroke();
-        ctx.fillStyle = `rgba(255,220,80,${.7 * (1 - p)})`; ctx.beginPath(); ctx.arc(x, y, f.r * cell * p * .6, 0, 7); ctx.fill();
-        const bolt = uiImg(p < .5 ? 'bolt' : 'bolt2');
+        const p = f.t / .5, c = f.col || 'w', bu = fxImg('burst' + Math.min(4, 1 + Math.floor(p * 4)) + '_' + c);
+        if (bu) {   // the artist's splash frames, growing with the blast, with two drops flung out
+          const h = f.r * cell * (1.4 + p * .8), w = h * bu.naturalWidth / bu.naturalHeight; ctx.globalAlpha = p < .7 ? 1 : (1 - p) / .3;
+          ctx.save(); ctx.translate(x, y); ctx.rotate(f.x * 1.7); ctx.drawImage(bu, -w * .35, -h / 2, w, h); ctx.restore();
+          for (let i = 0; i < 2; i++) { const dr = fxImg('drop' + (i + 1) + '_' + c); if (!dr) continue; const a = f.x * 2 + i * 2.4, d = f.r * cell * (.3 + p * 1.1), dw = cell * .22 * (1 - p * .5); ctx.save(); ctx.translate(x + Math.cos(a) * d, y + Math.sin(a) * d * .7 - p * p * cell * .4); ctx.rotate(a); ctx.drawImage(dr, -dw / 2, -dw / 2, dw, dw); ctx.restore(); }
+          ctx.globalAlpha = 1;
+        } else {
+          ctx.strokeStyle = `rgba(255,120,40,${1 - p})`; ctx.lineWidth = cell * .12 * (1 - p) + 1;
+          ctx.beginPath(); ctx.arc(x, y, f.r * cell * p, 0, 7); ctx.stroke();
+          ctx.fillStyle = `rgba(255,220,80,${.7 * (1 - p)})`; ctx.beginPath(); ctx.arc(x, y, f.r * cell * p * .6, 0, 7); ctx.fill();
+        }
+        const bolt = f.bolt && uiImg(p < .5 ? 'bolt' : 'bolt2');
         if (bolt) { const w = f.r * cell * (.6 + p * .8), h = w * bolt.naturalHeight / bolt.naturalWidth; ctx.globalAlpha = 1 - p; ctx.save(); ctx.translate(x, y); ctx.rotate(f.x * 3); ctx.drawImage(bolt, -w / 2, -h / 2, w, h); ctx.restore(); ctx.globalAlpha = 1; }
+      } else if (f.kind === 'slime') {   // a ghost's puddle: lands, spreads a little, soaks away
+        const p = f.t / 1.6, im = fxImg('slime' + f.i);
+        if (im) { const w = cell * f.size * (.5 + Math.min(1, p * 4) * .3), h = w * im.naturalHeight / im.naturalWidth * .45; ctx.globalAlpha = p < .6 ? .85 : .85 * (1 - p) / .4; ctx.drawImage(im, x - w / 2, y + cell * .42 - h, w, h); ctx.globalAlpha = 1; }
       } else if (f.kind === 'splat') {
         const p = f.t / .6;
         ctx.fillStyle = f.color; ctx.globalAlpha = 1 - p;
@@ -778,7 +809,8 @@ const Practice = (() => {
           ctx.globalAlpha = 1;
         }
       } else if (f.kind === 'icewave') {
-        const pr = f.t / .9, ice = uiImg('ice');
+        const pr = f.t / .9, ice = uiImg('ice'), bu = fxImg('burst3_c');
+        if (bu) { for (let r = 0; r < ROWS; r++) { const h = cell * 1.3, w = h * bu.naturalWidth / bu.naturalHeight; ctx.globalAlpha = 1 - pr; ctx.drawImage(bu, W * pr - w * .4, r * cell + cell * .5 - h / 2, w, h); } ctx.globalAlpha = 1; }
         if (ice) { const w = cell * 3, h = w * ice.naturalHeight / ice.naturalWidth; ctx.globalAlpha = 1 - pr; for (let r = 0; r < ROWS; r++) ctx.drawImage(ice, W * pr - w / 2, r * cell + cell * .5 - h / 2, w, h); ctx.globalAlpha = 1; }
         ctx.fillStyle = `rgba(190,230,255,${.35 * (1 - pr)})`; ctx.fillRect(0, 0, W * pr, H);
       } else if (f.kind === 'smoke') {
@@ -892,7 +924,7 @@ const Practice = (() => {
       S.frozen = 6; S.fx.push({ kind: 'icewave', t: 0 }); buddy('pose_hips', 'emo_grin', 2);
     } else {
       S.shake = .6; buddy('pose_thumbs', 'emo_grin', 2);
-      for (const sq of S.squishies) if (!sq.dead) { hurt(sq, 150, 'storm'); S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: .7 }); }
+      for (const sq of S.squishies) if (!sq.dead) { hurt(sq, 150, 'storm'); S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: .7, col: 'w', bolt: true }); }
     }
     S.power = null; refreshShop();
   }
@@ -1019,6 +1051,8 @@ const Practice = (() => {
     for (const k in SQUISHIES) { const q = SQUISHIES[k]; if (q.sheet) for (let i = 1; i <= 9; i++) arts.push(q.sheet.art + i); if (q.srig && typeof Rig !== 'undefined') Rig.load(q.srig); }
     for (const a of arts) if (!SPRITES[a]) { const im = new Image(); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
     for (const n of UI_NAMES) if (!UI[n]) { const im = new Image(); im.src = 'art/ui/' + n + '.png'; UI[n] = im; }
+    for (const n of FX_NAMES) if (!FX[n]) { const im = new Image(); im.src = 'art/fx/' + n + '.png'; FX[n] = im; }
+    if (typeof Rig !== 'undefined') Rig.load('barrelsmoke');
     for (const key in GUNS) for (let t = 1; t <= GUNS[key].tiers.length; t++) { const n = GUNS[key].art + t; if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; } }
     for (const n of ['proj_bullet', 'proj_lava', 'proj_ice', 'proj_ring', 'proj_rock']) if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; }
     if (typeof Rig !== 'undefined') for (const n of RIG_KEYS) Rig.load(n);

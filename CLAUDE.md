@@ -80,6 +80,15 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   `art/rigs/<key>.json+.png`, exported by `scratchpad/sq2/export_rigs.py`:
   Fire plays after a shot, Idle between. Plasma Bomb and Brain Wash have no
   usable rig and stay as still pictures. Not used yet: Floaty, Generators.
+  **Effects** come from the artist's `Partical Effects` sheets, cut into
+  `art/fx/` (`FX_NAMES` in `practice.js`): `boom` draws `burst1-4_<c>` with
+  two flung `drop`s (`col`: `y` fire for bombs, mines, Kamikaze and Solar
+  shells, `w` for lightning and rock shells, `c` ice), the Solar shell trails
+  `trail2_y`, Sonic rings cycle `wave1-4`, ghosts (`mist: true`) trail
+  `mist.png` and leave a `slime` puddle, the Freeze shows `sparkles` over the
+  lawn and cyan bursts in the ice wave, and bullet guns puff the artist's
+  `barrelsmoke` rig (`art/rigs/barrelsmoke`, animation `Fire`, frames start
+  at 0.5 s) from the muzzle after each shot (`drawMuzzleSmoke`).
   Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
   `art/ui/`, `art/trophies/`. **Rigged squishies** (the artist's Squishies
 Drive folder, id 1P6XWDzXcu_AHl6ooNK0PwGwcLf3s-Obw, inside the shared art
