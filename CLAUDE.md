@@ -46,8 +46,11 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   (`practice.js`), always landscape; coins come only from matching words.
   For now one long daytime level on Earth (the owner dropped the worlds):
   wave 1 trickles in for 8 min (gap 14 s → 1.2 s, ~150 squishies, kinds by
-  the minute), then a final wave of 250 led by the four bosses; ~10 min,
-  ~400 squishies. **Bosses** (`big: 3`) are three rows tall: `sq.rows`
+  the minute), ended by the Chomp King (`WAVE1_BOSS`: no more spawns until
+  he is beaten), then a huge wave of 250, and at the end of the game the
+  other three bosses (`FINAL_BOSSES`) one after another, each announced and
+  sent once the last is dead and the lawn is nearly clear; ~12 min,
+  ~400 squishies plus the bosses' minions. **Bosses** (`big: 3`) are three rows tall: `sq.rows`
   lists the rows they fill, `inRow(sq, r)` is used by every hit test, they
   chew the first gun they meet in any of their rows, set off all three
   mowers (600 damage each, not instant death) and lose the game if they

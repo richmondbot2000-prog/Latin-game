@@ -60,9 +60,9 @@ const Practice = (() => {
   const worldOf = () => WORLDS[1];   // one level for now: Earth, daytime
   // the level: wave 1 builds from one squishy every 14 s to one every 1.2 s over 8 minutes (about 150 squishies),
   // then the final wave pours in 250 more with the four bosses leading groups of it. About five times the old level.
-  const WAVE1_SECS = 480, WAVE1_MAX = 150, WAVE2 = 250, BOSS_AT = { 0: 'chompking', 70: 'broodqueen', 140: 'ghostking', 210: 'sharky' };
+  const WAVE1_SECS = 480, WAVE1_MAX = 150, WAVE2 = 250, WAVE1_BOSS = 'chompking', FINAL_BOSSES = ['broodqueen', 'ghostking', 'sharky'];   // a boss ends each wave; the last three end the game one after another
   function levelSpec(n) {
-    return { count: WAVE1_MAX + WAVE2, rows: [0, 1, 2, 3, 4, 5], grace: 10, world: worldOf(), last: true, boss: 'chompking', huge: true };
+    return { count: WAVE1_MAX + WAVE2 + 1 + FINAL_BOSSES.length, rows: [0, 1, 2, 3, 4, 5], grace: 10, world: worldOf(), last: true, boss: 'chompking', huge: true };
   }
   const gapAt = t => t < 240 ? 14 - 11 * (t / 240) : Math.max(1.2, 3 - 1.8 * ((t - 240) / 240));
   function weightsAt(t) {   // which kinds can appear this far into the level
@@ -162,17 +162,20 @@ const Practice = (() => {
     if (S.started && S.spawned < sp.count) {
       S.clock = (S.clock || 0) + dt;
       S.nextSpawn -= dt;
-      if (!S.hugeDone && (S.clock >= WAVE1_SECS || S.spawned >= WAVE1_MAX)) {
-        S.hugeDone = true; S.wave2 = 0;
-        S.banner = { text: 'A huge wave of squishies is coming!', t: 3, wave: true }; S.nextSpawn = 3;
-      }
-      if (S.nextSpawn <= 0) {
-        if (S.hugeDone) {
-          const boss = BOSS_AT[S.wave2];
-          spawn(boss || pickWeighted(weightsAt(S.clock)));
-          S.wave2++; S.nextSpawn = boss ? 1.5 : .6;
-          if (S.wave2 === WAVE2 - 30) S.banner = { text: 'Final wave!', t: 1.6, wave: true };
-        } else { spawn(pickWeighted(weightsAt(S.clock))); S.nextSpawn = gapAt(S.clock); }
+      const bossAlive = S.squishies.some(q => !q.dead && q.k.big);
+      const callBoss = kind => { S.bossNext = kind; S.nextSpawn = 2.5; S.banner = { text: SQUISHIES[kind].name + ' is coming!', t: 3, wave: true }; };
+      if (S.bossNext) { if (S.nextSpawn <= 0) { spawn(S.bossNext); S.bossNext = null; } }   // a boss has been announced: it arrives, nothing else does
+      else if (!S.hugeDone) {
+        // wave 1: the trickle, then the Chomp King ends it; the huge wave waits until he is beaten
+        if (!S.boss1 && (S.clock >= WAVE1_SECS || S.spawned >= WAVE1_MAX)) { S.boss1 = true; callBoss(WAVE1_BOSS); }
+        else if (S.boss1) { if (!bossAlive) { S.hugeDone = true; S.wave2 = 0; S.banner = { text: 'A huge wave of squishies is coming!', t: 3, wave: true }; S.nextSpawn = 3; } }
+        else if (S.nextSpawn <= 0) { spawn(pickWeighted(weightsAt(S.clock))); S.nextSpawn = gapAt(S.clock); }
+      } else if (S.wave2 < WAVE2) {
+        if (S.nextSpawn <= 0) { spawn(pickWeighted(weightsAt(S.clock))); S.wave2++; S.nextSpawn = .6; if (S.wave2 === WAVE2 - 30) S.banner = { text: 'Final wave!', t: 1.6, wave: true }; }
+      } else if (!bossAlive && S.squishies.filter(q => !q.dead).length < 12) {
+        // the end of the game: the three big bosses, one after another, each once the last is beaten and the lawn is nearly clear
+        const next = FINAL_BOSSES[S.finalIdx || 0];
+        if (next) { S.finalIdx = (S.finalIdx || 0) + 1; callBoss(next); }
       }
     }
     if (S.banner) { S.banner.t -= dt; if (S.banner.t <= 0) S.banner = null; }
@@ -962,7 +965,7 @@ const Practice = (() => {
   function ready() {
     const sub = S.level === 1 && !(store.get(saveKey, {}).won)
       ? 'Match the words below to earn coins. Buy a Blaster, then tap a square to plant it. The squishies start slowly and keep coming for a long time — then a huge wave. Keep them away from your lawnmowers!'
-      : 'A long day on the lawn: the squishies trickle in, thicken up, and then the huge wave comes with all four bosses. Match words, plant guns, hold out!';
+      : 'A long day on the lawn: the squishies trickle in, thicken up, and the Chomp King ends the first wave, then the huge wave comes, and the last three bosses arrive one after another at the end. Match words, plant guns, hold out!';
     showOverlay({ kind: 'ready', title: 'Squishygeddon', sub, btn: "Let's go!" }, start);
     const tr = document.createElement('button'); tr.className = 'linkbtn'; tr.textContent = '🏆 Trophy cabinet';
     tr.onclick = () => { location.hash = 'trophies'; };
