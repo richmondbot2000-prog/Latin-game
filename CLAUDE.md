@@ -182,9 +182,8 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   has/have/had as a main verb → habeo. `BLOCK` lists English words never
   converted (too many meanings: like, well, even, so, there, left, kind…).
   A photographed page is shown **as text by default** (book print is too
-  small on a phone for overlays), keeping the page's line and paragraph
-  breaks (`\n` / `\n\n` from the recogniser's lines and paragraphs →
-  `.snapbr`), with junk words (low confidence, no vowels, stray symbols)
+  small on a phone for overlays), keeping the page's paragraph breaks (`\n\n` from the recogniser's
+  paragraphs → `.snapbr.para`; lines reflow), with junk words (low confidence, no vowels, stray symbols)
   dropped. **📷 On the photo** shows the picture instead, cropped to its
   text, with the Latin words as yellow chips laid over the English words
   (`Snap.ocr` returns the word boxes; tokens carry `at/from/to` character

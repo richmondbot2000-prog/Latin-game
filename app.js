@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '107';
+const APP_VERSION = '108';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1013,7 +1013,7 @@ function renderSnap(u) {
         s.forEach((t, j) => {
           if (t.skip) return;
           const gap = prevEnd >= 0 && t.at != null ? text.slice(prevEnd, t.at) : ''; if (t.at != null) prevEnd = t.to != null ? t.to : t.at + t.en.length;
-          if (/\n\n/.test(gap)) html += '<span class="snapbr para"></span>'; else if (/\n/.test(gap)) html += '<span class="snapbr"></span>';
+          if (/\n\n/.test(gap)) html += '<span class="snapbr para"></span>';   // paragraphs as on the page; lines reflow
           const punct = !/[a-z0-9]/i.test(t.en), sp = j === 0 || punct || /^["'(]$/.test(s[j - 1] && s[j - 1].en) ? '' : ' ';
           if (!t.la) { html += sp + esc(t.en); return; }
           const i = k++;
