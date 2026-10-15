@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '93';
+const APP_VERSION = '94';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -155,6 +155,7 @@ function route() {
   if (h === 'hammer-items') return renderHammer(u, true);
   if (h === 'read') return renderRead(u);
   if (h === 'beasts') return renderBeasts(u);
+  if (h === 'cards') return renderCardsHome(u);
   if (h === 'passages') return renderPassages(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
@@ -359,12 +360,11 @@ function renderHome(u) {
     <div class="small meterline">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
     <div class="tile prac2" id="org">
       <h2>Organise</h2>
-      <button class="gamebanner" data-t="play" style="background-image:url('art/banners/cards.jpg')"><span class="gname cards">Cards</span></button>
       <button class="gamebanner" data-t="list" style="background-image:url('art/banners/wordlist.jpg')"><span class="gname list">Word list</span></button>
-      <button class="gamebanner" data-t="beasts" style="background-image:url('art/banners/beastpedia.jpg')"><span class="gname beasts">Beastpedia</span></button>
     </div>
     <div class="tile prac2" id="readtile">
       <h2>Read</h2>
+      <button class="gamebanner" id="cardsGo" style="background-image:url('art/banners/cards.jpg')"><span class="gname cards">Cards &amp; Beasts</span></button>
       <button class="gamebanner" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span></button>
       <button class="gamebanner" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span></button>
     </div>
@@ -389,6 +389,7 @@ function renderHome(u) {
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#readGo').onclick = () => { location.hash = 'read'; };
+  $('#cardsGo').onclick = () => { location.hash = 'cards'; };
   $('#passGo').onclick = () => { location.hash = 'passages'; };
   $('#verline').onclick = () => { $('#verline').textContent = 'updating…'; freshen(); };
   checkVersion();
@@ -399,10 +400,39 @@ function renderHome(u) {
   };
   $('#org').onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.t === 'beasts') { location.hash = 'beasts'; return; }
     store.set('latin.orgTab', b.dataset.t); location.hash = b.dataset.t;
   };
   $('#who').onclick = () => { store.del('latin.current'); route(); };
+}
+
+
+/* ---------- Cards & Beasts: the home screen — a face-down deck to swipe, and the Beastpedia ---------- */
+function renderCardsHome(u) {
+  Celebrate.stop();
+  app.innerHTML = `
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Cards &amp; Beasts</span><span class="lvtag">${levelName(levelOf(u))}</span></div>
+    <div id="pane" class="play chome">
+      <div class="deckhome" id="deckhome">
+        <div class="cardback b3"></div><div class="cardback b2"></div>
+        <div class="cardback top" id="topback"><div class="orn top"></div><div class="orn bottom"></div><div class="emblem">⚡</div></div>
+      </div>
+      <p class="deckhint">Swipe a card to play</p>
+      <button class="gamebanner" id="pediaGo" style="background-image:url('art/banners/beastpedia.jpg')"><span class="gname beasts">Beastpedia</span></button>
+      <p class="small deckcount" id="deckcount"></p>
+    </div>
+  </div>`;
+  $('#back').onclick = () => { location.hash = ''; };
+  $('#pediaGo').onclick = () => { location.hash = 'beasts'; };
+  const pane = $('#pane');
+  Beasts.load().then(() => { if (!document.body.contains(pane)) return; pane.className = 'play chome scene-' + Beasts.scene(u); $('#deckcount').textContent = `${Beasts.count(u)} / ${Beasts.totalStages()} beasts found`; });
+  // the top card slides off with the finger (or a tap) and the game begins
+  const top = $('#topback'); let x0 = null, y0 = 0, id = null, moved = 0;
+  const go = dir => { top.classList.add('anim'); top.style.transform = `translate(${dir * (innerWidth + 200)}px, -40px) rotate(${dir * 25}deg)`; top.style.opacity = '0'; setTimeout(() => { location.hash = 'play'; }, 220); };
+  top.addEventListener('pointerdown', e => { x0 = e.clientX; y0 = e.clientY; id = e.pointerId; moved = 0; top.setPointerCapture(id); top.classList.remove('anim'); });
+  top.addEventListener('pointermove', e => { if (x0 === null || e.pointerId !== id) return; const dx = e.clientX - x0, dy = e.clientY - y0; moved = Math.max(moved, Math.abs(dx), Math.abs(dy)); top.style.transform = `translate(${dx}px, ${dy * .3}px) rotate(${dx / 18}deg)`; });
+  const end = e => { if (x0 === null || e.pointerId !== id) return; const dx = e.clientX - x0; x0 = null; if (Math.abs(dx) > 60 || moved < 8) go(dx < 0 ? -1 : 1); else { top.classList.add('anim'); top.style.transform = ''; } };
+  top.addEventListener('pointerup', end); top.addEventListener('pointercancel', end);
 }
 
 /* ---------- Beastpedia: every beast found so far, and the shadows of the ones still to find ---------- */
@@ -410,10 +440,10 @@ function renderBeasts(u) {
   Celebrate.stop();
   app.innerHTML = `
   <div class="wrap">
-    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Beastpedia</span><span class="lvtag" id="bcount"></span></div>
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Back">← Cards</button><span class="title">Beastpedia</span><span class="lvtag" id="bcount"></span></div>
     <div id="pane" class="pedia"><p class="small" style="text-align:center">Loading…</p></div>
   </div>`;
-  $('#back').onclick = () => { location.hash = ''; };
+  $('#back').onclick = () => { location.hash = 'cards'; };
   Beasts.load().then(() => {
     const pane = $('#pane'); if (!pane) return;
     const s = Beasts.state(u), l = Beasts.latest(u);
@@ -734,10 +764,10 @@ function renderOrganise(u, tab) {
   Celebrate.stop();
   app.innerHTML = `
   <div class="wrap">
-    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">${tab === 'play' ? 'Play' : 'Word list'}</span><span class="lvtag">${levelName(levelOf(u))}</span></div>
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Back">${tab === 'play' ? '← Cards' : '← Home'}</button><span class="title">${tab === 'play' ? '' : 'Word list'}</span><span class="lvtag">${tab === 'play' ? '' : levelName(levelOf(u))}</span></div>
     <div id="pane" class="play"></div>
   </div>`;
-  $('#back').onclick = () => { location.hash = ''; };
+  $('#back').onclick = () => { location.hash = tab === 'play' ? 'cards' : ''; };
   (tab === 'play' ? renderPlay : renderList)(u, $('#pane'));
 }
 
@@ -817,12 +847,11 @@ function renderPlay(u, pane) {
   const st = store.get(streakKey(u), { cur: 0, best: 0 });
   pane.innerHTML = `
     <div class="streakbar"><div class="streak" id="streak"><span class="fire">🔥</span><span class="n" id="sn">0</span><span class="lbl">in a row</span></div><div class="best" id="best"></div></div>
-    <button class="pal" id="buddy" aria-label="Your beast"></button>
-    <div class="score"><span id="sc">Swipe to answer</span><span id="left"></span></div>
+    <button class="pal" id="buddy" aria-label="Your beast" hidden></button>
+    <div class="score" hidden><span id="sc">Swipe to answer</span><span id="left"></span></div>
     <div class="deck" id="deck"></div>
     <div class="combo" id="combo" aria-live="polite"></div>
-    <div class="answer"><button class="no" id="no">✗ Wrong</button><button class="yes" id="yes">Right ✓</button></div>
-    <p class="hint">Does the Latin word mean the English? Swipe right for <b>right</b>, left for <b>wrong</b>, up if you <b>don't know</b>.</p>`;
+    <div class="answer"><button class="no" id="no">✗ Wrong</button><button class="yes" id="yes">Right ✓</button></div>`;
   const deck = $('#deck', pane);
   // the scene behind the cards follows the element of the beast being raised; the bar above the cards shows it growing
   const setScene = () => { pane.className = 'play scene-' + Beasts.scene(u); };
