@@ -50,7 +50,7 @@ const Rig = (() => {
     for (let i = 0; i < j.bones.length; i++) {
       const b = j.bones[i];
       let rot = b.rotation || 0, x = b.x || 0, y = b.y || 0, sx = b.scaleX == null ? 1 : b.scaleX, sy = b.scaleY == null ? 1 : b.scaleY, shx = b.shearX || 0, shy = b.shearY || 0;
-      const tl = A && A.bones[b.name];
+      const tl = A && (A.bones || {})[b.name];
       if (tl) {
         let f;
         if ((f = frameAt(tl.rotate, t))) rot += lerpAngle(f[0].angle || 0, f[1].angle || 0, f[2]);
@@ -74,7 +74,7 @@ const Rig = (() => {
     ctx.save(); ctx.translate(x, y); ctx.scale(s, -s);
     for (const slot of j.slots) {
       let attName = slot.attachment;
-      const stl = A && j.animations[A].slots[slot.name];
+      const stl = A && (j.animations[A].slots || {})[slot.name];
       if (stl && stl.attachment && stl.attachment.length) { let cur = null; for (const f of stl.attachment) { if (f.time <= t) cur = f; else break; } if (cur) attName = cur.name; }
       if (!attName) continue;
       const att = j.skin[slot.name] && j.skin[slot.name][attName]; if (!att) continue;

@@ -34,17 +34,17 @@ const Practice = (() => {
   // ice (Freeze Turret), beam (Freeze Ray), ring (Sonic Boom), blast (Solar Blast), rock (Miner), bomb (mines and bombs).
   // nofreeze = ice and the beam don't slow it; nobrain = Brain Wash can't turn it.
   const SQUISHIES = {
-    chomp:      { name: 'Chomp',      hp: 100, speed: .075, chomp: 25, size: 1.0,  from: 0,   look: { ok: 'chomp1', hurt: 'chomp2' }, motion: 'waddle', color: '#b8d0a8', tip: 'Chomps eat your guns. A Blaster kills one in five shots.' },
-    skitter:    { name: 'Skitter',    hp: 60,  speed: .15,  chomp: 25, size: .74,  from: 1.5, look: { ok: 'skitter1', hurt: 'skitter2' }, motion: 'hop', color: '#d49496', res: { ice: 1.5 }, tip: 'Skitters are fast but flimsy. Ice stops them dead.' },
+    chomp:      { name: 'Chomp',      hp: 100, speed: .075, chomp: 25, size: 1.0,  from: 0,   look: { ok: 'chomp1', hurt: 'chomp2' }, srig: 'chomp', sheet: { art: 'chomp/d', cell: 320, fig: 192, foot: 0.981 }, motion: 'waddle', color: '#b8d0a8', tip: 'Chomps eat your guns. A Blaster kills one in five shots.' },
+    skitter:    { name: 'Skitter',    hp: 60,  speed: .15,  chomp: 25, size: .74,  from: 1.5, look: { ok: 'skitter1', hurt: 'skitter2' }, srig: 'skitter', sheet: { art: 'skitter/d', cell: 320, fig: 169, foot: 0.969 }, motion: 'hop', color: '#d49496', res: { ice: 1.5 }, tip: 'Skitters are fast but flimsy. Ice stops them dead.' },
     antbun:     { name: 'Antbun',     hp: 280, speed: .09,  chomp: 25, size: 1.05, from: 3,   look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd', res: { bullet: .5, spray: .5, rock: 1.5, bomb: 1.5, blast: 1.5 }, tip: 'Antbuns wear armour: bullets only half work. Rocks and bombs crack it.' },
-    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, srig: 'kamikaze', sheet: { art: 'kamikaze/d', cell: 320, fig: 209, foot: .96 }, motion: 'roll', color: '#ddb8a4', boom: true, res: { bullet: 1.5, spray: 1.5 }, tip: 'Kamikazes blow up the guns they touch. Shoot early, or brain-wash one and send it back into the crowd!' },
-    ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88, nofreeze: true, nobrain: true, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'Ghosts float over one gun. Ice and sound pass straight through them, but Solar Blast burns them double.' },
-    flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true, res: { bullet: 0, rock: 0, bomb: 0, spray: 1.5 }, tip: 'Flyers sail over everything. Bullets and rocks go underneath; a Handy Turret or ice shards bring them down.' },
-    moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12, res: { bomb: 1.5 }, tip: 'The Mole King drills underground: only blasts and rocks reach him until he pops up.' },
-    chompking:  { name: 'ChompKing',  hp: 900, speed: .05,  chomp: 50, size: 1.4,  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, motion: 'stomp', color: '#9ec9c0', boss: true, nobrain: true, res: { bomb: .5, ice: .5 }, halfFreeze: true, tip: 'ChompKing is huge: bombs only half-work and ice barely slows him. Keep shooting!' },
-    broodqueen: { name: 'Brood Queen', hp: 1300, speed: .04, chomp: 40, size: 1.4, from: 99, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, motion: 'stomp', color: '#c0acb6', boss: true, nobrain: true, brood: 9, res: { rock: 1.5, ring: .5 }, tip: 'The Brood Queen lays Skitters as she comes. Rocks hurt her most.' },
-    ghostking:  { name: 'Ghost King', hp: 1200, speed: .06, chomp: 35, size: 1.35, from: 99, look: { ok: 'ghostking' }, motion: 'float', color: '#aca9a2', boss: true, nobrain: true, nofreeze: true, pass: 2, alpha: .88, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'The Ghost King floats over two guns and shrugs off ice and sound. Light hurts him: Solar Blast!' },
-    sharky:     { name: 'Sharky',     hp: 2000, speed: .04, chomp: 90, size: 1.5, from: 99, look: { ok: 'sharky' }, motion: 'float', color: '#d9c48a', boss: true, nobrain: true, nofreeze: true, res: { bullet: .25, spray: .25, ice: 0, beam: 0, bomb: 1.5, blast: 1.5, rock: 1.25 }, tip: 'Sharky has thick skin: bullets barely scratch him. Bombs, blasts and rocks do the work.' },
+    kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, srig: 'kamikaze', rigFlip: true, sheet: { art: 'kamikaze/d', cell: 320, fig: 209, foot: .96 }, motion: 'roll', color: '#ddb8a4', boom: true, res: { bullet: 1.5, spray: 1.5 }, tip: 'Kamikazes blow up the guns they touch. Shoot early, or brain-wash one and send it back into the crowd!' },
+    ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, sheet: { art: 'ghost/d', cell: 320, fig: 173, foot: 0.853 }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88, nofreeze: true, nobrain: true, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'Ghosts float over one gun. Ice and sound pass straight through them, but Solar Blast burns them double.' },
+    flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, srig: 'flying', sheet: { art: 'flying/d', cell: 320, fig: 253, foot: 0.781 }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true, res: { bullet: 0, rock: 0, bomb: 0, spray: 1.5 }, tip: 'Flyers sail over everything. Bullets and rocks go underneath; a Handy Turret or ice shards bring them down.' },
+    moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, sheet: { art: 'moley/d', cell: 320, fig: 243, foot: 0.853 }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12, res: { bomb: 1.5 }, tip: 'The Mole King drills underground: only blasts and rocks reach him until he pops up.' },
+    chompking:  { name: 'ChompKing',  hp: 900, speed: .05,  chomp: 50, size: 1.4,  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, srig: 'chompking', sheet: { art: 'chompking/d', cell: 320, fig: 216, foot: 0.991 }, motion: 'stomp', color: '#9ec9c0', boss: true, nobrain: true, res: { bomb: .5, ice: .5 }, halfFreeze: true, tip: 'ChompKing is huge: bombs only half-work and ice barely slows him. Keep shooting!' },
+    broodqueen: { name: 'Brood Queen', hp: 1300, speed: .04, chomp: 40, size: 1.4, from: 99, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, srig: 'broodqueen', sheet: { art: 'broodqueen/d', cell: 320, fig: 228, foot: 0.981 }, motion: 'stomp', color: '#c0acb6', boss: true, nobrain: true, brood: 9, res: { rock: 1.5, ring: .5 }, tip: 'The Brood Queen lays Skitters as she comes. Rocks hurt her most.' },
+    ghostking:  { name: 'Ghost King', hp: 1200, speed: .06, chomp: 35, size: 1.35, from: 99, look: { ok: 'ghostking' }, srig: 'ghostking', sheet: { art: 'ghostking/d', cell: 320, fig: 236, foot: 0.909 }, motion: 'float', color: '#aca9a2', boss: true, nobrain: true, nofreeze: true, pass: 2, alpha: .88, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'The Ghost King floats over two guns and shrugs off ice and sound. Light hurts him: Solar Blast!' },
+    sharky:     { name: 'Sharky',     hp: 2000, speed: .04, chomp: 90, size: 1.5, from: 99, look: { ok: 'sharky' }, srig: 'sharky', sheet: { art: 'sharky/d', cell: 320, fig: 281, foot: 0.959 }, motion: 'float', color: '#d9c48a', boss: true, nobrain: true, nofreeze: true, res: { bullet: .25, spray: .25, ice: 0, beam: 0, bomb: 1.5, blast: 1.5, rock: 1.25 }, tip: 'Sharky has thick skin: bullets barely scratch him. Bombs, blasts and rocks do the work.' },
   };
   const resist = (sq, kind) => sq.k.res && sq.k.res[kind] != null ? sq.k.res[kind] : 1;
   // the worlds, as the planet trophies name them; each ends with a boss level
@@ -579,9 +579,12 @@ const Practice = (() => {
     else {
       let near = false; const row = S.grid[sq.row]; for (let c = Math.floor(sq.x) - 2; c <= Math.floor(sq.x); c++) if (c >= 0 && c < COLS && row[c] && sq.x - c < 1.6) near = true;
       if (near && Rig.has(rig, 'WalkSwell')) anim = 'WalkSwell';
-      const d = Rig.duration(rig, anim) || 1; t = (((COLS + 2 - sq.x) / 2.8 + sq.phase / 7) * d) % d;
+      const d = Rig.duration(rig, anim) || 1;
+      // a roller turns with the ground it covers; a walker keeps its own pace (the clock only runs while it moves)
+      t = sq.k.motion === 'roll' ? (((COLS + 2 - sq.x) / 2.8 + sq.phase / 7) * d) % d : (sq.wob + sq.phase) % d;
     }
-    g.save(); g.scale(-1, 1);   // the artist's Walk rolls to the right; our squishies roll left
+    if (!sq.k.rigFlip) return Rig.draw(g, rig, anim, t, ox, oy, sc);
+    g.save(); g.scale(-1, 1);   // the Kamikaze's Walk rolls to the right; our squishies roll left
     const okd = Rig.draw(g, rig, anim, t, -ox, oy, sc); g.restore(); return okd;
   }
   function drawSquishy(g, sq, x, y, s) {
@@ -643,7 +646,7 @@ const Practice = (() => {
       g.restore();
     }
     const crown = uiImg('crown');
-    if (k.boss && crown) { const cw = s * .4, ch = cw * crown.naturalHeight / crown.naturalWidth; g.drawImage(crown, x - cw / 2, foot - w * .95 - ch + Math.sin(sq.wob * 3) * s * .04 + mo.dy * s, cw, ch); }
+    if (k.boss && crown && !k.sheet) { const cw = s * .4, ch = cw * crown.naturalHeight / crown.naturalWidth; g.drawImage(crown, x - cw / 2, foot - w * .95 - ch + Math.sin(sq.wob * 3) * s * .04 + mo.dy * s, cw, ch); }
     if (k.boss) {   // boss health bar
       g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - w * .35, foot + s * .08, w * .7, s * .07);
       g.fillStyle = '#FF5D8F'; g.fillRect(x - w * .35, foot + s * .08, w * .7 * Math.max(0, sq.hp / k.hp), s * .07);

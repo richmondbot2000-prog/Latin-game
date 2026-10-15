@@ -69,18 +69,24 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   Fire plays after a shot, Idle between. Plasma Bomb and Brain Wash have no
   usable rig and stay as still pictures. Not used yet: Floaty, Generators.
   Art from the owner's folders: `art/squishies/` (incl. the rigged Antbun),
-  `art/ui/`, `art/trophies/`. **Rigged squishies**: the Kamikaze is a Spine
-  rig (`art/rigs/kamikaze.json+.png`, from the owner's Squishies/Kamikaze
-  Drive folder: Walk = rolling, WalkSwell near a gun, Attack; played by
-  `drawSqRig`, mirrored because the artist rolls to the right) while
-  healthy; below half health it shows the bruised frames of the artist's
-  3×3 death sheet (`art/squishies/kamikaze/d4-6.png`, cut by a scratch
-  script into 320px cells) and on death plays frames 7-9 (`sqdeath` fx).
-  Other squishies came as two flat pictures each, so they only bob and
-  melt; give a kind `srig` + `sheet` in `SQUISHIES` to rig it the same way
-  once its Drive folder (`<Name>.json`, `.atlas.txt`, `.png`, `<Name>Death.png`)
-  is shared. `scratchpad/export_sq.py` (in the session scratchpad, not the
-  repo) turned the Spine files into the rig format. Per-player counters live in
+  `art/ui/`, `art/trophies/`. **Rigged squishies** (the artist's Squishies
+Drive folder, id 1P6XWDzXcu_AHl6ooNK0PwGwcLf3s-Obw, inside the shared art
+root 1kSOzKEnj5_GiJhmTwQmwOnf6G2mL2iar): Chomp, Skitter, Flyer (FlyingFiend),
+Chomp King, Brood Queen, Ghost King, Sharky (SharkyBoss) and Kamikaze play
+their Spine rigs (`art/rigs/<key>.json+.png`) through `drawSqRig` while
+healthy: Walk on the squishy's own clock (`sq.wob`; a roller by distance),
+WalkSwell next to a gun, Attack while eating. Only the Kamikaze is mirrored
+(`rigFlip`). Every kind except the Antbun has `sheet` (the artist's 3×3
+`<Name>Death.png`, cut into `art/squishies/<key>/d1-9.png` at 320px; `fig` is
+the healthy figure's width, `foot` its baseline): frames 4-6 below half
+health, 7-9 on death (`sqdeath`). Ghost and Moley have no usable rig (no
+animation file / no atlas), so they walk as their flat pictures but still
+bruise and burst. Artist-drawn bosses wear their own crown, so the game's
+crown is skipped for them. The Antbun keeps its own parts rig. The rigs were
+converted by `scratchpad/export_sq2.py` (session scratchpad, not the repo):
+it straightens rotated atlas regions and repacks them at 0.25 scale. Not
+used yet from that folder: Unicorn, MoleKings, the small Sharky.
+Per-player counters live in
   `latin.practice.<id>` (kills, by_<type>, correct, asked, won, stars).
 - **Jacques Hammer** — a runner (`hammer.js`), portrait like the artist's mockup
   (works either way up). One wide board at a time scrolls in with a Latin word
