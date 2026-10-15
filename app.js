@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '90';
+const APP_VERSION = '91';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -557,7 +557,8 @@ function renderRead(u) {
 // translates to its English. When every blank is filled the next sentence comes; at the end of the story, fireworks.
 const PASSAGES = (() => { const by = {}; SENTENCES.forEach((s, n) => { if (s.p) (by[s.p] = by[s.p] || { id: s.p, title: s.pt, lv: s.lv || 0, lines: [] }).lines.push(n); }); return Object.values(by); })();
 const normWord = w => w.toLowerCase().replace(/[’']s$/, '').replace(/[^a-z0-9]/g, '');
-const sameWord = (a, b) => a === b || (a.length > 3 && (a === b + 's' || b === a + 's' || a === b + 'es' || b === a + 'es'));
+const stemWord = w => w.length > 4 ? w.replace(/(ing|ies|ed|es|s)$/, '') : w.length > 3 ? w.replace(/s$/, '') : w;
+const sameWord = (a, b) => a === b || (a.length > 3 && b.length > 3 && stemWord(a) === stemWord(b));
 function renderPassages(u) {
   Celebrate.stop();
   const key = 'latin.passages.' + u.id, sv = store.get(key, { done: {} });
@@ -577,7 +578,7 @@ function renderPassages(u) {
     <p class="rmsg" id="pmsg"></p>
   </div>`;
   $('#back').onclick = () => { stopRec(); location.hash = ''; };
-  let pas = null, at = 0, sent = null, flipped = [], filled = [], done = false, rec = null, listening = false, heard = 0;
+  let pas = null, at = 0, sent = null, flipped = [], filled = [], done = false, rec = null, listening = false, heard = 0, seen = [];
   const count = () => `${Object.keys(sv.done || {}).length}/${PASSAGES.length} read`;
   const words = () => sent.la.filter(t => t[1]);
   const enWords = () => sent.en.split(/\s+/).flatMap(w => w.split('-')).map(w => ({ show: w, n: normWord(w) })).filter(w => w.n);   // slave-girls is said as two words
@@ -647,19 +648,27 @@ function renderPassages(u) {
     'audio-capture': 'No microphone could be opened.', 'network': 'The speech service could not be reached — check the connection.', 'language-not-supported': 'English speech is not available on this phone.' };
   function startRec() {
     if (!SR || listening) return;
-    rec = new SR(); rec.lang = 'en-GB'; rec.interimResults = true; rec.maxAlternatives = 1; heard = 0;
+    rec = new SR(); rec.lang = 'en-GB'; rec.interimResults = true; rec.maxAlternatives = 3; heard = 0; seen = [];
     rec.continuous = !isIOS;   // iPhone Safari drops a continuous session after a few seconds: short sessions, restarted after each result, are steadier
     rec.onstart = () => { logEv('start'); setMic('Listening… say the English words'); };
     rec.onaudiostart = () => { logEv('audio'); setMic('Listening… (microphone open)'); };
     rec.onspeechstart = () => { logEv('speech'); setMic('Hearing you…'); }; rec.onnomatch = () => logEv('nomatch'); rec.onsoundstart = () => logEv('sound');
     rec.onresult = e => {
-      const all = []; for (let i = 0; i < e.results.length; i++) all.push(...e.results[i][0].transcript.split(/\s+/).filter(Boolean));
-      const fresh = all.slice(heard); heard = all.length; logEv('result ' + all.length + (e.results[e.results.length - 1].isFinal ? ' final' : ''));
+      // the phone rewrites the last few words as it listens ("Father" becomes "a farmer"): every word that is new
+      // or has changed since the last look is tried, and every alternative the recogniser offers for it
+      const all = []; let fresh = [];
+      for (let i = 0; i < e.results.length; i++) {
+        const alts = []; for (let a = 0; a < e.results[i].length; a++) alts.push(e.results[i][a].transcript.split(/\s+/).filter(Boolean));
+        const ws = alts[0] || [], old = seen[i] || [];
+        ws.forEach((w, k) => { if (old[k] !== w) { fresh.push(w); alts.slice(1).forEach(x => { if (x[k] && x[k] !== w) fresh.push(x[k]); }); } });
+        seen[i] = ws; all.push(...ws);
+      }
+      logEv('result ' + all.length + (e.results[e.results.length - 1].isFinal ? ' final' : ''));
       $('#heard').textContent = all.slice(-8).join(' ');
       fresh.forEach(say);
       setMic('Listening… say the English words');
     };
-    rec.onend = () => { logEv('end'); heard = 0; if (listening) setTimeout(() => { if (listening && rec) { try { rec.start(); } catch (err) { setMic('Could not restart listening (' + err.message + ') — tap the microphone again.'); listening = false; setMic(); } } }, 150); else setMic(''); };
+    rec.onend = () => { logEv('end'); heard = 0; seen = []; if (listening) setTimeout(() => { if (listening && rec) { try { rec.start(); } catch (err) { setMic('Could not restart listening (' + err.message + ') — tap the microphone again.'); listening = false; setMic(); } } }, 150); else setMic(''); };
     rec.onerror = ev => {
       logEv('error ' + ev.error);
       if (ev.error === 'no-speech' || ev.error === 'aborted') { setMic('Nothing heard yet — keep going'); return; }   // the session simply ends and restarts
