@@ -629,3 +629,11 @@ body.noscroll { overflow: hidden; }
 .giftcard .btitle { margin: 10px 0 4px; font-size: 26px; }
 .giftcard .belem { font-size: 26px; margin-top: 6px; }
 #pname { text-transform: uppercase; text-align: center; font-weight: 700; letter-spacing: .06em; }
+
+/* Read a book */
+.gamebanner.locked { filter: grayscale(.85) brightness(.8); }
+.gamebanner .corner { position: absolute; right: 10px; bottom: 10px; background: #2B1A3A; color: #fff; font: 700 13px/1 system-ui, sans-serif; padding: 6px 10px; border-radius: 999px; letter-spacing: .04em; }
+.gname.book { color: #FFE7B8; }
+.booktitle { text-align: center; margin: 0 0 6px; line-height: 1.2; }
+.booktitle b { display: block; font-size: 1.2rem; }
+.pline .ptr { font-size: .8rem; font-style: italic; color: var(--muted); font-weight: 400; }

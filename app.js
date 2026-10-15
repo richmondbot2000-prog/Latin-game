@@ -5,7 +5,7 @@ const mem = {};
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return k in mem ? mem[k] : d; } },
   set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
-    if (/^latin\.(progress|streak|level|practice|stats|hammer|read|beasts|passages)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
+    if (/^latin\.(progress|streak|level|practice|stats|hammer|read|beasts|passages|book)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
   del(k) { delete mem[k]; try { localStorage.removeItem(k); } catch (e) {} },
 };
 
@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '100';
+const APP_VERSION = '101';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -159,6 +159,7 @@ function route() {
   if (h === 'beasts') return renderBeasts(u);
   if (h === 'cards') return renderCardsHome(u);
   if (h === 'passages') return renderPassages(u);
+  if (h === 'book') return levelOf(u) === '3' ? renderPassages(u, true) : renderHome(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
@@ -496,6 +497,7 @@ function renderHome(u) {
       <h2>Read</h2>
       <button class="gamebanner" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span></button>
       <button class="gamebanner" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span></button>
+      <button class="gamebanner${levelOf(u) === '3' ? '' : ' locked'}" id="bookGo" style="background-image:url('art/banners/book.jpg')"><span class="gname book">Read a book</span>${levelOf(u) === '3' ? '' : '<span class="corner">Level 3</span>'}</button>
     </div>
     ${leaderboardHTML()}
     <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
@@ -518,6 +520,7 @@ function renderHome(u) {
   $('#readGo').onclick = () => { location.hash = 'read'; };
   $('#cardsGo').onclick = () => { location.hash = 'cards'; };
   $('#passGo').onclick = () => { location.hash = 'passages'; };
+  $('#bookGo').onclick = () => { if (levelOf(u) === '3') location.hash = 'book'; else flashHome('📖 The book opens at Level 3 — choose Level 3 above to read it.'); };
   $('#verline').onclick = () => { $('#verline').textContent = 'updating…'; freshen(); };
   checkVersion();
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
@@ -721,14 +724,16 @@ const PASSAGES = (() => { const by = {}; SENTENCES.forEach((s, n) => { if (s.p) 
 const normWord = w => w.toLowerCase().replace(/[’']s$/, '').replace(/[^a-z0-9]/g, '');
 const stemWord = w => w.length > 4 ? w.replace(/(ing|ies|ed|es|s)$/, '') : w.length > 3 ? w.replace(/s$/, '') : w;
 const sameWord = (a, b) => a === b || (a.length > 3 && b.length > 3 && stemWord(a) === stemWord(b));
-function renderPassages(u) {
+const BOOK_LINES = typeof BOOK !== 'undefined' ? BOOK.chapters.flatMap((c, ci) => c.sents.map((x, i) => ({ ...x, ch: ci, first: i === 0, lastInCh: i === c.sents.length - 1 }))) : [];
+function renderPassages(u, book = false) {
   Celebrate.stop();
-  const key = 'latin.passages.' + u.id, sv = store.get(key, { done: {} });
+  const key = book ? 'latin.book.' + u.id : 'latin.passages.' + u.id, sv = store.get(key, book ? { at: 0 } : { done: {} });
   const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   app.innerHTML = `
   <div class="wrap">
-    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Passages</span><span class="lvtag" id="pcount"></span></div>
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">${book ? 'Read a book' : 'Passages'}</span><span class="lvtag" id="pcount"></span></div>
+    ${book ? `<div class="booktitle"><b>${esc(BOOK.title)}</b><span class="small">${esc(BOOK.sub)}</span></div>` : ''}
     <div class="rtitle" id="ptitle"></div>
     <div class="pbox card" id="pbox"></div>
     <div class="pen" id="pen"></div>
@@ -742,22 +747,28 @@ function renderPassages(u) {
   </div>`;
   $('#back').onclick = () => { stopRec(); location.hash = ''; };
   let pas = null, at = 0, sent = null, flipped = [], filled = [], done = false, rec = null, listening = false, heard = 0, seen = [];
-  const count = () => `${Object.keys(sv.done || {}).length}/${PASSAGES.length} read`;
+  const count = () => book ? `${Math.min(sv.at || 0, BOOK_LINES.length)}/${BOOK_LINES.length}` : `${Object.keys(sv.done || {}).length}/${PASSAGES.length} read`;
+  const lineObj = k => book ? BOOK_LINES[k] : SENTENCES[pas.lines[k]];
   const words = () => sent.la.filter(t => t[1]);
   const enWords = () => sent.en.split(/\s+/).flatMap(w => w.split('-')).map(w => ({ show: w, n: normWord(w) })).filter(w => w.n);   // slave-girls is said as two words
   function pick() {
+    if (book) { pas = { id: 'book', title: BOOK.title, lines: BOOK_LINES.map((x, i) => i) }; at = Math.min(sv.at || 0, BOOK_LINES.length - 1); loadLine(); return; }
     const seen = sv.done || {}, fresh = PASSAGES.filter(p => !seen[p.id]);
     const list = fresh.length ? fresh : PASSAGES;
     pas = list[Math.floor(Math.random() * list.length)]; at = 0; loadLine();
   }
-  function loadLine() { sent = SENTENCES[pas.lines[at]]; flipped = words().map(() => false); filled = enWords().map(() => false); done = false; show(); }
+  function loadLine() { sent = lineObj(at); flipped = words().map(() => false); filled = enWords().map(() => false); done = false; show(); }
   function show() {
     $('#pcount').textContent = count();
-    $('#ptitle').innerHTML = `📖 <b>${esc(pas.title)}</b> <span class="small">· sentence ${at + 1} of ${pas.lines.length}</span>`;
+    const plain = s => esc(s.la.map(t => t[0]).join(' ').replace(/ ([,.;:?!])/g, '$1').replace(/" (.*?) "/g, '"$1"'));
+    if (book) { const ch = BOOK.chapters[sent.ch], start = BOOK_LINES.findIndex(x => x.ch === sent.ch); $('#ptitle').innerHTML = `📖 <b>${esc(ch.title)}</b> <span class="small">· ${esc(ch.en)} · sentence ${at - start + 1} of ${ch.sents.length}</span>`; }
+    else $('#ptitle').innerHTML = `📖 <b>${esc(pas.title)}</b> <span class="small">· sentence ${at + 1} of ${pas.lines.length}</span>`;
     const ws = words();
-    $('#pbox').innerHTML = pas.lines.map((n, k) => {
-      const s = SENTENCES[n];
-      if (k !== at) return `<div class="pline ${k < at ? 'past' : 'ahead'}">${esc(s.la.map(t => t[0]).join(' ').replace(/ ([,.;:?!])/g, '$1'))}</div>`;
+    // the book shows the three sentences just read (with their English) and the one coming; a passage shows all its lines
+    const shown = book ? pas.lines.filter(k => k >= at - 3 && k <= at + 1 && lineObj(k).ch === sent.ch) : pas.lines.map((n, k) => k);
+    $('#pbox').innerHTML = shown.map(k => {
+      const s = lineObj(k);
+      if (k !== at) return `<div class="pline ${k < at ? 'past' : 'ahead'}">${plain(s)}${book && k < at ? `<div class="ptr">${esc(s.en)}</div>` : ''}</div>`;
       return `<div class="pline cur">${s.la.map(t => { if (!t[1]) return `<span class="rp">${esc(t[0])}</span>`; const i = ws.indexOf(t); return `<button class="pw${flipped[i] ? ' flip' : ''}" data-i="${i}"><span class="f">${esc(t[0])}</span><span class="b">${esc(t[2])}</span></button>`; }).join(' ')}</div>`;
     }).join('');
     $('#pen').innerHTML = enWords().map((w, i) => `<span class="ew${filled[i] ? ' on' : ''}" style="--n:${w.n.length}">${filled[i] ? esc(w.show) : ''}</span>`).join(' ');
@@ -794,6 +805,13 @@ function renderPassages(u) {
     if (filled.every(Boolean)) {
       done = true; $('#pmsg').textContent = '⭐ ' + sent.en;
       const last = at >= pas.lines.length - 1;
+      if (book) {
+        sv.at = Math.max(sv.at || 0, at + 1); store.set(key, sv); $('#pcount').textContent = count();
+        if (last) { Celebrate(innerWidth / 2, innerHeight / 3, 2.6); $('#pen').insertAdjacentHTML('afterend', `<p class="small" style="text-align:center">That is the end of the book so far — more chapters are coming.</p><button class="btn" id="pnext">📖 Read it again from the start</button>`); $('#pnext').onclick = () => { $('#pnext').remove(); sv.at = 0; store.set(key, sv); $('#pmsg').textContent = ''; pick(); }; }
+        else if (sent.lastInCh) { Celebrate(innerWidth / 2, innerHeight / 3, 2.4); $('#pen').insertAdjacentHTML('afterend', `<button class="btn" id="pnext">🏆 Chapter finished — carry on</button>`); $('#pnext').onclick = () => { $('#pnext').remove(); $('#pmsg').textContent = ''; at++; loadLine(); }; }
+        else { Celebrate(innerWidth / 2, innerHeight / 3, 1.4); setTimeout(() => { if (done) { at++; $('#pmsg').textContent = ''; loadLine(); } }, 1200); }
+        return;
+      }
       if (last) {
         sv.done = sv.done || {}; sv.done[pas.id] = Date.now(); store.set(key, sv); $('#pcount').textContent = count();
         Celebrate(innerWidth / 2, innerHeight / 3, 2.6);

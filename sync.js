@@ -32,10 +32,10 @@ const Sync = (() => {
     store.set('latin.users', users().map(x => x.id === u.id ? { ...x, code: u.code } : x));
     return u.code;
   }
-  const KEYS = ['progress', 'streak', 'level', 'practice', 'stats', 'hammer', 'read', 'beasts', 'passages'];
+  const KEYS = ['progress', 'streak', 'level', 'practice', 'stats', 'hammer', 'read', 'beasts', 'passages', 'book'];
   const blobOf = u => ({ v: 1, updated: Date.now(), progress: store.get('latin.progress.' + u.id, {}), streak: store.get('latin.streak.' + u.id, null),
     level: store.get('latin.level.' + u.id, null), practice: store.get('latin.practice.' + u.id, null), stats: store.get('latin.stats.' + u.id, null),
-    hammer: store.get('latin.hammer.' + u.id, null), read: store.get('latin.read.' + u.id, null), beasts: store.get('latin.beasts.' + u.id, null), passages: store.get('latin.passages.' + u.id, null) });
+    hammer: store.get('latin.hammer.' + u.id, null), read: store.get('latin.read.' + u.id, null), beasts: store.get('latin.beasts.' + u.id, null), passages: store.get('latin.passages.' + u.id, null), book: store.get('latin.book.' + u.id, null) });
 
   // merge what the cloud has into this device: per word, keep the more recent answer
   function merge(u, remote) {
@@ -80,6 +80,9 @@ const Sync = (() => {
     // passages: a story read on either device counts
     const lps = store.get('latin.passages.' + u.id, null), rps = remote.passages;
     if (rps && rps.done) { const m = { done: { ...((lps && lps.done) || {}), ...rps.done } }; if (JSON.stringify(m) !== JSON.stringify(lps)) { store.set('latin.passages.' + u.id, m); changed = true; } }
+    // the book: the furthest sentence reached on either device
+    const lbk = store.get('latin.book.' + u.id, null), rbk = remote.book;
+    if (rbk && typeof rbk === 'object' && (rbk.at || 0) > ((lbk && lbk.at) || 0)) { store.set('latin.book.' + u.id, { ...(lbk || {}), at: rbk.at }); changed = true; }
     // beasts: every beast either device has found, at its furthest stage; the one being raised stays the local one
     const lb = store.get('latin.beasts.' + u.id, null), rb = remote.beasts;
     if (rb && typeof rb === 'object') {

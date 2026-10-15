@@ -128,6 +128,18 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   own 🎤 key, which works on every iPhone, including the home-screen app. All blanks filled → next sentence; last
   sentence → fireworks and the next passage. Progress `latin.passages.<id>`
   {done{p: time}}, synced as a union.
+- **Read a book** (`book.js`, `renderPassages(u, true)`, banner under Read,
+  greyed with a "Level 3" corner tag until the level is set to 3): *Puer et
+  Via Longa*, the owner's original Latin story, read sentence by sentence
+  with the Passages mechanic (speak or type the English; every Latin word
+  flips). `BOOK = { title, sub, chapters: [{ title, en, sents: [{ la, en }] }] }`;
+  tokens outside the 403 words carry an `x:form` id and just their gloss.
+  The three sentences just read stay above the current one with their
+  English; a chapter ends with "Chapter finished — carry on", the book's
+  end offers a re-read. Place kept in `latin.book.<id>` {at}, synced by max.
+  Built by `scratchpad/build_book.py` (session scratchpad): one line per
+  sentence in `form/gloss[=headword]` notation plus the translation; add
+  chapters there and rebuild. Two chapters so far (69 sentences).
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Each level is one long day on a planet (`WORLDS` in `practice.js`,
