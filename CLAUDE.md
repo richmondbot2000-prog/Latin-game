@@ -181,9 +181,12 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   walking"); is/are/was/were → est/sunt/erat/erant when not a helper;
   has/have/had as a main verb → habeo. `BLOCK` lists English words never
   converted (too many meanings: like, well, even, so, there, left, kind…).
-  **The reader** (`read(text)` in `renderSnap`): white paper, black text,
-  serif or sans and three sizes (`latin.reader` {font, size}, the `.rtool`
-  row), the page's paragraph breaks kept (`\n\n` from the recogniser's
+  **The reader** (`read(text)` in `renderSnap`; `html.readermode` turns the
+  whole screen white, `.reader` max 42rem, 20px gutters, no card): a thin
+  head with ← Home, "n of m" and one **Aa** button that opens a bottom
+  sheet (`.aasheet`) with Serif / Sans and three sizes (`latin.reader`
+  {font, size}; 16 / 18 / 21px, line height 1.55, like Apple Books and
+  Kindle), the page's paragraph breaks kept (`\n\n` from the recogniser's
   paragraphs), junk words (low confidence, no vowels, stray symbols)
   dropped. Latin words are bold `.lw`; the word in focus is highlighted
   yellow and a `.pop` box floats under it with **three meanings** (the

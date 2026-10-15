@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '109';
+const APP_VERSION = '110';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -920,11 +920,12 @@ function renderSnap(u) {
   const key = 'latin.snap.' + u.id, sv = store.get(key, { pages: 0, words: 0, last: '' });
   const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
   const lv = levelOf(u), pool = activeWords(u);
-  app.innerHTML = `
+  const shell = () => `
   <div class="wrap">
     <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Snap a page</span><span class="lvtag" id="pcount">${sv.pages ? sv.pages + ' page' + (sv.pages === 1 ? '' : 's') : ''}</span></div>
     <div id="snapmain"></div>
   </div>`;
+  app.innerHTML = shell();
   $('#back').onclick = () => { if (stop) stop(); location.hash = ''; };
   let stop = null;
   function start(msg) {
@@ -977,13 +978,19 @@ function renderSnap(u) {
       const all = [gloss, ...pick]; for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }
       return all;
     };
-    $('#snapmain').innerHTML = `
-      <div class="readerbar"><span class="small" id="rprog"></span><div class="rtools">
-        <button class="rtool${rs.font === 'serif' ? ' on' : ''}" data-font="serif" style="font-family:Georgia,serif">Aa</button><button class="rtool${rs.font === 'sans' ? ' on' : ''}" data-font="sans" style="font-family:system-ui,sans-serif">Aa</button>
-        <span class="rsep"></span><button class="rtool sz1${rs.size === 1 ? ' on' : ''}" data-size="1">A</button><button class="rtool sz2${rs.size === 2 ? ' on' : ''}" data-size="2">A</button><button class="rtool sz3${rs.size === 3 ? ' on' : ''}" data-size="3">A</button></div></div>
+    document.documentElement.classList.add('readermode');
+    window.addEventListener('hashchange', () => document.documentElement.classList.remove('readermode'), { once: true });
+    app.innerHTML = `<div class="reader">
+      <div class="rhead"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="rpos" id="rprog"></span><button class="rtool aa" id="aaBtn" aria-label="Text settings">Aa</button></div>
       <div class="paper ${rs.font} size${rs.size}" id="paper"></div>
-      <p class="rmsg" id="pmsg"></p>`;
-    document.querySelectorAll('.rtool').forEach(b => { b.onclick = () => { if (b.dataset.font) rs.font = b.dataset.font; else rs.size = +b.dataset.size; saveRS(); document.querySelectorAll('.rtool').forEach(x => x.classList.toggle('on', x.dataset.font ? x.dataset.font === rs.font : +x.dataset.size === rs.size)); $('#paper').className = `paper ${rs.font} size${rs.size}`; place(); }; });
+      <p class="rmsg" id="pmsg"></p>
+      <div class="aasheet" id="aasheet" hidden><div class="rtools">
+        <button class="rtool${rs.font === 'serif' ? ' on' : ''}" data-font="serif" style="font-family:Georgia,serif">Serif</button><button class="rtool${rs.font === 'sans' ? ' on' : ''}" data-font="sans" style="font-family:system-ui,sans-serif">Sans</button>
+        <span class="rsep"></span><button class="rtool sz1${rs.size === 1 ? ' on' : ''}" data-size="1">A</button><button class="rtool sz2${rs.size === 2 ? ' on' : ''}" data-size="2">A</button><button class="rtool sz3${rs.size === 3 ? ' on' : ''}" data-size="3">A</button></div></div>
+    </div>`;
+    $('#back').onclick = () => { document.documentElement.classList.remove('readermode'); location.hash = ''; };
+    $('#aaBtn').onclick = () => { $('#aasheet').hidden = !$('#aasheet').hidden; };
+    document.querySelectorAll('.rtool[data-font], .rtool[data-size]').forEach(b => { b.onclick = () => { if (b.dataset.font) rs.font = b.dataset.font; else rs.size = +b.dataset.size; saveRS(); document.querySelectorAll('.rtool[data-font], .rtool[data-size]').forEach(x => x.classList.toggle('on', x.dataset.font ? x.dataset.font === rs.font : +x.dataset.size === rs.size)); $('#paper').className = `paper ${rs.font} size${rs.size}`; place(); }; });
     let html = '', k = 0, prevEnd = -1, open = true;
     html += '<p>';
     for (const s of sents) {
@@ -1001,7 +1008,7 @@ function renderSnap(u) {
     $('#paper').innerHTML = html + '<div class="pop" id="pop" hidden></div>';
     const lw = i => $('#paper').querySelector(`.lw[data-i="${i}"]`);
     function show() {
-      $('#rprog').textContent = `${state.filter(Boolean).length} / ${toks.length} words · ${right} right`;
+      $('#rprog').textContent = `${state.filter(Boolean).length} of ${toks.length}`;
       toks.forEach((t, i) => { const el = lw(i); if (!el) return; el.className = 'lw' + (i === focus && !done ? ' focus' : '') + (state[i] === 1 ? ' ok' : state[i] === -1 ? ' bad' : ''); if (state[i]) { el.textContent = t.gloss || t.en; el.title = t.la; } else el.textContent = t.la; });
       if (done) { $('#pop').hidden = true; return; }
       const t = toks[focus];
@@ -1035,11 +1042,10 @@ function renderSnap(u) {
     }
     function finish() {
       done = true; sv.pages = (sv.pages || 0) + 1; sv.words = (sv.words || 0) + toks.length; store.set(key, sv);
-      $('#pcount').textContent = sv.pages + ' page' + (sv.pages === 1 ? '' : 's');
       show(); Celebrate(innerWidth / 2, innerHeight / 3, 2.6);
       $('#pmsg').innerHTML = `🏆 Page finished — ${right} of ${toks.length} right`;
       $('#pmsg').insertAdjacentHTML('afterend', `<div class="snapbtns"><button class="btn" id="pnext">📷 Another page</button><button class="btn ghost" id="pagain">↩ Read it again</button></div>`);
-      $('#pnext').onclick = () => start(); $('#pagain').onclick = () => read(text);
+      $('#pnext').onclick = () => { document.documentElement.classList.remove('readermode'); app.innerHTML = shell(); $('#back').onclick = () => { location.hash = ''; }; start(); }; $('#pagain').onclick = () => read(text);
     }
     $('#paper').onclick = e => { const el = e.target.closest('.lw'); if (!el || done) return; const i = +el.dataset.i; if (!state[i]) { focus = i; show(); } };   // tap any word to jump to it
     window.addEventListener('resize', place);
