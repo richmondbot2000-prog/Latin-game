@@ -257,7 +257,13 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   link or number (that book joins the shelf). Books are kept on the phone
   in the `latin-books` cache (the service worker keeps it across updates);
   the game re-asks once and trims itself if a book ever arrives with the
-  licence text still in it. Pages of ~200 words broken between paragraphs
+  licence text still in it. Opening can't hang (`getBook` / `open`): the
+  response is read once as text (no `clone()`: Safari can stall a split
+  body) and saved to the cache in the background, never awaited; the Cache
+  API is raced against 2 s, the download aborts after 25 s; any failure, or
+  an error while paging, shows the message with **Try again** (fresh from
+  the worker, the saved copy deleted). Tested by `scratchpad/stuck3.js`
+  (normal, saved copy, a Cache API that never answers, offline + retry). Pages of ~200 words broken between paragraphs
   (`paginate`; a picture counts 70 words and stays with the text after it;
   a page never ends on a heading). In the reader (`read(text, { label,
   back, next, done, pic })`) pictures stand in the text as `IMGMARKn` (in

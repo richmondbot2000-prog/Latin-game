@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '114';
+const APP_VERSION = '115';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1152,15 +1152,27 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       $('#lopen').onsubmit = e => { e.preventDefault(); const m = $('#lurl').value.match(/(?:ebooks\/|epub\/|pg|files\/|^\s*)(\d{1,6})/); if (!m) return shelf('That doesn’t look like a Project Gutenberg book — paste a link like gutenberg.org/ebooks/67098, or just the number.'); open(+m[1]); };
     }
     // the book's text, from the phone's own copy if it has one
-    async function getBook(id) {
+    // the book's text: the phone's own copy if it has one, else from the worker. Read once (no clone: Safari can stall a
+    // split response), saved in the background (never waited for), every step with a time limit so nothing can hang
+    const within = (ms, p) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error('timeout')), ms))]);
+    async function getBook(id, fresh) {
       const url = BOOK_URL(id);
-      let c = null; try { c = await caches.open('latin-books'); const hit = await c.match(url); if (hit) return await hit.json(); } catch (e) {}
+      let c = null;
+      if (!fresh) try { c = await within(2000, caches.open('latin-books')); const hit = await within(2000, c.match(url)); if (hit) { const j = JSON.parse(await within(4000, hit.text())); if (j && j.text) return j; } } catch (e) { c = null; }
       const stale = j => /\*\*\* ?START OF/.test(j.text.slice(0, 20000));   // an old copy from before the worker cut the licence text
-      let r = await fetch(url); if (!r.ok) throw new Error(r.status === 404 ? 'That book could not be found on Project Gutenberg' : 'The library could not be reached');
-      let j = await r.clone().json();
-      if (stale(j)) { await new Promise(ok => setTimeout(ok, 1200)); const r2 = await fetch(url, { cache: 'reload' }); if (r2.ok) { r = r2; j = await r.clone().json(); } }
+      const load = async (opt = {}) => {
+        const ctl = window.AbortController ? new AbortController() : null, timer = setTimeout(() => ctl && ctl.abort(), 25000);
+        try {
+          const r = await fetch(url, Object.assign({ signal: ctl && ctl.signal }, opt));
+          if (!r.ok) throw new Error(r.status === 404 ? 'That book could not be found on Project Gutenberg' : 'The library could not be reached');
+          return await r.text();
+        } catch (err) { throw err.name === 'AbortError' ? new Error('The book took too long to arrive — check the connection') : err.message === 'Load failed' || err.message === 'Failed to fetch' ? new Error('The library could not be reached — check the connection') : err; }
+        finally { clearTimeout(timer); }
+      };
+      let body = await load(), j = JSON.parse(body);
+      if (stale(j)) { await new Promise(ok => setTimeout(ok, 1200)); try { body = await load({ cache: 'reload' }); j = JSON.parse(body); } catch (e) {} }
       if (stale(j)) { const ps = j.text.split('\n\n'), k = ps.map((p, i) => /\*\*\* ?START OF/.test(p) ? i : -1).filter(i => i >= 0).pop(); j.text = ps.slice(k + 1).join('\n\n'); return j; }   // trimmed here, not kept
-      try { if (c) await c.put(url, r); } catch (e) {}
+      (async () => { try { const cc = c || await within(3000, caches.open('latin-books')); await within(10000, cc.put(url, new Response(body, { headers: { 'Content-Type': 'application/json' } }))); } catch (e) {} })();
       return j;
     }
     // pages of about 200 words, broken between paragraphs (a very long paragraph between sentences)
@@ -1180,12 +1192,17 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       push();
       return out;
     }
-    async function open(id) {
+    async function open(id, fresh) {
       document.documentElement.classList.add('readermode'); applyDark();
       app.innerHTML = `<div class="libpage"><div class="rhead"><button class="iconbtn" id="back">← Books</button><span></span><span style="width:44px"></span></div><p class="lload">Opening the book…</p></div>`;
       $('#back').onclick = () => shelf();
-      let book; try { book = await getBook(id); } catch (e) { return shelf(e.message + '.'); }
-      if (!book || !book.text) return shelf('That book has no text that can be read here.');
+      // anything that goes wrong shows a message and a way on, never a frozen "Opening the book…"
+      const fail = (msg, fresh) => { const el = app.querySelector('.lload'); if (!el) return; el.innerHTML = `${esc(msg)}<br><br><button class="rchoice main" id="lretry">Try again</button>`; $('#lretry').onclick = () => open(id, true); };
+      const slow = setTimeout(() => { const el = app.querySelector('.lload'); if (el && !el.dataset.n) { el.dataset.n = 1; el.insertAdjacentHTML('beforeend', '<br><span class="small">Still fetching the book…</span>'); } }, 6000);
+      let book; try { book = await getBook(id, fresh); } catch (e) { clearTimeout(slow); return fail((e.message || 'The book could not be opened') + '.'); }
+      clearTimeout(slow);
+      if (!book || !book.text) return fail('That book has no text that can be read here.');
+      try {
       const pages = paginate(book.text), b = lib.books[id] = Object.assign({ at: 0 }, lib.books[id] || {}, { title: book.title, author: book.author, pages: pages.length, pics: book.pics || 0 });
       b.at = Math.min(b.at, pages.length - 1); lib.last = id; saveLib();
       const page = () => { const here = b.at; read(pages[here], { label: `p. ${here + 1}/${pages.length}`, back: () => shelf(), pic: src => PIC_URL(id, src),
@@ -1193,6 +1210,11 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
         next: here + 1 < pages.length ? () => { page2(); } : null }); };
       const page2 = () => { b.at = Math.min(b.at, pages.length - 1); page(); scrollTo(0, 0); };
       page();
+      } catch (e) {
+        // show what went wrong so it can be reported; a fresh copy from the library on Try again
+        app.innerHTML = `<div class="libpage"><div class="rhead"><button class="iconbtn" id="back">← Books</button><span></span><span style="width:44px"></span></div><p class="lload">The book could not be shown (${esc(String(e && e.message || e))}).<br><br><button class="rchoice main" id="lretry">Try again</button></p></div>`;
+        $('#back').onclick = () => shelf(); $('#lretry').onclick = () => { try { caches.open('latin-books').then(c => c.delete(BOOK_URL(id))); } catch (er) {} open(id, true); };
+      }
     }
     shelf();
   }
