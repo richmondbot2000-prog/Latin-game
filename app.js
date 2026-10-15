@@ -5,7 +5,7 @@ const mem = {};
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return k in mem ? mem[k] : d; } },
   set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
-    if (/^latin\.(progress|streak|level|practice|stats|hammer|read)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
+    if (/^latin\.(progress|streak|level|practice|stats|hammer|read|beasts)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
   del(k) { delete mem[k]; try { localStorage.removeItem(k); } catch (e) {} },
 };
 
@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '81';
+const APP_VERSION = '82';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -154,6 +154,7 @@ function route() {
   if (h === 'hammer') return renderHammer(u);
   if (h === 'hammer-items') return renderHammer(u, true);
   if (h === 'read') return renderRead(u);
+  if (h === 'beasts') return renderBeasts(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
@@ -359,6 +360,7 @@ function renderHome(u) {
       <h2>Organise</h2>
       <button class="gamebanner" data-t="play" style="background-image:url('art/banners/cards.jpg')"><span class="gname cards">Cards</span></button>
       <button class="gamebanner" data-t="list" style="background-image:url('art/banners/wordlist.jpg')"><span class="gname list">Word list</span></button>
+      <button class="gamebanner" data-t="beasts" style="background-image:url('art/banners/beastpedia.jpg')"><span class="gname beasts">Beastpedia</span></button>
     </div>
     <div class="tile prac2" id="readtile">
       <h2>Read</h2>
@@ -394,9 +396,44 @@ function renderHome(u) {
   };
   $('#org').onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.t === 'beasts') { location.hash = 'beasts'; return; }
     store.set('latin.orgTab', b.dataset.t); location.hash = b.dataset.t;
   };
   $('#who').onclick = () => { store.del('latin.current'); route(); };
+}
+
+/* ---------- Beastpedia: every beast found so far, and the shadows of the ones still to find ---------- */
+function renderBeasts(u) {
+  Celebrate.stop();
+  app.innerHTML = `
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Beastpedia</span><span class="lvtag" id="bcount"></span></div>
+    <div id="pane" class="pedia"><p class="small" style="text-align:center">Loading…</p></div>
+  </div>`;
+  $('#back').onclick = () => { location.hash = ''; };
+  Beasts.load().then(() => {
+    const pane = $('#pane'); if (!pane) return;
+    const s = Beasts.state(u), c = Beasts.companion(u);
+    $('#bcount').textContent = Beasts.count(u) + ' / ' + Beasts.totalStages();
+    const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy"></button>`;
+    pane.innerHTML = `
+      ${c ? `<button class="pal big" id="buddy"><img class="bpic" src="${Beasts.img(c.beast, c.stage)}" alt=""><span class="btxt"><b>${esc(c.beast.stages[c.stage].name)}</b>${c.last ? '<span class="small">Fully grown!</span>' : `<span class="xp"><i style="width:${Math.round(100 * c.xp / c.need)}%"></i></span><span class="small">${c.xp} / ${c.need} right answers ${c.beast.stages[c.stage].s === 'egg' ? 'to hatch' : 'to grow'}</span>`}</span></button>` : `<p class="small" style="text-align:center">Every right answer on the cards hatches and grows your beasts. ${Beasts.totalStages()} to collect!</p>`}
+      <div class="bgrid">${Beasts.list().map(b => b.stages.map((st, i) => circ(b, i, b.key in s.have && (s.have[b.key] || 0) >= i)).join('')).join('')}</div>`;
+    pane.onclick = e => {
+      const bt = e.target.closest('.bc'); if (!bt) return;
+      const b = Beasts.byKey(bt.dataset.k), i = +bt.dataset.i;
+      if (bt.classList.contains('unknown')) { bt.classList.remove('nudge'); void bt.offsetWidth; bt.classList.add('nudge'); return; }
+      const st = b.stages[i], el = Beasts.ELEMENT[b.el] || ['', ''];
+      sheet.innerHTML = `<div class="panel bsheet" role="dialog" aria-modal="true" aria-label="${esc(st.name)}">
+          <img class="bbig" src="${Beasts.img(b, i)}" alt="">
+          <div class="bname">${esc(st.name)}</div>
+          <div class="small">${Beasts.STAGE[st.s]} · ${el[0]} ${el[1]}</div>
+          <p class="becol">${esc(st.desc)}</p>
+          <button class="btn" id="bOk">Close</button></div>`;
+      sheet.hidden = false;
+      $('#bOk').onclick = closeSheet; sheet.onclick = ev => { if (ev.target === sheet) closeSheet(); };
+    };
+  });
 }
 
 /* ---------- read: sentences, one word at a time ---------- */
@@ -601,11 +638,49 @@ function renderPlay(u, pane) {
   const st = store.get(streakKey(u), { cur: 0, best: 0 });
   pane.innerHTML = `
     <div class="streakbar"><div class="streak" id="streak"><span class="fire">🔥</span><span class="n" id="sn">0</span><span class="lbl">in a row</span></div><div class="best" id="best"></div></div>
+    <button class="pal" id="buddy" aria-label="Your beast"></button>
     <div class="score"><span id="sc">Swipe to answer</span><span id="left"></span></div>
     <div class="deck" id="deck"></div>
+    <div class="combo" id="combo" aria-live="polite"></div>
     <div class="answer"><button class="no" id="no">✗ Wrong</button><button class="yes" id="yes">Right ✓</button></div>
-    <p class="hint">Does the Latin word mean the English? Swipe right for <b>right</b>, left for <b>wrong</b>.</p>`;
+    <p class="hint">Does the Latin word mean the English? Swipe right for <b>right</b>, left for <b>wrong</b>, up if you <b>don't know</b>.</p>`;
   const deck = $('#deck', pane);
+  // the scene behind the cards follows the element of the beast being raised; the bar above the cards shows it growing
+  const setScene = () => { pane.className = 'play scene-' + Beasts.scene(u); };
+  function buddy() {
+    const el = $('#buddy', pane); if (!el) return;
+    const c = Beasts.companion(u);
+    if (!c) { el.innerHTML = Beasts.list().length ? `<span class="bpic egg">🥚</span><span class="btxt"><b>Your next egg is waiting</b><span class="small">Get a card right to find it</span></span>` : ''; return; }
+    const st = c.beast.stages[c.stage], to = c.last ? '' : (st.s === 'egg' ? 'to hatch' : 'to grow');
+    el.innerHTML = `<img class="bpic" src="${Beasts.img(c.beast, c.stage)}" alt=""><span class="btxt"><b>${esc(st.name)}</b>${c.last ? '<span class="small">Fully grown! Keep going for a new egg.</span>' : `<span class="xp"><i style="width:${Math.round(100 * c.xp / c.need)}%"></i></span><span class="small">${c.xp} / ${c.need} ${to}</span>`}</span>`;
+  }
+  $('#buddy', pane).onclick = () => { location.hash = 'beasts'; };
+  Beasts.load().then(() => { if (document.body.contains(pane)) { setScene(); buddy(); } });
+  const COMBO = ['SWEET!', 'SICKKK!', 'MAGIC!', 'PERFECT!'];
+  function combo(n) {
+    const word = n === 3 ? 'SWEET!' : n === 5 ? 'SICKKK!' : n === 8 ? 'MAGIC!' : n === 10 ? 'PERFECT!' : n > 10 && n % 5 === 0 ? COMBO[(n / 5) % 4] : null;
+    if (!word) return;
+    const el = $('#combo', pane); el.textContent = word; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  }
+  // the egg or growth card: the artist's fanfare — trumpets and confetti for a new egg, a white glow for a growth
+  function showBeast(ev, done) {
+    const b = ev.beast, st = b.stages[ev.stage], el = Beasts.ELEMENT[b.el] || ['', ''];
+    const prev = ev.kind === 'grow' ? Beasts.img(b, ev.stage - 1) : null;
+    deck.innerHTML = `<div class="card beast ${ev.kind}" id="beastCard">
+        <div class="btitle">${ev.kind === 'egg' ? 'NEW' : 'EVOLVING'}</div>
+        <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt="${esc(st.name)}">${prev ? `<img class="bold" src="${prev}" alt="">` : ''}<span class="glow"></span></div>
+        <div class="ribbon"><span>${esc(st.name)}</span></div>
+        <div class="belem" title="${el[1]}">${el[0]}</div>
+        <div class="small btap">Tap to carry on</div>
+      </div>${ev.kind === 'egg' ? `<img class="trumpets l" src="art/beasts/trumpets_l.png" alt=""><img class="trumpets r" src="art/beasts/trumpets_r.png" alt="">` : ''}`;
+    const r = deck.getBoundingClientRect();
+    if (ev.kind === 'egg') { Celebrate(r.left + r.width / 2, r.top + 10, 2.6); flash(ev.stage === 0 ? '🥚 You found an egg!' : ''); }
+    else setTimeout(() => Celebrate(r.left + r.width / 2, r.top + r.height * .4, 1.8), 700);
+    setScene(); buddy();
+    const go = () => { deck.onclick = null; done(); };
+    deck.onclick = go;
+    setTimeout(() => { if (deck.onclick === go) { /* still showing: leave it until tapped */ } }, 4000);
+  }
   document.querySelectorAll('.toast').forEach(t => t.remove());
   const toast = document.createElement('div'); toast.className = 'toast'; document.body.appendChild(toast);
 
@@ -641,12 +716,14 @@ function renderPlay(u, pane) {
   }
   const cardHTML = (c, p, top) => `
       <div class="card${top ? '' : ' under'}" ${top ? 'id="top"' : 'aria-hidden="true"'} data-kind="${c.w.kind}">
+        <div class="orn top"><span class="num">${seen + (top ? 1 : 2)}</span></div>
+        <div class="orn bottom"></div>
         <div class="cstars">${starsHTML((p[c.w.id] && p[c.w.id].s) || 0)}</div>
         ${phraseFor(c.w) ? `<div class="phrase">${phraseHTML(phraseFor(c.w).la)}</div>` : ''}
         <div class="kind">${c.w.kind}</div>
-        ${top ? '<span class="stamp yes">RIGHT</span><span class="stamp no">WRONG</span>' : ''}
+        ${top ? '<span class="stamp yes">✓</span><span class="stamp no">✗</span>' : ''}
         <div class="lat">${esc(c.form ? c.form.la : c.w.show)}</div>
-        <div class="means">means</div>
+        <div class="rule"></div>
         <div class="en">${esc(c.shown)}</div>
       </div>`;
   function next() {
@@ -659,8 +736,8 @@ function renderPlay(u, pane) {
     }
     pending = prepare();
     deck.innerHTML = (pending ? cardHTML(pending, p, false) : '<div class="card under" aria-hidden="true"></div>') + cardHTML(card, p, true);
-    drawFrame();
     attachSwipe($('#top', deck));
+    buddy();
     busy = false;
   }
   function answer(saysMatch) {
@@ -672,18 +749,20 @@ function renderPlay(u, pane) {
     seen++;
     const hadStars = (getProg(u)[w.id] || {}).s || 0;
     const pw = recordAnswer(u, w, ok);
+    let ev = null;
     if (ok) {
       st.cur++; st.best = Math.max(st.best, st.cur);
       const big = st.cur % 10 === 0 ? 2.4 : st.cur % 5 === 0 ? 1.7 : 1;
       const r = deck.getBoundingClientRect();
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
-      right++;
+      right++; combo(st.cur);
+      ev = Beasts.onRight(u);
       if (pw.s === 5) flash(`🏆 ${w.show} mastered! Resting for a month`); else if (pw.s >= 2) flash(`⭐ ${pw.s} stars — back in ${restText(REST[pw.s])}`);
     } else st.cur = 0;
     store.set(streakKey(u), st);
     showStreak(ok);
     $('#sc', pane).textContent = `${right} / ${seen} right this time`;
-    if (ok) setTimeout(next, 120);
+    if (ok) setTimeout(ev ? () => showBeast(ev, next) : next, 120);
     else {
       const v = (match
         ? `Oops — “${esc(la)}” really does mean “${esc(shown)}”.`
@@ -692,10 +771,15 @@ function renderPlay(u, pane) {
     }
   }
   function fly(el, dir) {
-    el.classList.add('anim');
-    el.style.transform = `translateX(${dir * (window.innerWidth + 200)}px) rotate(${dir * 30}deg)`;
-    el.style.opacity = '0';
-    setTimeout(() => answer(dir > 0), 200);
+    const ok = card && (dir > 0) === card.match;
+    el.classList.add('judged', ok ? 'ok' : 'bad');
+    el.insertAdjacentHTML('beforeend', `<span class="badge ${ok ? 'ok' : 'bad'}">${ok ? '✓' : '✗'}</span>`);
+    setTimeout(() => {
+      el.classList.add('anim');
+      el.style.transform = `translateX(${dir * (window.innerWidth + 200)}px) rotate(${dir * 30}deg)`;
+      el.style.opacity = '0';
+    }, 260);
+    setTimeout(() => answer(dir > 0), 480);
   }
   function attachSwipe(el) {
     let x0 = null, y0 = 0, dx = 0, t0 = 0, id = null;
@@ -717,7 +801,9 @@ function renderPlay(u, pane) {
       if (x0 === null || e.pointerId !== id) return;
       x0 = null; el.classList.remove('dragging');
       const v = Math.abs(dx) / Math.max(1, performance.now() - t0);
+      const dyUp = y0 - e.clientY;
       if (Math.abs(dx) > 90 || (Math.abs(dx) > 30 && v > 0.5)) { busy = true; fly(el, dx > 0 ? 1 : -1); }
+      else if (dyUp > 70 && Math.abs(dx) < 60) { el.classList.add('anim'); el.style.transform = ''; flip(el); }   // swipe up: "I don't know" — turn the card over
       else { el.classList.add('anim'); el.style.transform = ''; yes.style.opacity = 0; no.style.opacity = 0; if (Math.abs(dx) < 8 && Math.abs(e.clientY - y0) < 8 && performance.now() - t0 < 400) flip(el); }
     };
     el.addEventListener('pointerup', end);
@@ -759,12 +845,6 @@ function renderPlay(u, pane) {
     if (bump === true) el.classList.add('pop');
     if (bump === false) el.classList.add('zero');
   }
-  function drawFrame() {
-    for (const el of deck.querySelectorAll('.card[data-kind]')) {
-      const old = $('.frame', el); if (old) old.remove();
-      el.insertAdjacentHTML('afterbegin', frameSVG(el.dataset.kind, el.clientWidth, el.clientHeight));
-    }
-  }
   function flash(msg) {
     toast.textContent = msg; toast.classList.add('show');
     clearTimeout(flash.t); flash.t = setTimeout(() => toast.classList.remove('show'), 900);
@@ -777,8 +857,6 @@ function renderPlay(u, pane) {
     if (e.key === 'ArrowLeft') button(-1);
   };
   document.addEventListener('keydown', keys);
-  const onResize = () => { if (!document.body.contains(deck)) return removeEventListener('resize', onResize); drawFrame(); };
-  addEventListener('resize', onResize);
   showStreak();
   next();
 }

@@ -32,10 +32,10 @@ const Sync = (() => {
     store.set('latin.users', users().map(x => x.id === u.id ? { ...x, code: u.code } : x));
     return u.code;
   }
-  const KEYS = ['progress', 'streak', 'level', 'practice', 'stats', 'hammer', 'read'];
+  const KEYS = ['progress', 'streak', 'level', 'practice', 'stats', 'hammer', 'read', 'beasts'];
   const blobOf = u => ({ v: 1, updated: Date.now(), progress: store.get('latin.progress.' + u.id, {}), streak: store.get('latin.streak.' + u.id, null),
     level: store.get('latin.level.' + u.id, null), practice: store.get('latin.practice.' + u.id, null), stats: store.get('latin.stats.' + u.id, null),
-    hammer: store.get('latin.hammer.' + u.id, null), read: store.get('latin.read.' + u.id, null) });
+    hammer: store.get('latin.hammer.' + u.id, null), read: store.get('latin.read.' + u.id, null), beasts: store.get('latin.beasts.' + u.id, null) });
 
   // merge what the cloud has into this device: per word, keep the more recent answer
   function merge(u, remote) {
@@ -76,6 +76,14 @@ const Sync = (() => {
       const a = lr || { done: {}, read: 0 }, m = { ...a, done: { ...(a.done || {}) }, read: Math.max(a.read || 0, rr.read || 0) };
       for (const n in rr.done || {}) if (!m.done[n] || m.done[n] < rr.done[n]) m.done[n] = rr.done[n];
       if (JSON.stringify(m) !== JSON.stringify(lr)) { store.set('latin.read.' + u.id, m); changed = true; }
+    }
+    // beasts: every beast either device has found, at its furthest stage; the one being raised stays the local one
+    const lb = store.get('latin.beasts.' + u.id, null), rb = remote.beasts;
+    if (rb && typeof rb === 'object') {
+      const a = lb || { have: {}, order: [], cur: null, xp: 0, total: 0 }, m = { ...a, have: { ...(a.have || {}) }, order: [...(a.order || [])], total: Math.max(a.total || 0, rb.total || 0) };
+      for (const k in (rb.have || {})) { m.have[k] = Math.max(m.have[k] || 0, rb.have[k] || 0); if (!m.order.includes(k)) m.order.push(k); }
+      if (!m.cur && rb.cur) { m.cur = rb.cur; m.xp = rb.xp || 0; } else if (m.cur && m.cur === rb.cur) m.xp = Math.max(m.xp || 0, rb.xp || 0);
+      if (JSON.stringify(m) !== JSON.stringify(lb)) { store.set('latin.beasts.' + u.id, m); changed = true; }
     }
     return changed;
   }

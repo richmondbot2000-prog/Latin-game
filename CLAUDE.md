@@ -37,6 +37,25 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   streak kept). Memory cards (`memory.js`); example phrases
   (`phrases.js`); fireworks (`effects.js`); vocabulary settings Beginner / Level
   1 / 2 / 3. Players = first name + two emojis, no passwords.
+  The card screen follows the artist's own MemiBeasts app (the preview video
+  and screenshots in the Drive `MemiBeasts/` folder): grey-framed cream cards
+  with a sunburst and the card number, word / rule / meaning, a green tick or
+  red cross stamped on the card before it flies off, combo words (SWEET!,
+  SICKKK!, MAGIC!, PERFECT! at 3 / 5 / 8 / 10 in a row), swipe up = "I don't
+  know" (turns the card over), and a scene behind the cards coloured by the
+  **beast** being raised. **Beasts** (`beasts.js`, `art/beasts/`): the
+  artist's 48 MemiBeasts monsters, each up to four stages (egg, baby, teen,
+  adult; 175 pictures as 360px WebP, names and one-line ecologies from the
+  artist's `Monster Ecologies` sheet in `art/beasts/beasts.json`, element by
+  colour). A right answer on the cards finds the first egg (fanfare: the
+  artist's trumpets, `trumpets_l/r.png`, cut from a screenshot, plus confetti);
+  every further right answer grows the beast being raised (`NEED` = 15 to
+  hatch, 25 to grow, 30 to grow fully, a white "EVOLVING" glow), and a fully
+  grown beast makes the next right answer bring a new egg. `latin.beasts.<id>`
+  = { have: { key: stage }, order, cur, xp, total }, synced (union, furthest
+  stage). The **Beastpedia** (`#beasts`, banner on the home page) shows every
+  stage as a circle, silhouettes for the ones still to find, and a sheet with
+  the picture, stage, element and ecology for the found ones.
 - **Read** — "Sentences" (`read.js`, `renderRead` in `app.js`): 60 hand-written
   sentences using only Beginner words, each token mapped to its headword and
   checked against `vocab.js`. The reader is asked each word's meaning in turn
@@ -185,7 +204,7 @@ the worker; also latin-sync.richmondbot2000.workers.dev). `SYNC_URL` in
 the profile screen (shown once when the player is created, and behind the
 ☁️ line on the home page); progress is stored under SHA-256 of the code,
 never a name. The blob (`blobOf` in `sync.js`) holds `latin.progress`,
-`streak`, `level`, `practice`, `stats`, `hammer` and `read` for the player;
+`streak`, `level`, `practice`, `stats`, `hammer`, `read` and `beasts` for the player;
 `merge` keeps the best of both devices (stars by latest time, scores and
 levels by max, Hammer items as a union with coins from the device that has
 earned more, Read sentences as a union). Avatars and the player list itself
