@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '92';
+const APP_VERSION = '93';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -747,6 +747,7 @@ function renderList(u, pane) {
   const now = Date.now();
   let filter = store.get('latin.listFilter', 'all'), term = '';
   const { c, rest, total } = summary(u);
+  if (filter !== 'all' && !(filter === 'rest' ? rest : c[+filter])) filter = 'all';   // a remembered filter with nothing in it any more falls back to everything
   const opts = [['all', 'All ' + total], ['0', 'New ' + c[0]], ...[1, 2, 3, 4, 5].map(s => [String(s), '★'.repeat(s) + ' ' + c[s]]), ['rest', 'Resting ' + rest]];
   pane.innerHTML = `
     <div class="sticky">

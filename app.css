@@ -460,22 +460,22 @@ body.noscroll { overflow: hidden; }
 
 /* ---------- the artist's card game: scene, card frame, beasts ---------- */
 .play { position: relative; }
-.play::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--scene, #c99a66); }
+.play[class*="scene-"]::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--scene, #c99a66); }
 .play.scene-earth { --scene: radial-gradient(ellipse 60% 40% at 20% 20%, rgba(120,70,40,.55), transparent 70%), radial-gradient(ellipse 50% 35% at 80% 70%, rgba(90,50,30,.5), transparent 70%), radial-gradient(ellipse 70% 30% at 50% 100%, rgba(70,40,25,.6), transparent 70%), linear-gradient(170deg, #d8a86f, #b67b48 55%, #8a5634); }
 .play.scene-grass { --scene: radial-gradient(ellipse 60% 40% at 15% 25%, rgba(255,255,200,.3), transparent 70%), radial-gradient(ellipse 50% 35% at 85% 65%, rgba(40,110,40,.45), transparent 70%), radial-gradient(circle at 70% 15%, rgba(255,255,255,.35) 0 6px, transparent 7px), linear-gradient(170deg, #b6e07a, #6fb84a 55%, #3f8a37); }
 .play.scene-water { --scene: radial-gradient(circle at 20% 30%, rgba(255,255,255,.5) 0 5px, transparent 6px), radial-gradient(circle at 75% 20%, rgba(255,255,255,.4) 0 8px, transparent 9px), radial-gradient(circle at 60% 80%, rgba(255,255,255,.4) 0 6px, transparent 7px), radial-gradient(circle at 30% 70%, rgba(255,255,255,.35) 0 9px, transparent 10px), radial-gradient(ellipse 60% 40% at 80% 60%, rgba(20,110,120,.45), transparent 70%), linear-gradient(170deg, #9ff0e4, #35b7c0 55%, #1f7f95); }
 .play.scene-snow { --scene: radial-gradient(ellipse 60% 40% at 25% 20%, rgba(255,255,255,.9), transparent 70%), radial-gradient(ellipse 50% 40% at 80% 75%, rgba(255,255,255,.8), transparent 70%), radial-gradient(ellipse 70% 30% at 50% 100%, rgba(170,190,220,.7), transparent 70%), linear-gradient(170deg, #f7fbff, #d9e4f4 55%, #b9c9e2); }
 .play.scene-fire { --scene: radial-gradient(ellipse 60% 40% at 20% 25%, rgba(255,220,120,.55), transparent 70%), radial-gradient(ellipse 50% 35% at 80% 70%, rgba(140,30,20,.55), transparent 70%), radial-gradient(ellipse 70% 30% at 50% 100%, rgba(90,10,10,.6), transparent 70%), linear-gradient(170deg, #ffb24a, #f0702e 55%, #b5321f); }
 .play.scene-crystal { --scene: radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255,255,255,.55), transparent 70%), radial-gradient(ellipse 50% 35% at 85% 65%, rgba(110,50,170,.5), transparent 70%), radial-gradient(ellipse 70% 30% at 50% 100%, rgba(80,30,130,.6), transparent 70%), linear-gradient(170deg, #f3d4ff, #c58ff0 55%, #8650c9); }
-.wrap:has(.play) .bar, .wrap:has(.pedia) .bar { background: rgba(255,250,240,.82); border-radius: 14px; padding: 0 6px; margin-bottom: 10px; color: #2B1A3A; }
-.wrap:has(.play) .bar .iconbtn, .wrap:has(.pedia) .bar .iconbtn { color: #8E2F4A; }
-.wrap:has(.play) .lvtag, .wrap:has(.pedia) .lvtag { color: #6E6378; }
-.play .streak { background: rgba(255,250,240,.85); color: #2B1A3A; }
-.play .streak .lbl { color: #6E6378; }
-.play .best, .play .score, .play .hint { color: rgba(255,255,255,.92); text-shadow: 0 1px 3px rgba(0,0,0,.45); }
-.play .hint b { color: #fff; }
-.play .answer .no { background: rgba(255,240,238,.92); }
-.play .answer .yes { background: rgba(235,250,240,.92); }
+.wrap:has(.play[class*="scene-"]) .bar, .wrap:has(.pedia) .bar { background: rgba(255,250,240,.82); border-radius: 14px; padding: 0 6px; margin-bottom: 10px; color: #2B1A3A; }
+.wrap:has(.play[class*="scene-"]) .bar .iconbtn, .wrap:has(.pedia) .bar .iconbtn { color: #8E2F4A; }
+.wrap:has(.play[class*="scene-"]) .lvtag, .wrap:has(.pedia) .lvtag { color: #6E6378; }
+.play[class*="scene-"] .streak { background: rgba(255,250,240,.85); color: #2B1A3A; }
+.play[class*="scene-"] .streak .lbl { color: #6E6378; }
+.play[class*="scene-"] .best, .play[class*="scene-"] .score, .play[class*="scene-"] .hint { color: rgba(255,255,255,.92); text-shadow: 0 1px 3px rgba(0,0,0,.45); }
+.play[class*="scene-"] .hint b { color: #fff; }
+.play[class*="scene-"] .answer .no { background: rgba(255,240,238,.92); }
+.play[class*="scene-"] .answer .yes { background: rgba(235,250,240,.92); }
 
 .card { background: linear-gradient(180deg, #f6f1e2 0%, #ece3cb 45%, #e3d7b8 100%); border: 0; border-radius: 20px; padding: 48px 28px 44px;
   box-shadow: 0 0 0 7px #a7adb6, 0 0 0 9px #e6e9ee, 0 0 0 10px #8e959f, 0 12px 28px rgba(0,0,0,.35); color: #2B1A3A; }
