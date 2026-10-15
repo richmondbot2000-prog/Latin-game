@@ -1,7 +1,9 @@
 'use strict';
 
 /* ---------- Rig: a small player for the artist's Spine rigs (art/rigs/<key>.json + .png) ----------
-   Bones with rotate / translate / scale / shear timelines, slot attachment timelines, region attachments.
+   Bones with rotate / translate / scale / shear timelines, slot attachment + colour (alpha) timelines, draw-order timelines,
+   region attachments, named skins (draw(..., { skin }) falls back to the default skin), and per-slot hooks
+   (draw(..., { hooks: { Weapon: (ctx, slot) => ... } }) draws your own thing in that slot's bone frame instead).
    Coordinates are Spine's (y up); draw() maps the skeleton origin to a canvas point with a scale. */
 const Rig = (() => {
   const rigs = {};
@@ -18,7 +20,8 @@ const Rig = (() => {
     for (const n in j.animations) {
       const a = j.animations[n]; let d = 0;
       for (const b in a.bones) for (const k in a.bones[b]) for (const f of a.bones[b][k]) d = Math.max(d, f.time || 0);
-      for (const s in a.slots) for (const f of a.slots[s].attachment || []) d = Math.max(d, f.time || 0);
+      for (const s in a.slots) { for (const f of a.slots[s].attachment || []) d = Math.max(d, f.time || 0); for (const f of a.slots[s].color || []) d = Math.max(d, f.time || 0); }
+      for (const f of a.drawOrder || []) d = Math.max(d, f.time || 0);
       a.duration = d;
     }
     r.ready = true;
@@ -68,19 +71,37 @@ const Rig = (() => {
     return W;
   }
   // draw the rig with its origin at canvas (x, y), skeleton units scaled by s
-  function draw(ctx, r, anim, t, x, y, s) {
+  // slot order at time t: the setup order, shifted by the animation's draw-order keys
+  function orderAt(j, A, t) {
+    const base = j.slots, tl = A && j.animations[A].drawOrder;
+    if (!tl || !tl.length) return base;
+    let cur = null; for (const f of tl) { if (f.time <= t) cur = f; else break; }
+    if (!cur || !cur.offsets) return base;
+    const n = base.length, out = new Array(n).fill(null), unchanged = [];
+    const idx = {}; base.forEach((sl, i) => { idx[sl.name] = i; });
+    const moved = new Set(cur.offsets.map(o => o.slot));
+    for (const sl of base) if (!moved.has(sl.name)) unchanged.push(sl);
+    for (const o of cur.offsets) { const i = idx[o.slot]; if (i == null) continue; let p = i + o.offset; p = Math.max(0, Math.min(n - 1, p)); while (out[p]) p = (p + 1) % n; out[p] = base[i]; }
+    let u = 0; for (let i = 0; i < n; i++) if (!out[i]) out[i] = unchanged[u++];
+    return out;
+  }
+  const alphaOf = (frames, t) => { const f = frameAt(frames, t); if (!f) return 1; const a0 = parseInt(f[0].color.slice(6, 8), 16) / 255, a1 = parseInt(f[1].color.slice(6, 8), 16) / 255; return a0 + (a1 - a0) * f[2]; };
+  function draw(ctx, r, anim, t, x, y, s, opts) {
     if (!ok(r)) return false;
     const j = r.json, A = anim && j.animations[anim] ? anim : null, W = pose(j, A, t), at = j.atlas, k = j.scale;
+    const skinName = opts && opts.skin, skinAtt = skinName && j.skins && j.skins[skinName], hooks = (opts && opts.hooks) || null, baseAlpha = ctx.globalAlpha;
     ctx.save(); ctx.translate(x, y); ctx.scale(s, -s);
-    for (const slot of j.slots) {
+    for (const slot of orderAt(j, A, t)) {
       let attName = slot.attachment;
       const stl = A && (j.animations[A].slots || {})[slot.name];
       if (stl && stl.attachment && stl.attachment.length) { let cur = null; for (const f of stl.attachment) { if (f.time <= t) cur = f; else break; } if (cur) attName = cur.name; }
-      if (!attName) continue;
-      const att = j.skin[slot.name] && j.skin[slot.name][attName]; if (!att) continue;
-      const reg = at[att.path || att.name || attName]; if (!reg) continue;
       const B = W[j.boneIndex[slot.bone]];
-      ctx.save();
+      if (hooks && hooks[slot.name]) { ctx.save(); ctx.transform(B[0], B[2], B[1], B[3], B[4], B[5]); hooks[slot.name](ctx, slot, attName); ctx.restore(); continue; }
+      if (!attName) continue;
+      const alpha = stl && stl.color ? alphaOf(stl.color, t) : 1; if (alpha <= 0) continue;
+      const att = (skinAtt && skinAtt[slot.name] && skinAtt[slot.name][attName]) || (j.skin[slot.name] && j.skin[slot.name][attName]); if (!att) continue;
+      const reg = at[att.path || att.name || attName]; if (!reg) continue;
+      ctx.save(); if (alpha < 1) ctx.globalAlpha = baseAlpha * alpha;
       ctx.transform(B[0], B[2], B[1], B[3], B[4], B[5]);
       const ar = (att.rotation || 0) * Math.PI / 180, asx = att.scaleX == null ? 1 : att.scaleX, asy = att.scaleY == null ? 1 : att.scaleY;
       ctx.transform(Math.cos(ar) * asx, Math.sin(ar) * asx, -Math.sin(ar) * asy, Math.cos(ar) * asy, att.x || 0, att.y || 0);
@@ -95,5 +116,6 @@ const Rig = (() => {
   }
   const duration = (r, anim) => ok(r) && r.json.animations[anim] ? r.json.animations[anim].duration : 0;
   const has = (r, anim) => ok(r) && !!r.json.animations[anim];
-  return { load, ok, draw, duration, has, bounds: r => ok(r) ? r.json.bounds : null };
+  const skins = r => ok(r) && r.json.skins ? Object.keys(r.json.skins) : [];
+  return { load, ok, draw, duration, has, skins, bounds: r => ok(r) ? r.json.bounds : null };
 })();

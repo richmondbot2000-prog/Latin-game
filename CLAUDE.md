@@ -120,11 +120,20 @@ Per-player counters live in
   wrong). Clearing a level pays **coins**; the **Items**
   screen (JACQUE / HAMMER / PUP / SHOP tabs, after the artist's mockup) sells
   26 costumes, 23 'hammers' and 5 pups, owned for ever and worn whenever.
-  Art in `art/jh/`: pixel rigs drawn part by part (`meta.json` holds every
-  part's box per outfit); seven costumes (disco, suit, samurai, astronaut,
-  cowboy, karate, turban) came only as flat pictures, so their `body` is one
-  cut-out on recoloured standard legs; pups `gb/gc/gg/gp_*` are recolours of
-  the dog `g_*`; signs `sign0-7` (+ `_l`/`_r` halves) with six wooden styles
+  Art in `art/jh/`. **Characters are the artist's Spine rigs** played by
+  `rig.js`: `art/rigs/jacque` (skins = costumes, `RIG_SKIN` in `hammer.js`
+  maps costume keys to skin names; Walk / Idle / Attack for the swing / Hit
+  when clubbed; the weapon slot is a hook that draws our `w_<key>.png` where
+  the artist's hammer sits), `art/rigs/decoy` (Spawn, Idle / Laugh while
+  talking, Attack, Death as he sinks) and `art/rigs/dog` (Walk, Sit, Talk)
+  with `dog_gb/gc/gg/gp` recoloured atlases for the pups (the recolour maps
+  were learnt from the old `g_*`/`gb_*` parts). Exported by
+  `scratchpad/export_rig_skins.py` (session scratchpad) at 1:1 pixel scale.
+  `rig.js` also understands named skins, alpha colour timelines, draw-order
+  keys and per-slot hooks. The old part-by-part drawing (`meta.json` boxes)
+  remains for the seven costumes that came only as flat pictures (disco,
+  suit, samurai, astronaut, cowboy, karate, turban: `body` is one cut-out on
+  recoloured standard legs) and as a fallback; signs `sign0-7` (+ `_l`/`_r` halves) with six wooden styles
   cycling by level and green/red once judged; `title_tall/wide.jpg` start
   screen. Progress in `latin.hammer.<id>` {best, level, cleared, coins,
   earned, owned[], wear{skin, weapon, pup}}.

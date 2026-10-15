@@ -198,6 +198,14 @@ const Hammer = (() => {
   // Each layer scrolls at a fraction of the run speed, plus a little drift of its own so the sky moves even when Jacques stops.
   const CLOUD_SHAPES = [[[0, 8, 7], [8, 4, 9], [17, 6, 8], [24, 10, 6], [12, 11, 7]], [[0, 6, 5], [6, 2, 7], [14, 4, 6], [20, 7, 5]], [[0, 10, 8], [9, 5, 10], [20, 3, 9], [30, 8, 7], [16, 12, 8], [36, 11, 5]], [[0, 5, 5], [5, 2, 6], [11, 5, 5]]];
   const jScale = () => Math.min(H * .24, W * .5) / 116;
+  // the artist's Spine rigs (art/rigs/jacque, decoy, dog): Jacque's skins are the costumes; seven costumes came only as flat pictures and keep the old part-by-part drawing
+  const RIG_SKIN = { standard: 'Basic', standardred: 'BasicRed', standardgold: 'BasicGold', beach: 'Beach', coolbeach: 'CoolBeach', coolbeachyellow: 'CoolBeachYellow', farmer: 'Farmer', farmerdenim: 'FarmerDenim',
+    lumberjacque: 'LumberJacque', lumberjacquebearded: 'LumberJacqueBearded', biker: 'Biker', greek: 'Greek', dragqueen: 'DragQueen', hotdog: 'Hotdog', bunny: 'Bunny', peapod: 'Peapod', banana: 'Banana', monkey: 'Monkey', dino: 'Dino' };
+  const rigOf = key => typeof Rig !== 'undefined' ? Rig.load(key) : null;
+  const jacqueRig = skin => { const r = RIG_SKIN[skin] && rigOf('jacque'); return r && Rig.ok(r) ? r : null; };
+  const dogRig = pup => { const r = rigOf(pup === 'g' ? 'dog' : 'dog_' + pup); return r && Rig.ok(r) ? r : null; };
+  // our weapon pictures are held where the artist's hammer sits in the rig: same pixel scale, same bottom-right corner in the hand
+  const weaponHook = im => (c) => { if (!ok(im)) return; c.translate(48.03, -3.62); c.rotate(-139.89 * Math.PI / 180); c.scale(1, -1); c.drawImage(im, 64 - im.naturalWidth, 59 - im.naturalHeight, im.naturalWidth, im.naturalHeight); };
   const CLOUD_SPR = [];
   function cloudSprite(i) {
     if (CLOUD_SPR[i]) return CLOUD_SPR[i];
@@ -256,9 +264,20 @@ const Hammer = (() => {
       g.strokeStyle = 'rgba(40,20,20,.55)'; g.lineWidth = Math.max(1.5, k * 1.2);
       for (let i = 0; i < 5; i++) { const lx = x + (70 + i * 14) * k, top = ground - (150 - i * 12) * k; g.beginPath(); g.moveTo(lx, top); g.lineTo(lx - 10 * k, top + (60 + i * 10) * k); g.stroke(); }
     }
+    const skin = WEAR.skin, jr = jacqueRig(skin);
+    if (jr) {   // the artist's rig: Walk while running, Attack for the swing (its own leap), Hit when clubbed, Idle while the evil guy talks
+      g.save(); g.translate(x, ground); g.rotate(stumble);
+      if (S.invuln > 0 && Math.floor(S.t * 12) % 2) g.globalAlpha = .45;
+      let anim = 'Idle', t = S.t % 2;
+      if (swinging) { anim = 'Attack'; t = Math.min(1.6, sw / .55 * 1.67); }
+      else if (S.ouch > 0) { anim = 'Hit'; t = Math.min(2.6, (.9 - S.ouch) * 2.2); }
+      else if (running) { anim = 'Walk'; }
+      Rig.draw(g, jr, anim, t, 0, 0, k, { skin: RIG_SKIN[skin], hooks: { Weapon: weaponHook(img('w_' + WEAR.weapon)) } });
+      g.restore(); return;
+    }
     g.save(); g.translate(x, ground - jump * k); g.scale(1 / squash, squash); g.rotate(stumble);
     if (S.invuln > 0 && Math.floor(S.t * 12) % 2) g.globalAlpha = .45;
-    const skin = WEAR.skin, RIG = META && META.jacque[skin];
+    const RIG = META && META.jacque[skin];
     if (!RIG) { g.restore(); return; }
     const legs = swinging ? (sw < .3 && RIG.jumplegs ? 'jumplegs' : 'hittinglegs') : running ? 'run' + (1 + Math.floor(cyc) % 4) : 'legs';
     const P = (n, dy = 0) => { if (RIG[n]) part(`j_${skin}_${n}`, RIG[n], JPIV[0], JPIV[1], 0, -bob + dy, k); };
@@ -287,6 +306,13 @@ const Hammer = (() => {
     const hop = S.dogHop > 0 ? Math.sin((1 - S.dogHop / .4) * Math.PI) * 14 : 0;
     const x = W * JX + S.dogX * jScale();
     const cyc = running ? S.t * 10 + 1.5 : 0, bob = running ? Math.abs(Math.sin(cyc * Math.PI / 2)) * 2 : 0;
+    const dr = dogRig(WEAR.pup);
+    if (dr) {   // the artist's rig: trots, sits when Jacques stops, hops with the swing
+      g.save(); g.translate(x, ground - hop * k);
+      const anim = running || S.dogHop > 0 ? 'Walk' : S.vil && S.vil.talk ? 'Talk' : 'Sit', t = anim === 'Sit' ? Math.min(2.6, (S.dogSit = (S.dogSit || 0) + 1 / 60) * 1.4) : (S.t + 1) % 2.67;
+      if (anim !== 'Sit') S.dogSit = 0;
+      Rig.draw(g, dr, anim, t, 0, 0, k * .9); g.restore(); return;
+    }
     g.save(); g.translate(x, ground - (bob + hop) * k);
     const P = n => part(WEAR.pup + '_' + n, DOG[n], 43, 68, 0, 0, k);
     P('tail'); P(running ? 'run' + (1 + Math.floor(cyc) % 4) : S.dogHop > 0 ? 'run2' : 'sitting2'); P('head'); P('leftear'); P('rightear'); P('chin'); P('inside'); P('tongue');
@@ -299,7 +325,10 @@ const Hammer = (() => {
     const c = document.createElement('canvas'); c.width = c.height = size * 2; const g = c.getContext('2d'); g.scale(2, 2); g.imageSmoothingEnabled = false;
     const saveCtx = ctx; ctx = g;
     try {
-      if (kind === 'costume' && META && META.jacque[id]) {
+      const jr = kind === 'costume' && jacqueRig(id), dr = kind === 'pup' && dogRig(id);
+      if (jr) { g.imageSmoothingEnabled = false; Rig.draw(g, jr, 'Idle', 0, size * .5, size * .96, size * .68 / 116, { skin: RIG_SKIN[id], hooks: { Weapon: () => {} } }); }
+      else if (dr) { Rig.draw(g, dr, 'Idle', 0, size * .5, size * .9, size * .8 / 70); }
+      else if (kind === 'costume' && META && META.jacque[id]) {
         const RIG = META.jacque[id], k = size * .72 / 116, x = size * .46, y = size * .96;
         const P = n => { if (RIG[n]) part(`j_${id}_${n}`, RIG[n], JPIV[0], JPIV[1], x, y, k); };
         if (RIG.tail) P('tail'); if (RIG.tails) P('tails'); P('legs');
@@ -319,7 +348,18 @@ const Hammer = (() => {
   function drawVillain() {
     const v = S.vil; if (!v) return;
     const g = ctx, kd = jScale() * .82, ground = H * GROUND, vx = W * JX + 62 * jScale();
-    const t = v.t;
+    const t = v.t, vr = rigOf('decoy');
+    if (vr && Rig.ok(vr)) {   // the artist's rig: rises (Spawn), laughs while talking, swings (Attack), sinks away (Death)
+      g.save(); g.translate(vx, ground);
+      let anim = 'Idle', tt = S.t % 2.67;
+      if (v.leaving || t > 1.5) { anim = 'Death'; tt = Math.min(.5, Math.max(0, (t - 1.5) / .55 * .5)); }
+      else if (t < .56) { anim = 'Spawn'; tt = t / .56 * .67; }
+      else if (v.talk) { anim = Math.floor(S.t / 2.67) % 2 ? 'Laugh' : 'Idle'; tt = S.t % 2.67; }
+      else { anim = 'Attack'; tt = Math.min(2, (t - .56) / .94 * 2); }
+      Rig.draw(g, vr, anim, tt, 0, 0, kd); g.restore();
+      if (v.talk && !v.leaving) drawBubble(v, vx + 40 * kd, ground - 150 * kd);
+      return;
+    }
     if (t < .56 || t > 1.5) {
       const f = t < .56 ? 1 + Math.min(6, Math.floor(t / .08)) : 7 - Math.min(6, Math.floor((t - 1.5) / .08));
       const b = DENTER[f], i = img('d_enter' + f); if (!ok(i)) return;
