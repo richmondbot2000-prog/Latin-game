@@ -3,7 +3,7 @@
    (egg → baby → teen → adult). The pictures and names are the artist's MemiBeasts set (art/beasts/):
    each beast has up to four stages, a one-line ecology and an element that colours the scene behind
    the cards. Progress lives in latin.beasts.<id>: { have: { key: stage }, order: [keys as found],
-   spare: { key: spare copies of a fully grown monster, to give away }, last: key of the latest find, finds, total }. */
+   spare: { key: spare copies of a fully grown monster, to give away }, last: key of the latest find, finds, total right answers, played cards }. */
 const Beasts = (() => {
   const ART = 'art/beasts/';
   const ELEMENT = { earth: ['🪨', 'Earth'], grass: ['🌿', 'Grass'], water: ['💧', 'Water'], snow: ['❄️', 'Snow'], fire: ['🔥', 'Fire'], crystal: ['💎', 'Crystal'] };
@@ -21,15 +21,14 @@ const Beasts = (() => {
   const img = (b, i) => ART + b.key + '_' + b.stages[i].s + '.webp';
   // which monster an egg turns out to be: any of them, at random, like a card from a pack
   const roll = () => (list || [])[Math.floor(Math.random() * list.length)];
-  // called on every right answer with the streak so far. Eggs drop at random (about one in twelve), always on a combo
-  // (3, 5, 8, 10 in a row, then every 5) and always on a new player's first right answer. A monster you already have
-  // is a duplicate, and a duplicate evolves it one stage: egg → baby → teen → adult.
-  // Returns { kind: 'egg' | 'grow', beast, stage } when an egg drops, else null.
-  function onRight(u, streak = 0) {
+  // called on every card played, right or wrong, with the streak so far. A beast drops every 5 right answers in a
+  // row (5, 10, 15…), every 20 cards played (right or wrong), and on a new player's first right answer. A monster you
+  // already have is a duplicate, and a duplicate evolves it one stage: egg → baby → teen → adult.
+  // Returns { kind: 'egg' | 'grow' | 'spare', beast, stage } when a beast drops, else null.
+  function onCard(u, ok, streak = 0) {
     if (!list || !list.length) return null;
-    const s = state(u); s.total = (s.total || 0) + 1;
-    const combo = streak === 3 || streak === 5 || streak === 8 || (streak >= 10 && streak % 5 === 0);
-    const drop = s.total === 1 || combo || Math.random() < 1 / 12;
+    const s = state(u); s.played = (s.played || 0) + 1; if (ok) s.total = (s.total || 0) + 1;
+    const drop = (ok && (s.total === 1 || (streak > 0 && streak % 5 === 0))) || s.played % 20 === 0;
     let ev = null;
     if (drop) {
       const b = roll();
@@ -42,6 +41,7 @@ const Beasts = (() => {
     save(u, s);
     return ev;
   }
+  const onRight = (u, streak) => onCard(u, true, streak);
   // giving a spare away, and taking a gift in: a gift of a monster you don't have (or have at a lower stage) goes
   // straight into the Beastpedia at the sender's stage; one you already have fully grown becomes a spare
   function give(u, k) { const s = state(u); s.spare = s.spare || {}; if (!(s.spare[k] > 0)) return false; s.spare[k]--; if (!s.spare[k]) delete s.spare[k]; save(u, s); return true; }
@@ -65,5 +65,5 @@ const Beasts = (() => {
   function scene(u) { const l = latest(u); return l ? l.beast.el : 'earth'; }
   const count = u => { const s = state(u); let n = 0; for (const k in s.have) n += (s.have[k] || 0) + 1; return n; };
   const totalStages = () => (list || []).reduce((n, b) => n + b.stages.length, 0);
-  return { load, state, onRight, give, receive, spares, latest, scene, count, totalStages, img, byKey, list: () => list || [], ELEMENT, STAGE, ART };
+  return { load, state, onCard, onRight, give, receive, spares, latest, scene, count, totalStages, img, byKey, list: () => list || [], ELEMENT, STAGE, ART };
 })();

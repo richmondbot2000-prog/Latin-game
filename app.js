@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '102';
+const APP_VERSION = '103';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -583,7 +583,7 @@ function renderBeasts(u) {
     const sp = s.spare || {};
     const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy">${known && i === b.stages.length - 1 && sp[b.key] > 0 ? `<span class="spare">×${1 + sp[b.key]}</span>` : ''}</button>`;
     pane.innerHTML = `
-      ${l ? `<div class="pal big"><img class="bpic" src="${Beasts.img(l.beast, l.stage)}" alt=""><span class="btxt"><b>${esc(l.beast.stages[l.stage].name)}</b><span class="small">Latest find · ${Beasts.list().length} monsters, ${Beasts.totalStages()} stages to collect. Eggs drop while you play the cards; find a monster again and it evolves.</span></span></div>` : `<p class="small" style="text-align:center">Monster eggs drop at random while you play the cards. Find the same monster again and it evolves: egg, baby, teen, adult. ${Beasts.totalStages()} to collect!</p>`}
+      ${l ? `<div class="pal big"><img class="bpic" src="${Beasts.img(l.beast, l.stage)}" alt=""><span class="btxt"><b>${esc(l.beast.stages[l.stage].name)}</b><span class="small">Latest find · ${Beasts.list().length} monsters, ${Beasts.totalStages()} stages to collect. A beast every 5 right in a row and every 20 cards; find a monster again and it evolves.</span></span></div>` : `<p class="small" style="text-align:center">A monster egg drops every 5 right answers in a row and every 20 cards played. Find the same monster again and it evolves: egg, baby, teen, adult. ${Beasts.totalStages()} to collect!</p>`}
       <div class="bgrid">${Beasts.list().map(b => b.stages.map((st, i) => circ(b, i, b.key in s.have && (s.have[b.key] || 0) >= i)).join('')).join('')}</div>`;
     pane.onclick = e => {
       const bt = e.target.closest('.bc'); if (!bt) return;
@@ -1131,9 +1131,9 @@ function renderPlay(u, pane) {
       const r = deck.getBoundingClientRect();
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
       right++; combo(st.cur);
-      ev = Beasts.onRight(u, st.cur);
+      ev = Beasts.onCard(u, true, st.cur);
       if (pw.s === 5) flash(`🏆 ${w.show} mastered! Resting for a month`); else if (pw.s >= 2) flash(`⭐ ${pw.s} stars — back in ${restText(REST[pw.s])}`);
-    } else st.cur = 0;
+    } else { st.cur = 0; ev = Beasts.onCard(u, false, 0); }   // the 20th card drops a beast even when it is wrong
     store.set(streakKey(u), st);
     showStreak(ok);
     $('#sc', pane).textContent = `${right} / ${seen} right this time`;
@@ -1142,7 +1142,7 @@ function renderPlay(u, pane) {
       const v = (match
         ? `Oops — “${esc(la)}” really does mean “${esc(shown)}”.`
         : `Not quite — “${esc(la)}” doesn’t mean “${esc(shown)}”.`) + (hadStars ? ' Back to zero stars for this one.' : '');
-      setTimeout(() => openMemo(w, pw.s, v, next), 120);
+      setTimeout(() => openMemo(w, pw.s, v, ev ? () => showBeast(ev, next) : next), 120);
     }
   }
   function fly(el, dir) {

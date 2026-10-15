@@ -52,10 +52,10 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   artist's 48 MemiBeasts monsters, each up to four stages (egg, baby, teen,
   adult; 175 pictures as 360px WebP, names and one-line ecologies from the
   artist's `Monster Ecologies` sheet in `art/beasts/beasts.json`, element by
-  colour). **Eggs drop at random while you play the cards**, like cards from
-  a pack (`Beasts.onRight(u, streak)`: about one right answer in twelve,
-  always on a combo — 3, 5, 8, 10 in a row, then every 5 — and always on a
-  new player's first right answer). A new monster shows the "NEW … Egg"
+  colour). **Eggs drop while you play the cards**
+  (`Beasts.onCard(u, ok, streak)`: every 5 right answers in a row, every 20
+  cards played right or wrong — `played` in the state — and on a new
+  player's first right answer; a drop on a wrong card shows after the memo). A new monster shows the "NEW … Egg"
   fanfare (the artist's trumpets, `trumpets_l/r.png`, cut from a screenshot,
   plus confetti); finding a monster you already have is a **duplicate, and a
   duplicate evolves it one stage** (egg → baby → teen → adult, the white
