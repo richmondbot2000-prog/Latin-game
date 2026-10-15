@@ -11,7 +11,7 @@ const Beasts = (() => {
   let list = null, loading = null;
   function load() {
     if (list) return Promise.resolve(list);
-    return loading || (loading = fetch(ART + 'beasts.json').then(r => r.json()).then(j => (list = j)).catch(() => (list = [])));
+    return loading || (loading = fetch(ART + 'beasts.json').then(r => r.json()).then(j => { list = j; ahead(); return list; }).catch(() => (list = [])));
   }
   const key = u => 'latin.beasts.' + u.id;
   const fresh = () => ({ have: {}, order: [], spare: {}, last: null, finds: 0, total: 0 });
@@ -19,8 +19,12 @@ const Beasts = (() => {
   const save = (u, s) => store.set(key(u), s);
   const byKey = k => (list || []).find(b => b.key === k) || null;
   const img = (b, i) => ART + b.key + '_' + b.stages[i].s + '.webp';
-  // which monster an egg turns out to be: any of them, at random, like a card from a pack
-  const roll = () => (list || [])[Math.floor(Math.random() * list.length)];
+  // which monster an egg turns out to be: any of them, at random, like a card from a pack. The next one is rolled
+  // ahead of time and its pictures fetched, so the fanfare never waits for the network
+  let next = null;
+  const preload = b => { if (!b) return; b.stages.forEach((s, i) => { const im = new Image(); im.src = img(b, i); }); };
+  const ahead = () => { if (!next && list && list.length) { next = list[Math.floor(Math.random() * list.length)]; preload(next); } };
+  const roll = () => { ahead(); const b = next; next = null; ahead(); return b; };
   // called on every card played, right or wrong, with the streak so far. A beast drops every 5 right answers in a
   // row (5, 10, 15…), every 20 cards played (right or wrong), and on a new player's first right answer. A monster you
   // already have is a duplicate, and a duplicate evolves it one stage: egg → baby → teen → adult.

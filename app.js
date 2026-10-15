@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '104';
+const APP_VERSION = '105';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -398,13 +398,15 @@ function giveSheet(u, b, done) {
   };
   $('#gNo').onclick = closeSheet; sheet.onclick = e => { if (e.target === sheet) closeSheet(); };
 }
+// a picture that failed to load (a dropped connection) is asked for again a few seconds later, up to five times
+function retryImg(im) { const n = +(im.dataset.retry || 0); if (n >= 5) return; im.dataset.retry = n + 1; setTimeout(() => { im.src = im.src.split('?')[0] + '?r=' + (n + 1); }, 1500 * (n + 1)); }
 function flashHome(msg) { const t = document.createElement('div'); t.className = 'toast show'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
 // a gift arrives: the beast card in a sheet, with who it came from
 function giftSheet(ev, from, done) {
   const b = ev.beast, st = b.stages[ev.stage], el = Beasts.ELEMENT[b.el] || ['', ''];
   sheet.innerHTML = `<div class="panel bsheet" role="dialog" aria-modal="true" aria-label="A gift">
       <div class="card beast egg giftcard"><div class="btitle">GIFT</div>
-        <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt=""><span class="glow"></span></div>
+        <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt="" onerror="retryImg(this)"><span class="glow"></span></div>
         <div class="ribbon"><span>${esc(st.name)}</span></div><div class="belem">${el[0]}</div></div>
       <p style="margin:12px 0 0">${from ? `<b>${esc(from.toUpperCase())}</b> sent you this ${esc(st.name)}${ev.spare ? ' — you already had one, so it’s a spare you can pass on' : ''}!` : `Someone opened your gift!`}</p>
       <button class="btn" id="gfOk">Wonderful</button></div>`;
@@ -1159,7 +1161,7 @@ function renderPlay(u, pane) {
     const prev = ev.kind === 'grow' ? Beasts.img(b, ev.stage - 1) : null;
     deck.innerHTML = `<div class="card beast ${ev.kind}" id="beastCard">
         <div class="btitle">${ev.kind === 'egg' ? 'NEW' : ev.kind === 'spare' ? 'SPARE!' : 'EVOLVING'}</div>
-        <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt="${esc(st.name)}">${prev ? `<img class="bold" src="${prev}" alt="">` : ''}<span class="glow"></span></div>
+        <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt="${esc(st.name)}" onerror="retryImg(this)">${prev ? `<img class="bold" src="${prev}" alt="">` : ''}<span class="glow"></span></div>
         <div class="ribbon"><span>${esc(st.name)}</span></div>
         <div class="belem" title="${el[1]}">${el[0]}</div>
         <div class="small btap">${ev.kind === 'grow' ? 'Found again — it evolves! Tap to carry on' : ev.kind === 'spare' ? 'A second one — give it to a friend from the Beastpedia. Tap to carry on' : 'Tap to carry on'}</div>

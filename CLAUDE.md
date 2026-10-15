@@ -61,7 +61,9 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   duplicate evolves it one stage** (egg → baby → teen → adult, the white
   "EVOLVING" glow). A duplicate of a fully grown monster re-rolls once for one
   that can still grow. The bar above the cards shows the latest find and the
-  Beastpedia count. `latin.beasts.<id>`
+  Beastpedia count. The next beast is rolled ahead and its pictures
+  preloaded (`ahead` in `beasts.js`); all 175 pictures are in the service
+  worker cache list and a fanfare picture that fails retries (`retryImg`). `latin.beasts.<id>`
   = { have: { key: stage }, order, last, finds, total }, synced (union, furthest
   stage). A duplicate of a **fully grown** monster is a **spare**
   (`spare: { key: n }`, "SPARE!" fanfare, ×N badge in the Beastpedia); spares
