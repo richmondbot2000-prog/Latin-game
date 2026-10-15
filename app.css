@@ -649,6 +649,24 @@ body.noscroll { overflow: hidden; }
 .snapbr { display: block; height: 0; }
 .snapbr.para { height: .8em; }
 .snapbox { font-size: 1.25rem; }
+.readerbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 8px; }
+.rtools { display: flex; align-items: center; gap: 4px; }
+.rtool { border: 1.5px solid var(--line); background: #fff; color: var(--ink); border-radius: 9px; min-width: 36px; height: 34px; padding: 0 8px; font-weight: 700; cursor: pointer; }
+.rtool.on { background: #2B1A3A; color: #fff; border-color: #2B1A3A; }
+.rtool.sz1 { font-size: .8rem; } .rtool.sz2 { font-size: 1rem; } .rtool.sz3 { font-size: 1.25rem; }
+.rsep { width: 1px; height: 24px; background: var(--line); margin: 0 4px; }
+.paper { position: relative; background: #fff; color: #111; border-radius: 14px; box-shadow: var(--shadow); padding: 22px 20px 26px; line-height: 1.75; }
+.paper.serif { font-family: Georgia, 'Times New Roman', serif; } .paper.sans { font-family: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif; }
+.paper.size1 { font-size: 1rem; } .paper.size2 { font-size: 1.2rem; } .paper.size3 { font-size: 1.45rem; line-height: 1.8; }
+.paper p { margin: 0 0 1em; } .paper p:last-of-type { margin-bottom: 0; }
+.lw { font-weight: 700; border-radius: 4px; padding: 0 2px; cursor: pointer; }
+.lw.focus { background: #FFE066; box-shadow: 0 0 0 3px #FFE066; }
+.lw.ok { color: #1F7A3A; font-weight: 600; font-style: italic; } .lw.bad { color: #B23A48; font-weight: 600; font-style: italic; text-decoration: underline wavy #B23A48; }
+.pop { position: absolute; z-index: 5; display: flex; flex-direction: column; gap: 4px; background: #fff; border: 1.5px solid #ddd; border-radius: 12px; padding: 6px; box-shadow: 0 10px 28px rgba(0, 0, 0, .18); min-width: 150px; max-width: 80%; }
+.pop[hidden] { display: none; }
+.pop::before { content: ''; position: absolute; top: -7px; left: var(--arrow, 50%); margin-left: -6px; width: 12px; height: 12px; background: #fff; border-left: 1.5px solid #ddd; border-top: 1.5px solid #ddd; transform: rotate(45deg); }
+.popc { border: 0; background: #F6F1E6; color: #111; border-radius: 8px; padding: 9px 12px; font: inherit; font-size: .95rem; font-family: system-ui, sans-serif; font-weight: 600; text-align: left; cursor: pointer; }
+.popc:active { background: #FFE066; } .popc.wrong { background: #F7D3D8; color: #B23A48; } .popc.isright { background: #D7F2DF; color: #1F7A3A; }
 .snapzoom { overflow-x: auto; border-radius: 14px; box-shadow: var(--shadow); background: #fff; margin: 6px 0 4px; -webkit-overflow-scrolling: touch; }
 .snapphoto { position: relative; width: 100%; }
 .snapphoto img { display: block; width: 100%; height: 100%; }

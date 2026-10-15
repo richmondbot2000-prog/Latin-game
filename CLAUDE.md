@@ -181,22 +181,28 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   walking"); is/are/was/were → est/sunt/erat/erant when not a helper;
   has/have/had as a main verb → habeo. `BLOCK` lists English words never
   converted (too many meanings: like, well, even, so, there, left, kind…).
-  A photographed page is shown **as text by default** (book print is too
-  small on a phone for overlays), keeping the page's paragraph breaks (`\n\n` from the recogniser's
-  paragraphs → `.snapbr.para`; lines reflow), with junk words (low confidence, no vowels, stray symbols)
-  dropped. **📷 On the photo** shows the picture instead, cropped to its
-  text, with the Latin words as yellow chips laid over the English words
-  (`Snap.ocr` returns the word boxes; tokens carry `at/from/to` character
-  offsets so `boxOf` finds the words a Latin word stands for, helpers
-  included; chip type shrinks to fit the word's box, `fit()`; a flipped
-  chip goes clear with a green outline so the English shows through);
-  🔍 Bigger zooms the picture 1×/2×/3× in a side-scrolling box, 📄 As text
-  returns to the text view. Text is cut into parts
-  of ~45 words at sentence ends; all Latin words flipped → next part; last
-  part → celebration and "Another page". Progress
+  **The reader** (`read(text)` in `renderSnap`): white paper, black text,
+  serif or sans and three sizes (`latin.reader` {font, size}, the `.rtool`
+  row), the page's paragraph breaks kept (`\n\n` from the recogniser's
+  paragraphs), junk words (low confidence, no vowels, stray symbols)
+  dropped. Latin words are bold `.lw`; the word in focus is highlighted
+  yellow and a `.pop` box floats under it with **three meanings** (the
+  word's own gloss and two from other words of the same kind in the same
+  English shape, `Snap.shapeLike`: "were walking" → "were carrying",
+  "boys" → "farmers"; `avoid` lists respected). Right → the word turns into
+  its English in green and the focus hops to the next Latin word (scrolled
+  into view); wrong → the wrong choice goes red, the right one green, the
+  word shows its English in red with a wavy underline, then the hop.
+  Every answer goes through `recordAnswer` (stars, leaderboard). Tapping any
+  unanswered Latin word moves the focus there. All words answered →
+  celebration, "N of M right", "Another page" / "Read it again". The
+  microphone is not used here. (`Snap.ocr` still returns the word boxes on
+  the picture, unused since the photo overlay was dropped: book print is too
+  small on a phone.) Progress
   `latin.snap.<id>` {pages, words, last} (the last text, for "The last page
-  again"; not synced). Tested by `scratchpad/snap.js` (paste path, taps,
-  typed words, and the OCR path on a rendered PNG, ~2 s in Chromium).
+  again"; not synced). Tested by `scratchpad/reader.js` (paste, right and
+  wrong answers, font and size, finishing a page) and `scratchpad/snap.js`
+  (the OCR path on a rendered PNG, ~2 s in Chromium).
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Each level is one long day on a planet (`WORLDS` in `practice.js`,

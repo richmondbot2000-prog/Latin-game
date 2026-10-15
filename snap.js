@@ -360,5 +360,23 @@ const Snap = (() => {
       return { text, words, image: cc.toDataURL('image/jpeg', .85), w: cc.width, h: cc.height };
     } finally { worker.terminate(); }
   }
-  return { latinise, ocr, noun, adj, verb, parts };
+  // an English meaning of another word, put into the same shape as a gloss ("were walking" → "were carrying"; "boys" → "farmers")
+  function shapeLike(gloss, english, kind) {
+    const base = english.replace(/\(.*?\)/g, '').trim().replace(/^to\s+/, ''); if (!base) return null;
+    const ws = gloss.trim().split(/\s+/), last = ws[ws.length - 1].toLowerCase(), head = ws.slice(0, -1).join(' ');
+    const bw = base.split(' '), b = bw[0], rest = bw.slice(1).join(' ');
+    const cap = x => /^[A-Z]/.test(ws[0]) ? x[0].toUpperCase() + x.slice(1) : x;
+    let f = b;
+    const THIRD = { be: 'is', have: 'has', do: 'does', go: 'goes' }, PASTS = new Set([...Object.values(PAST), 'was', 'were', 'had', 'did']);
+    if (kind === 'v') {
+      if (/ing$/.test(last)) f = ing(b);
+      else if (PASTPART[last] || /ed$/.test(last) || PASTS.has(last)) f = b === 'be' ? (last === 'were' ? 'were' : 'was') : past(b);
+      else if (last === 'am' || last === 'is' || last === 'are') f = b === 'be' ? last : last === 'are' ? b : (THIRD[b] || sfx(b));
+      else if (/s$/.test(last) && !/ss$/.test(last) && !(head && /^(to|will|can|must|should|could)$/.test(head.split(' ').pop()))) f = THIRD[b] || sfx(b);
+    } else if (kind === 'n') { if (/s$/.test(last) && !/ss$/.test(last) && last.length > 3) f = IRRPL[b] || sfx(b); }
+    else return cap(base);   // little words: the other word's own meaning, whole
+    const out = (head ? head + ' ' : '') + f + (rest ? ' ' + rest : '');
+    return cap(out);
+  }
+  return { latinise, ocr, noun, adj, verb, parts, shapeLike };
 })();

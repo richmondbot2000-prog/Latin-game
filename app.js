@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '108';
+const APP_VERSION = '109';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -945,105 +945,105 @@ function renderSnap(u) {
       try {
         const r = await Snap.ocr(file, (m, p) => { $('#snapmsg').textContent = m + (p ? ' ' + Math.round(p * 100) + '%' : ''); $('#snapfill').style.width = Math.round(p * 100) + '%'; });
         if (!r.text || r.text.replace(/[^a-z]/gi, '').length < 10) return start('No words could be read in that picture — try a closer, straighter photo in good light.');
-        read(r.text, r);
+        read(r.text);
       } catch (err) { start('The picture could not be read (' + (err.message || err) + '). You can paste the text instead.'); }
     };
     $('#snapCam').onchange = e => take(e.target.files[0]); $('#snapPic').onchange = e => take(e.target.files[0]);
     $('#pasteform').onsubmit = e => { e.preventDefault(); const t = $('#pasted').value.trim(); if (t.replace(/[^a-z]/gi, '').length < 10) return flashHome('Paste a few sentences first'); read(t); };
     if ($('#snapLast')) $('#snapLast').onclick = () => read(sv.last);
   }
-  // photo: { image, words: [{ t, at, x0, y0, x1, y1 }], w, h } when the text came from a picture — the Latin then sits on the picture
-  function read(text, photo) {
+  // the reader: white paper, the Latin words in bold; the word in focus is highlighted and three meanings float under it
+  const RK = 'latin.reader', rs = Object.assign({ font: 'serif', size: 2 }, store.get(RK, null) || {});
+  const saveRS = () => store.set(RK, rs);
+  function read(text) {
     text = text.replace(/-\n(?=[a-z])/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 6000);
     sv.last = text; store.set(key, sv);
     const sents = Snap.latinise(text, pool);
     if (!sents.some(s => s.some(t => t.la))) return start('None of the words on that page are in the ' + levelName(lv) + ' list — try another page, or a higher level.');
-    // pages of about 45 words, broken at sentence ends
-    const pages = []; let cur = [], nw = 0;
-    for (const s of sents) { cur.push(s); nw += s.filter(t => /[a-z]/i.test(t.en)).length; if (nw >= 45 && !(photo && photo.onPhoto)) { pages.push(cur); cur = []; nw = 0; } }
-    if (cur.length) pages.push(cur);
-    const boxOf = t => {   // the box on the picture covering this Latin word and the English words folded into it
-      if (!photo) return null;
-      const a = t.from != null ? t.from : t.at, b = t.to != null ? t.to : t.at + t.en.length, hit = photo.words.filter(w => w.at < b && w.at + w.t.length > a);
-      if (!hit.length) return null;
-      const main = hit[hit.length - 1], line = hit.filter(w => Math.abs((w.y0 + w.y1) / 2 - (main.y0 + main.y1) / 2) < (main.y1 - main.y0));
-      return { x0: Math.min(...line.map(w => w.x0)), x1: Math.max(...line.map(w => w.x1)), y0: Math.min(...line.map(w => w.y0)), y1: Math.max(...line.map(w => w.y1)) };
+    const toks = []; sents.forEach(s => s.forEach(t => { if (t.la && !t.skip) toks.push(t); }));
+    const state = toks.map(() => 0);   // 0 to do, 1 right, -1 wrong
+    let focus = 0, right = 0, done = false;
+    // three meanings for a word: its own, and two from other words of the same kind in the same English shape
+    const kindOf = w => /^N/.test(w.pos) ? 'n' : /^V/.test(w.pos) ? 'v' : /^Adj|^numo/.test(w.pos) ? 'a' : 'o';
+    const choices = t => {
+      const w = byIdAll[t.id], gloss = t.gloss || t.en, k = w ? kindOf(w) : 'o';
+      const others = pool.filter(x => x.id !== t.id && kindOf(x) === k && (!w || !(w.avoid || []).includes(x.id)));
+      const pick = [];
+      for (let tries = 0; tries < 40 && pick.length < 2 && others.length; tries++) {
+        const x = others[Math.floor(Math.random() * others.length)], e = Snap.shapeLike(gloss, x.english.split(/[,;]/)[0].trim(), k);
+        if (!e || e.toLowerCase() === gloss.toLowerCase() || pick.includes(e) || (w && w.english.toLowerCase().split(/[,;]/).map(s => s.trim()).includes(e.toLowerCase()))) continue;
+        pick.push(e);
+      }
+      const all = [gloss, ...pick]; for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }
+      return all;
     };
-    let pg = 0, toks = [], flipped = [], done = false, total = 0;
-    const STOPW = new Set(['of', 'the', 'a', 'an', 'to', 'for', 'in', 'on', 'at', 'by', 'up', 'out', 'be', 'is', 'am', 'are', 'it', 'not', 'do', 'and', 'with', 'into', 'from', 'over', 'was', 'were', 'will', 'did', 'had', 'has', 'have']);
-    const meansOf = t => {
-      const out = new Set();
-      const add = phrase => { const ws = phrase.toLowerCase().replace(/\(.*?\)/g, ' ').split(/[^a-z0-9']+/).filter(Boolean); const keep = ws.length > 1 ? ws.filter(x => !STOPW.has(x)) : ws; (keep.length ? keep : ws).forEach(x => out.add(normWord(x))); };
-      add(t.gloss || t.en); const w = byIdAll[t.id]; if (w) w.english.split(/[,;]/).forEach(add); ((typeof SYNONYMS !== 'undefined' && SYNONYMS[t.id]) || []).forEach(add);
-      return [...out].filter(Boolean);
-    };
-    const onPhoto = !!(photo && photo.onPhoto);
-    $('#snapmain').innerHTML = `<div class="rtitle" id="ptitle"></div>${onPhoto ? `<div class="snapzoom" id="snapzoom"><div class="snapphoto" id="snapbox" style="aspect-ratio:${photo.w} / ${photo.h}"><img src="${photo.image}" alt=""></div></div><div class="snapbtns"><button class="btn ghost small" id="snapZoom">🔍 Bigger</button><button class="btn ghost small" id="snapText">📄 As text</button></div>` : `<div class="pbox card snapbox" id="snapbox"></div>${photo ? '<div class="snapbtns"><button class="btn ghost small" id="snapPhoto">📷 On the photo</button></div>' : ''}`}<p class="rmsg" id="pmsg"></p>${micHTML()}`;
-    let zoom = 1;
-    if (onPhoto) {
-      $('#snapZoom').onclick = () => { zoom = zoom === 1 ? 2 : zoom === 2 ? 3 : 1; $('#snapbox').style.width = zoom * 100 + '%'; $('#snapZoom').textContent = zoom === 3 ? '🔍 Smaller' : '🔍 Bigger'; fit(); };
-      $('#snapText').onclick = () => { stopRec(); read(text, { ...photo, onPhoto: false }); };
-    } else if (photo) $('#snapPhoto').onclick = () => { stopRec(); read(text, { ...photo, onPhoto: true }); };
-    // the chips are sized from the boxes once the picture has a size on screen
-    function fit() {
-      const box = $('#snapbox'); if (!box || !onPhoto) return;
-      const sc = box.clientWidth / photo.w;
-      // a chip may be a quarter wider than the English word under it; longer Latin gets smaller type so it does not cover its neighbours
-      box.querySelectorAll('.pw.ph').forEach(el => { const h = +el.dataset.h * sc, w = +el.dataset.w * sc, n = el.textContent.length; el.style.fontSize = Math.max(7, Math.min(h * .72, (w * 1.2) / (n * .58 + .6))) + 'px'; el.style.height = h + 'px'; });
+    $('#snapmain').innerHTML = `
+      <div class="readerbar"><span class="small" id="rprog"></span><div class="rtools">
+        <button class="rtool${rs.font === 'serif' ? ' on' : ''}" data-font="serif" style="font-family:Georgia,serif">Aa</button><button class="rtool${rs.font === 'sans' ? ' on' : ''}" data-font="sans" style="font-family:system-ui,sans-serif">Aa</button>
+        <span class="rsep"></span><button class="rtool sz1${rs.size === 1 ? ' on' : ''}" data-size="1">A</button><button class="rtool sz2${rs.size === 2 ? ' on' : ''}" data-size="2">A</button><button class="rtool sz3${rs.size === 3 ? ' on' : ''}" data-size="3">A</button></div></div>
+      <div class="paper ${rs.font} size${rs.size}" id="paper"></div>
+      <p class="rmsg" id="pmsg"></p>`;
+    document.querySelectorAll('.rtool').forEach(b => { b.onclick = () => { if (b.dataset.font) rs.font = b.dataset.font; else rs.size = +b.dataset.size; saveRS(); document.querySelectorAll('.rtool').forEach(x => x.classList.toggle('on', x.dataset.font ? x.dataset.font === rs.font : +x.dataset.size === rs.size)); $('#paper').className = `paper ${rs.font} size${rs.size}`; place(); }; });
+    let html = '', k = 0, prevEnd = -1, open = true;
+    html += '<p>';
+    for (const s of sents) {
+      s.forEach((t, j) => {
+        if (t.skip) return;
+        const gap = prevEnd >= 0 && t.at != null ? text.slice(prevEnd, t.at) : ''; if (t.at != null) prevEnd = t.to != null ? t.to : t.at + t.en.length;
+        if (/\n\n/.test(gap)) html += '</p><p>';
+        const punct = !/[a-z0-9]/i.test(t.en), sp = j === 0 && !/\n\n/.test(gap) && html.slice(-3) !== '<p>' ? ' ' : (j === 0 || punct || /^["'(]$/.test(s[j - 1] && s[j - 1].en)) ? '' : ' ';
+        if (!t.la) { html += sp + esc(t.en); return; }
+        const i = k++;
+        html += sp + `<span class="lw" data-i="${i}">${esc(t.la)}</span>`;
+      });
     }
-    window.addEventListener('resize', fit);
-    function load() {
-      toks = []; pages[pg].forEach(s => s.forEach(t => { if (t.la) toks.push(t); }));
-      flipped = toks.map(() => false); done = false; show();
-    }
+    html += '</p>';
+    $('#paper').innerHTML = html + '<div class="pop" id="pop" hidden></div>';
+    const lw = i => $('#paper').querySelector(`.lw[data-i="${i}"]`);
     function show() {
-      $('#ptitle').innerHTML = `📷 <b>Your page</b> <span class="small">· part ${pg + 1} of ${pages.length} · ${flipped.filter(Boolean).length} / ${toks.length} words</span>`;
-      let html = '', k = 0;
-      if (onPhoto) {
-        pages[pg].forEach(s => s.forEach(t => {
-          if (t.skip || !t.la) return;
-          const i = k++, bx = boxOf(t); if (!bx) return;
-          html += `<button class="pw ph${flipped[i] ? ' flip' : ''}" data-i="${i}" data-h="${bx.y1 - bx.y0}" data-w="${bx.x1 - bx.x0}" style="left:${bx.x0 / photo.w * 100}%;top:${bx.y0 / photo.h * 100}%;min-width:${(bx.x1 - bx.x0) / photo.w * 100}%" title="${esc(t.gloss || t.en)}">${esc(t.la)}</button>`;
-        }));
-        $('#snapbox').querySelectorAll('.pw').forEach(e => e.remove()); $('#snapbox').insertAdjacentHTML('beforeend', html); fit(); setMic(); return;
-      }
-      let prevEnd = -1;
-      for (const s of pages[pg]) {
-        html += '<span class="snaps">';
-        s.forEach((t, j) => {
-          if (t.skip) return;
-          const gap = prevEnd >= 0 && t.at != null ? text.slice(prevEnd, t.at) : ''; if (t.at != null) prevEnd = t.to != null ? t.to : t.at + t.en.length;
-          if (/\n\n/.test(gap)) html += '<span class="snapbr para"></span>';   // paragraphs as on the page; lines reflow
-          const punct = !/[a-z0-9]/i.test(t.en), sp = j === 0 || punct || /^["'(]$/.test(s[j - 1] && s[j - 1].en) ? '' : ' ';
-          if (!t.la) { html += sp + esc(t.en); return; }
-          const i = k++;
-          html += sp + `<button class="pw${flipped[i] ? ' flip' : ''}" data-i="${i}"><span class="f">${esc(t.la)}</span><span class="b">${esc(t.gloss || t.en)}</span></button>`;
-        });
-        html += '</span> ';
-      }
-      $('#snapbox').innerHTML = html;
-      setMic();
+      $('#rprog').textContent = `${state.filter(Boolean).length} / ${toks.length} words · ${right} right`;
+      toks.forEach((t, i) => { const el = lw(i); if (!el) return; el.className = 'lw' + (i === focus && !done ? ' focus' : '') + (state[i] === 1 ? ' ok' : state[i] === -1 ? ' bad' : ''); if (state[i]) { el.textContent = t.gloss || t.en; el.title = t.la; } else el.textContent = t.la; });
+      if (done) { $('#pop').hidden = true; return; }
+      const t = toks[focus];
+      $('#pop').innerHTML = choices(t).map(c => `<button class="popc">${esc(c)}</button>`).join('');
+      $('#pop').hidden = false;
+      $('#pop').querySelectorAll('.popc').forEach(b => { b.onclick = () => answer(b, b.textContent); });
+      place();
+      const el = lw(focus); if (el) { const r = el.getBoundingClientRect(); if (r.top < 60 || r.bottom > innerHeight - 180) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
     }
-    function say(raw) {
-      const w = normWord(raw); if (!w || done) return false;
-      let hit = false;
-      toks.forEach((t, i) => { if (flipped[i] || hit || !meansOf(t).some(m => sameWord(m, w))) return; flipped[i] = true; hit = true; });
-      if (hit) { show(); check(); }
-      return hit;
+    // the choices sit just under the word in focus, kept inside the paper
+    function place() {
+      const el = lw(focus), pop = $('#pop'), paper = $('#paper'); if (!el || !pop || pop.hidden) return;
+      const pr = paper.getBoundingClientRect(), r = el.getBoundingClientRect();
+      pop.style.top = (r.bottom - pr.top + 6) + 'px';
+      const w = pop.offsetWidth, left = Math.max(6, Math.min(pr.width - w - 6, r.left - pr.left + r.width / 2 - w / 2));
+      pop.style.left = left + 'px';
+      pop.style.setProperty('--arrow', (r.left - pr.left + r.width / 2 - left) + 'px');
     }
-    function check() {
-      if (!flipped.every(Boolean)) return;
-      done = true; sv.words = (sv.words || 0) + toks.length;
-      const last = pg >= pages.length - 1;
-      if (last) { sv.pages = (sv.pages || 0) + 1; store.set(key, sv); $('#pcount').textContent = sv.pages + ' page' + (sv.pages === 1 ? '' : 's'); Celebrate(innerWidth / 2, innerHeight / 3, 2.6); $('#pmsg').innerHTML = `🏆 Page finished — ${sv.words} Latin words read in all`; $('#pmsg').insertAdjacentHTML('afterend', `<button class="btn" id="pnext">📷 Another page</button>`); $('#pnext').onclick = () => start(); }
-      else { store.set(key, sv); Celebrate(innerWidth / 2, innerHeight / 3, 1.6); $('#pmsg').textContent = '⭐ Part ' + (pg + 1) + ' done'; setTimeout(() => { if (done) { pg++; $('#pmsg').textContent = ''; load(); } }, 1200); }
+    function answer(btn, picked) {
+      const t = toks[focus], ok = picked === (t.gloss || t.en), w = byIdAll[t.id];
+      if (w) recordAnswer(u, w, ok);
+      if (ok) { right++; state[focus] = 1; const r = btn.getBoundingClientRect(); Celebrate(r.left + r.width / 2, r.top, .9); }
+      else { state[focus] = -1; btn.classList.add('wrong'); $('#pop').querySelectorAll('.popc').forEach(b => { if (b.textContent === (t.gloss || t.en)) b.classList.add('isright'); }); setTimeout(next, 900); return; }
+      next();
     }
-    $('#snapbox').onclick = e => { const b = e.target.closest('.pw'); if (!b || done) return; const i = +b.dataset.i; if (!flipped[i]) { flipped[i] = true; show(); check(); } };
-    bindTyped(say, () => done);
-    const { setMic, stopRec } = micListener(say);
-    stop = stopRec; window.addEventListener('hashchange', stopRec, { once: true });
-    load();
-    if (onPhoto) requestAnimationFrame(fit);
+    function next() {
+      let n = -1; for (let i = focus + 1; i < toks.length; i++) if (!state[i]) { n = i; break; }
+      if (n < 0) for (let i = 0; i < toks.length; i++) if (!state[i]) { n = i; break; }
+      if (n < 0) { finish(); return; }
+      focus = n; show();
+    }
+    function finish() {
+      done = true; sv.pages = (sv.pages || 0) + 1; sv.words = (sv.words || 0) + toks.length; store.set(key, sv);
+      $('#pcount').textContent = sv.pages + ' page' + (sv.pages === 1 ? '' : 's');
+      show(); Celebrate(innerWidth / 2, innerHeight / 3, 2.6);
+      $('#pmsg').innerHTML = `🏆 Page finished — ${right} of ${toks.length} right`;
+      $('#pmsg').insertAdjacentHTML('afterend', `<div class="snapbtns"><button class="btn" id="pnext">📷 Another page</button><button class="btn ghost" id="pagain">↩ Read it again</button></div>`);
+      $('#pnext').onclick = () => start(); $('#pagain').onclick = () => read(text);
+    }
+    $('#paper').onclick = e => { const el = e.target.closest('.lw'); if (!el || done) return; const i = +el.dataset.i; if (!state[i]) { focus = i; show(); } };   // tap any word to jump to it
+    window.addEventListener('resize', place);
+    show();
   }
   start();
 }
