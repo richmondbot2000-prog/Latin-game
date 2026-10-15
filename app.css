@@ -598,3 +598,4 @@ body.noscroll { overflow: hidden; }
 .typerow input { flex: 1; }
 .typerow .btn { width: auto; margin: 0; padding: 10px 16px; }
 .gname.pass { color: #C9F0FF; }
+.miclog { color: var(--muted); font-size: 11px; line-height: 1.3; word-break: break-word; }

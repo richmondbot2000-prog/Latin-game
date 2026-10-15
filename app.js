@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '89';
+const APP_VERSION = '90';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -570,7 +570,7 @@ function renderPassages(u) {
     <div class="pen" id="pen"></div>
     <div class="microw">
       <button class="mic" id="mic" aria-label="Listen">🎤</button>
-      <div class="micside"><div class="small" id="micmsg"></div><div class="heard" id="heard"></div></div>
+      <div class="micside"><div class="small" id="micmsg"></div><div class="heard" id="heard"></div><div class="miclog small" id="miclog"></div></div>
     </div>
     <form class="typerow" id="typeform"><input type="text" id="typed" placeholder="…or type / dictate here" autocomplete="off" autocapitalize="off" autocorrect="off"><button class="btn ghost" type="submit">Say</button></form>
     <p class="small" style="margin:4px 0 0;text-align:center">On an iPhone the keyboard’s own 🎤 key dictates straight into the box.</p>
@@ -634,6 +634,7 @@ function renderPassages(u) {
   // speech: continuous, in English; the words of each result are handed to say() once
   // the status line under the microphone says exactly what the recogniser is doing, so a problem can be named
   let note = '';
+  const log = []; const logEv = t => { log.push(new Date().toTimeString().slice(3, 8) + ' ' + t); if (log.length > 6) log.shift(); const el = $('#miclog'); if (el) el.textContent = log.join(' · '); };
   function setMic(text) {
     const m = $('#mic'), msg = $('#micmsg'); if (!m) return;
     if (text != null) note = text;
@@ -648,21 +649,23 @@ function renderPassages(u) {
     if (!SR || listening) return;
     rec = new SR(); rec.lang = 'en-GB'; rec.interimResults = true; rec.maxAlternatives = 1; heard = 0;
     rec.continuous = !isIOS;   // iPhone Safari drops a continuous session after a few seconds: short sessions, restarted after each result, are steadier
-    rec.onstart = () => setMic('Listening… say the English words');
-    rec.onaudiostart = () => setMic('Listening… (microphone open)');
-    rec.onspeechstart = () => setMic('Hearing you…');
+    rec.onstart = () => { logEv('start'); setMic('Listening… say the English words'); };
+    rec.onaudiostart = () => { logEv('audio'); setMic('Listening… (microphone open)'); };
+    rec.onspeechstart = () => { logEv('speech'); setMic('Hearing you…'); }; rec.onnomatch = () => logEv('nomatch'); rec.onsoundstart = () => logEv('sound');
     rec.onresult = e => {
       const all = []; for (let i = 0; i < e.results.length; i++) all.push(...e.results[i][0].transcript.split(/\s+/).filter(Boolean));
-      const fresh = all.slice(heard); heard = all.length;
+      const fresh = all.slice(heard); heard = all.length; logEv('result ' + all.length + (e.results[e.results.length - 1].isFinal ? ' final' : ''));
       $('#heard').textContent = all.slice(-8).join(' ');
       fresh.forEach(say);
       setMic('Listening… say the English words');
     };
-    rec.onend = () => { heard = 0; if (listening) setTimeout(() => { if (listening && rec) { try { rec.start(); } catch (err) { setMic('Could not restart listening (' + err.message + ') — tap the microphone again.'); listening = false; setMic(); } } }, 150); else setMic(''); };
+    rec.onend = () => { logEv('end'); heard = 0; if (listening) setTimeout(() => { if (listening && rec) { try { rec.start(); } catch (err) { setMic('Could not restart listening (' + err.message + ') — tap the microphone again.'); listening = false; setMic(); } } }, 150); else setMic(''); };
     rec.onerror = ev => {
+      logEv('error ' + ev.error);
       if (ev.error === 'no-speech' || ev.error === 'aborted') { setMic('Nothing heard yet — keep going'); return; }   // the session simply ends and restarts
       listening = false; setMic(ERRORS[ev.error] || ('Speech error: ' + ev.error + ' — type the words or use the keyboard’s 🎤 dictation.'));
     };
+    logEv('v' + APP_VERSION + (navigator.standalone ? ' app' : ' browser') + (rec.continuous ? ' cont' : ' short'));
     try { rec.start(); listening = true; setMic('Starting the microphone…'); } catch (err) { listening = false; setMic('The microphone would not start (' + err.message + '). Tap the box below and use the keyboard’s 🎤 dictation.'); }
   }
   function stopRec() { listening = false; if (rec) { try { rec.stop(); } catch (err) {} rec = null; } setMic(''); }
