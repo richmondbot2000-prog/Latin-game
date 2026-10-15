@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '98';
+const APP_VERSION = '99';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -825,14 +825,25 @@ function renderPassages(u) {
   const ERRORS = { 'not-allowed': 'The microphone is blocked for this site. Settings → Safari → Microphone → Allow, or use the keyboard’s 🎤 dictation in the box below.',
     'service-not-allowed': 'Speech recognition is switched off on this phone (Settings → Siri & Search → Enable Dictation). The keyboard’s 🎤 dictation in the box below works instead.',
     'audio-capture': 'No microphone could be opened.', 'network': 'The speech service could not be reached — check the connection.', 'language-not-supported': 'English speech is not available on this phone.' };
-  function startRec() {
-    if (!SR || listening) return;
-    rec = new SR(); rec.lang = 'en-GB'; rec.interimResults = true; rec.maxAlternatives = 3; heard = 0; seen = [];
-    rec.continuous = !isIOS;   // iPhone Safari drops a continuous session after a few seconds: short sessions, restarted after each result, are steadier
-    rec.onstart = () => { logEv('start'); setMic('Listening… say the English words'); };
-    rec.onaudiostart = () => { logEv('audio'); setMic('Listening… (microphone open)'); };
-    rec.onspeechstart = () => { logEv('speech'); setMic('Hearing you…'); }; rec.onnomatch = () => logEv('nomatch'); rec.onsoundstart = () => logEv('sound');
-    rec.onresult = e => {
+  // every session is a fresh recogniser: Safari restarted on the same object sometimes comes back silently dead
+  let watch = 0, dead = 0, gen = 0;
+  function spin() {
+    if (!SR || !listening) return;
+    const my = ++gen;
+    const r = rec = new SR(); r.lang = 'en-GB'; r.interimResults = true; r.maxAlternatives = 3; heard = 0; seen = [];
+    r.continuous = !isIOS;   // iPhone Safari drops a continuous session after a few seconds: short sessions, started afresh after each, are steadier
+    let alive = false;
+    const live = () => { alive = true; dead = 0; clearTimeout(watch); };
+    // a session that opens no audio within a few seconds is dead: replace it; after three in a row, hand back to the player
+    clearTimeout(watch); watch = setTimeout(() => { if (!listening || my !== gen || alive) return; dead++; logEv('silent ' + dead); try { r.abort(); } catch (e) {}
+      if (dead >= 3) { listening = false; rec = null; setMic('The phone stopped listening. Tap the microphone to start again (or use the keyboard’s 🎤 in the box below).'); } else setTimeout(() => { if (listening && gen === my) spin(); }, 200); }, 4000);   // abort normally ends the session, and end starts the next; if it doesn't, start one anyway
+    r.onstart = () => { logEv('start'); setMic('Starting…'); };
+    r.onaudiostart = () => { live(); logEv('audio'); setMic('Listening… say the English words'); };
+    r.onsoundstart = () => { live(); logEv('sound'); setMic('Hearing you…'); };
+    r.onspeechstart = () => { live(); logEv('speech'); setMic('Hearing you…'); };
+    r.onnomatch = () => logEv('nomatch');
+    r.onresult = e => {
+      live();
       // the phone rewrites the last few words as it listens ("Father" becomes "a farmer"): every word that is new
       // or has changed since the last look is tried, and every alternative the recogniser offers for it
       const all = []; let fresh = [];
@@ -847,16 +858,20 @@ function renderPassages(u) {
       fresh.forEach(say);
       setMic('Listening… say the English words');
     };
-    rec.onend = () => { logEv('end'); heard = 0; seen = []; if (listening) setTimeout(() => { if (listening && rec) { try { rec.start(); } catch (err) { setMic('Could not restart listening (' + err.message + ') — tap the microphone again.'); listening = false; setMic(); } } }, 150); else setMic(''); };
-    rec.onerror = ev => {
-      logEv('error ' + ev.error);
-      if (ev.error === 'no-speech' || ev.error === 'aborted') { setMic('Nothing heard yet — keep going'); return; }   // the session simply ends and restarts
-      listening = false; setMic(ERRORS[ev.error] || ('Speech error: ' + ev.error + ' — type the words or use the keyboard’s 🎤 dictation.'));
+    r.onend = () => { if (my !== gen) return; logEv('end'); clearTimeout(watch); if (listening) setTimeout(spin, 120); else setMic(''); };
+    r.onerror = ev => {
+      if (my !== gen) return; logEv('error ' + ev.error);
+      if (ev.error === 'no-speech' || ev.error === 'aborted') { return; }   // the session simply ends and a fresh one starts
+      listening = false; clearTimeout(watch); setMic(ERRORS[ev.error] || ('Speech error: ' + ev.error + ' — type the words or use the keyboard’s 🎤 dictation.'));
     };
-    logEv('v' + APP_VERSION + (navigator.standalone ? ' app' : ' browser') + (rec.continuous ? ' cont' : ' short'));
-    try { rec.start(); listening = true; setMic('Starting the microphone…'); } catch (err) { listening = false; setMic('The microphone would not start (' + err.message + '). Tap the box below and use the keyboard’s 🎤 dictation.'); }
+    try { r.start(); } catch (err) { listening = false; clearTimeout(watch); setMic('The microphone would not start (' + err.message + '). Tap the box below and use the keyboard’s 🎤 dictation.'); }
   }
-  function stopRec() { listening = false; if (rec) { try { rec.stop(); } catch (err) {} rec = null; } setMic(''); }
+  function startRec() {
+    if (!SR || listening) return;
+    listening = true; dead = 0; logEv('v' + APP_VERSION + (navigator.standalone ? ' app' : ' browser') + (isIOS ? ' short' : ' cont'));
+    setMic('Starting the microphone…'); spin();
+  }
+  function stopRec() { listening = false; gen++; clearTimeout(watch); if (rec) { try { rec.stop(); } catch (err) {} rec = null; } setMic(''); }
   $('#mic').onclick = () => listening ? stopRec() : startRec();
   window.addEventListener('hashchange', stopRec, { once: true });
   pick();
