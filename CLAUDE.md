@@ -135,8 +135,12 @@ healthy: Walk on the squishy's own clock (`sq.wob`; a roller by distance),
 WalkSwell next to a gun, Attack while eating. Only the Kamikaze is mirrored
 (`rigFlip`). Every kind except the Antbun has `sheet` (the artist's 3×3
 `<Name>Death.png`, cut into `art/squishies/<key>/d1-9.png` at 320px; `fig` is
-the healthy figure's width, `foot` its baseline): frames 4-6 below half
-health, 7-9 on death (`sqdeath`). Ghost and Moley have no usable rig (no
+the healthy figure's width, `foot` its baseline). **Damage look**: a hit
+bulges the squishy for a fifth of a second (`sq.bulge`, `BULGE_T`); once
+three quarters of its health is gone (`HURT_AT` = .25) it shows the bruised
+frames 4-6 (at 25 / 16 / 8 %); on death frames 7-9 (`sqdeath`): the pop,
+the bits flying out (swelling), then the puddle lies for a second and
+soaks away (1.6 s in all). Ghost and Moley have no usable rig (no
 animation file / no atlas), so they walk as their flat pictures but still
 bruise and burst. Artist-drawn bosses wear their own crown, so the game's
 crown is skipped for them. The Antbun keeps its own parts rig. The rigs were

@@ -160,13 +160,14 @@ const Practice = (() => {
     S.seen = S.seen || {}; if (!S.seen[type] && k.tip) { S.seen[type] = 1; S.banner = { text: k.tip, t: 4.5 }; }
     return sq;
   }
+  const HURT_AT = .25, BULGE_T = .22;   // a squishy looks damaged once three quarters of its health is gone; a hit bulges it for a fifth of a second
   function hurt(sq, dmg, kind = 'other') {
     const m = resist(sq, kind); if (m === 0) { sq.ping = (sq.ping || 0) - 1; if (sq.ping <= 0) { sq.ping = 40; S.floats.push({ x: sq.x, row: sq.row, t: 0, text: 'no effect' }); } return; }
     dmg *= m;
     if (m > 1 && dmg >= 5 && Math.random() < .3) S.floats.push({ x: sq.x, row: sq.row, t: 0, text: 'ouch!' });
     if (sq.helmet > 0) { sq.helmet -= dmg; if (sq.helmet < 0) { sq.hp += sq.helmet; sq.helmet = 0; S.fx.push({ kind: 'pot', x: sq.x, row: sq.row, t: 0 }); } }
     else sq.hp -= dmg;
-    sq.flash = .12;
+    sq.flash = .1; sq.bulge = BULGE_T;   // a hit: a quick bulge that settles back
     if (sq.hp <= 0 && !sq.dead) {
       sq.dead = true; S.kills++; tally('kills', 1); tally('by_' + sq.type, 1);
       if (sq.k.boss) buddy('pose_thumbs', 'emo_grin', 2.5); else if (Math.random() < .15) buddy('pose_thumbs', 'emo_happy', 1.2);
@@ -223,9 +224,9 @@ const Practice = (() => {
     // squishies move / chomp (not while the lawn is frozen)
     for (const sq of S.squishies) {
       if (S.frozen > 0) { sq.eating = null; continue; }
-      if (sq.frozenT > 0) { sq.frozenT -= dt; sq.eating = null; if (sq.flash > 0) sq.flash -= dt; continue; }   // iced by a Freeze Turret
+      if (sq.frozenT > 0) { sq.frozenT -= dt; sq.eating = null; if (sq.flash > 0) sq.flash -= dt; if (sq.bulge > 0) sq.bulge -= dt; continue; }   // iced by a Freeze Turret
       if (sq.stun > 0) { sq.stun -= dt; continue; }
-      sq.wob += dt; if (sq.flash > 0) sq.flash -= dt; if (sq.rise > 0) sq.rise -= dt;
+      sq.wob += dt; if (sq.flash > 0) sq.flash -= dt; if (sq.bulge > 0) sq.bulge -= dt; if (sq.rise > 0) sq.rise -= dt;
       if (sq.hypno) {                  // brain-washed: walks back the way it came, biting the others
         sq.eating = null; sq.x += sq.k.speed * 1.4 * dt;
         for (const o of S.squishies) if (o !== sq && !o.hypno && !o.dead && inRow(o, sq.row) && Math.abs(o.x - sq.x) < .5) {
@@ -378,7 +379,7 @@ const Practice = (() => {
     S.shells = S.shells.filter(s => !s.gone);
     // effects
     for (const f of S.fx) { f.t += dt; if (f.kind === 'smoke') { f.x -= .4 * dt; f.row += f.drift * dt * .3; } }
-    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'sqdeath' ? 1.3 : f.kind === 'slime' ? 1.6 : f.kind === 'icewave' ? .9 : f.kind === 'gallop' ? .5 : .8));
+    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'sqdeath' ? 1.6 : f.kind === 'slime' ? 1.6 : f.kind === 'icewave' ? .9 : f.kind === 'gallop' ? .5 : .8));
     for (const f of S.floats) f.t += dt;
     S.floats = S.floats.filter(f => f.t < 1);
     S.squishies = S.squishies.filter(s => !s.dead);
@@ -657,7 +658,7 @@ const Practice = (() => {
     g.globalAlpha = alpha; g.drawImage(im, x - iw / 2, y - ih, iw, ih); g.globalAlpha = 1;
     return true;
   }
-  const lookOf = sq => (sq.k.look.hurt && sq.hp < sq.maxHp * .5) ? sq.k.look.hurt : sq.k.look.ok;
+  const lookOf = sq => (sq.k.look.hurt && sq.hp < sq.maxHp * HURT_AT) ? sq.k.look.hurt : sq.k.look.ok;
   // how each kind of squishy moves: returns {dy (cells), rot, sx, sy}
   function motionOf(sq) {
     const t = sq.wob, k = sq.k, m = k.motion;
@@ -675,7 +676,7 @@ const Practice = (() => {
   }
   // the rigged Antbun: parts drawn in order, ears flopping with the hop, blinking, hit reaction, hurt set below half health
   function drawAntbun(g, sq, w, mo) {
-    const f = w / ANTBUN.box[0], hurt = sq.hp < sq.maxHp * .5, hit = sq.flash > 0;
+    const f = w / ANTBUN.box[0], hurt = sq.hp < sq.maxHp * HURT_AT, hit = sq.flash > 0;
     const part = (name, rot = 0, px = 0, py = 0) => {
       const b = ANTBUN.parts[name], im = SPRITES['antbun/' + name]; if (!b || !im || !im.complete) return;
       g.save(); g.translate((b[0] + px) * f, (b[1] + py) * f); g.rotate(rot); g.drawImage(im, -px * f, -py * f, b[2] * f, b[3] * f); g.restore();
@@ -776,19 +777,20 @@ const Practice = (() => {
     g.translate(x, foot + mo.dy * s);
     if (sq.rise > 0) { g.beginPath(); g.rect(-w, -w * 2, w * 2, w * 2 * (1 - sq.rise)); g.clip(); g.translate(0, w * sq.rise); }   // moley rising out of the ground
     if (sq.hypno) g.scale(-1, 1);   // brain-washed squishies face the other way
-    const rig = k.srig && typeof Rig !== 'undefined' ? Rig.load(k.srig) : null, useRig = !!(rig && Rig.ok(rig) && sq.hp >= sq.maxHp * .5);   // the artist's rig while healthy (its own rolling / hopping), the bruised sheet frames when hurt
+    const rig = k.srig && typeof Rig !== 'undefined' ? Rig.load(k.srig) : null, useRig = !!(rig && Rig.ok(rig) && sq.hp >= sq.maxHp * HURT_AT);   // the artist's rig until three quarters of its health is gone, the bruised sheet frames after that
     if (useRig) { /* the rig carries its own motion */ } else if (k.motion === 'roll') { g.translate(0, -w * .45); g.rotate(mo.rot); g.translate(0, w * .45); } else g.rotate(mo.rot);
     g.scale(mo.sx, mo.sy);
+    if (sq.bulge > 0) { const bp = Math.sin(Math.PI * (1 - sq.bulge / BULGE_T)), bs = 1 + .14 * bp; g.scale(bs, bs); }   // the hit bulge, about the feet
     if (k.alpha) g.globalAlpha = k.alpha;
     const iced = S.frozen > 0 || sq.frozenT > 0;
-    const paint = (c) => { if (k.rig) drawAntbun(c, sq, w, mo); else if (useRig && drawSqRig(c, rig, sq, w)) { } else if (k.sheet && sq.hp < sq.maxHp * .5 && drawSheet(c, k.sheet, sq.hp < sq.maxHp * .15 ? 6 : sq.hp < sq.maxHp * .3 ? 5 : 4, 0, 0, w)) { } else if (!drawSprite(c, lookOf(sq), 0, 0, w, k.alpha || 1)) { c.fillStyle = k.color; c.beginPath(); c.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); c.fill(); } };
+    const paint = (c) => { if (k.rig) drawAntbun(c, sq, w, mo); else if (useRig && drawSqRig(c, rig, sq, w)) { } else if (k.sheet && sq.hp < sq.maxHp * HURT_AT && drawSheet(c, k.sheet, sq.hp < sq.maxHp * .08 ? 6 : sq.hp < sq.maxHp * .16 ? 5 : 4, 0, 0, w)) { } else if (!drawSprite(c, lookOf(sq), 0, 0, w, k.alpha || 1)) { c.fillStyle = k.color; c.beginPath(); c.ellipse(0, -w * .4, w * .4, w * .4, 0, 0, 7); c.fill(); } };
     if (iced) {   // frozen: the squishy itself goes cold blue, like a figure seen through ice
       const P = Math.ceil(w * 2.6), oc = iceCanvas(P), og = oc.getContext('2d'); og.setTransform(1, 0, 0, 1, 0, 0); og.clearRect(0, 0, P, P); og.translate(P / 2, P * .78);
       paint(og); og.globalCompositeOperation = 'source-atop'; og.fillStyle = 'rgba(90,150,230,.6)'; og.fillRect(-P, -P, 2 * P, 2 * P);
       og.globalCompositeOperation = 'lighter'; og.fillStyle = 'rgba(120,200,255,.18)'; og.fillRect(-P, -P, 2 * P, 2 * P); og.globalCompositeOperation = 'source-over';
       g.drawImage(oc, -P / 2, -P * .78);
     } else paint(g);
-    if (sq.flash > 0 && !k.rig && !iced) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .7); g.globalCompositeOperation = 'source-over'; }
+    if (sq.flash > 0 && !k.rig && !iced && !useRig) { g.globalCompositeOperation = 'lighter'; drawSprite(g, lookOf(sq), 0, 0, w, .35); g.globalCompositeOperation = 'source-over'; }
     g.restore();
     if (sq.slowT > 0 && !(S.frozen > 0 || sq.frozenT > 0)) { g.fillStyle = 'rgba(150,215,255,.3)'; g.beginPath(); g.ellipse(x, foot - w * .4 + mo.dy * s, w * .42, w * .45, 0, 0, 7); g.fill(); g.fillStyle = '#dff4ff'; g.font = `700 ${s * .22}px system-ui`; g.textAlign = 'center'; g.fillText('❄', x + w * .3, foot - w * .75 + mo.dy * s); }
     if (iced) {   // a translucent shell of ice round the whole squishy, jagged on top, icicles below, a snow drift at the feet
@@ -918,8 +920,9 @@ const Practice = (() => {
         ctx.restore();
       } else if (f.kind === 'sqdeath') {
         // the artist's death sheet: burst, bits fly, then the puddle fades
-        const n = f.t < .15 ? 7 : f.t < .35 ? 8 : 9, w = cell * f.size * 1.2, foot = y + cell * .42;
-        ctx.globalAlpha = f.t > .8 ? Math.max(0, 1 - (f.t - .8) / .5) : 1;
+        const n = f.t < .12 ? 7 : f.t < .32 ? 8 : 9, foot = y + cell * .42;
+        const w = cell * f.size * 1.2 * (n === 7 ? 1.1 : n === 8 ? 1.2 + (f.t - .12) * .8 : 1);   // the burst swells as the bits fly out
+        ctx.globalAlpha = f.t > 1.25 ? Math.max(0, 1 - (f.t - 1.25) / .35) : 1;
         drawSheet(ctx, f.sheet, n, x, foot, w);
         ctx.globalAlpha = 1;
       } else if (f.kind === 'abdeath') {
