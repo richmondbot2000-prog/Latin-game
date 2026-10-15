@@ -141,7 +141,16 @@ const Snap = (() => {
   const tokens = text => { const out = [], re = /[A-Za-z][A-Za-z'-]*|\d+|[^\sA-Za-z\d]+/g, t = text.replace(/[’‘]/g, "'").replace(/[“”]/g, '"'); let m; while ((m = re.exec(t))) out.push({ t: m[0], at: m.index }); return out; };
   function sentences(text) {
     const out = []; let cur = [];
-    for (const x of tokens(text)) { cur.push(x); if (/^[.!?]+["']?$/.test(x.t) || /^["']?[.!?]+$/.test(x.t)) { out.push(cur); cur = []; } }
+    let end = 0;
+    for (const x of tokens(text)) {
+      // a new paragraph ends the sentence only after a heading (CHAPTER I, a title in capitals): a photo's paragraphs can break mid-sentence
+      if (cur.length && /\n\s*\n/.test(text.slice(end, x.at))) {
+        const words = cur.filter(c => /[A-Za-z]/.test(c.t)), caps = words.filter(c => /^[A-Z0-9]/.test(c.t)).length;
+        if (words.length && (end - cur[0].at < 120) && (caps / words.length >= .5 || /^(CHAPTER|Chapter|PART|Part|BOOK|Book)$/.test(cur[0].t))) { out.push(cur); cur = []; }
+      }
+      cur.push(x); end = x.at + x.t.length;
+      if (/^[.!?]+["']?$/.test(x.t) || /^["']?[.!?]+$/.test(x.t)) { out.push(cur); cur = []; }
+    }
     if (cur.length) out.push(cur);
     return out;
   }
@@ -152,7 +161,8 @@ const Snap = (() => {
     const isWord = i => i >= 0 && i < n && /^[a-z]/.test(low[i]);
     const out = sent.map(t => ({ en: t, la: null, id: null }));
     const info = new Array(n).fill(null);   // { kind, w, feat, pl, g, cs, pers, tense }
-    const look = i => { if (!isWord(i)) return null; if (BLOCK.has(low[i])) return null; const two = isWord(i + 1) && idx[low[i] + ' ' + low[i + 1]], three = isWord(i + 2) && idx[low[i] + ' ' + low[i + 1] + ' ' + low[i + 2]]; if (three) return { c: three, len: 3 }; if (two) return { c: two, len: 2 }; return idx[low[i]] ? { c: idx[low[i]], len: 1 } : null; };
+    // words in capitals (headings, shouting) are left alone
+    const look = i => { if (!isWord(i)) return null; if (BLOCK.has(low[i])) return null; if (/^[A-Z]{2,}$/.test(sent[i])) return null; const two = isWord(i + 1) && idx[low[i] + ' ' + low[i + 1]], three = isWord(i + 2) && idx[low[i] + ' ' + low[i + 1] + ' ' + low[i + 2]]; if (three) return { c: three, len: 3 }; if (two) return { c: two, len: 2 }; return idx[low[i]] ? { c: idx[low[i]], len: 1 } : null; };
     const prevWord = i => { for (let k = i - 1; k >= 0; k--) if (isWord(k) && !(info[k] && info[k].kind === 'fold')) return k; return -1; };
     const GIVE = new Set(['give', 'show', 'tell', 'send', 'hand', 'bring', 'teach', 'announce', 'entrust', 'promise']);
     const detBefore = i => { const p = prevWord(i); return p >= 0 && (DET.has(low[p]) || (info[p] && info[p].kind === 'a') || low[p] === 'of'); };
@@ -315,8 +325,12 @@ const Snap = (() => {
   // the whole text → sentences of tokens { en, la, id }; `words` = the vocabulary in play
   function latinise(text, words) {
     const idx = build(words); idx.__words = Object.fromEntries(words.map(w => [w.word, w]));
+    // a heading (CHAPTER I, a story's title: a whole short paragraph with no full stop) stays English
+    const isHeading = sx => { const a = sx[0].at, b = sx[sx.length - 1].at + sx[sx.length - 1].t.length, para = text.slice(a, b).trim();
+      const ws = para.split(/\s+/), titled = ws.filter(w => /^[A-Z0-9]/.test(w)).length / ws.length >= .5;
+      return /(^|\n\s*\n)\s*$/.test(text.slice(0, a)) && /^\s*(\n\s*\n|$)/.test(text.slice(b)) && para.length < 120 && (!/[.,;:!?]["'”’)]?$/.test(para) || /^(CHAPTER|Chapter|PART|Part|BOOK|Book)\b/.test(para) || (para.length < 50 && titled && !/["“”]/.test(para))); };
     return sentences(text).map(s => {
-      const r = convert(s.map(x => x.t), idx);
+      const r = isHeading(s) ? s.map(x => ({ en: x.t, la: null, id: null })) : convert(s.map(x => x.t), idx);
       r.forEach((t, i) => { t.at = s[i].at; let a = i; while (a > 0 && r[a - 1].skip && !r[a - 1].la) a--; t.from = s[a].at; t.to = s[i + (t.len || 1) - 1].at + s[i + (t.len || 1) - 1].t.length; });   // from…to: the English this Latin stands for
       return r;
     }).filter(s => s.some(t => /[a-z]/i.test(t.en)));

@@ -635,6 +635,7 @@ body.noscroll { overflow: hidden; }
 .gamebanner .corner { position: absolute; right: 10px; bottom: 10px; background: #2B1A3A; color: #fff; font: 700 13px/1 system-ui, sans-serif; padding: 6px 10px; border-radius: 999px; letter-spacing: .04em; }
 .gname.book { color: #FFE7B8; }
 .gname.snap { color: #D7FFD0; }
+.gname.lib { color: #FFE9C2; }
 .snapbtns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 8px 0; }
 .filebtn { display: inline-flex; align-items: center; cursor: pointer; }
 #pasted { width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; padding: 10px 12px; border: 2px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); resize: vertical; margin-top: 10px; }
@@ -693,6 +694,25 @@ html.readermode { background: #fff; }
 .lw { font-weight: 700; border-radius: 3px; cursor: pointer; }
 .lw.focus { background: #FFE066; box-shadow: 0 0 0 2px #FFE066; }
 .lw.ok { color: #1F7A3A; font-weight: 500; font-style: italic; } .lw.bad { color: #B23A48; font-weight: 500; font-style: italic; text-decoration: underline wavy #B23A48; }
+/* the Library: a clean list of books on white */
+.libpage { max-width: 42rem; margin: 0 auto; min-height: 100vh; background: #fff; padding: calc(4px + env(safe-area-inset-top, 0px)) 0 calc(30px + env(safe-area-inset-bottom)); }
+.libtitle { font-family: 'Iowan Old Style', Palatino, Georgia, serif; font-size: 2rem; font-weight: 700; margin: 6px 20px 12px; color: #111; }
+.lbook { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 13px 20px; border-bottom: 1px solid #eee; cursor: pointer; font: inherit; color: #111; }
+.lbook:active { background: #f6f6f6; }
+.lbook .lt { display: block; font-family: 'Iowan Old Style', Palatino, Georgia, serif; font-size: 1.15rem; font-weight: 600; line-height: 1.25; }
+.lbook .la { display: block; font-family: -apple-system, system-ui, sans-serif; font-size: .85rem; color: #777; margin-top: 3px; }
+.lbar { display: block; height: 3px; background: #eee; border-radius: 2px; margin-top: 8px; overflow: hidden; } .lbar span { display: block; height: 100%; background: #1B4E9B; }
+.lcarry { background: #F3F7FF; border: 0; border-radius: 14px; margin: 0 16px 14px; width: calc(100% - 32px); padding: 14px 16px; }
+.lcarry .lk { display: block; font-family: -apple-system, system-ui, sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #1B4E9B; margin-bottom: 4px; }
+.lshelf { border-top: 1px solid #eee; }
+.lopen { display: flex; gap: 8px; padding: 16px 20px 6px; }
+.lopen input { flex: 1; min-width: 0; font: inherit; font-family: -apple-system, system-ui, sans-serif; font-size: 1rem; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 11px; background: #fff; color: #111; }
+.lopen .rchoice { flex: none; padding: 6px 18px; }
+.lnote { font-family: -apple-system, system-ui, sans-serif; font-size: .85rem; color: #888; padding: 6px 20px; margin: 0; }
+.lload { padding: 40px 20px; text-align: center; color: #777; font-family: -apple-system, system-ui, sans-serif; }
+.paper p.rh { text-align: center; font-weight: 700; letter-spacing: .02em; margin: 1.2em 0 .9em; }
+html.rdark .libpage, html.rdark .lbook { background: #000; color: #eee; } html.rdark .libtitle { color: #f2f2f2; } html.rdark .lbook { border-bottom-color: #222; } html.rdark .lshelf { border-top-color: #222; }
+html.rdark .lcarry { background: #10203A; } html.rdark .lbar { background: #2a2a2a; } html.rdark .lopen input { background: #1C1C1E; color: #eee; border-color: #3a3a3c; }
 /* the answer panel: the bottom fifth of the screen; pulled up it shows the text settings */
 .rsheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: #fff; border-top: 1px solid #e6e6e6; box-shadow: 0 -6px 20px rgba(0, 0, 0, .07); border-radius: 16px 16px 0 0; padding: 0 14px calc(10px + env(safe-area-inset-bottom)); max-width: 42rem; margin: 0 auto; touch-action: none; }
 .rgrip { position: relative; display: flex; align-items: center; justify-content: space-between; height: 34px; cursor: pointer; user-select: none; -webkit-user-select: none; }

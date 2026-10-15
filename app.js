@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '112';
+const APP_VERSION = '113';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -160,6 +160,7 @@ function route() {
   if (h === 'cards') return renderCardsHome(u);
   if (h === 'passages') return renderPassages(u);
   if (h === 'snap') return renderSnap(u);
+  if (h === 'library') return renderSnap(u, 'books');
   if (h === 'book') return levelOf(u) === '3' ? renderPassages(u, true) : renderHome(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
@@ -502,6 +503,7 @@ function renderHome(u) {
       <button class="gamebanner" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span></button>
       <button class="gamebanner${levelOf(u) === '3' ? '' : ' locked'}" id="bookGo" style="background-image:url('art/banners/book.jpg')"><span class="gname book">Read a book</span>${levelOf(u) === '3' ? '' : '<span class="corner">Level 3</span>'}</button>
       <button class="gamebanner" id="snapGo" style="background-image:url('art/banners/snap.jpg')"><span class="gname snap">Snap a page</span></button>
+      <button class="gamebanner" id="libGo" style="background-image:url('art/banners/library.jpg')"><span class="gname lib">Library</span></button>
     </div>
     ${leaderboardHTML()}
     <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
@@ -525,6 +527,7 @@ function renderHome(u) {
   $('#cardsGo').onclick = () => { location.hash = 'cards'; };
   $('#passGo').onclick = () => { location.hash = 'passages'; };
   $('#snapGo').onclick = () => { location.hash = 'snap'; };
+  $('#libGo').onclick = () => { location.hash = 'library'; };
   $('#bookGo').onclick = () => { if (levelOf(u) === '3') location.hash = 'book'; else flashHome('📖 The book opens at Level 3 — choose Level 3 above to read it.'); };
   $('#verline').onclick = () => { $('#verline').textContent = 'updating…'; freshen(); };
   checkVersion();
@@ -915,7 +918,7 @@ function renderPassages(u, book = false) {
 }
 
 /* ---------- Snap a page: a photographed (or pasted) English text with its vocabulary words turned into Latin ---------- */
-function renderSnap(u) {
+function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Project Gutenberg books in the same reader
   Celebrate.stop();
   const key = 'latin.snap.' + u.id, sv = store.get(key, { pages: 0, words: 0, last: '' });
   const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
@@ -988,9 +991,10 @@ function renderSnap(u) {
   const RK = 'latin.reader', rs = Object.assign({ font: 'serif', size: 2, dark: false }, store.get(RK, null) || {});
   const applyDark = () => document.documentElement.classList.toggle('rdark', !!rs.dark);
   const saveRS = () => store.set(RK, rs);
-  function read(text) {
+  // opts (a book page): { label, back, next } — the head shows the book and page, ← goes to the shelf, the end of the page offers the next one
+  function read(text, opts = {}) {
     text = text.replace(/-\n(?=[a-z])/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 6000);
-    sv.last = text; store.set(key, sv);
+    if (!opts.label) { sv.last = text; store.set(key, sv); }
     const sents = Snap.latinise(text, pool);
     if (!sents.some(s => s.some(t => t.la))) return start('None of the words on that page are in the ' + levelName(lv) + ' list — try another page, or a higher level.');
     const toks = []; sents.forEach(s => s.forEach(t => { if (t.la && !t.skip) toks.push(t); }));
@@ -1015,7 +1019,7 @@ function renderSnap(u) {
     // the page, and a panel across the bottom fifth of the screen with the three meanings; pulled up, it also holds
     // the font, the size and white-on-black
     app.innerHTML = `<div class="reader">
-      <div class="rhead"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="rpos" id="rprog"></span><span style="width:44px"></span></div>
+      <div class="rhead"><button class="iconbtn" id="back" aria-label="Back">${opts.back ? '← Books' : '← Home'}</button><span class="rpos" id="rprog"></span><span style="width:44px"></span></div>
       <div class="paper ${rs.font} size${rs.size}" id="paper"></div>
       <div class="rsheet" id="rsheet">
         <div class="rgrip" id="rgrip" aria-label="Pull up for text settings"><span class="rword" id="rword"></span><span class="rbar"></span><span class="rhint">Aa</span></div>
@@ -1027,7 +1031,7 @@ function renderSnap(u) {
         </div>
       </div>
     </div>`;
-    $('#back').onclick = () => { document.documentElement.classList.remove('readermode', 'rdark'); location.hash = ''; };
+    $('#back').onclick = () => { if (opts.back) return opts.back(); document.documentElement.classList.remove('readermode', 'rdark'); location.hash = ''; };
     const sheet = $('#rsheet'), setOpen = o => sheet.classList.toggle('open', o);
     // the grip: tap to open or close; drag up to open, down to close
     let y0 = null, moved = false;
@@ -1056,10 +1060,12 @@ function renderSnap(u) {
     }
     html += '</p>';
     $('#paper').innerHTML = html;
+    // a short line with no full stop is a heading (CHAPTER I, a story's title)
+    $('#paper').querySelectorAll('p').forEach(p => { const t = p.textContent.trim(); const ws = t.split(/\s+/); if (t.length < 90 && !/[.,;:!?]["'”’)]?$/.test(t) || /^(CHAPTER|Chapter)\b/.test(t) && t.length < 120 || t.length < 50 && !/["“”]/.test(t) && ws.filter(w => /^[A-Z0-9]/.test(w)).length / ws.length >= .5) p.className = 'rh'; });
     const lw = i => $('#paper').querySelector(`.lw[data-i="${i}"]`);
     let busy = false;
     function show() {
-      $('#rprog').textContent = `${state.filter(Boolean).length} of ${toks.length}`;
+      $('#rprog').textContent = (opts.label ? opts.label + ' · ' : '') + `${state.filter(Boolean).length} of ${toks.length}`;
       toks.forEach((t, i) => { const el = lw(i); if (!el) return; el.className = 'lw' + (i === focus && !done ? ' focus' : '') + (state[i] === 1 ? ' ok' : state[i] === -1 ? ' bad' : ''); if (state[i]) { el.textContent = t.gloss || t.en; el.title = t.la; } else el.textContent = t.la; });
       if (done) return;
       const t = toks[focus];
@@ -1084,16 +1090,91 @@ function renderSnap(u) {
       focus = n; show();
     }
     function finish() {
-      done = true; sv.pages = (sv.pages || 0) + 1; sv.words = (sv.words || 0) + toks.length; store.set(key, sv);
+      done = true; if (!opts.label) { sv.pages = (sv.pages || 0) + 1; sv.words = (sv.words || 0) + toks.length; store.set(key, sv); }
       show(); Celebrate(innerWidth / 2, innerHeight / 3, 2.6);
       $('#rword').textContent = `🏆 ${right} of ${toks.length} right`;
-      $('#rans').innerHTML = `<button class="rchoice main" id="pnext">📷 Another page</button><button class="rchoice" id="pagain">↩ Read it again</button>`;
-      $('#pnext').onclick = () => start(); $('#pagain').onclick = () => read(text);
+      $('#rans').innerHTML = `<button class="rchoice main" id="pnext">${opts.next ? 'Next page →' : opts.back ? '🏆 The end — back to the books' : '📷 Another page'}</button><button class="rchoice" id="pagain">↩ Read it again</button>`;
+      if (opts.done) opts.done();
+      $('#pnext').onclick = () => opts.next ? opts.next() : opts.back ? opts.back() : start(); $('#pagain').onclick = () => read(text, opts);
     }
     $('#paper').onclick = e => { const el = e.target.closest('.lw'); if (!el || done || busy) return; const i = +el.dataset.i; if (!state[i]) { focus = i; show(); } };   // tap any word to jump to it
     show();
   }
+  if (mode === 'books') return library();
   start();
+
+  /* ---------- the Library: Project Gutenberg books, fetched through the sync worker (Gutenberg sends no CORS header) ---------- */
+  function library() {
+    const LK = 'latin.library.' + u.id, lib = Object.assign({ books: {}, last: null }, store.get(LK, null) || {});
+    const saveLib = () => store.set(LK, lib);
+    const SHELF = [[67098, 'Winnie-the-Pooh', 'A. A. Milne'], [11, 'Alice’s Adventures in Wonderland', 'Lewis Carroll'], [11757, 'The Velveteen Rabbit', 'Margery Williams'],
+      [16, 'Peter Pan', 'J. M. Barrie'], [289, 'The Wind in the Willows', 'Kenneth Grahame'], [55, 'The Wonderful Wizard of Oz', 'L. Frank Baum'], [2781, 'Just So Stories', 'Rudyard Kipling'],
+      [236, 'The Jungle Book', 'Rudyard Kipling'], [113, 'The Secret Garden', 'Frances Hodgson Burnett'], [1874, 'The Railway Children', 'E. Nesbit'], [778, 'Five Children and It', 'E. Nesbit'],
+      [271, 'Black Beauty', 'Anna Sewell'], [500, 'The Adventures of Pinocchio', 'Carlo Collodi'], [902, 'The Happy Prince and Other Tales', 'Oscar Wilde'], [2591, 'Grimms’ Fairy Tales', 'The Brothers Grimm'],
+      [1448, 'Heidi', 'Johanna Spyri'], [120, 'Treasure Island', 'Robert Louis Stevenson'], [45, 'Anne of Green Gables', 'L. M. Montgomery']];
+    const BOOK_V = 8;   // the worker's cleaning version (/__book/<n>/v8 in its cache): a new number skips any stale copy on the way and on the phone
+    const BOOK_URL = id => (store.get('latin.syncUrl', null) || 'https://sync.musicalmagic.uk') + '/book/' + id + '?v=' + BOOK_V;
+    const progressOf = id => { const b = lib.books[id]; return b && b.pages ? `Page ${Math.min(b.at + 1, b.pages)} of ${b.pages}` : ''; };
+    function shelf(msg) {
+      document.documentElement.classList.add('readermode'); applyDark();
+      const last = lib.last && lib.books[lib.last];
+      const row = ([id, title, author]) => { const p = progressOf(id), b = lib.books[id]; return `<button class="lbook" data-id="${id}"><span class="lt">${esc(title)}</span><span class="la">${esc(author)}${p ? ' · ' + p : ''}</span>${b && b.pages ? `<span class="lbar"><span style="width:${Math.round(100 * Math.min(1, b.at / b.pages))}%"></span></span>` : ''}</button>`; };
+      const extra = Object.entries(lib.books).filter(([id]) => !SHELF.some(s => s[0] === +id)).map(([id, b]) => [+id, b.title, b.author || '']);
+      app.innerHTML = `<div class="libpage">
+        <div class="rhead"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="rpos">Project Gutenberg</span><span style="width:44px"></span></div>
+        <h1 class="libtitle">Library</h1>
+        ${last ? `<button class="lcarry lbook" data-id="${lib.last}"><span class="lk">Carry on reading</span><span class="lt">${esc(last.title)}</span><span class="la">${esc(progressOf(lib.last))}</span><span class="lbar"><span style="width:${Math.round(100 * Math.min(1, last.at / (last.pages || 1)))}%"></span></span></button>` : ''}
+        <div class="lshelf">${[...extra, ...SHELF].map(row).join('')}</div>
+        <form class="lopen" id="lopen"><input id="lurl" type="text" inputmode="url" autocomplete="off" autocapitalize="off" placeholder="Paste a Project Gutenberg link or number"><button class="rchoice main" type="submit">Open</button></form>
+        ${msg ? `<p class="snapnote">${esc(msg)}</p>` : ''}
+        <p class="lnote">Free classic books from gutenberg.org. Every word from your Latin list turns into Latin.</p>
+      </div>`;
+      $('#back').onclick = () => { document.documentElement.classList.remove('readermode', 'rdark'); location.hash = ''; };
+      app.querySelectorAll('.lbook').forEach(b => { b.onclick = () => open(+b.dataset.id); });
+      $('#lopen').onsubmit = e => { e.preventDefault(); const m = $('#lurl').value.match(/(?:ebooks\/|epub\/|pg|files\/|^\s*)(\d{1,6})/); if (!m) return shelf('That doesn’t look like a Project Gutenberg book — paste a link like gutenberg.org/ebooks/67098, or just the number.'); open(+m[1]); };
+    }
+    // the book's text, from the phone's own copy if it has one
+    async function getBook(id) {
+      const url = BOOK_URL(id);
+      let c = null; try { c = await caches.open('latin-books'); const hit = await c.match(url); if (hit) return await hit.json(); } catch (e) {}
+      const stale = j => /\*\*\* ?START OF/.test(j.text.slice(0, 20000));   // an old copy from before the worker cut the licence text
+      let r = await fetch(url); if (!r.ok) throw new Error(r.status === 404 ? 'That book could not be found on Project Gutenberg' : 'The library could not be reached');
+      let j = await r.clone().json();
+      if (stale(j)) { await new Promise(ok => setTimeout(ok, 1200)); const r2 = await fetch(url, { cache: 'reload' }); if (r2.ok) { r = r2; j = await r.clone().json(); } }
+      if (stale(j)) { const ps = j.text.split('\n\n'), k = ps.map((p, i) => /\*\*\* ?START OF/.test(p) ? i : -1).filter(i => i >= 0).pop(); j.text = ps.slice(k + 1).join('\n\n'); return j; }   // trimmed here, not kept
+      try { if (c) await c.put(url, r); } catch (e) {}
+      return j;
+    }
+    // pages of about 200 words, broken between paragraphs (a very long paragraph between sentences)
+    function paginate(text) {
+      const out = []; let cur = [], n = 0;
+      const push = () => { if (cur.length) out.push(cur.join('\n\n')); cur = []; n = 0; };
+      for (const p of text.split('\n\n')) {
+        const w = p.split(/\s+/).length;
+        if (w > 320) { push(); let part = []; let pn = 0; for (const s of p.match(/[^.!?]+[.!?]+["'”’)]*\s*|[^.!?]+$/g) || [p]) { part.push(s.trim()); pn += s.split(/\s+/).length; if (pn >= 200) { out.push(part.join(' ')); part = []; pn = 0; } } if (part.length) { cur = [part.join(' ')]; n = pn; } continue; }
+        if (n + w > 260 && n >= 120) push();
+        cur.push(p); n += w;
+        if (n >= 200 && !(p.length < 90 && !/[.!?]["'”’)]?$/.test(p))) push();   // never end a page on a heading
+      }
+      push();
+      return out;
+    }
+    async function open(id) {
+      document.documentElement.classList.add('readermode'); applyDark();
+      app.innerHTML = `<div class="libpage"><div class="rhead"><button class="iconbtn" id="back">← Books</button><span></span><span style="width:44px"></span></div><p class="lload">Opening the book…</p></div>`;
+      $('#back').onclick = () => shelf();
+      let book; try { book = await getBook(id); } catch (e) { return shelf(e.message + '.'); }
+      if (!book || !book.text) return shelf('That book has no text that can be read here.');
+      const pages = paginate(book.text), b = lib.books[id] = Object.assign({ at: 0 }, lib.books[id] || {}, { title: book.title, author: book.author, pages: pages.length });
+      b.at = Math.min(b.at, pages.length - 1); lib.last = id; saveLib();
+      const page = () => { const here = b.at; read(pages[here], { label: `p. ${here + 1}/${pages.length}`, back: () => shelf(),
+        done: () => { b.at = Math.max(b.at, Math.min(here + 1, pages.length)); saveLib(); },
+        next: here + 1 < pages.length ? () => { page2(); } : null }); };
+      const page2 = () => { b.at = Math.min(b.at, pages.length - 1); page(); scrollTo(0, 0); };
+      page();
+    }
+    shelf();
+  }
 }
 
 /* ---------- practice (garden defence) ---------- */

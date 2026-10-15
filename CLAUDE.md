@@ -212,10 +212,42 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   the picture, unused since the photo overlay was dropped: book print is too
   small on a phone.) Progress
   `latin.snap.<id>` {pages, words, last} (the last text, for "The last page
-  again"; not synced). Tested by `scratchpad/reader.js` (paste, right and
+  again"; not synced). Banner `art/banners/library.jpg` for the Library. Tested by `scratchpad/reader.js` (paste, right and
   wrong answers, the panel's font, size and black page, finishing a page),
   `scratchpad/camtest.js` (the camera screen with a fake camera) and `scratchpad/snap.js`
   (the OCR path on a rendered PNG, ~2 s in Chromium).
+- **Library** (`library()` inside `renderSnap(u, 'books')`, banner under Read,
+  `#library`): Project Gutenberg books in the Snap a page reader. Gutenberg
+  sends no CORS header, so the sync worker fetches them: `GET
+  https://sync.musicalmagic.uk/book/<n>` → `{ id, title, author, text }`
+  (after the last `*** START OF` marker, before `*** END OF`; one paragraph
+  per line, `[Illustration…]` / `[Picture…]` and underscores dropped; the
+  story starts at the first chapter heading followed by real prose —
+  `isProse`: mostly lower case, few digits, under half the words
+  capitalised, real punctuation — or else at the first long prose
+  paragraph, stepped back over opening sentences and short verse or
+  dialogue to the story's own title; cached at the edge 30 days under
+  `/__book/<n>/v8` on the worker's own host: when the cleaning changes, bump that **and** `BOOK_V` in
+  `app.js`, which the game adds as `?v=` so no stale copy on the way or on
+  the phone is used). The
+  shelf: 18 children's classics (`SHELF`: Winnie-the-Pooh, Alice, Velveteen
+  Rabbit, Peter Pan, Wind in the Willows, Oz, Just So, Jungle Book, Secret
+  Garden, Railway Children, Five Children and It, Black Beauty, Pinocchio,
+  Happy Prince, Grimm, Heidi, Treasure Island, Anne of Green Gables), a
+  "Carry on reading" card, and a box that takes any Gutenberg link or
+  number (that book joins the shelf). Books are kept on the phone in the
+  `latin-books` cache (the service worker keeps it across updates). Pages
+  of ~200 words broken between paragraphs (`paginate`; never ending on a
+  heading); the reader runs in book mode (`read(text, { label, back, next,
+  done })`: "← Books", "p. 3/104 · n of m", "Next page →" at the end).
+  Headings (short, no full stop, mostly capitals, no quotes; `CHAPTER …`)
+  are centred `.rh` and stay English (`isHeading` in `Snap.latinise`; a
+  paragraph break ends a sentence only after a heading, so a photo's
+  mid-sentence breaks don't), and words in capitals are never converted.
+  Place per book in `latin.library.<id>` {books: {n: {at, pages, title,
+  author}}, last} (not synced). Tested by `scratchpad/library.js` against
+  the live worker; `scratchpad/wtest.mjs` runs the worker's book route
+  locally over the shelf.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Each level is one long day on a planet (`WORLDS` in `practice.js`,
@@ -374,8 +406,9 @@ levels by max, Hammer items as a union with coins from the device that has
 earned more, Read sentences as a union). Avatars and the player list itself
 (name + emojis) stay on the device. A new device: "I have a sync code
 from another device" on the new-player or sign-in screen, type the code,
-progress merges in. The worker allows only `GET`/`PUT /p/<64 hex>` from
-`latin.musicalmagic.uk` (and localhost:8765), 64 KB max, JSON only.
+progress merges in. The worker allows `GET`/`PUT /p/<64 hex>` from
+`latin.musicalmagic.uk` (and localhost:8765), 64 KB max, JSON only, plus the
+name / gift routes and `GET /book/<n>` (see `sync/worker.js`).
 Redeploy from `sync/` with `npx wrangler deploy`. The Cloudflare token is
 stored as a **network secret** on the Claude cloud environment "Default"
 (name `CLOUDFLARE_API_TOKEN`, Bearer, allowed host `api.cloudflare.com`):
