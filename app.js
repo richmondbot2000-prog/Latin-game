@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '86';
+const APP_VERSION = '87';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -440,12 +440,17 @@ function renderBeasts(u) {
 // put a dictionary meaning into the shape a form needs: plural nouns, he/she verbs, and (with pronoun) I / you / we / they
 const IRREG = { be: ['is', 'are', 'am'], do: ['does', 'do', 'do'], go: ['goes', 'go', 'go'], have: ['has', 'have', 'have'], man: 'men', woman: 'women', child: 'children', foot: 'feet', tooth: 'teeth', mouse: 'mice', person: 'people', wife: 'wives', life: 'lives', knife: 'knives', sheep: 'sheep', ship: 'ships' };
 const PRON = { v1s: 'I', v2s: 'you', v3s: 'he/she', v1p: 'we', v2p: 'you', v3p: 'they' };
+const PAST = { be: 'was', see: 'saw', give: 'gave', say: 'said', lead: 'led', take: 'took', run: 'ran', come: 'came', go: 'went', hear: 'heard', write: 'wrote', drink: 'drank', fight: 'fought', sleep: 'slept', throw: 'threw', build: 'built', hold: 'held', have: 'had', put: 'put', read: 'read', stand: 'stood', send: 'sent', make: 'made', do: 'did', find: 'found', flee: 'fled', catch: 'caught', leave: 'left', bring: 'brought', sit: 'sat', eat: 'ate', fall: 'fell', meet: 'met', seek: 'sought', set: 'set', tell: 'told', know: 'knew', win: 'won', hide: 'hid', drive: 'drove', overcome: 'overcame', strike: 'struck', get: 'got', wear: 'wore', can: 'could' };
+const pastOf = w => PAST[w] || (/e$/.test(w) ? w + 'd' : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + 'ied' : w + 'ed');
 function inflect(english, shape, pronoun = false) {
   let base = english.split(',')[0].trim().replace(/\s*\(.*\)$/, '');
   if (shape === 'o' || shape === 'adj' || shape === 'adjp' || shape === 'n1') return base;
   const words = base.split(' '), head = words[0], rest = words.slice(1).join(' ');
   const sfx = w => /(s|x|z|ch|sh)$/.test(w) ? w + 'es' : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + 'ies' : /[^aeiou]o$/.test(w) ? w + 'es' : w + 's';
   if (shape === 'n2') { const ir = IRREG[base]; const pl = typeof ir === 'string' ? ir : sfx(words[words.length - 1]); return words.length > 1 ? words.slice(0, -1).join(' ') + ' ' + pl : pl; }
+  if (shape === 'inf') return 'to ' + base;
+  if (shape === 'imp') return base + '!';
+  if (/^p[123][sp]$/.test(shape)) { const v = head === 'be' ? (shape === 'p3s' || shape === 'p1s' ? 'was' : 'were') : pastOf(head); return rest ? v + ' ' + rest : v; }   // perfect tense
   const ir = Array.isArray(IRREG[head]) ? IRREG[head] : null;
   const v = shape === 'v3s' ? (ir ? ir[0] : sfx(head)) : shape === 'v1s' ? (ir ? ir[2] : head) : (ir ? ir[1] : head);
   const out = rest ? v + ' ' + rest : v;
@@ -461,31 +466,49 @@ function inflectAll(english, shape) {
 }
 function renderRead(u) {
   const byId = Object.fromEntries(WORDS.map(w => [w.id, w]));
-  const pool = WORDS.filter(w => w.beginner);
+  const pool = activeWords(u);   // wrong answers come from the words of the chosen level
+  const L = ['beginner', '1', '2', '3'].indexOf(levelOf(u));
   const key = 'latin.read.' + u.id;
   const sv = store.get(key, { done: {}, read: 0 });
+  // the sentences for this level and below; the stories, as lists of sentence numbers in reading order
+  const avail = SENTENCES.map((x, n) => n).filter(n => (SENTENCES[n].lv || 0) <= L);
+  const stories = {}; avail.forEach(n => { const p = SENTENCES[n].p; if (p) (stories[p] = stories[p] || []).push(n); });
   app.innerHTML = `
   <div class="wrap">
     <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Sentences</span><span class="lvtag" id="rcount"></span></div>
     <p class="small" style="text-align:center;margin:0 0 6px">Read the sentence. What does the <b>highlighted word</b> mean?</p>
+    <div class="rtitle" id="rtitle" hidden></div>
+    <div class="rstory" id="rstory" hidden></div>
     <div class="rsent card" id="rsent"></div>
     <div class="ropts" id="ropts"></div>
     <p class="rmsg" id="rmsg"></p>
   </div>`;
   $('#back').onclick = () => { location.hash = ''; };
-  let sent = null, i = 0, opts = [], busy = false, misses = 0;
+  let sent = null, i = 0, opts = [], busy = false, misses = 0, story = null;   // story = { id, title, list, at }
+  const count = () => `${avail.filter(n => (sv.done || {})[n]).length}/${avail.length} read`;
   const pick = () => {
     const seen = sv.done || {};
-    const fresh = SENTENCES.map((x, n) => n).filter(n => !seen[n]);
-    const list = fresh.length ? fresh : SENTENCES.map((x, n) => n);
-    const n = list[Math.floor(Math.random() * list.length)];
-    return { n, ...SENTENCES[n] };
+    let fresh = avail.filter(n => !seen[n]); if (!fresh.length) fresh = avail;
+    // the level's own sentences come up most (7 in 10), the easier ones stay in the mix
+    const own = fresh.filter(n => (SENTENCES[n].lv || 0) === L);
+    const list = own.length && Math.random() < .7 ? own : fresh;
+    const n = list[Math.floor(Math.random() * list.length)], p = SENTENCES[n].p;
+    if (p) { story = { id: p, title: SENTENCES[n].pt, list: stories[p], at: 0 }; return stories[p][0]; }   // a story is read from its first line
+    story = null; return n;
   };
+  const load = n => { sent = { n, ...SENTENCES[n] }; i = 0; misses = 0; };
+  const plain = n => SENTENCES[n].la.map(t => t[0]).join(' ').replace(/ ([,.;:?!])/g, '$1');
   const wordsIn = () => sent.la.filter(t => t[1]);
   function show() {
     const words = wordsIn();
     const cur = words[i];
-    $('#rcount').textContent = `${Object.keys(sv.done || {}).length}/${SENTENCES.length} read`;
+    $('#rcount').textContent = count();
+    const tt = $('#rtitle'), st = $('#rstory');
+    tt.hidden = !story; st.hidden = !story || !story.at;
+    if (story) {
+      tt.innerHTML = `📖 <b>${esc(story.title)}</b> <span class="small">· line ${story.at + 1} of ${story.list.length}</span>`;
+      st.innerHTML = story.list.slice(0, story.at).map(n => `<div class="rline"><span class="rl">${esc(plain(n))}</span><span class="re">${esc(SENTENCES[n].en)}</span></div>`).join('');
+    }
     $('#rsent').innerHTML = `<div class="rla">${sent.la.map(t => t[1] ? `<span class="rw ${t === cur ? 'cur' : words.indexOf(t) < i ? 'done' : ''}" data-id="${esc(t[1])}">${esc(t[0])}</span>` : `<span class="rp">${esc(t[0])}</span>`).join(' ')}</div>
       <div class="ren" id="ren"></div>`;
     if (!cur) { finish(); return; }
@@ -500,11 +523,12 @@ function renderRead(u) {
   function finish() {
     $('#ren').textContent = sent.en; $('#ren').classList.add('show');
     sv.done = sv.done || {}; sv.done[sent.n] = Date.now(); sv.read = (sv.read || 0) + 1; store.set(key, sv);
-    $('#rcount').textContent = `${Object.keys(sv.done).length}/${SENTENCES.length} read`;
-    $('#ropts').innerHTML = `<button class="btn" id="rnext">${misses ? 'Next sentence' : '⭐ Perfect! Next sentence'}</button>`;
+    $('#rcount').textContent = count();
+    const more = story && story.at < story.list.length - 1;
+    $('#ropts').innerHTML = `<button class="btn" id="rnext">${more ? (misses ? 'Next line' : '⭐ Perfect! Next line') : story ? '🏆 The end — next' : (misses ? 'Next sentence' : '⭐ Perfect! Next sentence')}</button>`;
     $('#rmsg').textContent = misses ? `${misses} to look at again — they'll come round sooner.` : '';
-    if (!misses) Celebrate(innerWidth / 2, innerHeight / 3, 1.6);
-    $('#rnext').onclick = () => { sent = pick(); i = 0; misses = 0; show(); };
+    if (!misses) Celebrate(innerWidth / 2, innerHeight / 3, story && !more ? 2.4 : 1.6);
+    $('#rnext').onclick = () => { if (more) { story.at++; load(story.list[story.at]); } else load(pick()); show(); };
   }
   $('#ropts').onclick = e => {
     const b = e.target.closest('button[data-k]'); if (!b || busy) return;
@@ -514,12 +538,12 @@ function renderRead(u) {
     if (ok) { b.classList.add('good'); setTimeout(() => { i++; show(); }, 450); }
     else {
       misses++; b.classList.add('bad');
-      $('#ropts').querySelectorAll('button').forEach((x, k) => { if (opts[k] === w.english) x.classList.add('good'); });
+      $('#ropts').querySelectorAll('button').forEach((x, k) => { if (opts[k] === gloss) x.classList.add('good'); });
       $('#rmsg').innerHTML = `<b>${esc(cur[0])}</b> means <b>${esc(gloss)}</b>.`;
       setTimeout(() => { i++; show(); }, 1600);
     }
   };
-  sent = pick(); show();
+  load(pick()); show();
 }
 
 /* ---------- practice (garden defence) ---------- */

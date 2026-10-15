@@ -61,11 +61,24 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   stage). The **Beastpedia** (`#beasts`, banner on the home page) shows every
   stage as a circle, silhouettes for the ones still to find, and a sheet with
   the picture, stage, element and ecology for the found ones.
-- **Read** — "Sentences" (`read.js`, `renderRead` in `app.js`): 60 hand-written
-  sentences using only Beginner words, each token mapped to its headword and
-  checked against `vocab.js`. The reader is asked each word's meaning in turn
-  (3 options, same star rule); the English appears at the end. Progress in
-  `latin.read.<id>` {done{n: time}, read}. Next: longer passages.
+- **Read** — "Sentences" (`read.js`, `renderRead` in `app.js`): 301 hand-written
+  sentences, each token mapped to its headword and checked against
+  `vocab.js`: 60 + two short stories from Beginner words only, then about 60
+  sentences and three stories (4–6 lines each) for each of Levels 1, 2 and 3
+  (`lv`; stories carry `p` id and `pt` title), using that level's words and
+  grammar (Level 2+: 3rd declension, perfect tense, `inquit`, `noli`,
+  questions; Level 3: `qui`, `hic`/`ille`, `dum`, the `eo` compounds). The
+  game follows the level setting: sentences of the level and below, the
+  level's own 7 times in 10; a story is read line by line with the earlier
+  lines and their English kept above the card, and a big celebration at
+  the end. The reader is asked each word's meaning in turn (3 options from
+  the level's words, same star rule; `inflect` also makes perfect, infinitive
+  and imperative forms, `PAST` in `app.js`); the English appears at the end.
+  The later sentences were written in a compact notation and built by
+  `scratchpad/build_read.py` (session scratchpad), which lemmatises each
+  form from the dictionary entries and refuses any word above the level.
+  Progress in `latin.read.<id>` {done{n: time}, read}; the first 60 keep
+  their numbers, new sentences are only ever appended.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Each level is one long day on a planet (`WORLDS` in `practice.js`,

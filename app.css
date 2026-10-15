@@ -564,3 +564,11 @@ body.noscroll { overflow: hidden; }
 .bsheet .becol { background: var(--chip); border-radius: 14px; padding: 12px 14px; text-align: left; }
 .gname.beasts { color: #FFC9F7; }
 @media (min-width: 480px) { .bgrid { grid-template-columns: repeat(6, 1fr); } }
+
+/* Sentences: stories read line by line */
+.rtitle { text-align: center; margin: 2px 0 8px; }
+.rstory { background: var(--chip); border-radius: 14px; padding: 8px 12px; margin-bottom: 8px; font-size: .95rem; line-height: 1.35; }
+.rline { display: flex; flex-direction: column; padding: 3px 0; border-bottom: 1px solid var(--line); }
+.rline:last-child { border-bottom: 0; }
+.rline .rl { font-weight: 700; }
+.rline .re { color: var(--muted); font-style: italic; font-size: .88rem; }
