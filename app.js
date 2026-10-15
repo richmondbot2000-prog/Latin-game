@@ -5,7 +5,7 @@ const mem = {};
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return k in mem ? mem[k] : d; } },
   set(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {}
-    if (/^latin\.(progress|streak|level|practice|stats|hammer|read|beasts)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
+    if (/^latin\.(progress|streak|level|practice|stats|hammer|read|beasts|passages)\./.test(k) && typeof Sync !== 'undefined') { const u = current(); if (u && k.endsWith(u.id)) Sync.touch(u); } },
   del(k) { delete mem[k]; try { localStorage.removeItem(k); } catch (e) {} },
 };
 
@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '87';
+const APP_VERSION = '88';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -155,6 +155,7 @@ function route() {
   if (h === 'hammer-items') return renderHammer(u, true);
   if (h === 'read') return renderRead(u);
   if (h === 'beasts') return renderBeasts(u);
+  if (h === 'passages') return renderPassages(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
   renderHome(u);
@@ -365,6 +366,7 @@ function renderHome(u) {
     <div class="tile prac2" id="readtile">
       <h2>Read</h2>
       <button class="gamebanner" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span></button>
+      <button class="gamebanner" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span></button>
     </div>
     <div class="tile prac2" id="prac">
       <h2>Practice</h2>
@@ -387,6 +389,7 @@ function renderHome(u) {
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#readGo').onclick = () => { location.hash = 'read'; };
+  $('#passGo').onclick = () => { location.hash = 'passages'; };
   $('#verline').onclick = () => { $('#verline').textContent = 'updating…'; freshen(); };
   checkVersion();
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
@@ -544,6 +547,107 @@ function renderRead(u) {
     }
   };
   load(pick()); show();
+}
+
+
+/* ---------- passages: read a story aloud in English, word by word ---------- */
+// The stories from read.js (the sentences that share a p id), one at a time, at random. The current sentence sits
+// at the top in Latin; underneath, its English translation with every word hidden. The player speaks (Web Speech
+// API, English) or types: each word heard fills the matching blank in the translation and flips the Latin word it
+// translates to its English. When every blank is filled the next sentence comes; at the end of the story, fireworks.
+const PASSAGES = (() => { const by = {}; SENTENCES.forEach((s, n) => { if (s.p) (by[s.p] = by[s.p] || { id: s.p, title: s.pt, lv: s.lv || 0, lines: [] }).lines.push(n); }); return Object.values(by); })();
+const normWord = w => w.toLowerCase().replace(/[’']s$/, '').replace(/[^a-z0-9]/g, '');
+const sameWord = (a, b) => a === b || (a.length > 3 && (a === b + 's' || b === a + 's' || a === b + 'es' || b === a + 'es'));
+function renderPassages(u) {
+  Celebrate.stop();
+  const key = 'latin.passages.' + u.id, sv = store.get(key, { done: {} });
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  app.innerHTML = `
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Passages</span><span class="lvtag" id="pcount"></span></div>
+    <div class="rtitle" id="ptitle"></div>
+    <div class="pbox card" id="pbox"></div>
+    <div class="pen" id="pen"></div>
+    <div class="microw">
+      <button class="mic" id="mic" aria-label="Listen">🎤</button>
+      <div class="micside"><div class="small" id="micmsg"></div><div class="heard" id="heard"></div></div>
+    </div>
+    <form class="typerow" id="typeform"><input type="text" id="typed" placeholder="…or type a word" autocomplete="off" autocapitalize="off"><button class="btn ghost" type="submit">Say</button></form>
+    <p class="rmsg" id="pmsg"></p>
+  </div>`;
+  $('#back').onclick = () => { stopRec(); location.hash = ''; };
+  let pas = null, at = 0, sent = null, flipped = [], filled = [], done = false, rec = null, listening = false, heard = 0;
+  const count = () => `${Object.keys(sv.done || {}).length}/${PASSAGES.length} read`;
+  const words = () => sent.la.filter(t => t[1]);
+  const enWords = () => sent.en.split(/\s+/).flatMap(w => w.split('-')).map(w => ({ show: w, n: normWord(w) })).filter(w => w.n);   // slave-girls is said as two words
+  function pick() {
+    const seen = sv.done || {}, fresh = PASSAGES.filter(p => !seen[p.id]);
+    const list = fresh.length ? fresh : PASSAGES;
+    pas = list[Math.floor(Math.random() * list.length)]; at = 0; loadLine();
+  }
+  function loadLine() { sent = SENTENCES[pas.lines[at]]; flipped = words().map(() => false); filled = enWords().map(() => false); done = false; show(); }
+  function show() {
+    $('#pcount').textContent = count();
+    $('#ptitle').innerHTML = `📖 <b>${esc(pas.title)}</b> <span class="small">· sentence ${at + 1} of ${pas.lines.length}</span>`;
+    const ws = words();
+    $('#pbox').innerHTML = pas.lines.map((n, k) => {
+      const s = SENTENCES[n];
+      if (k !== at) return `<div class="pline ${k < at ? 'past' : 'ahead'}">${esc(s.la.map(t => t[0]).join(' ').replace(/ ([,.;:?!])/g, '$1'))}</div>`;
+      return `<div class="pline cur">${s.la.map(t => { if (!t[1]) return `<span class="rp">${esc(t[0])}</span>`; const i = ws.indexOf(t); return `<button class="pw${flipped[i] ? ' flip' : ''}" data-i="${i}"><span class="f">${esc(t[0])}</span><span class="b">${esc(t[2])}</span></button>`; }).join(' ')}</div>`;
+    }).join('');
+    $('#pen').innerHTML = enWords().map((w, i) => `<span class="ew${filled[i] ? ' on' : ''}" style="--n:${w.n.length}">${filled[i] ? esc(w.show) : ''}</span>`).join(' ');
+    setMic();
+  }
+  // a word heard or typed: fill its blank in the translation, flip the Latin words whose meaning contains it
+  function say(raw) {
+    const w = normWord(raw); if (!w || done) return false;
+    let hit = false;
+    const ew = enWords();
+    const k = ew.findIndex((x, i) => !filled[i] && sameWord(x.n, w));
+    if (k >= 0) { filled[k] = true; hit = true; }
+    words().forEach((t, i) => { if (!flipped[i] && t[2].toLowerCase().split(/[^a-z0-9]+/).some(g => g && sameWord(g, w))) { flipped[i] = true; hit = true; } });
+    if (hit) { show(); check(); }
+    return hit;
+  }
+  function check() {
+    if (filled.every(Boolean)) {
+      done = true; $('#pmsg').textContent = '⭐ ' + sent.en;
+      const last = at >= pas.lines.length - 1;
+      if (last) {
+        sv.done = sv.done || {}; sv.done[pas.id] = Date.now(); store.set(key, sv); $('#pcount').textContent = count();
+        Celebrate(innerWidth / 2, innerHeight / 3, 2.6);
+        $('#pen').insertAdjacentHTML('afterend', `<button class="btn" id="pnext">🏆 The end — next passage</button>`);
+        $('#pnext').onclick = () => { $('#pnext').remove(); $('#pmsg').textContent = ''; pick(); };
+      } else { Celebrate(innerWidth / 2, innerHeight / 3, 1.4); setTimeout(() => { if (done) { at++; $('#pmsg').textContent = ''; loadLine(); } }, 1200); }
+    }
+  }
+  $('#pbox').onclick = e => { const b = e.target.closest('.pw'); if (!b || done) return; const i = +b.dataset.i; if (!flipped[i]) { flipped[i] = true; say(words()[i][2]); show(); check(); } };   // a tap flips a word too
+  $('#typeform').onsubmit = e => { e.preventDefault(); const v = $('#typed').value; $('#typed').value = ''; v.split(/\s+/).forEach(say); $('#heard').textContent = v; };
+  // speech: continuous, in English; the words of each result are handed to say() once
+  function setMic() {
+    const m = $('#mic'), msg = $('#micmsg'); if (!m) return;
+    m.classList.toggle('on', listening);
+    if (!SR) { m.disabled = true; msg.textContent = 'This browser can’t hear you — type the words instead.'; }
+    else msg.textContent = listening ? 'Listening… say the English words' : 'Tap the microphone, then say the English words';
+  }
+  function startRec() {
+    if (!SR || listening) return;
+    rec = new SR(); rec.lang = 'en-GB'; rec.continuous = true; rec.interimResults = true; rec.maxAlternatives = 1; heard = 0;
+    rec.onresult = e => {
+      const all = []; for (let i = 0; i < e.results.length; i++) all.push(...e.results[i][0].transcript.split(/\s+/).filter(Boolean));
+      const fresh = all.slice(heard); heard = all.length;
+      $('#heard').textContent = all.slice(-8).join(' ');
+      fresh.forEach(say);
+    };
+    rec.onend = () => { heard = 0; if (listening) { try { rec.start(); } catch (err) {} } };
+    rec.onerror = ev => { if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') { listening = false; setMic(); $('#micmsg').textContent = 'The microphone is blocked — allow it for this site, or type the words.'; } };
+    try { rec.start(); listening = true; } catch (err) { listening = false; }
+    setMic();
+  }
+  function stopRec() { listening = false; if (rec) { try { rec.stop(); } catch (err) {} rec = null; } setMic(); }
+  $('#mic').onclick = () => listening ? stopRec() : startRec();
+  window.addEventListener('hashchange', stopRec, { once: true });
+  pick();
 }
 
 /* ---------- practice (garden defence) ---------- */

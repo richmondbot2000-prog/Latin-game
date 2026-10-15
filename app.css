@@ -572,3 +572,29 @@ body.noscroll { overflow: hidden; }
 .rline:last-child { border-bottom: 0; }
 .rline .rl { font-weight: 700; }
 .rline .re { color: var(--muted); font-style: italic; font-size: .88rem; }
+
+/* Passages: speak the English */
+.pbox { position: relative; inset: auto; background-color: #F8F0DC; padding: 16px 14px; margin: 6px 0 12px; display: block; text-align: center; min-height: 0; }
+.pline { font-size: .95rem; line-height: 1.5; color: var(--muted); padding: 2px 0; }
+.pline.past { color: var(--good); }
+.pline.ahead { opacity: .55; }
+.pline.cur { font-size: clamp(1.35rem, 6.2vw, 1.8rem); font-weight: 700; color: var(--ink); line-height: 1.7; padding: 6px 0; }
+.pw { position: relative; display: inline-grid; border: 0; background: none; padding: 0 2px; font: inherit; color: inherit; perspective: 400px; vertical-align: baseline; }
+.pw .f, .pw .b { grid-area: 1 / 1; display: inline-block; transition: transform .45s; backface-visibility: hidden; border-radius: 8px; padding: 0 6px; text-align: center; white-space: nowrap; }
+.pw .b { transform: rotateX(180deg); background: #FFE066; color: #2B1A3A; }
+.pw.flip .f { transform: rotateX(180deg); }
+.pw.flip .b { transform: rotateX(0); }
+.pen { display: flex; flex-wrap: wrap; gap: 6px 8px; justify-content: center; min-height: 48px; font-size: 1.15rem; margin-bottom: 10px; }
+.ew { display: inline-block; min-width: calc(var(--n) * .62em + 14px); height: 1.7em; line-height: 1.7em; padding: 0 7px; border-radius: 9px; background: var(--chip); border-bottom: 3px solid var(--line); text-align: center; transition: background .25s; }
+.ew.on { background: var(--good-bg); color: var(--good); border-bottom-color: var(--good); font-weight: 700; animation: pop .35s ease; }
+.microw { display: flex; align-items: center; gap: 12px; margin: 6px 0; }
+.mic { width: 64px; height: 64px; border-radius: 50%; border: 0; font-size: 30px; background: var(--accent); color: #fff; box-shadow: var(--shadow); flex: none; }
+.mic.on { background: #d7312b; animation: micpulse 1.2s ease-in-out infinite; }
+.mic:disabled { opacity: .4; }
+@keyframes micpulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(215,49,43,.5); } 50% { box-shadow: 0 0 0 14px rgba(215,49,43,0); } }
+.micside { flex: 1; min-width: 0; }
+.heard { font-style: italic; color: var(--muted); min-height: 1.4em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.typerow { display: flex; gap: 8px; margin-top: 6px; }
+.typerow input { flex: 1; }
+.typerow .btn { width: auto; margin: 0; padding: 10px 16px; }
+.gname.pass { color: #C9F0FF; }

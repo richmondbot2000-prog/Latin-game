@@ -79,6 +79,19 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   form from the dictionary entries and refuses any word above the level.
   Progress in `latin.read.<id>` {done{n: time}, read}; the first 60 keep
   their numbers, new sentences are only ever appended.
+- **Passages** (`renderPassages` in `app.js`, banner under Read): the eleven
+  stories from `read.js` (`PASSAGES`, grouped by `p`), one at random. The
+  current sentence sits at the top in Latin, the earlier ones in green and
+  the later ones dimmed; below it the English translation with every word
+  hidden. The player **speaks the English** (Web Speech API,
+  `SpeechRecognition`/`webkitSpeechRecognition`, `lang en-GB`, continuous
+  with interim results, restarted on `end`; on iPhone the browser sends the
+  audio to Apple to recognise — nothing goes to us) or types a word: each
+  word heard fills its blank in the translation and flips the Latin word
+  whose gloss contains it (`say`, `sameWord` allows a plural). Tapping a
+  Latin word flips it too. All blanks filled → next sentence; last
+  sentence → fireworks and the next passage. Progress `latin.passages.<id>`
+  {done{p: time}}, synced as a union.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Each level is one long day on a planet (`WORLDS` in `practice.js`,
