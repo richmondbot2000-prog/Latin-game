@@ -79,7 +79,13 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   with a Spine rig animate through `rig.js` (a small Spine player) from
   `art/rigs/<key>.json+.png`, exported by `scratchpad/sq2/export_rigs.py`:
   Fire plays after a shot, Idle between. Plasma Bomb and Brain Wash have no
-  usable rig and stay as still pictures. Not used yet: Floaty, Generators.
+  usable rig and stay as still pictures. Not used yet: Floaty. The
+  **Generator** (`kind: 'gen'`, first in the shop like PvZ's Sunflower,
+  cost 50, hp 300) pays `tier.pay` coins every `tier.every` seconds (5/20 s,
+  8/15 s, 12/12 s) with a coin float and a bounce; its three tiers are the
+  artist's `Generators/Gen2-4` rigs exported as `art/rigs/generator1-3`
+  (one looping `animation`), shop stills rendered from the rigs into
+  `art/weapons/generator1-3.png` (Gen1 and Gen5 have no atlas).
   **Effects** come from the artist's `Partical Effects` sheets, cut into
   `art/fx/` (`FX_NAMES` in `practice.js`): `boom` draws `burst1-4_<c>` with
   two flung `drop`s (`col`: `y` fire for bombs, mines, Kamikaze and Solar

@@ -9,6 +9,7 @@ const Practice = (() => {
   // that knocks the whole row back; lob = lobbed shells (Solar Blast anywhere, Miner along its row); mine = explodes when touched;
   // bomb = explodes after a fuse; brain = turns the squishy that bites it; wall = just soaks up bites. tiers[1..2] carry the upgrade cost.
   const GUNS = {
+    generator:    { name: 'Generator', cost: 50, hp: 300, recharge: 6, art: 'generator', kind: 'gen', tiers: [{ every: 20, pay: 5 }, { every: 15, pay: 8, cost: 75 }, { every: 12, pay: 12, cost: 125 }], blurb: 'makes a few coins every so often: a little extra on top of the words, and worth defending' },
     shooter:      { name: 'Blaster', cost: 100, hp: 100, recharge: 5, art: 'blaster', kind: 'shoot', proj: 'bullet', dmg: 20, speed: 7, tiers: [{ every: 1.5, shots: 1 }, { every: 1.5, shots: 2, cost: 150 }, { every: 1.5, shots: 3, cost: 250 }], blurb: 'a bullet every 1.5 s. Cheap and steady; half as good on armour, useless on Flyers' },
     handy:        { name: 'Handy Turret', cost: 150, hp: 100, recharge: 8, art: 'handy', kind: 'shoot', proj: 'bullet', small: true, dmg: 6, speed: 10, range: 3.5, tiers: [{ every: .3, shots: 1 }, { every: .22, shots: 1, cost: 150 }, { every: .15, shots: 1, cost: 250 }], blurb: 'a stream of little bullets, 3½ squares ahead. The thing for Flyers and Kamikazes' },
     freezeturret: { name: 'Freeze Turret', cost: 175, hp: 100, recharge: 10, art: 'freezeturret', kind: 'shoot', proj: 'ice', dmg: 15, speed: 8, tiers: [{ every: 3, shots: 1, freeze: 2 }, { every: 2.2, shots: 1, freeze: 2.5, cost: 150 }, { every: 1.5, shots: 1, freeze: 3, cost: 250 }], blurb: 'ice shards freeze a squishy on the spot. Ghosts and Sharky ignore it' },
@@ -84,7 +85,7 @@ const Practice = (() => {
   const WEAPONS = {};   // art/weapons: every gun tier and the projectiles
   const LAWN = {};      // art/lawn: grass and soil textures, the mower, bushes, the path
   // the weapons that have an animation rig (art/rigs): they fire with the artist's recoil and idle between shots
-  const RIG_KEYS = ['blaster1', 'blaster3', 'mine1', 'mine2', 'mine3', 'freezeray1', 'freezeturret2', 'freezeturret3', 'handy1', 'handy3', 'miner1', 'miner2', 'miner3', 'solar1', 'sonic1', 'sonic2', 'sonic3'];
+  const RIG_KEYS = ['generator1', 'generator2', 'generator3', 'blaster1', 'blaster3', 'mine1', 'mine2', 'mine3', 'freezeray1', 'freezeturret2', 'freezeturret3', 'handy1', 'handy3', 'miner1', 'miner2', 'miner3', 'solar1', 'sonic1', 'sonic2', 'sonic3'];
   const rigFor = g => { const n = GUNS[g.type].art + (g.tier || 1); return RIG_KEYS.includes(n) && typeof Rig !== 'undefined' ? Rig.load(n) : null; };
   const lawnImg = n => { const im = LAWN[n]; return im && im.complete && im.naturalWidth ? im : null; };
   const wImg = n => { const im = WEAPONS[n]; return im && im.complete && im.naturalWidth ? im : null; };
@@ -272,6 +273,11 @@ const Practice = (() => {
       const k = GUNS[g.type], tier = tierOf(g);
       if (g.bitten > 0) g.bitten -= dt;
       if (k.kind === 'wall') continue;
+      if (k.kind === 'gen') {   // a generator hums along and pays out every so often
+        g.genT = (g.genT == null ? tier.every : g.genT) - dt;
+        if (g.genT <= 0) { g.genT = tier.every; S.money += tier.pay; refreshShop(); g.fired = S.t; S.floats.push({ x: c + .5, row: r, t: 0, text: '+' + tier.pay + ' 🪙' }); }
+        continue;
+      }
       if (k.kind === 'mine') { if (!g.armed) { g.arm -= dt; if (g.arm <= 0) { g.armed = true; S.floats.push({ x: c + .5, row: r, t: 0, text: 'Armed!' }); } } continue; }
       if (k.kind === 'bomb') {
         g.fuse -= dt;
@@ -476,9 +482,10 @@ const Practice = (() => {
       let anim = null, t = 0;
       const since = gun.fired != null ? S.t - gun.fired : 1e9, fireDur = Rig.duration(rig, 'Fire');
       if (fireDur && since < fireDur) { anim = 'Fire'; t = since; }
-      else { const idle = Rig.has(rig, 'Idle') ? 'Idle' : Rig.has(rig, 'ReadyIdle') ? 'ReadyIdle' : null; if (idle) { anim = idle; const d = Rig.duration(rig, idle); t = d ? (S.t + (gun.seed || 0)) % d : 0; } }
+      else { const idle = Rig.has(rig, 'Idle') ? 'Idle' : Rig.has(rig, 'ReadyIdle') ? 'ReadyIdle' : Rig.has(rig, 'animation') ? 'animation' : null; if (idle) { anim = idle; const d = Rig.duration(rig, idle); t = d ? (S.t + (gun.seed || 0)) % d : 0; } }
       if (k.kind === 'mine' && !gun.armed) g.globalAlpha = .55;
       g.save();
+      if (k.kind === 'gen' && gun.fired != null && S.t - gun.fired < .4) { const p = (S.t - gun.fired) / .4, q = 1 + .12 * Math.sin(p * Math.PI); g.translate(x, bottom); g.scale(q, q); g.translate(-x, -bottom); }   // a little bounce as it pays out
       if (k.kind === 'bomb') { const p = gun.fuse != null ? Math.max(0, gun.fuse) / k.fuse : 1; g.translate(x, bottom); g.scale(1 + .15 * Math.sin(S.t * 25) * (1 - p), 1 + .15 * Math.sin(S.t * 25) * (1 - p)); g.translate(-x, -bottom); }
       Rig.draw(g, rig, anim, t, ox, oy, sc);
       g.restore(); g.globalAlpha = 1;
