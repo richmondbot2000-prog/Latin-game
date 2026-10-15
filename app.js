@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '97';
+const APP_VERSION = '98';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -486,16 +486,16 @@ function renderHome(u) {
       <h2>Organise</h2>
       <button class="gamebanner" data-t="list" style="background-image:url('art/banners/wordlist.jpg')"><span class="gname list">Word list</span></button>
     </div>
-    <div class="tile prac2" id="readtile">
-      <h2>Read</h2>
-      <button class="gamebanner" id="cardsGo" style="background-image:url('art/banners/cards.jpg')"><span class="gname cards">Cards &amp; Beasts</span></button>
-      <button class="gamebanner" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span></button>
-      <button class="gamebanner" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span></button>
-    </div>
     <div class="tile prac2" id="prac">
       <h2>Practice</h2>
+      <button class="gamebanner" id="cardsGo" style="background-image:url('art/banners/cards.jpg')"><span class="gname cards">Cards &amp; Beasts</span></button>
       <button class="gamebanner" id="pracGo" style="background-image:url('art/banners/squishygeddon.jpg')"><span class="gname squishy">Squishygeddon</span></button>
       <button class="gamebanner" id="hamGo" style="background-image:url('art/banners/hammer.jpg')"><span class="gname hammer">Jacques Hammer</span></button>
+    </div>
+    <div class="tile prac2" id="readtile">
+      <h2>Read</h2>
+      <button class="gamebanner" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span></button>
+      <button class="gamebanner" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span></button>
     </div>
     ${leaderboardHTML()}
     <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
