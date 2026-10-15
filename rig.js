@@ -10,8 +10,9 @@ const Rig = (() => {
   function load(key) {
     if (rigs[key]) return rigs[key];
     const r = rigs[key] = { key, ready: false, failed: false, json: null, img: new Image() };
-    r.img.src = 'art/rigs/' + key + '.png';
-    fetch('art/rigs/' + key + '.json').then(x => x.json()).then(j => { r.json = j; prep(r); }).catch(() => { r.failed = true; });
+    const retry = () => { r.failed = true; setTimeout(() => { if (rigs[key] === r) delete rigs[key]; }, 4000); };   // a failed load (flaky network, mid-update) is tried again on the next draw a few seconds later
+    r.img.onerror = retry; r.img.src = 'art/rigs/' + key + '.png';
+    fetch('art/rigs/' + key + '.json').then(x => x.json()).then(j => { r.json = j; prep(r); }).catch(retry);
     return r;
   }
   function prep(r) {

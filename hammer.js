@@ -14,7 +14,7 @@ const Hammer = (() => {
   let SCENE_DATA = null, sceneReq = null;   // art/jh/scenes.json: for each scene the sky block, the ground strip and the props by layer
   const sceneImg = f => img('scenes/' + f.replace(/\.png$/, ''));
   function preloadScene(L) {
-    if (!SCENE_DATA) { if (!sceneReq) sceneReq = fetch(ART + 'scenes.json').then(r => r.json()).then(j => { SCENE_DATA = j; preloadScene(L); }).catch(() => { sceneReq = null; }); return; }
+    if (!SCENE_DATA) { if (!sceneReq) sceneReq = fetch(ART + 'scenes.json').then(r => r.json()).then(j => { SCENE_DATA = j; preloadScene(L); }).catch(() => { sceneReq = null; setTimeout(() => preloadScene(L), 4000); }); return; }
     const d = SCENE_DATA[L.key]; if (!d) return; sceneImg(d.sky); if (d.ground) sceneImg(d.ground); for (const l of ['far', 'mid', 'near']) for (const p of d[l]) sceneImg(p.f);
   }
   // a repeating row of props along the run: piece i sits at a steady spacing with a little wobble, chosen by a hash so each level looks the same every time
@@ -171,7 +171,7 @@ const Hammer = (() => {
   let META = null;   // art/jh/meta.json: every rig part's box, per outfit
   const lev = () => levelOf(S ? S.level : 1);
   let WEAR = { skin: 'standard', weapon: 'hammer', pup: 'g' };
-  const img = n => { if (!IMG[n]) { const i = new Image(); i.src = ART + n + '.png'; IMG[n] = i; } return IMG[n]; };
+  const img = n => { if (!IMG[n]) { const i = new Image(); i.onerror = () => setTimeout(() => { if (IMG[n] === i) delete IMG[n]; }, 4000); i.src = ART + n + '.png'; IMG[n] = i; } return IMG[n]; };   // a picture that fails to load is asked for again a few seconds later
   const ok = i => i.complete && i.naturalWidth > 0;
   // part boxes in the rig's own pixel space [x0, y0, x1, y1]
   const JPIV = [57, 125], HAND = [79, 72];                                        // feet centre and right hand, in rig pixels
@@ -228,7 +228,11 @@ const Hammer = (() => {
   function drawBackground() {
     const g = ctx, L = lev(), d = SCENE_DATA && SCENE_DATA[L.key], ground = H * GROUND;
     const bh = Math.min(H * .6, W * .9), k = bh / 289;   // the artist composed these at 512x289: k maps sheet pixels to the screen
-    if (!d || !ok(sceneImg(d.sky))) { g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); return; }
+    if (!d || !ok(sceneImg(d.sky))) {   // the scene is still on its way: plain sky and ground, and a word to say so
+      if (!d) preloadScene(L); else { sceneImg(d.sky); if (d.ground) sceneImg(d.ground); }
+      g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); g.fillStyle = '#9a9a9a'; g.fillRect(0, ground, W, H - ground);
+      g.fillStyle = 'rgba(0,0,0,.35)'; g.font = `600 ${Math.round(W * .04)}px system-ui, sans-serif`; g.textAlign = 'center'; g.fillText('Loading the scene…', W / 2, ground * .5); return;
+    }
     // the sky: stretched over the whole width, its bottom on the ground line; above it the sky's own top colour
     const sky = sceneImg(d.sky), skyH = Math.max(d.skyh * k, ground * .8), skyTop = ground - skyH;   // on a tall phone the sky block is stretched up to fill most of the screen
     g.drawImage(sky, 0, 0, 1, 1, 0, 0, W, Math.max(0, skyTop) + 1); g.drawImage(sky, 0, skyTop, W, skyH + 1);

@@ -1,6 +1,6 @@
 // Offline support. Always tries the network first so updates appear straight
 // away; falls back to the saved copy when there is no connection.
-const CACHE = 'latin-v85';
+const CACHE = 'latin-v86';
 const CORE = ['./', 'index.html', 'app.css', 'app.js', 'vocab.js', 'memory.js', 'phrases.js', 'effects.js', 'practice.js', 'hammer.js', 'read.js', 'forms.js', 'sync.js', 'beasts.js', 'manifest.webmanifest', ...["blaster1.png", "blaster2.png", "blaster3.png", "brain1.png", "brain2.png", "brain3.png", "freezeray1.png", "freezeturret1.png", "freezeturret2.png", "freezeturret3.png", "handy1.png", "handy2.png", "handy3.png", "mine1.png", "mine2.png", "mine3.png", "miner1.png", "miner2.png", "miner3.png", "plasma1.png", "proj_bullet.png", "proj_ice.png", "proj_lava.png", "proj_ring.png", "proj_rock.png", "shield1.png", "shield2.png", "shield3.png", "floaty1.png", "generator1.png", "generator2.png", "generator3.png", "solar1.png", "sonic1.png", "sonic2.png", "sonic3.png"].map(a => 'art/weapons/' + a), ...['grass', 'soil', 'path', 'mower', 'bush', 'fence'].map(a => 'art/lawn/' + a + '.png'), 'art/lawn/grass_real.jpg', 'art/banners/sentences.jpg', 'art/banners/cards.jpg', 'art/banners/wordlist.jpg', 'art/banners/squishygeddon.jpg', 'art/banners/hammer.jpg', 'art/banners/beastpedia.jpg', 'art/beasts/beasts.json', 'art/beasts/trumpets_l.png', 'art/beasts/trumpets_r.png', 'rig.js', ...["blaster1.json", "blaster1.png", "blaster3.json", "blaster3.png", "freezeray1.json", "freezeray1.png", "freezeturret2.json", "freezeturret2.png", "freezeturret3.json", "freezeturret3.png", "handy1.json", "handy1.png", "handy3.json", "handy3.png", "mine1.json", "mine1.png", "mine2.json", "mine2.png", "mine3.json", "mine3.png", "miner1.json", "miner1.png", "miner2.json", "miner2.png", "miner3.json", "miner3.png", "solar1.json", "solar1.png", "sonic1.json", "sonic1.png", "sonic2.json", "sonic2.png", "sonic3.json", "sonic3.png", "kamikaze.json", "kamikaze.png", "chomp.json", "chomp.png", "skitter.json", "skitter.png", "flying.json", "flying.png", "chompking.json", "chompking.png", "broodqueen.json", "broodqueen.png", "ghostking.json", "ghostking.png", "sharky.json", "sharky.png", "sharkling.json", "sharkling.png", "unicorn.json", "unicorn.png", "jacque.json", "jacque.png", "decoy.json", "decoy.png", "dog.json", "dog.png", "dog_gb.json", "dog_gb.png", "dog_gc.json", "dog_gc.png", "dog_gg.json", "dog_gg.png", "dog_gp.json", "dog_gp.png", "barrelsmoke.json", "barrelsmoke.png", "generator1.json", "generator1.png", "generator2.json", "generator2.png", "generator3.json", "generator3.png"].map(a => 'art/rigs/' + a), 'art/ui/paper.jpg', 'icons/apple-touch-icon.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/favicon-32.png'];
 const FILES = ['./', 'index.html', 'app.css', 'app.js', 'vocab.js', 'memory.js', 'phrases.js', 'effects.js', 'practice.js', 'hammer.js', 'sync.js',
   'manifest.webmanifest',
@@ -18,8 +18,17 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.allSettled(CORE.map(f => c.add(f)))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
-    .then(() => self.clients.claim()).then(() => warm()));
+  // the art in the old version's cache is still good: copy it across before the old cache goes, so an update
+  // never leaves the game without its pictures while they download again
+  e.waitUntil((async () => {
+    const c = await caches.open(CACHE);
+    for (const k of await caches.keys()) {
+      if (k === CACHE) continue;
+      try { const old = await caches.open(k); for (const req of await old.keys()) { const path = new URL(req.url).pathname.replace(/^.*\//, ''); if (!CORE.includes(path) && !(await c.match(req))) { const r = await old.match(req); if (r && r.ok) await c.put(req, r); } } } catch (err) {}
+      await caches.delete(k);
+    }
+    await self.clients.claim(); await warm();
+  })());
 });
 async function warm() {
   const c = await caches.open(CACHE);

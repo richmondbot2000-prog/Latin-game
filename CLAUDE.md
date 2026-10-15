@@ -202,6 +202,11 @@ Per-player counters live in
   and `checkVersion()` in `app.js` reads the live `sw.js` on the home page and
   refreshes by itself when it is newer (once per session; the version line at
   the bottom of the home page does the same by hand).
+  On activation the new worker **copies the art from the old cache** before
+  deleting it (an update never leaves a game without its pictures), then warms
+  the gaps. Every picture, rig and scene loader (`hammer.js` `img`,
+  `rig.js`, `practice.js` sprite tables) retries a failed load a few seconds
+  later, and Jacques Hammer says "Loading the scene…" until the sky is in.
 
 ## Cloud sync (switched on)
 

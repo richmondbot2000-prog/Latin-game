@@ -1201,15 +1201,15 @@ const Practice = (() => {
     for (const n of ANTBUN_PARTS) arts.push('antbun/' + n);
     for (let i = 1; i <= 9; i++) arts.push('antbun/death' + i);
     for (const k in SQUISHIES) { const q = SQUISHIES[k]; if (q.sheet) for (let i = 1; i <= 9; i++) arts.push(q.sheet.art + i); if (q.srig && typeof Rig !== 'undefined') Rig.load(q.srig); }
-    for (const a of arts) if (!SPRITES[a]) { const im = new Image(); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
-    for (const n of UI_NAMES) if (!UI[n]) { const im = new Image(); im.src = 'art/ui/' + n + '.png'; UI[n] = im; }
-    for (const n of FX_NAMES) if (!FX[n]) { const im = new Image(); im.src = 'art/fx/' + n + '.png'; FX[n] = im; }
+    for (const a of arts) if (!SPRITES[a] || SPRITES[a].retry) { const im = new Image(); im.onerror = () => setTimeout(() => { im.retry = true; }, 4000); im.src = 'art/squishies/' + a + '.png'; SPRITES[a] = im; }
+    for (const n of UI_NAMES) if (!UI[n] || UI[n].retry) { const im = new Image(); im.onerror = () => setTimeout(() => { im.retry = true; }, 4000); im.src = 'art/ui/' + n + '.png'; UI[n] = im; }
+    for (const n of FX_NAMES) if (!FX[n] || FX[n].retry) { const im = new Image(); im.onerror = () => setTimeout(() => { im.retry = true; }, 4000); im.src = 'art/fx/' + n + '.png'; FX[n] = im; }
     if (typeof Rig !== 'undefined') Rig.load('barrelsmoke');
-    for (const key in GUNS) for (let t = 1; t <= GUNS[key].tiers.length; t++) { const n = GUNS[key].art + t; if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; } }
-    for (const n of ['proj_bullet', 'proj_lava', 'proj_ice', 'proj_ring', 'proj_rock']) if (!WEAPONS[n]) { const im = new Image(); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; }
+    for (const key in GUNS) for (let t = 1; t <= GUNS[key].tiers.length; t++) { const n = GUNS[key].art + t; if (!WEAPONS[n] || WEAPONS[n].retry) { const im = new Image(); im.onerror = () => setTimeout(() => { im.retry = true; }, 4000); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; } }
+    for (const n of ['proj_bullet', 'proj_lava', 'proj_ice', 'proj_ring', 'proj_rock']) if (!WEAPONS[n] || WEAPONS[n].retry) { const im = new Image(); im.onerror = () => setTimeout(() => { im.retry = true; }, 4000); im.src = 'art/weapons/' + n + '.png'; WEAPONS[n] = im; }
     if (typeof Rig !== 'undefined') for (const n of RIG_KEYS) Rig.load(n);
-    for (const n of WORLD_NAMES) if (!WORLD[n]) { const im = new Image(); im.onload = () => { bg = null; }; im.src = 'art/world/' + n + (WORLD_JPG.includes(n) ? '.jpg' : '.png'); WORLD[n] = im; }
-    for (const n of ['grass', 'grass_real', 'soil', 'path', 'mower', 'bush', 'fence']) if (!LAWN[n]) { const im = new Image(); im.onload = () => { bg = null; }; im.src = 'art/lawn/' + n + (n === 'grass_real' ? '.jpg' : '.png'); LAWN[n] = im; }
+    for (const n of WORLD_NAMES) if (!WORLD[n] || WORLD[n].retry) { const im = new Image(); im.onload = () => { bg = null; }; im.onerror = () => setTimeout(() => { im.retry = true; }, 4000); im.src = 'art/world/' + n + (WORLD_JPG.includes(n) ? '.jpg' : '.png'); WORLD[n] = im; }
+    for (const n of ['grass', 'grass_real', 'soil', 'path', 'mower', 'bush', 'fence']) if (!LAWN[n] || LAWN[n].retry) { const im = new Image(); im.onload = () => { bg = null; }; im.onerror = () => setTimeout(() => { im.retry = true; }, 4000); im.src = 'art/lawn/' + n + (n === 'grass_real' ? '.jpg' : '.png'); LAWN[n] = im; }
     S = null; newLevel(sv.level || 1);
     renderShop(); layout(); refreshShop();
     cv.addEventListener('pointerdown', onCanvasTap);
