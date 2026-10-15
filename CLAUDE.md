@@ -88,7 +88,13 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   with interim results, restarted on `end`; on iPhone the browser sends the
   audio to Apple to recognise — nothing goes to us) or types a word: each
   word heard fills its blank in the translation and flips the Latin word
-  whose gloss contains it (`say`, `sameWord` allows a plural). Tapping a
+  whose gloss contains it (`say`; `sameWord` matches on stems, so works /
+  working / worked count) — or any other meaning of that word: the
+  dictionary senses and the spoken alternatives in **`synonyms.js`**
+  (`SYNONYMS`, every one of the 403 words: great / mighty / huge for
+  magnus, irregular pasts like saw / ran / went spelt out; multi-word
+  entries match by their content words). A flip also fills that word's
+  blank in the translation. Tapping a
   Latin word flips it too. On iPhone the session is not continuous (Safari
   drops long sessions) and is restarted after each result; the status line
   under the microphone names every state and error (`ERRORS`). The typing

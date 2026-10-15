@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '91';
+const APP_VERSION = '92';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -562,6 +562,7 @@ const sameWord = (a, b) => a === b || (a.length > 3 && b.length > 3 && stemWord(
 function renderPassages(u) {
   Celebrate.stop();
   const key = 'latin.passages.' + u.id, sv = store.get(key, { done: {} });
+  const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   app.innerHTML = `
   <div class="wrap">
@@ -601,13 +602,29 @@ function renderPassages(u) {
     setMic();
   }
   // a word heard or typed: fill its blank in the translation, flip the Latin words whose meaning contains it
+  const STOPW = new Set(['of', 'the', 'a', 'an', 'to', 'for', 'in', 'on', 'at', 'by', 'up', 'out', 'be', 'is', 'am', 'are', 'it', 'not', 'do', 'and', 'with', 'into', 'from', 'over']);
+  const meansCache = {};
+  const meansOf = t => {   // every single word that counts for a token: gloss, dictionary senses, spoken alternatives (phrases by their content words)
+    if (meansCache[t[1]]) return meansCache[t[1]];
+    const w = byIdAll[t[1]], out = new Set();
+    const add = phrase => { const ws = phrase.toLowerCase().replace(/\(.*?\)/g, ' ').split(/[^a-z0-9']+/).filter(Boolean); const keep = ws.length > 1 ? ws.filter(x => !STOPW.has(x)) : ws; (keep.length ? keep : ws).forEach(x => out.add(normWord(x))); };
+    add(t[2]); if (w) w.english.split(',').forEach(add); ((typeof SYNONYMS !== 'undefined' && SYNONYMS[t[1]]) || []).forEach(add);
+    return (meansCache[t[1]] = [...out].filter(Boolean));
+  };
   function say(raw) {
     const w = normWord(raw); if (!w || done) return false;
     let hit = false;
     const ew = enWords();
     const k = ew.findIndex((x, i) => !filled[i] && sameWord(x.n, w));
     if (k >= 0) { filled[k] = true; hit = true; }
-    words().forEach((t, i) => { if (!flipped[i] && t[2].toLowerCase().split(/[^a-z0-9]+/).some(g => g && sameWord(g, w))) { flipped[i] = true; hit = true; } });
+    // a Latin word flips when any of its meanings is said: its gloss here, the dictionary senses, or a spoken
+    // alternative from synonyms.js (great for magnus); its blank in the translation fills with it
+    words().forEach((t, i) => {
+      if (flipped[i] || !meansOf(t).some(m => sameWord(m, w))) return;
+      flipped[i] = true; hit = true;
+      const gl = t[2].toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+      ew.forEach((x, j) => { if (!filled[j] && gl.some(g => sameWord(g, x.n))) filled[j] = true; });
+    });
     if (hit) { show(); check(); }
     return hit;
   }
