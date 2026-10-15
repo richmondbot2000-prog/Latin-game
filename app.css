@@ -619,3 +619,4 @@ body.noscroll { overflow: hidden; }
 .play.chome .deckhome, .play.chome .deckhint, .play.chome .gamebanner, .play.chome .deckcount { position: relative; }
 .play.chome { --scene: linear-gradient(170deg, #d8a86f, #b67b48 55%, #8a5634); }
 .pal[hidden], .score[hidden] { display: none; }
+.play .deck { margin-top: 14px; }
