@@ -41,10 +41,11 @@ const Practice = (() => {
     ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, sheet: { art: 'ghost/d', cell: 320, fig: 173, foot: 0.853 }, motion: 'float', color: '#a6a0aa', pass: 1, alpha: .88, nofreeze: true, nobrain: true, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'Ghosts float over one gun. Ice and sound pass straight through them, but Solar Blast burns them double.' },
     flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, srig: 'flying', sheet: { art: 'flying/d', cell: 320, fig: 253, foot: 0.781 }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true, res: { bullet: 0, rock: 0, bomb: 0, spray: 1.5 }, tip: 'Flyers sail over everything. Bullets and rocks go underneath; a Handy Turret or ice shards bring them down.' },
     moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, sheet: { art: 'moley/d', cell: 320, fig: 243, foot: 0.853 }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12, res: { bomb: 1.5 }, tip: 'The Mole King drills underground: only blasts and rocks reach him until he pops up.' },
-    chompking:  { name: 'ChompKing',  hp: 900, speed: .05,  chomp: 50, size: 1.4,  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, srig: 'chompking', sheet: { art: 'chompking/d', cell: 320, fig: 216, foot: 0.991 }, motion: 'stomp', color: '#9ec9c0', boss: true, nobrain: true, res: { bomb: .5, ice: .5 }, halfFreeze: true, tip: 'ChompKing is huge: bombs only half-work and ice barely slows him. Keep shooting!' },
-    broodqueen: { name: 'Brood Queen', hp: 1300, speed: .04, chomp: 40, size: 1.4, from: 99, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, srig: 'broodqueen', sheet: { art: 'broodqueen/d', cell: 320, fig: 228, foot: 0.981 }, motion: 'stomp', color: '#c0acb6', boss: true, nobrain: true, brood: 9, res: { rock: 1.5, ring: .5 }, tip: 'The Brood Queen lays Skitters as she comes. Rocks hurt her most.' },
-    ghostking:  { name: 'Ghost King', hp: 1200, speed: .06, chomp: 35, size: 1.35, from: 99, look: { ok: 'ghostking' }, srig: 'ghostking', sheet: { art: 'ghostking/d', cell: 320, fig: 236, foot: 0.909 }, motion: 'float', color: '#aca9a2', boss: true, nobrain: true, nofreeze: true, pass: 2, alpha: .88, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'The Ghost King floats over two guns and shrugs off ice and sound. Light hurts him: Solar Blast!' },
-    sharky:     { name: 'Sharky',     hp: 2000, speed: .04, chomp: 90, size: 1.5, from: 99, look: { ok: 'sharky' }, srig: 'sharky', sheet: { art: 'sharky/d', cell: 320, fig: 281, foot: 0.959 }, motion: 'float', color: '#d9c48a', boss: true, nobrain: true, nofreeze: true, res: { bullet: .25, spray: .25, ice: 0, beam: 0, bomb: 1.5, blast: 1.5, rock: 1.25 }, tip: 'Sharky has thick skin: bullets barely scratch him. Bombs, blasts and rocks do the work.' },
+    chompking:  { name: 'ChompKing',  hp: 3000, speed: .045, chomp: 60, size: 2.5,  big: 3, spawns: { kind: 'chomp', every: 9 },  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, srig: 'chompking', sheet: { art: 'chompking/d', cell: 320, fig: 216, foot: 0.991 }, motion: 'stomp', color: '#9ec9c0', boss: true, nobrain: true, res: { bomb: .5, ice: .5 }, halfFreeze: true, tip: 'ChompKing is huge and spits out Chomps: bombs only half-work and ice barely slows him. Guns in all three of his rows can hit him!' },
+    broodqueen: { name: 'Brood Queen', hp: 3600, speed: .04, chomp: 50, size: 2.5,  big: 3, spawns: { kind: 'skitter', every: 6 }, from: 99, look: { ok: 'broodqueen1', hurt: 'broodqueen2' }, srig: 'broodqueen', sheet: { art: 'broodqueen/d', cell: 320, fig: 228, foot: 0.981 }, motion: 'stomp', color: '#c0acb6', boss: true, nobrain: true, res: { rock: 1.5, ring: .5 }, tip: 'The Brood Queen is three rows tall and lays Skitters as she comes. Rocks hurt her most.' },
+    ghostking:  { name: 'Ghost King', hp: 4000, speed: .05,  chomp: 45, size: 2.4,  big: 3, spawns: { kind: 'ghost', every: 10 }, from: 99, look: { ok: 'ghostking' }, srig: 'ghostking', sheet: { art: 'ghostking/d', cell: 320, fig: 236, foot: 0.909 }, motion: 'float', color: '#aca9a2', boss: true, nobrain: true, nofreeze: true, pass: 2, alpha: .88, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'The Ghost King floats over two guns, breathes out Ghosts, and shrugs off ice and sound. Light hurts him: Solar Blast!' },
+    sharky:     { name: 'Sharky',     hp: 6000, speed: .035, chomp: 90, size: 2.6,  big: 3, spawns: { kind: 'sharkling', every: 9 }, from: 99, look: { ok: 'sharky' }, srig: 'sharky', sheet: { art: 'sharky/d', cell: 320, fig: 281, foot: 0.959 }, motion: 'float', color: '#d9c48a', boss: true, nobrain: true, nofreeze: true, res: { bullet: .25, spray: .25, ice: 0, beam: 0, bomb: 1.5, blast: 1.5, rock: 1.25 }, tip: 'Sharky has thick skin and spawns little Sharklings: bullets barely scratch him. Bombs, blasts and rocks do the work.' },
+    sharkling:  { name: 'Sharkling',  hp: 150, speed: .1,   chomp: 30, size: .95,  from: 99, look: { ok: 'sharky' }, srig: 'sharkling', sheet: { art: 'sharky/d', cell: 320, fig: 281, foot: 0.959 }, motion: 'float', color: '#d9c48a', res: { bullet: .6, spray: .6 }, tip: 'Sharklings are Sharky\'s little ones: tough skin, but a bomb or a rock sorts them out.' },
   };
   const resist = (sq, kind) => sq.k.res && sq.k.res[kind] != null ? sq.k.res[kind] : 1;
   // the worlds, as the planet trophies name them; each ends with a boss level
@@ -106,6 +107,7 @@ const Practice = (() => {
   }
 
   /* ---------- squishies ---------- */
+  const inRow = (sq, r) => sq.rows ? sq.rows.includes(r) : sq.row === r;   // does this squishy fill row r? (a huge boss fills several)
   function spawn(type, row, opts = {}) {
     const k = SQUISHIES[type];
     if (row == null) {
@@ -116,8 +118,10 @@ const Practice = (() => {
       S.lastRows.push(row); if (S.lastRows.length > 2) S.lastRows.shift();
     }
     const x = opts.x != null ? opts.x : COLS + .4 + Math.random() * .3;
+    if (k.big) row = Math.max((k.big - 1) / 2, Math.min(ROWS - 1 - (k.big - 1) / 2, row));   // a huge boss needs room above and below
     const sq = { type, k, row, x, hp: k.hp, phase: Math.random() * 7, blink: 2 + Math.random() * 3,
-      eating: null, flash: 0, wob: 0, pass: k.pass || 0, passedCol: -1, brood: k.brood || 0, rise: 0,
+      eating: null, flash: 0, wob: 0, pass: k.pass || 0, passedCol: -1, rise: 0,
+      rows: k.big ? Array.from({ length: k.big }, (_, i) => row - (k.big - 1) / 2 + i) : null,   // the rows a huge boss fills
       under: !!k.digs, target: 2.5 + Math.random() * 3.5 };   // the Mole King drills underground until he reaches his target column
     S.squishies.push(sq);
     if (!opts.extra) S.spawned++;
@@ -134,9 +138,11 @@ const Practice = (() => {
     if (sq.hp <= 0 && !sq.dead) {
       sq.dead = true; S.kills++; tally('kills', 1); tally('by_' + sq.type, 1);
       if (sq.k.boss) buddy('pose_thumbs', 'emo_grin', 2.5); else if (Math.random() < .15) buddy('pose_thumbs', 'emo_happy', 1.2);
-      S.fx.push({ kind: 'splat', x: sq.x, row: sq.row, t: 0, color: sq.k.color, size: sq.k.size });
-      if (sq.k.rig) S.fx.push({ kind: 'abdeath', x: sq.x, row: sq.row, t: 0, size: sq.k.size });
-      else if (sq.k.sheet) S.fx.push({ kind: 'sqdeath', x: sq.x, row: sq.row, t: 0, size: sq.k.size, sheet: sq.k.sheet });
+      const frow = sq.row + (sq.k.big ? (sq.k.big - 1) / 2 : 0);   // a huge boss's feet are on its bottom row
+      S.fx.push({ kind: 'splat', x: sq.x, row: frow, t: 0, color: sq.k.color, size: sq.k.size });
+      if (sq.k.big) S.shake = .8;
+      if (sq.k.rig) S.fx.push({ kind: 'abdeath', x: sq.x, row: frow, t: 0, size: sq.k.size });
+      else if (sq.k.sheet) S.fx.push({ kind: 'sqdeath', x: sq.x, row: frow, t: 0, size: sq.k.size, sheet: sq.k.sheet });
       else S.fx.push({ kind: 'melt', x: sq.x, row: sq.row, t: 0, art: lookOf(sq), size: sq.k.size, fly: !!sq.k.fly });
     }
   }
@@ -179,7 +185,7 @@ const Practice = (() => {
       sq.wob += dt; if (sq.flash > 0) sq.flash -= dt; if (sq.rise > 0) sq.rise -= dt;
       if (sq.hypno) {                  // brain-washed: walks back the way it came, biting the others
         sq.eating = null; sq.x += sq.k.speed * 1.4 * dt;
-        for (const o of S.squishies) if (o !== sq && !o.hypno && !o.dead && o.row === sq.row && Math.abs(o.x - sq.x) < .5) {
+        for (const o of S.squishies) if (o !== sq && !o.hypno && !o.dead && inRow(o, sq.row) && Math.abs(o.x - sq.x) < .5) {
           if (sq.k.boom) {   // a brain-washed Kamikaze goes off in the crowd
             S.shake = .5; S.fx.push({ kind: 'boom', x: sq.x, row: sq.row, t: 0, r: 1.5 });
             for (const q of S.squishies) if (q !== sq && !q.dead && !q.hypno && Math.hypot(q.x - sq.x, (q.row - sq.row) * 1.15) < 1.5) hurt(q, 300, 'bomb');
@@ -197,9 +203,17 @@ const Practice = (() => {
         if (sq.x <= sq.target) { sq.under = false; sq.rise = 1; S.fx.push({ kind: 'dirt', x: sq.x, row: sq.row, t: 0 }); S.shake = .2; }
         continue;
       }
-      if (sq.brood) { sq.broodT = (sq.broodT || 4) - dt; if (sq.broodT <= 0) { sq.broodT = sq.brood; spawn('skitter', sq.row, { x: sq.x + .5, extra: true }); } }
+      if (sq.k.spawns && !sq.hypno) {   // a boss keeps producing smaller squishies of its own kind
+        sq.broodT = (sq.broodT == null ? 5 : sq.broodT) - dt;
+        if (sq.broodT <= 0 && sq.x < COLS - .5) {
+          sq.broodT = sq.k.spawns.every; const r = sq.rows ? sq.rows[Math.floor(Math.random() * sq.rows.length)] : sq.row;
+          const m = spawn(sq.k.spawns.kind, r, { x: Math.min(COLS - .2, sq.x + .3), extra: true }); m.flash = .3;
+          S.fx.push({ kind: 'boom', x: m.x, row: r, t: 0, r: .35 });
+        }
+      }
       const col = Math.floor(sq.x - .35);
-      const g = col >= 0 && col < COLS ? S.grid[sq.row][col] : null;
+      let g = null, gRow = sq.row;
+      if (col >= 0 && col < COLS) for (const r of (sq.rows || [sq.row])) if (S.grid[r][col]) { g = S.grid[r][col]; gRow = r; break; }
       if (g && sq.k.boom) {            // kamikaze: explodes, taking out every gun in the 3x3 block around the one it hit
         for (let r = sq.row - 1; r <= sq.row + 1; r++) for (let c = col - 1; c <= col + 1; c++) {
           if (r < 0 || r >= ROWS || c < 0 || c >= COLS || !S.grid[r][c]) continue;
@@ -213,24 +227,25 @@ const Practice = (() => {
       if (g && GUNS[g.type].kind === 'brain' && !sq.k.nobrain && sq.passedCol !== col) {   // Brain Wash: one bite and the squishy is yours
         sq.hypno = true; sq.eating = null; sq.flash = .3; g.uses--; S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: .4 }); S.floats.push({ x: col + .5, row: sq.row, t: 0, text: 'Brainwashed!' });
         buddy('pose_thumbs', 'emo_grin', 1.5);
-        if (g.uses <= 0) { S.grid[sq.row][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 }); }
+        if (g.uses <= 0) { S.grid[gRow][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: gRow, t: 0 }); }
         continue;
       }
       if (g && GUNS[g.type].kind === 'mine' && g.armed && sq.passedCol !== col) {   // Detonate Bomb: boom
-        const t = tierOf(g); S.grid[sq.row][col] = null; S.shake = .4;
-        S.fx.push({ kind: 'boom', x: col + .5, row: sq.row, t: 0, r: t.splash });
-        for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (col + .5), (o.row - sq.row) * 1.15) < t.splash) hurt(o, t.dmg, 'bomb');
+        const t = tierOf(g); S.grid[gRow][col] = null; S.shake = .4;
+        S.fx.push({ kind: 'boom', x: col + .5, row: gRow, t: 0, r: t.splash });
+        for (const o of S.squishies) if (!o.dead && Math.hypot(o.x - (col + .5), (o.row - gRow) * 1.15) < t.splash) hurt(o, t.dmg, 'bomb');
         continue;
       }
       if (g && sq.passedCol !== col) {
         sq.eating = g; g.hp -= sq.k.chomp * dt; g.bitten = .25;
-        if (g.hp <= 0) { S.grid[sq.row][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: sq.row, t: 0 }); sq.eating = null; buddy('pose_arms', 'emo_shock', 1.6); }
+        if (g.hp <= 0) { S.grid[gRow][col] = null; S.fx.push({ kind: 'crunch', x: col + .5, row: gRow, t: 0 }); sq.eating = null; buddy('pose_arms', 'emo_shock', 1.6); }
       } else {
         sq.eating = null;
         if (sq.rise <= 0) sq.x -= sq.k.speed * slow * dt;
         if (sq.x < -.25) {
-          if (S.gnomes[sq.row]) { S.gnomes[sq.row] = false; S.gnomeRuns.push({ row: sq.row, x: -.6 }); S.shake = .3; }
-          else if (!S.gnomeRuns.some(r => r.row === sq.row)) { lose(); return; }
+          const rows = sq.rows || [sq.row]; let any = false;
+          for (const r of rows) if (S.gnomes[r]) { S.gnomes[r] = false; S.gnomeRuns.push({ row: r, x: -.6 }); any = true; }
+          if (any) S.shake = .3; else if (!rows.some(r => S.gnomeRuns.some(gr => gr.row === r))) { lose(); return; }
         }
       }
     }
@@ -240,7 +255,7 @@ const Practice = (() => {
       gr.puff = (gr.puff || 0) - dt;
       if (gr.puff <= 0) { gr.puff = .07; S.fx.push({ kind: 'smoke', x: gr.x - .35, row: gr.row, t: 0, r: rnd(.08, .16), drift: rnd(-.3, .3) }); }
       if (!gr.bumpT || gr.bumpT <= 0) { gr.bumpT = rnd(.08, .22); gr.jump = rnd(.25, 1); gr.tilt = rnd(-1, 1); } else gr.bumpT -= dt;
-      for (const sq of S.squishies) if (sq.row === gr.row && !sq.dead && Math.abs(sq.x - gr.x) < .5) hurt(sq, 9999, 'mower');
+      for (const sq of S.squishies) if (inRow(sq, gr.row) && !sq.dead && Math.abs(sq.x - gr.x) < .6) { if (!sq.k.big) hurt(sq, 9999, 'mower'); else { gr.hit = gr.hit || new Set(); if (!gr.hit.has(sq)) { gr.hit.add(sq); hurt(sq, 600, 'mower'); } } }
     }
     S.gnomeRuns = S.gnomeRuns.filter(gr => gr.x < COLS + 1);
 
@@ -263,7 +278,7 @@ const Practice = (() => {
       if (k.kind === 'beam') {   // a 2-second ray every 10 s down the whole row: every squishy in it is iced solid while it fires
         g.rayT = (g.rayT || 0) + dt; if (g.rayT >= k.every) g.rayT -= k.every;
         g.beam = g.rayT < k.burst;
-        if (g.beam) for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === r && sq.x > c + .3) {
+        if (g.beam) for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && inRow(sq, r) && sq.x > c + .3) {
           if (sq.k.nofreeze) continue;
           if (sq.k.halfFreeze) sq.slowT = Math.max(sq.slowT || 0, .25); else sq.frozenT = Math.max(sq.frozenT || 0, .15);
         }
@@ -272,7 +287,7 @@ const Practice = (() => {
       g.cool -= dt;
       if (g.cool > 0) continue;
       // bullets, rings and rocks fly along the gun's own row; the Solar Blast lobs at the most advanced squishy on the whole lawn
-      const targets = S.squishies.filter(s => !s.dead && !s.hypno && s.x < COLS + .6 && (k.kind === 'lob' && !k.lane ? s.x > .5 : s.row === r && s.x > c + .2 && !s.under && (!k.range || s.x < c + .5 + k.range)));
+      const targets = S.squishies.filter(s => !s.dead && !s.hypno && s.x < COLS + .6 && (k.kind === 'lob' && !k.lane ? s.x > .5 : inRow(s, r) && s.x > c + .2 && !s.under && (!k.range || s.x < c + .5 + k.range)));
       if (!targets.length) continue;
       const first = targets.reduce((a, b) => a.x < b.x ? a : b);
       g.cool = tier.every; g.kick = .12; g.fired = S.t;
@@ -283,7 +298,7 @@ const Practice = (() => {
     // sonic rings: pass through every squishy in the row, knocking it back
     for (const rg of S.rings) {
       rg.x += rg.speed * dt; rg.t += dt;
-      for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && sq.row === rg.row && !rg.hit.has(sq) && sq.x < rg.x + .2 && sq.x > rg.x - .6) {
+      for (const sq of S.squishies) if (!sq.dead && !sq.hypno && !sq.under && inRow(sq, rg.row) && !rg.hit.has(sq) && sq.x < rg.x + .2 && sq.x > rg.x - .6) {
         rg.hit.add(sq); if (resist(sq, 'ring') === 0) { hurt(sq, 0, 'ring'); continue; } hurt(sq, rg.dmg, 'ring'); sq.stun = .25; sq.x = Math.min(COLS + .4, sq.x + rg.push * (sq.k.boss ? .3 : 1) * resist(sq, 'ring')); sq.eating = null;
       }
       if (rg.x > COLS + 1) rg.gone = true;
@@ -293,7 +308,7 @@ const Practice = (() => {
     for (const b of S.bullets) {
       b.x += b.speed * dt;
       const kind = b.proj === 'ice' ? 'ice' : b.small ? 'spray' : 'bullet';
-      const hit = S.squishies.find(s => s.row === b.row && !s.dead && !s.hypno && !s.under && resist(s, kind) > 0 && Math.abs(s.x - b.x) < s.k.size * .45);   // a bullet flies on past what it can't touch
+      const hit = S.squishies.find(s => inRow(s, b.row) && !s.dead && !s.hypno && !s.under && resist(s, kind) > 0 && Math.abs(s.x - b.x) < Math.min(s.k.size, 1.4) * .45);   // a bullet flies on past what it can't touch
       if (b.range != null && b.x > b.range) b.gone = true;
       if (hit) { hurt(hit, b.dmg, kind); b.gone = true; if (b.freeze && !hit.k.nofreeze) { if (hit.k.halfFreeze || hit.k.boss) hit.slowT = b.freeze; else { hit.frozenT = b.freeze; hit.eating = null; } } }
       if (b.x > COLS + 1) b.gone = true;
@@ -587,6 +602,22 @@ const Practice = (() => {
     g.save(); g.scale(-1, 1);   // the Kamikaze's Walk rolls to the right; our squishies roll left
     const okd = Rig.draw(g, rig, anim, t, -ox, oy, sc); g.restore(); return okd;
   }
+  // a huge boss's power bar across the top of the lawn: its name, and a red bar that drains as it takes hits
+  function drawBossBars(g) {
+    const bosses = S.squishies.filter(q => !q.dead && q.k.big);
+    bosses.forEach((q, i) => {
+      const bw = cell * COLS * .7, bx = OX + (cell * COLS - bw) / 2, bh = Math.max(8, cell * .17), by = cell * .05 + i * (bh + cell * .09), f = Math.max(0, q.hp / q.k.hp);
+      g.save();
+      g.fillStyle = 'rgba(20,10,20,.6)'; rr(g, bx - 3, by - 3, bw + 6, bh + 6, bh / 2 + 3); g.fill();
+      const gr = g.createLinearGradient(0, by, 0, by + bh); gr.addColorStop(0, '#FF7A9A'); gr.addColorStop(.5, '#E8203E'); gr.addColorStop(1, '#8E0C22');
+      g.fillStyle = gr; if (f > 0) { rr(g, bx, by, Math.max(bh, bw * f), bh, bh / 2); g.fill(); }
+      g.fillStyle = 'rgba(255,255,255,.35)'; if (f > 0) { rr(g, bx + 2, by + 2, Math.max(bh, bw * f) - 4, bh * .35, bh * .18); g.fill(); }
+      g.strokeStyle = 'rgba(0,0,0,.35)'; g.lineWidth = 1; for (let k = 1; k < 10; k++) { const tx = bx + bw * k / 10; g.beginPath(); g.moveTo(tx, by + 1); g.lineTo(tx, by + bh - 1); g.stroke(); }
+      g.font = `900 ${Math.round(bh * .95)}px system-ui, sans-serif`; g.textBaseline = 'middle'; g.textAlign = 'left';
+      g.lineWidth = 3; g.strokeStyle = 'rgba(0,0,0,.7)'; g.strokeText(q.k.name.toUpperCase(), bx + bh * .6, by + bh / 2 + 1); g.fillStyle = '#fff'; g.fillText(q.k.name.toUpperCase(), bx + bh * .6, by + bh / 2 + 1);
+      g.restore();
+    });
+  }
   function drawSquishy(g, sq, x, y, s) {
     const k = sq.k, w = s * k.size * 1.2, mo = motionOf(sq);
     if (sq.rise <= 0) sq.blink -= 1 / 60; if (sq.blink < 0) sq.blink = 2 + Math.random() * 3;
@@ -647,7 +678,7 @@ const Practice = (() => {
     }
     const crown = uiImg('crown');
     if (k.boss && crown && !k.sheet) { const cw = s * .4, ch = cw * crown.naturalHeight / crown.naturalWidth; g.drawImage(crown, x - cw / 2, foot - w * .95 - ch + Math.sin(sq.wob * 3) * s * .04 + mo.dy * s, cw, ch); }
-    if (k.boss) {   // boss health bar
+    if (k.boss && !k.big) {   // boss health bar (a huge boss has the big bar at the top instead)
       g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(x - w * .35, foot + s * .08, w * .7, s * .07);
       g.fillStyle = '#FF5D8F'; g.fillRect(x - w * .35, foot + s * .08, w * .7 * Math.max(0, sq.hp / k.hp), s * .07);
     }
@@ -704,7 +735,9 @@ const Practice = (() => {
     const ringIm = wImg('proj_ring');
     for (const rg of S.rings) { const w = cell * (.5 + rg.t * .4); ctx.globalAlpha = .9; if (ringIm) ctx.drawImage(ringIm, rg.x * cell - w / 2, rg.row * cell + cell * .42 - w / 2, w, w); else { ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(rg.x * cell, rg.row * cell + cell * .42, w / 2, 0, 7); ctx.stroke(); } ctx.globalAlpha = 1; }
     // squishies, lower rows drawn later so they overlap properly
-    for (const sq of S.squishies.slice().sort((a, b) => a.row - b.row)) drawSquishy(ctx, sq, sq.x * cell, sq.row * cell + cell * .5, cell);
+    const drawRow = q => q.rows ? q.rows[q.rows.length - 1] + .5 : q.row;   // a huge boss is drawn after the row its feet are on
+    for (const sq of S.squishies.slice().sort((a, b) => drawRow(a) - drawRow(b))) drawSquishy(ctx, sq, sq.x * cell, (sq.rows ? sq.rows[sq.rows.length - 1] : sq.row) * cell + cell * .5, cell);
+    drawBossBars(ctx);
     // effects
     for (const f of S.fx) {
       const x = f.x * cell, y = f.row * cell + cell * .5;
