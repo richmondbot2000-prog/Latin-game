@@ -634,6 +634,18 @@ body.noscroll { overflow: hidden; }
 .gamebanner.locked { filter: grayscale(.85) brightness(.8); }
 .gamebanner .corner { position: absolute; right: 10px; bottom: 10px; background: #2B1A3A; color: #fff; font: 700 13px/1 system-ui, sans-serif; padding: 6px 10px; border-radius: 999px; letter-spacing: .04em; }
 .gname.book { color: #FFE7B8; }
+.gname.snap { color: #D7FFD0; }
+.snapbtns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 8px 0; }
+.filebtn { display: inline-flex; align-items: center; cursor: pointer; }
+#pasted { width: 100%; box-sizing: border-box; font: inherit; font-size: 1rem; padding: 10px 12px; border: 2px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); resize: vertical; margin-top: 10px; }
+.snapprog { margin: 14px 0; text-align: center; }
+.snapbar { height: 12px; border-radius: 6px; background: var(--chip); overflow: hidden; margin-bottom: 6px; }
+.snapbar span { display: block; height: 100%; width: 0; background: var(--good); transition: width .3s; }
+.snapbox { text-align: left; font-size: 1.15rem; line-height: 1.9; color: var(--ink); }
+.snapbox .pw { font-weight: 700; }
+.snapbox .pw .f { background: #FFF1C4; }
+.snapbox .pw .b { background: #FFE066; }
+.snaps { display: inline; }
 .booktitle { text-align: center; margin: 0 0 6px; line-height: 1.2; }
 .booktitle b { display: block; font-size: 1.2rem; }
 .pline .ptr { font-size: .8rem; font-style: italic; color: var(--muted); font-weight: 400; }

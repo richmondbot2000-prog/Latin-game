@@ -142,6 +142,48 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   chapters there and rebuild. Six chapters, 287 sentences, 1779 words, of
   which only 39 (scio, disco, si, ut, satis, salve, gratias ago, saccus, saxum,
   lapis, albus, pes, finis) fall outside the 403; everything else is Level 3.
+- **Snap a page** (`snap.js`, `renderSnap` in `app.js`, banner under Read, `#snap`):
+  photograph (or paste) any English text; every word that is in the
+  vocabulary of the player's level turns into Latin in the form the English
+  context asks for, and the reader says the English of each Latin word
+  (the Passages mechanic: `micListener` / `bindTyped` / `micHTML` in
+  `app.js` are shared by Passages, the book and Snap). The photo is read
+  **on the phone** by Tesseract.js 5 served from `ocr/` (Apache-2.0:
+  `tesseract.min.js`, `worker.min.js`, the two LSTM wasm cores, the
+  tessdata_fast English model gzipped; ~10 MB, fetched on first use and
+  then cached by the service worker) — nothing is uploaded. `Snap.ocr`
+  draws the picture to a canvas at ≤1800px (so EXIF rotation is applied)
+  and recognises it with a progress bar. `Snap.latinise(text, words)`:
+  sentences → tokens `{ en, la, id, gloss, skip }`. Morphology from the
+  dictionary entries: nouns in five cases and both numbers (`noun`;
+  i-stems, plural-only nouns, proper nouns), adjectives agreeing in gender,
+  case and number (`adj`, 2-1-2 and 3rd declension), verbs in present /
+  imperfect / perfect / future / infinitive / imperative (`verb`, the
+  irregular table `IRR` for sum, possum, eo and compounds, volo, nolo,
+  fero). English analysis in `convert`: an English → candidates index built
+  from the dictionary senses (nouns with their plurals, verbs in base / -s /
+  past / -ing / past-participle forms, two-word senses like "listen to" and
+  "look at" fold the second word in); noun vs verb by the word before (a
+  determiner → noun, a pronoun or modal → verb); case: `of` → genitive,
+  prepositions by `PREP` (the preposition itself turns Latin, `with me` →
+  mecum), `to` → ad + acc. after a motion verb else dative, the first of
+  two objects after a giving verb → dative, otherwise a noun whose verb
+  comes before it in the clause is the object and one whose verb follows is
+  the subject, predicate nouns after is/was nominative, "Run, boy!"
+  vocative; adjectives agree with the next noun or, after a copula, the
+  subject; verb person from the subject (pronoun or noun, "X and Y" →
+  plural), tense from the English form and helpers (`were walking` →
+  imperfect, `will` → future, `did not` → perfect, `can/must/want to` +
+  verb → possum/debeo/volo + infinitive, `do not` → noli + infinitive;
+  the helper words fold into the Latin and the gloss keeps them: "were
+  walking"); is/are/was/were → est/sunt/erat/erant when not a helper;
+  has/have/had as a main verb → habeo. `BLOCK` lists English words never
+  converted (too many meanings: like, well, even, so, there, left, kind…).
+  Text is cut into parts of ~45 words at sentence ends; all Latin words
+  flipped → next part; last part → celebration and "Another page". Progress
+  `latin.snap.<id>` {pages, words, last} (the last text, for "The last page
+  again"; not synced). Tested by `scratchpad/snap.js` (paste path, taps,
+  typed words, and the OCR path on a rendered PNG, ~2 s in Chromium).
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Each level is one long day on a planet (`WORLDS` in `practice.js`,

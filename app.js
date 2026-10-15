@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '103';
+const APP_VERSION = '104';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -159,6 +159,7 @@ function route() {
   if (h === 'beasts') return renderBeasts(u);
   if (h === 'cards') return renderCardsHome(u);
   if (h === 'passages') return renderPassages(u);
+  if (h === 'snap') return renderSnap(u);
   if (h === 'book') return levelOf(u) === '3' ? renderPassages(u, true) : renderHome(u);
   if (h === 'list' || h === 'play') return renderOrganise(u, h);
   if (h === 'organise') return renderOrganise(u, store.get('latin.orgTab', 'play'));
@@ -498,6 +499,7 @@ function renderHome(u) {
       <button class="gamebanner" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span></button>
       <button class="gamebanner" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span></button>
       <button class="gamebanner${levelOf(u) === '3' ? '' : ' locked'}" id="bookGo" style="background-image:url('art/banners/book.jpg')"><span class="gname book">Read a book</span>${levelOf(u) === '3' ? '' : '<span class="corner">Level 3</span>'}</button>
+      <button class="gamebanner" id="snapGo" style="background-image:url('art/banners/snap.jpg')"><span class="gname snap">Snap a page</span></button>
     </div>
     ${leaderboardHTML()}
     <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
@@ -520,6 +522,7 @@ function renderHome(u) {
   $('#readGo').onclick = () => { location.hash = 'read'; };
   $('#cardsGo').onclick = () => { location.hash = 'cards'; };
   $('#passGo').onclick = () => { location.hash = 'passages'; };
+  $('#snapGo').onclick = () => { location.hash = 'snap'; };
   $('#bookGo').onclick = () => { if (levelOf(u) === '3') location.hash = 'book'; else flashHome('📖 The book opens at Level 3 — choose Level 3 above to read it.'); };
   $('#verline').onclick = () => { $('#verline').textContent = 'updating…'; freshen(); };
   checkVersion();
@@ -725,11 +728,98 @@ const normWord = w => w.toLowerCase().replace(/[’']s$/, '').replace(/[^a-z0-9]
 const stemWord = w => w.length > 4 ? w.replace(/(ing|ies|ed|es|s)$/, '') : w.length > 3 ? w.replace(/s$/, '') : w;
 const sameWord = (a, b) => a === b || (a.length > 3 && b.length > 3 && stemWord(a) === stemWord(b));
 const BOOK_LINES = typeof BOOK !== 'undefined' ? BOOK.chapters.flatMap((c, ci) => c.sents.map((x, i) => ({ ...x, ch: ci, first: i === 0, lastInCh: i === c.sents.length - 1 }))) : [];
+// the typing box under the microphone: words are used as soon as they are complete, wherever in the box they were
+// typed (the keyboard's own 🎤 dictation on an iPhone lands here too); Say sends the lot and clears the box
+function bindTyped(say, isDone) {
+  const said = {};
+  $('#typeform').onsubmit = e => { e.preventDefault(); const v = $('#typed').value; $('#typed').value = ''; for (const k in said) delete said[k]; v.split(/\s+/).forEach(say); $('#heard').textContent = v; };
+  $('#typed').oninput = () => {
+    const v = $('#typed').value, ws = v.split(/\s+/).filter(Boolean), end = $('#typed').selectionEnd;
+    const atEnd = /\s$/.test(v) || end < v.length;   // the last word is still being typed unless the caret has left it
+    const complete = atEnd ? ws : ws.slice(0, -1), have = {};
+    complete.forEach(w => { have[w] = (have[w] || 0) + 1; if (have[w] > (said[w] || 0)) { said[w] = have[w]; say(w); } });
+    if (isDone()) { $('#typed').value = ''; for (const k in said) delete said[k]; }
+  };
+}
+// the microphone row shared by Passages, the book and Snap a page
+const micHTML = () => `<div class="microw">
+      <button class="mic" id="mic" aria-label="Listen">🎤</button>
+      <div class="micside"><div class="small" id="micmsg"></div><div class="heard" id="heard"></div><div class="miclog small" id="miclog"></div></div>
+    </div>
+    <form class="typerow" id="typeform"><input type="text" id="typed" placeholder="…or type / dictate here" autocomplete="off" autocapitalize="off" autocorrect="off"><button class="btn ghost" type="submit">Say</button></form>
+    <p class="small" style="margin:4px 0 0;text-align:center">On an iPhone the keyboard’s own 🎤 key dictates straight into the box.</p>`;
+// the speech engine: every word heard goes to say(word). Returns setMic (status line) and stopRec.
+function micListener(say) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null, listening = false, heard = 0, seen = [];
+  // speech: continuous, in English; the words of each result are handed to say() once
+  // the status line under the microphone says exactly what the recogniser is doing, so a problem can be named
+  let note = '';
+  const log = []; const logEv = t => { log.push(new Date().toTimeString().slice(3, 8) + ' ' + t); if (log.length > 6) log.shift(); const el = $('#miclog'); if (el) el.textContent = log.join(' · '); };
+  function setMic(text) {
+    const m = $('#mic'), msg = $('#micmsg'); if (!m) return;
+    if (text != null) note = text;
+    m.classList.toggle('on', listening);
+    if (!SR) { m.disabled = true; msg.textContent = (navigator.standalone ? 'The home-screen app can’t use the microphone — open latin.musicalmagic.uk in Safari, ' : 'This browser can’t hear you — ') + 'or tap the box below and use the keyboard’s 🎤 dictation.'; }
+    else msg.textContent = note || (listening ? 'Listening… say the English words' : 'Tap the microphone, then say the English words');
+  }
+  const ERRORS = { 'not-allowed': 'The microphone is blocked for this site. Settings → Safari → Microphone → Allow, or use the keyboard’s 🎤 dictation in the box below.',
+    'service-not-allowed': 'Speech recognition is switched off on this phone (Settings → Siri & Search → Enable Dictation). The keyboard’s 🎤 dictation in the box below works instead.',
+    'audio-capture': 'No microphone could be opened.', 'network': 'The speech service could not be reached — check the connection.', 'language-not-supported': 'English speech is not available on this phone.' };
+  // every session is a fresh recogniser: Safari restarted on the same object sometimes comes back silently dead
+  let watch = 0, dead = 0, gen = 0;
+  function spin() {
+    if (!SR || !listening) return;
+    const my = ++gen;
+    const r = rec = new SR(); r.lang = 'en-GB'; r.interimResults = true; r.maxAlternatives = 3; heard = 0; seen = [];
+    r.continuous = !isIOS;   // iPhone Safari drops a continuous session after a few seconds: short sessions, started afresh after each, are steadier
+    let alive = false;
+    const live = () => { alive = true; dead = 0; clearTimeout(watch); };
+    // a session that opens no audio within a few seconds is dead: replace it; after three in a row, hand back to the player
+    clearTimeout(watch); watch = setTimeout(() => { if (!listening || my !== gen || alive) return; dead++; logEv('silent ' + dead); try { r.abort(); } catch (e) {}
+      if (dead >= 3) { listening = false; rec = null; setMic('The phone stopped listening. Tap the microphone to start again (or use the keyboard’s 🎤 in the box below).'); } else setTimeout(() => { if (listening && gen === my) spin(); }, 200); }, 4000);   // abort normally ends the session, and end starts the next; if it doesn't, start one anyway
+    r.onstart = () => { logEv('start'); setMic('Starting…'); };
+    r.onaudiostart = () => { live(); logEv('audio'); setMic('Listening… say the English words'); };
+    r.onsoundstart = () => { live(); logEv('sound'); setMic('Hearing you…'); };
+    r.onspeechstart = () => { live(); logEv('speech'); setMic('Hearing you…'); };
+    r.onnomatch = () => logEv('nomatch');
+    r.onresult = e => {
+      live();
+      // the phone rewrites the last few words as it listens ("Father" becomes "a farmer"): every word that is new
+      // or has changed since the last look is tried, and every alternative the recogniser offers for it
+      const all = []; let fresh = [];
+      for (let i = 0; i < e.results.length; i++) {
+        const alts = []; for (let a = 0; a < e.results[i].length; a++) alts.push(e.results[i][a].transcript.split(/\s+/).filter(Boolean));
+        const ws = alts[0] || [], old = seen[i] || [];
+        ws.forEach((w, k) => { if (old[k] !== w) { fresh.push(w); alts.slice(1).forEach(x => { if (x[k] && x[k] !== w) fresh.push(x[k]); }); } });
+        seen[i] = ws; all.push(...ws);
+      }
+      logEv('result ' + all.length + (e.results[e.results.length - 1].isFinal ? ' final' : ''));
+      $('#heard').textContent = all.slice(-8).join(' ');
+      fresh.forEach(say);
+      setMic('Listening… say the English words');
+    };
+    r.onend = () => { if (my !== gen) return; logEv('end'); clearTimeout(watch); if (listening) setTimeout(spin, 120); else setMic(''); };
+    r.onerror = ev => {
+      if (my !== gen) return; logEv('error ' + ev.error);
+      if (ev.error === 'no-speech' || ev.error === 'aborted') { return; }   // the session simply ends and a fresh one starts
+      listening = false; clearTimeout(watch); setMic(ERRORS[ev.error] || ('Speech error: ' + ev.error + ' — type the words or use the keyboard’s 🎤 dictation.'));
+    };
+    try { r.start(); } catch (err) { listening = false; clearTimeout(watch); setMic('The microphone would not start (' + err.message + '). Tap the box below and use the keyboard’s 🎤 dictation.'); }
+  }
+  function startRec() {
+    if (!SR || listening) return;
+    listening = true; dead = 0; logEv('v' + APP_VERSION + (navigator.standalone ? ' app' : ' browser') + (isIOS ? ' short' : ' cont'));
+    setMic('Starting the microphone…'); spin();
+  }
+  function stopRec() { listening = false; gen++; clearTimeout(watch); if (rec) { try { rec.stop(); } catch (err) {} rec = null; } setMic(''); }
+  $('#mic').onclick = () => listening ? stopRec() : startRec();
+  return { setMic, stopRec, startRec };
+}
 function renderPassages(u, book = false) {
   Celebrate.stop();
   const key = book ? 'latin.book.' + u.id : 'latin.passages.' + u.id, sv = store.get(key, book ? { at: 0 } : { done: {} });
   const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   app.innerHTML = `
   <div class="wrap">
     <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">${book ? 'Read a book' : 'Passages'}</span><span class="lvtag" id="pcount"></span></div>
@@ -737,16 +827,11 @@ function renderPassages(u, book = false) {
     <div class="rtitle" id="ptitle"></div>
     <div class="pbox card" id="pbox"></div>
     <div class="pen" id="pen"></div>
-    <div class="microw">
-      <button class="mic" id="mic" aria-label="Listen">🎤</button>
-      <div class="micside"><div class="small" id="micmsg"></div><div class="heard" id="heard"></div><div class="miclog small" id="miclog"></div></div>
-    </div>
-    <form class="typerow" id="typeform"><input type="text" id="typed" placeholder="…or type / dictate here" autocomplete="off" autocapitalize="off" autocorrect="off"><button class="btn ghost" type="submit">Say</button></form>
-    <p class="small" style="margin:4px 0 0;text-align:center">On an iPhone the keyboard’s own 🎤 key dictates straight into the box.</p>
+    ${micHTML()}
     <p class="rmsg" id="pmsg"></p>
   </div>`;
   $('#back').onclick = () => { stopRec(); location.hash = ''; };
-  let pas = null, at = 0, sent = null, flipped = [], filled = [], done = false, rec = null, listening = false, heard = 0, seen = [];
+  let pas = null, at = 0, sent = null, flipped = [], filled = [], done = false;
   const count = () => book ? `${Math.min(sv.at || 0, BOOK_LINES.length)}/${BOOK_LINES.length}` : `${Object.keys(sv.done || {}).length}/${PASSAGES.length} read`;
   const lineObj = k => book ? BOOK_LINES[k] : SENTENCES[pas.lines[k]];
   const words = () => sent.la.filter(t => t[1]);
@@ -821,78 +906,110 @@ function renderPassages(u, book = false) {
     }
   }
   $('#pbox').onclick = e => { const b = e.target.closest('.pw'); if (!b || done) return; const i = +b.dataset.i; if (!flipped[i]) { flipped[i] = true; say(words()[i][2]); show(); check(); } };   // a tap flips a word too
-  $('#typeform').onsubmit = e => { e.preventDefault(); const v = $('#typed').value; $('#typed').value = ''; typedAt = 0; v.split(/\s+/).forEach(say); $('#heard').textContent = v; };
-  // the typing box also takes the keyboard's own dictation (the 🎤 key on the iPhone keyboard): words are used as they appear
-  let typedAt = 0;
-  $('#typed').oninput = () => {
-    const v = $('#typed').value, ws = v.split(/\s+/).filter(Boolean), complete = /\s$/.test(v) ? ws.length : ws.length - 1;   // the last word may still be being typed
-    for (; typedAt < complete; typedAt++) say(ws[typedAt]);
-    if (done) { $('#typed').value = ''; typedAt = 0; }
-  };
-  // speech: continuous, in English; the words of each result are handed to say() once
-  // the status line under the microphone says exactly what the recogniser is doing, so a problem can be named
-  let note = '';
-  const log = []; const logEv = t => { log.push(new Date().toTimeString().slice(3, 8) + ' ' + t); if (log.length > 6) log.shift(); const el = $('#miclog'); if (el) el.textContent = log.join(' · '); };
-  function setMic(text) {
-    const m = $('#mic'), msg = $('#micmsg'); if (!m) return;
-    if (text != null) note = text;
-    m.classList.toggle('on', listening);
-    if (!SR) { m.disabled = true; msg.textContent = (navigator.standalone ? 'The home-screen app can’t use the microphone — open latin.musicalmagic.uk in Safari, ' : 'This browser can’t hear you — ') + 'or tap the box below and use the keyboard’s 🎤 dictation.'; }
-    else msg.textContent = note || (listening ? 'Listening… say the English words' : 'Tap the microphone, then say the English words');
-  }
-  const ERRORS = { 'not-allowed': 'The microphone is blocked for this site. Settings → Safari → Microphone → Allow, or use the keyboard’s 🎤 dictation in the box below.',
-    'service-not-allowed': 'Speech recognition is switched off on this phone (Settings → Siri & Search → Enable Dictation). The keyboard’s 🎤 dictation in the box below works instead.',
-    'audio-capture': 'No microphone could be opened.', 'network': 'The speech service could not be reached — check the connection.', 'language-not-supported': 'English speech is not available on this phone.' };
-  // every session is a fresh recogniser: Safari restarted on the same object sometimes comes back silently dead
-  let watch = 0, dead = 0, gen = 0;
-  function spin() {
-    if (!SR || !listening) return;
-    const my = ++gen;
-    const r = rec = new SR(); r.lang = 'en-GB'; r.interimResults = true; r.maxAlternatives = 3; heard = 0; seen = [];
-    r.continuous = !isIOS;   // iPhone Safari drops a continuous session after a few seconds: short sessions, started afresh after each, are steadier
-    let alive = false;
-    const live = () => { alive = true; dead = 0; clearTimeout(watch); };
-    // a session that opens no audio within a few seconds is dead: replace it; after three in a row, hand back to the player
-    clearTimeout(watch); watch = setTimeout(() => { if (!listening || my !== gen || alive) return; dead++; logEv('silent ' + dead); try { r.abort(); } catch (e) {}
-      if (dead >= 3) { listening = false; rec = null; setMic('The phone stopped listening. Tap the microphone to start again (or use the keyboard’s 🎤 in the box below).'); } else setTimeout(() => { if (listening && gen === my) spin(); }, 200); }, 4000);   // abort normally ends the session, and end starts the next; if it doesn't, start one anyway
-    r.onstart = () => { logEv('start'); setMic('Starting…'); };
-    r.onaudiostart = () => { live(); logEv('audio'); setMic('Listening… say the English words'); };
-    r.onsoundstart = () => { live(); logEv('sound'); setMic('Hearing you…'); };
-    r.onspeechstart = () => { live(); logEv('speech'); setMic('Hearing you…'); };
-    r.onnomatch = () => logEv('nomatch');
-    r.onresult = e => {
-      live();
-      // the phone rewrites the last few words as it listens ("Father" becomes "a farmer"): every word that is new
-      // or has changed since the last look is tried, and every alternative the recogniser offers for it
-      const all = []; let fresh = [];
-      for (let i = 0; i < e.results.length; i++) {
-        const alts = []; for (let a = 0; a < e.results[i].length; a++) alts.push(e.results[i][a].transcript.split(/\s+/).filter(Boolean));
-        const ws = alts[0] || [], old = seen[i] || [];
-        ws.forEach((w, k) => { if (old[k] !== w) { fresh.push(w); alts.slice(1).forEach(x => { if (x[k] && x[k] !== w) fresh.push(x[k]); }); } });
-        seen[i] = ws; all.push(...ws);
-      }
-      logEv('result ' + all.length + (e.results[e.results.length - 1].isFinal ? ' final' : ''));
-      $('#heard').textContent = all.slice(-8).join(' ');
-      fresh.forEach(say);
-      setMic('Listening… say the English words');
-    };
-    r.onend = () => { if (my !== gen) return; logEv('end'); clearTimeout(watch); if (listening) setTimeout(spin, 120); else setMic(''); };
-    r.onerror = ev => {
-      if (my !== gen) return; logEv('error ' + ev.error);
-      if (ev.error === 'no-speech' || ev.error === 'aborted') { return; }   // the session simply ends and a fresh one starts
-      listening = false; clearTimeout(watch); setMic(ERRORS[ev.error] || ('Speech error: ' + ev.error + ' — type the words or use the keyboard’s 🎤 dictation.'));
-    };
-    try { r.start(); } catch (err) { listening = false; clearTimeout(watch); setMic('The microphone would not start (' + err.message + '). Tap the box below and use the keyboard’s 🎤 dictation.'); }
-  }
-  function startRec() {
-    if (!SR || listening) return;
-    listening = true; dead = 0; logEv('v' + APP_VERSION + (navigator.standalone ? ' app' : ' browser') + (isIOS ? ' short' : ' cont'));
-    setMic('Starting the microphone…'); spin();
-  }
-  function stopRec() { listening = false; gen++; clearTimeout(watch); if (rec) { try { rec.stop(); } catch (err) {} rec = null; } setMic(''); }
-  $('#mic').onclick = () => listening ? stopRec() : startRec();
+  bindTyped(say, () => done);
+  const { setMic, stopRec } = micListener(say);
   window.addEventListener('hashchange', stopRec, { once: true });
   pick();
+}
+
+/* ---------- Snap a page: a photographed (or pasted) English text with its vocabulary words turned into Latin ---------- */
+function renderSnap(u) {
+  Celebrate.stop();
+  const key = 'latin.snap.' + u.id, sv = store.get(key, { pages: 0, words: 0, last: '' });
+  const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
+  const lv = levelOf(u), pool = activeWords(u);
+  app.innerHTML = `
+  <div class="wrap">
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Snap a page</span><span class="lvtag" id="pcount">${sv.pages ? sv.pages + ' page' + (sv.pages === 1 ? '' : 's') : ''}</span></div>
+    <div id="snapmain"></div>
+  </div>`;
+  $('#back').onclick = () => { if (stop) stop(); location.hash = ''; };
+  let stop = null;
+  function start(msg) {
+    if (stop) { stop(); stop = null; }
+    $('#snapmain').innerHTML = `
+      <p class="rmsg" style="margin:0 0 8px">Photograph a page of any English book. Every word from the <b>${esc(levelName(lv))}</b> list turns into Latin, in the right case or tense. Read the English, and say the English of each Latin word.</p>
+      <div class="snapbtns">
+        <label class="btn filebtn">📷 Take a photo<input type="file" accept="image/*" capture="environment" id="snapCam" hidden></label>
+        <label class="btn ghost filebtn">🖼 Choose a picture<input type="file" accept="image/*" id="snapPic" hidden></label>
+      </div>
+      <div class="snapprog" id="snapprog" hidden><div class="snapbar"><span id="snapfill"></span></div><div class="small" id="snapmsg"></div></div>
+      <form id="pasteform"><textarea id="pasted" rows="4" placeholder="…or paste some English text here (on an iPhone, Live Text copies words straight out of the camera)"></textarea>
+        <div class="snapbtns"><button class="btn" type="submit">Read this text</button>${sv.last ? '<button class="btn ghost" type="button" id="snapLast">↩ The last page again</button>' : ''}</div></form>
+      <p class="small" style="text-align:center;margin-top:10px">The picture is read on this phone and never leaves it. ${msg ? '<br><b>' + esc(msg) + '</b>' : ''}</p>`;
+    const take = async file => {
+      if (!file) return;
+      $('#snapprog').hidden = false; $('#pasteform').hidden = true; document.querySelector('.snapbtns').hidden = true;
+      try {
+        const text = await Snap.ocr(file, (m, p) => { $('#snapmsg').textContent = m + (p ? ' ' + Math.round(p * 100) + '%' : ''); $('#snapfill').style.width = Math.round(p * 100) + '%'; });
+        if (!text || text.replace(/[^a-z]/gi, '').length < 10) return start('No words could be read in that picture — try a closer, straighter photo in good light.');
+        read(text);
+      } catch (err) { start('The picture could not be read (' + (err.message || err) + '). You can paste the text instead.'); }
+    };
+    $('#snapCam').onchange = e => take(e.target.files[0]); $('#snapPic').onchange = e => take(e.target.files[0]);
+    $('#pasteform').onsubmit = e => { e.preventDefault(); const t = $('#pasted').value.trim(); if (t.replace(/[^a-z]/gi, '').length < 10) return flashHome('Paste a few sentences first'); read(t); };
+    if ($('#snapLast')) $('#snapLast').onclick = () => read(sv.last);
+  }
+  function read(text) {
+    text = text.replace(/-\n(?=[a-z])/g, '').replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 6000);
+    sv.last = text; store.set(key, sv);
+    const sents = Snap.latinise(text, pool);
+    if (!sents.some(s => s.some(t => t.la))) return start('None of the words on that page are in the ' + levelName(lv) + ' list — try another page, or a higher level.');
+    // pages of about 45 words, broken at sentence ends
+    const pages = []; let cur = [], nw = 0;
+    for (const s of sents) { cur.push(s); nw += s.filter(t => /[a-z]/i.test(t.en)).length; if (nw >= 45) { pages.push(cur); cur = []; nw = 0; } }
+    if (cur.length) pages.push(cur);
+    let pg = 0, toks = [], flipped = [], done = false, total = 0;
+    const STOPW = new Set(['of', 'the', 'a', 'an', 'to', 'for', 'in', 'on', 'at', 'by', 'up', 'out', 'be', 'is', 'am', 'are', 'it', 'not', 'do', 'and', 'with', 'into', 'from', 'over', 'was', 'were', 'will', 'did', 'had', 'has', 'have']);
+    const meansOf = t => {
+      const out = new Set();
+      const add = phrase => { const ws = phrase.toLowerCase().replace(/\(.*?\)/g, ' ').split(/[^a-z0-9']+/).filter(Boolean); const keep = ws.length > 1 ? ws.filter(x => !STOPW.has(x)) : ws; (keep.length ? keep : ws).forEach(x => out.add(normWord(x))); };
+      add(t.gloss || t.en); const w = byIdAll[t.id]; if (w) w.english.split(/[,;]/).forEach(add); ((typeof SYNONYMS !== 'undefined' && SYNONYMS[t.id]) || []).forEach(add);
+      return [...out].filter(Boolean);
+    };
+    $('#snapmain').innerHTML = `<div class="rtitle" id="ptitle"></div><div class="pbox card snapbox" id="snapbox"></div><p class="rmsg" id="pmsg"></p>${micHTML()}`;
+    function load() {
+      toks = []; pages[pg].forEach(s => s.forEach(t => { if (t.la) toks.push(t); }));
+      flipped = toks.map(() => false); done = false; show();
+    }
+    function show() {
+      $('#ptitle').innerHTML = `📷 <b>Your page</b> <span class="small">· part ${pg + 1} of ${pages.length} · ${flipped.filter(Boolean).length} / ${toks.length} words</span>`;
+      let html = '', k = 0;
+      for (const s of pages[pg]) {
+        html += '<span class="snaps">';
+        s.forEach((t, j) => {
+          if (t.skip) return;
+          const punct = !/[a-z0-9]/i.test(t.en), sp = j === 0 || punct || /^["'(]$/.test(s[j - 1] && s[j - 1].en) ? '' : ' ';
+          if (!t.la) { html += sp + esc(t.en); return; }
+          const i = k++;
+          html += sp + `<button class="pw${flipped[i] ? ' flip' : ''}" data-i="${i}"><span class="f">${esc(t.la)}</span><span class="b">${esc(t.gloss || t.en)}</span></button>`;
+        });
+        html += '</span> ';
+      }
+      $('#snapbox').innerHTML = html;
+      setMic();
+    }
+    function say(raw) {
+      const w = normWord(raw); if (!w || done) return false;
+      let hit = false;
+      toks.forEach((t, i) => { if (flipped[i] || hit || !meansOf(t).some(m => sameWord(m, w))) return; flipped[i] = true; hit = true; });
+      if (hit) { show(); check(); }
+      return hit;
+    }
+    function check() {
+      if (!flipped.every(Boolean)) return;
+      done = true; sv.words = (sv.words || 0) + toks.length;
+      const last = pg >= pages.length - 1;
+      if (last) { sv.pages = (sv.pages || 0) + 1; store.set(key, sv); $('#pcount').textContent = sv.pages + ' page' + (sv.pages === 1 ? '' : 's'); Celebrate(innerWidth / 2, innerHeight / 3, 2.6); $('#pmsg').innerHTML = `🏆 Page finished — ${sv.words} Latin words read in all`; $('#pmsg').insertAdjacentHTML('afterend', `<button class="btn" id="pnext">📷 Another page</button>`); $('#pnext').onclick = () => start(); }
+      else { store.set(key, sv); Celebrate(innerWidth / 2, innerHeight / 3, 1.6); $('#pmsg').textContent = '⭐ Part ' + (pg + 1) + ' done'; setTimeout(() => { if (done) { pg++; $('#pmsg').textContent = ''; load(); } }, 1200); }
+    }
+    $('#snapbox').onclick = e => { const b = e.target.closest('.pw'); if (!b || done) return; const i = +b.dataset.i; if (!flipped[i]) { flipped[i] = true; show(); check(); } };
+    bindTyped(say, () => done);
+    const { setMic, stopRec } = micListener(say);
+    stop = stopRec; window.addEventListener('hashchange', stopRec, { once: true });
+    load();
+  }
+  start();
 }
 
 /* ---------- practice (garden defence) ---------- */
