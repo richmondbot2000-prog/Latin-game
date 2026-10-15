@@ -41,6 +41,7 @@ const Practice = (() => {
     antbun:     { name: 'Antbun',     hp: 280, speed: .09,  chomp: 25, size: 1.05, from: 3,   look: { ok: 'antbun1' }, motion: 'hop', rig: true, color: '#bda7cd', res: { bullet: .5, spray: .5, rock: 1.5, bomb: 1.5, blast: 1.5 }, tip: 'Antbuns wear armour: bullets only half work. Rocks and bombs crack it.' },
     kamikaze:   { name: 'Kamikaze',   hp: 90,  speed: .11,  chomp: 0,  size: .92,  from: 4.5, look: { ok: 'kamikaze1', hurt: 'kamikaze2' }, srig: 'kamikaze', rigFlip: true, sheet: { art: 'kamikaze/d', cell: 320, fig: 209, foot: .96 }, motion: 'roll', color: '#ddb8a4', boom: true, res: { bullet: 1.5, spray: 1.5 }, tip: 'Kamikazes blow up the guns they touch. Shoot early, or brain-wash one and send it back into the crowd!' },
     ghost:      { name: 'Ghost',      hp: 80,  speed: .11,  chomp: 25, size: 1.0,  from: 6,   look: { ok: 'ghost1', hurt: 'ghost2' }, sheet: { art: 'ghost/d', cell: 320, fig: 173, foot: 0.853 }, motion: 'float', mist: true, color: '#a6a0aa', pass: 1, alpha: .88, nofreeze: true, nobrain: true, res: { ice: 0, beam: 0, ring: 0, bullet: .75, blast: 2 }, tip: 'Ghosts float over one gun. Ice and sound pass straight through them, but Solar Blast burns them double.' },
+    unicorn:    { name: 'Unicorn',    hp: 220, speed: .07,  chomp: 30, size: 1.05, from: 5.5, look: { ok: 'unicorn1' }, srig: 'unicorn', sheet: { art: 'unicorn/d', cell: 320, fig: 270, foot: 0.925 }, motion: 'waddle', color: '#f3c6e4', gallop: 2.4, nobrain: true, res: { ice: 1.5, beam: 1.5, bullet: .75 }, tip: 'A hurt Unicorn bolts at more than double speed, and its pure heart shrugs off Brain Wash. Freeze it before it runs, or finish it in one go.' },
     flying:     { name: 'Flyer',      hp: 70,  speed: .13,  chomp: 0,  size: .9,   from: 7,   look: { ok: 'flying1', hurt: 'flying2' }, srig: 'flying', sheet: { art: 'flying/d', cell: 320, fig: 253, foot: 0.781 }, motion: 'fly', color: '#b9bcc5', pass: 99, fly: true, res: { bullet: 0, rock: 0, bomb: 0, spray: 1.5 }, tip: 'Flyers sail over everything. Bullets and rocks go underneath; a Handy Turret or ice shards bring them down.' },
     moley:      { name: 'Mole King',  hp: 300, speed: .08,  chomp: 30, size: .95,  from: 8,   look: { ok: 'moley' }, sheet: { art: 'moley/d', cell: 320, fig: 243, foot: 0.853 }, motion: 'waddle', color: '#e0c888', digs: true, dig: .12, res: { bomb: 1.5 }, tip: 'The Mole King drills underground: only blasts and rocks reach him until he pops up.' },
     chompking:  { name: 'ChompKing',  hp: 3000, speed: .045, chomp: 60, size: 2.5,  big: 3, spawns: { kind: 'chomp', every: 9 },  from: 99, look: { ok: 'chompking1', hurt: 'chompking2' }, srig: 'chompking', sheet: { art: 'chompking/d', cell: 320, fig: 216, foot: 0.991 }, motion: 'stomp', color: '#9ec9c0', boss: true, nobrain: true, res: { bomb: .5, ice: .5 }, halfFreeze: true, tip: 'ChompKing is huge and spits out Chomps: bombs only half-work and ice barely slows him. Guns in all three of his rows can hit him!' },
@@ -285,7 +286,9 @@ const Practice = (() => {
         sq.eating = null;
         const terr = kindAt(sq.row, Math.floor(sq.x)), wades = !(sq.k.motion === 'fly' || sq.k.motion === 'float' || sq.under);
         const tf = isTrench(terr) && wades ? .5 : terr === 'puddle' && wades ? .7 : 1;   // climbing through a trench, wading through the puddle
-        if (sq.rise <= 0) sq.x -= sq.k.speed * slow * tf * dt;
+        const bolt = sq.k.gallop && sq.hp < sq.maxHp * .5 && !(sq.frozenT > 0) ? sq.k.gallop : 1;   // a wounded Unicorn bolts for the house
+        if (sq.rise <= 0) sq.x -= sq.k.speed * slow * tf * bolt * dt;
+        if (bolt > 1) { sq.wob += dt * (bolt - 1); if (((S.t * 9) | 0) !== ((((S.t - dt) * 9) | 0))) S.fx.push({ kind: 'gallop', x: sq.x + .3, row: sq.row + .3 + (Math.random() - .5) * .15, t: 0, c: sq.k.color }); }
         if (sq.x < -.25) {
           const rows = sq.rows || [sq.row]; let any = false;
           for (const r of rows) if (S.gnomes[r]) { S.gnomes[r] = false; S.gnomeRuns.push({ row: r, x: -.6 }); any = true; }
@@ -375,7 +378,7 @@ const Practice = (() => {
     S.shells = S.shells.filter(s => !s.gone);
     // effects
     for (const f of S.fx) { f.t += dt; if (f.kind === 'smoke') { f.x -= .4 * dt; f.row += f.drift * dt * .3; } }
-    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'sqdeath' ? 1.3 : f.kind === 'slime' ? 1.6 : f.kind === 'icewave' ? .9 : .8));
+    S.fx = S.fx.filter(f => f.t < (f.kind === 'boom' ? .5 : f.kind === 'smoke' ? 1.1 : f.kind === 'splat' || f.kind === 'melt' ? .6 : f.kind === 'abdeath' ? 1.4 : f.kind === 'sqdeath' ? 1.3 : f.kind === 'slime' ? 1.6 : f.kind === 'icewave' ? .9 : f.kind === 'gallop' ? .5 : .8));
     for (const f of S.floats) f.t += dt;
     S.floats = S.floats.filter(f => f.t < 1);
     S.squishies = S.squishies.filter(s => !s.dead);
@@ -940,6 +943,9 @@ const Practice = (() => {
       } else if (f.kind === 'dirt') {
         const p = f.t / .8; ctx.fillStyle = `rgba(110,75,40,${1 - p})`;
         for (let i = 0; i < (f.small ? 3 : 8); i++) { const a = i * .8 + .3; ctx.beginPath(); ctx.arc(x + Math.cos(a) * p * cell * .7, y + cell * .3 - Math.sin(a) * p * cell * .9 + p * p * cell * .8, cell * .07, 0, 7); ctx.fill(); }
+      } else if (f.kind === 'gallop') {   // puffs of dust and sparkle a bolting Unicorn leaves behind
+        const p = f.t / .5; ctx.fillStyle = `rgba(235,220,210,${.55 * (1 - p)})`; ctx.beginPath(); ctx.arc(x + p * cell * .35, y - p * cell * .25, cell * (.08 + p * .14), 0, 7); ctx.fill();
+        ctx.fillStyle = `rgba(255,120,220,${.8 * (1 - p)})`; ctx.beginPath(); ctx.arc(x + cell * .12 + p * cell * .2, y - cell * .3 - p * cell * .35, cell * .035, 0, 7); ctx.fill();
       } else if (f.kind === 'pot') {
         const p = f.t / .8; ctx.fillStyle = `rgba(184,102,58,${1 - p})`; ctx.beginPath(); ctx.arc(x + p * cell * .6, y - cell * .6 - Math.sin(p * Math.PI) * cell * .8 + p * cell, cell * .12, 0, 7); ctx.fill();
       } else if (f.kind === 'crunch') {
