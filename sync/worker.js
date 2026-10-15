@@ -20,6 +20,118 @@ const ALLOWED = ['https://latin.musicalmagic.uk', 'http://127.0.0.1:8765', 'http
 const MAX_BYTES = 65536, GIFTS_A_DAY = 10, INBOX_MAX = 50;
 const NAME = /^[a-z0-9]{3,16}$/, KEY = /^[a-f0-9]{64}$/, CODE = /^[A-Z]+-[A-Z0-9]{4}$/;
 
+// ---------- Project Gutenberg books ----------
+// The HTML edition (it has the pictures) is read into paragraphs: a picture is its own paragraph
+// [[img src="images/x.jpg" cap="caption"]]; drop-cap letters drawn as pictures go back into the text; tiny ornaments,
+// page numbers, footnote marks and tables (contents) are dropped. The plain-text edition is the fallback.
+const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', mdash: '—', ndash: '–', rsquo: '’', lsquo: '‘', rdquo: '”', ldquo: '“', hellip: '…', shy: '', aelig: 'æ', AElig: 'Æ', oelig: 'œ', eacute: 'é', egrave: 'è', ecirc: 'ê', agrave: 'à', aacute: 'á', iuml: 'ï', ouml: 'ö', uuml: 'ü', ccedil: 'ç', pound: '£', middot: '·', times: '×' };
+const decode = s => s.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (m, e) => e[0] === '#' ? String.fromCodePoint(e[1] === 'x' || e[1] === 'X' ? parseInt(e.slice(2), 16) : +e.slice(1)) : (ENT[e] ?? m));
+const plain = s => decode(s.replace(/<\/?(span|a|i|em|b|strong|sup|sub|small|abbr|font|u|cite|ins|del|q)\b[^>]*>/gi, '').replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+const attr = (tag, a) => { const m = tag.match(new RegExp('\\b' + a + '\\s*=\\s*("([^"]*)"|\'([^\']*)\'|([^\\s>]+))', 'i')); return m ? decode(m[2] ?? m[3] ?? m[4] ?? '') : ''; };
+function htmlParas(html) {
+  let b = html;
+  const s = b.search(/id="pg-start-separator"|\*\*\* ?START OF (THE|THIS) PROJECT GUTENBERG/), e = b.search(/id="pg-end-separator"|\*\*\* ?END OF (THE|THIS) PROJECT GUTENBERG/);
+  if (s >= 0) b = b.slice(b.indexOf('>', b.indexOf('\n', s) >= 0 ? s : s) + 1);
+  if (e >= 0) { const e2 = b.search(/id="pg-end-separator"|\*\*\* ?END OF (THE|THIS) PROJECT GUTENBERG/); if (e2 >= 0) b = b.slice(0, b.lastIndexOf('<', e2)); }
+  b = b.replace(/<(script|style|table)\b[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<span[^>]*class="[^"]*pagenum[^"]*"[^>]*>[\s\S]*?<\/span>/gi, ' ')
+    .replace(/<a[^>]*class="[^"]*fnanchor[^"]*"[^>]*>[\s\S]*?<\/a>/gi, '');
+  // captions first, then pictures
+  b = b.replace(/<(p|div|span|figcaption)\b[^>]*class="[^"]*caption[^"]*"[^>]*>([\s\S]*?)<\/\1>/gi, (m0, t, inner) => '\n\n[[cap ' + plain(inner).replace(/[\[\]"]/g, '') + ']]\n\n')
+    .replace(/<figcaption\b[^>]*>([\s\S]*?)<\/figcaption>/gi, (m0, inner) => '\n\n[[cap ' + plain(inner).replace(/[\[\]"]/g, '') + ']]\n\n')
+    .replace(/<img\b[^>]*>/gi, tag => {
+      const src = attr(tag, 'src'), alt = attr(tag, 'alt').trim(), st = attr(tag, 'style');
+      const wd = +attr(tag, 'width') || +((st.match(/width:\s*(\d+)px/) || [])[1] || 0), ht = +attr(tag, 'height') || +((st.match(/height:\s*(\d+)px/) || [])[1] || 0);
+      if (/^[A-Z]$/.test(alt)) return alt;   // a drop cap drawn as a picture
+      if (!/^[\w\-./{}% ]+\.(jpe?g|png|gif)$/i.test(src) || /^https?:/i.test(src) || src.includes('..')) return ' ';
+      if ((wd && wd < 90) || (ht && ht < 90)) return ' ';   // ornaments
+      return '\n\n[[img src="' + src.replace(/"/g, '') + '"' + (wd && ht ? ' w="' + wd + '" h="' + ht + '"' : '') + ']]\n\n';
+    })
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/?(p|div|h[1-6]|blockquote|li|ul|ol|tr|section|hr|pre|figure|dl|dt|dd)\b[^>]*>/gi, '\n\n');
+  const out = [];
+  for (let p of b.split(/\n\s*\n/)) {
+    p = p.trim(); if (!p) continue;
+    if (/^\[\[(img|cap) /.test(p)) { out.push(p); continue; }
+    p = plain(p); if (p) out.push(p);
+  }
+  for (let i = 0; i < out.length - 1; i++) {
+    if (/^[A-Z]$/.test(out[i]) && (/^[a-z]/.test(out[i + 1]) || /^[A-Z]{1,4}\s+[a-z]/.test(out[i + 1]))) { out[i + 1] = out[i] + out[i + 1]; out.splice(i, 1); }
+  }
+  // a caption joins the picture just before it; a caption with no picture is dropped
+  const res = [];
+  for (const p of out) {
+    const c = p.match(/^\[\[cap (.*)\]\]$/);
+    if (c) { const k = res.length - 1; if (k >= 0 && /^\[\[img /.test(res[k]) && !/ cap="/.test(res[k]) && c[1]) res[k] = res[k].replace(/\]\]$/, ' cap="' + c[1] + '"]]'); continue; }
+    res.push(p);
+  }
+  return res;
+}
+function txtParas(t) {
+  let s = -1; for (const mm of t.matchAll(/^\*\*\* ?START OF (THE|THIS) PROJECT GUTENBERG.*$/gm)) s = mm.index;
+  if (s >= 0) t = t.slice(t.indexOf('\n', s) + 1);
+  const e = t.search(/^\*\*\* ?END OF (THE|THIS) PROJECT GUTENBERG/m); if (e >= 0) t = t.slice(0, e);
+  return t.split(/\n\s*\n/).map(p => p.replace(/\s*\n\s*/g, ' ').trim()).filter(Boolean);
+}
+// the story starts at the first chapter heading followed by real prose — not in an introduction, preface, foreword,
+// contents or list of illustrations; failing that, at the first long paragraph of prose, stepped back to the story's title
+function storyStart(paras) {
+  const isPic = p => /^\[\[img /.test(p);
+  const HEAD = /^(CHAPTER|Chapter|BOOK|Book|PART|Part|STORY|Story)\b|^(I|1)\.?\s*$|^(?=[IVX])X{0,3}(IX|IV|V?I{0,3})\.\s+[A-Z]/;   // I.–XXXIX., not 'L. Frank Baum'
+  const FRONT = /^(introduction|introductory|preface|foreword|fore-word|dedication|acknowledg|transcriber|editor'?s note|note to|a note on|biographical|to the reader)\b/i;
+  const LIST = /^(contents|table of contents|list of (illustrations|plates|chapters|pictures|colou?red plates)|illustrations|chapters)\b/i;
+  const isProse = p => { if (isPic(p)) return false; const L = (p.match(/[a-z]/gi) || []).length, low = (p.match(/[a-z]/g) || []).length, dig = (p.match(/\d/g) || []).length;
+    const ws = p.split(/\s+/), caps = ws.filter(x => /^[A-Z]/.test(x)).length;
+    return L > 30 && low / L > .6 && dig / p.length < .02 && caps / ws.length < .5 && /[a-z][.!?,;:]/.test(p) && !/\.\s?\.\s?\./.test(p); };
+  const titleLike = p => !isPic(p) && p.length < 80 && !isProse(p);
+  const proseAfter = i => { let n = 0; for (let j = i + 1; j < Math.min(paras.length, i + 10); j++) { if (HEAD.test(paras[j]) && paras[j].length < 120) break; if (isProse(paras[j])) n += paras[j].length; } return n > 400; };
+  // front-matter sections: from a heading like PREFACE to the next heading that is not one
+  const front = []; let inFront = false;
+  paras.forEach((p, i) => {
+    const t = p.replace(/[^\w\s'-]/g, '').trim();
+    if (titleLike(p) && FRONT.test(t)) inFront = 'prose';
+    else if (titleLike(p) && LIST.test(t)) inFront = 'list';
+    else if (inFront === 'list' && HEAD.test(p) && p.length < 120 && proseAfter(i)) inFront = false;   // the first chapter after the list
+    else if (inFront === 'list' && isProse(p) && p.length > 150) {   // a list has no sentences: the first one is the book, with its title just before it
+      inFront = false;
+      for (let j = i - 1, k = 0; j >= 0 && k < 2 && front[j]; j--) { if (/^\[\[img /.test(paras[j])) { front[j] = false; continue; } if (!titleLike(paras[j]) || LIST.test(paras[j])) break; front[j] = false; k++; }
+    }
+    // a preface or introduction ends at the next real heading (a chapter, or a title in capitals) — not at the author's signature
+    else if (inFront === 'prose' && titleLike(p) && (HEAD.test(p) || (/[A-Z]{3,}/.test(p) && !/[a-z]{2,}/.test(p.replace(/^(the|a|an|and|of|in)\b/gi, ''))) || (proseAfter(i) && /[A-Z]{2,}|^[A-Z][a-z]+( [A-Z][a-z]+){0,6}$/.test(p.trim()) && !/^[A-Z]\. /.test(p.trim())))) inFront = false;
+    front[i] = !!inFront || /^(transcriber|editor'?s note|produced by|this e-?book|e-?text prepared)/i.test(t) || /\bcopyright(ed)?\b|all rights reserved/i.test(p);
+  });
+  let first = paras.findIndex((p, i) => !front[i] && p.length < 120 && HEAD.test(p) && proseAfter(i));
+  if (first < 0 || first > paras.length / 3) {
+    first = paras.findIndex((p, i) => !front[i] && p.length > 300 && isProse(p));
+    let earliest = first;
+    for (let j = first - 1, steps = 0; j >= 0 && steps < 40; j--) {
+      const p = paras[j];
+      if (front[j]) break;
+      if (isPic(p)) continue;
+      steps++;
+      if (isProse(p) || (p.length < 100 && /[a-z]/.test(p) && /[,.;:!?\-—]["'”’)]?$/.test(p))) { earliest = j; continue; }
+      if (p.length < 80) earliest = j;
+      break;
+    }
+    first = earliest;
+  }
+  return Math.max(0, first);
+}
+async function gutenberg(id) {
+  const get = async u => { const r = await fetch(u, { headers: { 'User-Agent': 'latin.musicalmagic.uk reader' } }); return r.ok ? (await r.text()).replace(/\r/g, '') : null; };
+  const txt = await get(`https://www.gutenberg.org/cache/epub/${id}/pg${id}.txt`);
+  const html = await get(`https://www.gutenberg.org/cache/epub/${id}/pg${id}-images.html`);
+  if (!txt && !html) return null;
+  const head = (txt || plain(html.slice(0, 8000))).slice(0, 5000), field = k => ((head.match(new RegExp('^\\s*' + k + ':\\s*(.+)$', 'm')) || [])[1] || '').trim();
+  const title = field('Title') || ((html || '').match(/<title>([^<]*)<\/title>/i) || [])[1] || 'Book ' + id, author = field('Author');
+  let paras = html ? htmlParas(html) : txtParas(txt);
+  paras = paras.map(p => /^\[\[img /.test(p) ? p : p.replace(/\[(Illustration|Picture)[^\]]*\]/gi, '').replace(/\[\d+\]/g, '').replace(/_/g, '').replace(/\s+/g, ' ').trim())
+    .filter(p => p && (/^\[\[img /.test(p) || /[a-z]/i.test(p)) && !/\*\*\* ?(START|END) OF/.test(p));
+  let st = storyStart(paras); if (st > 0 && /^\[\[img /.test(paras[st - 1])) st--;   // the one picture just before the start (a chapter's opening drawing, a drawn initial), not a dedication before it
+  paras.splice(0, st);
+  return { id: +id, title: decode(title.replace(/^The Project Gutenberg eBook of /i, '').replace(/,? by .*$/, '').trim()), author, pics: paras.filter(p => /^\[\[img /.test(p)).length, text: paras.join('\n\n').slice(0, 1500000) };
+}
+
 export default {
   async fetch(req, env) {
     const origin = req.headers.get('Origin') || '';
@@ -46,46 +158,29 @@ export default {
     let m;
 
     if ((m = path.match(/^\/book\/(\d{1,6})$/)) && req.method === 'GET') {
-      const id = m[1], cache = caches.default, ck = new Request(new URL('/__book/' + id + '/v8', req.url).toString());   // bump v8 when the cleaning below changes
+      const id = m[1], cache = caches.default, ck = new Request(new URL('/__book/' + id + '/v14', req.url).toString());   // bump v9 when the cleaning changes (and BOOK_V in app.js)
       let hit = await cache.match(ck);
       if (!hit) {
-        const r = await fetch(`https://www.gutenberg.org/cache/epub/${id}/pg${id}.txt`, { headers: { 'User-Agent': 'latin.musicalmagic.uk reader' } });
-        if (!r.ok) return text('no such book', 404);
-        let t = (await r.text()).replace(/\r/g, '');
-        const head = t.slice(0, 4000), field = k => ((head.match(new RegExp('^' + k + ':\\s*(.+)$', 'm')) || [])[1] || '').trim();
-        const title = field('Title') || 'Book ' + id, author = field('Author');
-        // after the last START marker (some books carry the licence header twice), up to the END marker
-        let s = -1; for (const mm of t.matchAll(/^\*\*\* ?START OF (THE|THIS) PROJECT GUTENBERG.*$/gm)) s = mm.index;
-        if (s >= 0) t = t.slice(t.indexOf('\n', s) + 1);
-        const e = t.search(/^\*\*\* ?END OF (THE|THIS) PROJECT GUTENBERG/m); if (e >= 0) t = t.slice(0, e);
-        // one paragraph per line; illustrations, footnote marks and underscores (italics) dropped
-        const paras = t.split(/\n\s*\n/).map(p => p.replace(/\[(Illustration|Picture)[^\]]*\]/gi, '').replace(/\[\d+\]/g, '').replace(/_/g, '').replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim()).filter(p => p && /[a-z]/i.test(p));
-        // the story starts at the first chapter heading followed by real prose — sentences, not a contents list
-        const HEAD = /^(CHAPTER|Chapter|BOOK|Book|PART|Part|STORY|Story)\b|^(I|1)\.?\s*$|^[IVXLC]+\.\s+[A-Z]/;
-        const isProse = p => { const L = (p.match(/[a-z]/gi) || []).length, low = (p.match(/[a-z]/g) || []).length, dig = (p.match(/\d/g) || []).length;
-          const ws = p.split(/\s+/), caps = ws.filter(x => /^[A-Z]/.test(x)).length;
-          return L > 30 && low / L > .6 && dig / p.length < .02 && caps / ws.length < .5 && /[a-z][.!?,;:]/.test(p) && !/\.\s?\.\s?\./.test(p); };
-        const proseAfter = i => { let n = 0; for (let j = i + 1; j < Math.min(paras.length, i + 8); j++) { if (HEAD.test(paras[j]) && paras[j].length < 120) break; if (isProse(paras[j])) n += paras[j].length; } return n > 400; };
-        let first = paras.findIndex((p, i) => p.length < 120 && HEAD.test(p) && proseAfter(i));
-        if (first < 0 || first > paras.length / 3) {
-          first = paras.findIndex(p => p.length > 300 && isProse(p));
-          // step back over the opening dialogue or verse to the story's own title (a short line that is not a sentence)
-          // step back over the opening sentences, short lines of verse or dialogue, to the story's own title
-          let earliest = first;
-          for (let j = first - 1; j >= 0 && j >= first - 30; j--) {
-            const p = paras[j];
-            if (isProse(p) || (p.length < 100 && /[a-z]/.test(p) && /[,.;:!?\-—]["'”’)]?$/.test(p))) { earliest = j; continue; }
-            if (p.length < 80) earliest = j;
-            break;
-          }
-          first = earliest;
-        }
-        if (first > 0) paras.splice(0, first);
-        const body = JSON.stringify({ id: +id, title, author, text: paras.join('\n\n').slice(0, 1500000) });
-        hit = new Response(body, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=2592000' } });
+        const book = await gutenberg(id);
+        if (!book) return text('no such book', 404);
+        hit = new Response(JSON.stringify(book), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=2592000' } });
         await cache.put(ck, hit.clone());
       }
       return new Response(hit.body, { headers: { ...cors, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=86400' } });
+    }
+    // a book's picture, passed through so the game only ever loads from its own domains
+    if ((m = path.match(/^\/bookimg\/(\d{1,6})\/(.+)$/)) && req.method === 'GET') {
+      const id = m[1], file = decodeURIComponent(m[2]);
+      if (!/^[\w\-./{}% ]+\.(jpe?g|png|gif)$/i.test(file) || file.includes('..')) return text('bad', 400);
+      const cache = caches.default, ck = new Request(new URL('/__bookimg/' + id + '/' + encodeURIComponent(file), req.url).toString());
+      let hit = await cache.match(ck);
+      if (!hit) {
+        const r = await fetch(`https://www.gutenberg.org/cache/epub/${id}/${file.split('/').map(encodeURIComponent).join('/')}`, { headers: { 'User-Agent': 'latin.musicalmagic.uk reader' } });
+        if (!r.ok) return text('no picture', 404);
+        hit = new Response(r.body, { headers: { 'Content-Type': r.headers.get('Content-Type') || 'image/jpeg', 'Cache-Control': 'public, max-age=2592000' } });
+        await cache.put(ck, hit.clone());
+      }
+      return new Response(hit.body, { headers: { ...cors, 'Content-Type': hit.headers.get('Content-Type'), 'Cache-Control': 'public, max-age=2592000' } });
     }
     if ((m = path.match(/^\/p\/([a-f0-9]{64})$/))) {
       const key = m[1];

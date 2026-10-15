@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '113';
+const APP_VERSION = '114';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -993,7 +993,10 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
   const saveRS = () => store.set(RK, rs);
   // opts (a book page): { label, back, next } — the head shows the book and page, ← goes to the shelf, the end of the page offers the next one
   function read(text, opts = {}) {
-    text = text.replace(/-\n(?=[a-z])/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 6000);
+    text = text.replace(/-\n(?=[a-z])/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, opts.label ? 20000 : 6000);
+    // a book's pictures ([[img src="…" cap="…" w h]]) stand in the text as IMGMARKn (capitals: never turned into Latin)
+    const pics = [];
+    text = text.split('\n\n').map(p => { const m = p.match(/^\[\[img (.*)\]\]$/); if (!m) return p; const at = k => (m[1].match(new RegExp('\\b' + k + '="([^"]*)"')) || [])[1] || ''; pics.push({ src: at('src'), cap: at('cap'), w: +at('w'), h: +at('h') }); return 'IMGMARK' + (pics.length - 1); }).join('\n\n');
     if (!opts.label) { sv.last = text; store.set(key, sv); }
     const sents = Snap.latinise(text, pool);
     if (!sents.some(s => s.some(t => t.la))) return start('None of the words on that page are in the ' + levelName(lv) + ' list — try another page, or a higher level.');
@@ -1061,7 +1064,18 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
     html += '</p>';
     $('#paper').innerHTML = html;
     // a short line with no full stop is a heading (CHAPTER I, a story's title)
-    $('#paper').querySelectorAll('p').forEach(p => { const t = p.textContent.trim(); const ws = t.split(/\s+/); if (t.length < 90 && !/[.,;:!?]["'”’)]?$/.test(t) || /^(CHAPTER|Chapter)\b/.test(t) && t.length < 120 || t.length < 50 && !/["“”]/.test(t) && ws.filter(w => /^[A-Z0-9]/.test(w)).length / ws.length >= .5) p.className = 'rh'; });
+    // the pictures: a full-width figure with its caption; a small one (a drawn initial) floats at the start of the next paragraph
+    $('#paper').querySelectorAll('p').forEach(p => {
+      const m = p.textContent.replace(/\s/g, '').match(/^IMGMARK(\d+)$/); if (!m) return;
+      const pic = pics[+m[1]]; if (!pic || !opts.pic) { p.remove(); return; }
+      const url = opts.pic(pic.src);
+      if (pic.w && pic.h && pic.w <= 150 && pic.h <= 150) { const nx = p.nextElementSibling; if (nx && nx.tagName === 'P') nx.insertAdjacentHTML('afterbegin', `<img class="rdrop" src="${esc(url)}" alt="" onerror="retryImg(this)">`); p.remove(); return; }
+      const f = document.createElement('figure'); f.className = 'rpic';
+      f.innerHTML = `<img src="${esc(url)}" alt="${esc(pic.cap)}" loading="lazy" onerror="retryImg(this)"${pic.w && pic.h ? ` width="${pic.w}" height="${pic.h}"` : ''}>${pic.cap ? `<figcaption>${esc(pic.cap)}</figcaption>` : ''}`;
+      p.replaceWith(f);
+    });
+    // headings stay English, so a line with Latin in it is text
+    $('#paper').querySelectorAll('p').forEach(p => { const t = p.textContent.trim(); if (p.querySelector('.lw')) return; const ws = t.split(/\s+/); if (t.length < 90 && !/[.,;:!?]["'”’)]?$/.test(t) || /^(CHAPTER|Chapter)\b/.test(t) && t.length < 120 || t.length < 50 && !/["“”]/.test(t) && ws.filter(w => /^[A-Z0-9]/.test(w)).length / ws.length >= .5) p.className = 'rh'; });
     const lw = i => $('#paper').querySelector(`.lw[data-i="${i}"]`);
     let busy = false;
     function show() {
@@ -1107,19 +1121,23 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
   function library() {
     const LK = 'latin.library.' + u.id, lib = Object.assign({ books: {}, last: null }, store.get(LK, null) || {});
     const saveLib = () => store.set(LK, lib);
-    const SHELF = [[67098, 'Winnie-the-Pooh', 'A. A. Milne'], [11, 'Alice’s Adventures in Wonderland', 'Lewis Carroll'], [11757, 'The Velveteen Rabbit', 'Margery Williams'],
-      [16, 'Peter Pan', 'J. M. Barrie'], [289, 'The Wind in the Willows', 'Kenneth Grahame'], [55, 'The Wonderful Wizard of Oz', 'L. Frank Baum'], [2781, 'Just So Stories', 'Rudyard Kipling'],
-      [236, 'The Jungle Book', 'Rudyard Kipling'], [113, 'The Secret Garden', 'Frances Hodgson Burnett'], [1874, 'The Railway Children', 'E. Nesbit'], [778, 'Five Children and It', 'E. Nesbit'],
-      [271, 'Black Beauty', 'Anna Sewell'], [500, 'The Adventures of Pinocchio', 'Carlo Collodi'], [902, 'The Happy Prince and Other Tales', 'Oscar Wilde'], [2591, 'Grimms’ Fairy Tales', 'The Brothers Grimm'],
-      [1448, 'Heidi', 'Johanna Spyri'], [120, 'Treasure Island', 'Robert Louis Stevenson'], [45, 'Anne of Green Gables', 'L. M. Montgomery']];
-    const BOOK_V = 8;   // the worker's cleaning version (/__book/<n>/v8 in its cache): a new number skips any stale copy on the way and on the phone
-    const BOOK_URL = id => (store.get('latin.syncUrl', null) || 'https://sync.musicalmagic.uk') + '/book/' + id + '?v=' + BOOK_V;
+    // the illustrated Gutenberg editions where there is one (the 4th field: it has pictures)
+    const SHELF = [[67098, 'Winnie-the-Pooh', 'A. A. Milne', 1], [14838, 'The Tale of Peter Rabbit', 'Beatrix Potter', 1], [11757, 'The Velveteen Rabbit', 'Margery Williams', 1],
+      [28885, 'Alice’s Adventures in Wonderland', 'Lewis Carroll', 1], [43936, 'The Wonderful Wizard of Oz', 'L. Frank Baum', 1], [32488, 'Just So Stories', 'Rudyard Kipling', 1],
+      [27805, 'The Wind in the Willows', 'Kenneth Grahame', 1], [236, 'The Jungle Book', 'Rudyard Kipling', 1], [26999, 'Peter Pan in Kensington Gardens', 'J. M. Barrie', 1],
+      [16, 'Peter Pan', 'J. M. Barrie'], [16865, 'Pinocchio', 'Carlo Collodi', 1], [902, 'The Happy Prince and Other Tales', 'Oscar Wilde', 1], [52521, 'Grimm’s Fairy Tales', 'The Brothers Grimm', 1],
+      [17314, 'Five Children and It', 'E. Nesbit', 1], [46409, 'Heidi', 'Johanna Spyri', 1], [120, 'Treasure Island', 'Robert Louis Stevenson', 1], [64365, 'Anne of Green Gables', 'L. M. Montgomery', 1],
+      [113, 'The Secret Garden', 'Frances Hodgson Burnett'], [1874, 'The Railway Children', 'E. Nesbit'], [271, 'Black Beauty', 'Anna Sewell']];
+    const BOOK_V = 14;   // the worker's cleaning version (/__book/<n>/v8 in its cache): a new number skips any stale copy on the way and on the phone
+    const SYNC_BASE = () => store.get('latin.syncUrl', null) || 'https://sync.musicalmagic.uk';
+    const BOOK_URL = id => SYNC_BASE() + '/book/' + id + '?v=' + BOOK_V;
+    const PIC_URL = (id, src) => SYNC_BASE() + '/bookimg/' + id + '/' + src.split('/').map(encodeURIComponent).join('/');
     const progressOf = id => { const b = lib.books[id]; return b && b.pages ? `Page ${Math.min(b.at + 1, b.pages)} of ${b.pages}` : ''; };
     function shelf(msg) {
       document.documentElement.classList.add('readermode'); applyDark();
       const last = lib.last && lib.books[lib.last];
-      const row = ([id, title, author]) => { const p = progressOf(id), b = lib.books[id]; return `<button class="lbook" data-id="${id}"><span class="lt">${esc(title)}</span><span class="la">${esc(author)}${p ? ' · ' + p : ''}</span>${b && b.pages ? `<span class="lbar"><span style="width:${Math.round(100 * Math.min(1, b.at / b.pages))}%"></span></span>` : ''}</button>`; };
-      const extra = Object.entries(lib.books).filter(([id]) => !SHELF.some(s => s[0] === +id)).map(([id, b]) => [+id, b.title, b.author || '']);
+      const row = ([id, title, author, ill]) => { const p = progressOf(id), b = lib.books[id]; return `<button class="lbook" data-id="${id}"><span class="lt">${esc(title)}</span><span class="la">${esc(author)}${ill || (b && b.pics) ? ' · Illustrated' : ''}${p ? ' · ' + p : ''}</span>${b && b.pages ? `<span class="lbar"><span style="width:${Math.round(100 * Math.min(1, b.at / b.pages))}%"></span></span>` : ''}</button>`; };
+      const extra = Object.entries(lib.books).filter(([id]) => !SHELF.some(s => s[0] === +id)).map(([id, b]) => [+id, b.title, b.author || '', b.pics]);
       app.innerHTML = `<div class="libpage">
         <div class="rhead"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="rpos">Project Gutenberg</span><span style="width:44px"></span></div>
         <h1 class="libtitle">Library</h1>
@@ -1149,11 +1167,14 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
     function paginate(text) {
       const out = []; let cur = [], n = 0;
       const push = () => { if (cur.length) out.push(cur.join('\n\n')); cur = []; n = 0; };
+      let afterPic = false;
       for (const p of text.split('\n\n')) {
+        const pic = /^\[\[img /.test(p), small = pic && /w="(\d+)" h="(\d+)"/.test(p) && +RegExp.$1 <= 150 && +RegExp.$2 <= 150;
+        if (pic) { if (!small && n + 70 > 260 && n >= 120) push(); cur.push(p); n += small ? 0 : 70; afterPic = true; continue; }   // a picture stays with the text after it
         const w = p.split(/\s+/).length;
         if (w > 320) { push(); let part = []; let pn = 0; for (const s of p.match(/[^.!?]+[.!?]+["'”’)]*\s*|[^.!?]+$/g) || [p]) { part.push(s.trim()); pn += s.split(/\s+/).length; if (pn >= 200) { out.push(part.join(' ')); part = []; pn = 0; } } if (part.length) { cur = [part.join(' ')]; n = pn; } continue; }
-        if (n + w > 260 && n >= 120) push();
-        cur.push(p); n += w;
+        if (n + w > 260 && n >= 120 && !afterPic) push();
+        cur.push(p); n += w; afterPic = false;
         if (n >= 200 && !(p.length < 90 && !/[.!?]["'”’)]?$/.test(p))) push();   // never end a page on a heading
       }
       push();
@@ -1165,9 +1186,9 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       $('#back').onclick = () => shelf();
       let book; try { book = await getBook(id); } catch (e) { return shelf(e.message + '.'); }
       if (!book || !book.text) return shelf('That book has no text that can be read here.');
-      const pages = paginate(book.text), b = lib.books[id] = Object.assign({ at: 0 }, lib.books[id] || {}, { title: book.title, author: book.author, pages: pages.length });
+      const pages = paginate(book.text), b = lib.books[id] = Object.assign({ at: 0 }, lib.books[id] || {}, { title: book.title, author: book.author, pages: pages.length, pics: book.pics || 0 });
       b.at = Math.min(b.at, pages.length - 1); lib.last = id; saveLib();
-      const page = () => { const here = b.at; read(pages[here], { label: `p. ${here + 1}/${pages.length}`, back: () => shelf(),
+      const page = () => { const here = b.at; read(pages[here], { label: `p. ${here + 1}/${pages.length}`, back: () => shelf(), pic: src => PIC_URL(id, src),
         done: () => { b.at = Math.max(b.at, Math.min(here + 1, pages.length)); saveLib(); },
         next: here + 1 < pages.length ? () => { page2(); } : null }); };
       const page2 = () => { b.at = Math.min(b.at, pages.length - 1); page(); scrollTo(0, 0); };

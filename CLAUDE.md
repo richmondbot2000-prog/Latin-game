@@ -217,37 +217,63 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   `scratchpad/camtest.js` (the camera screen with a fake camera) and `scratchpad/snap.js`
   (the OCR path on a rendered PNG, ~2 s in Chromium).
 - **Library** (`library()` inside `renderSnap(u, 'books')`, banner under Read,
-  `#library`): Project Gutenberg books in the Snap a page reader. Gutenberg
-  sends no CORS header, so the sync worker fetches them: `GET
-  https://sync.musicalmagic.uk/book/<n>` → `{ id, title, author, text }`
-  (after the last `*** START OF` marker, before `*** END OF`; one paragraph
-  per line, `[Illustration…]` / `[Picture…]` and underscores dropped; the
-  story starts at the first chapter heading followed by real prose —
-  `isProse`: mostly lower case, few digits, under half the words
-  capitalised, real punctuation — or else at the first long prose
-  paragraph, stepped back over opening sentences and short verse or
-  dialogue to the story's own title; cached at the edge 30 days under
-  `/__book/<n>/v8` on the worker's own host: when the cleaning changes, bump that **and** `BOOK_V` in
-  `app.js`, which the game adds as `?v=` so no stale copy on the way or on
-  the phone is used). The
-  shelf: 18 children's classics (`SHELF`: Winnie-the-Pooh, Alice, Velveteen
-  Rabbit, Peter Pan, Wind in the Willows, Oz, Just So, Jungle Book, Secret
-  Garden, Railway Children, Five Children and It, Black Beauty, Pinocchio,
-  Happy Prince, Grimm, Heidi, Treasure Island, Anne of Green Gables), a
-  "Carry on reading" card, and a box that takes any Gutenberg link or
-  number (that book joins the shelf). Books are kept on the phone in the
-  `latin-books` cache (the service worker keeps it across updates). Pages
-  of ~200 words broken between paragraphs (`paginate`; never ending on a
-  heading); the reader runs in book mode (`read(text, { label, back, next,
-  done })`: "← Books", "p. 3/104 · n of m", "Next page →" at the end).
-  Headings (short, no full stop, mostly capitals, no quotes; `CHAPTER …`)
-  are centred `.rh` and stay English (`isHeading` in `Snap.latinise`; a
-  paragraph break ends a sentence only after a heading, so a photo's
-  mid-sentence breaks don't), and words in capitals are never converted.
-  Place per book in `latin.library.<id>` {books: {n: {at, pages, title,
-  author}}, last} (not synced). Tested by `scratchpad/library.js` against
-  the live worker; `scratchpad/wtest.mjs` runs the worker's book route
-  locally over the shelf.
+  `#library`): Project Gutenberg books, **with their illustrations**, in the
+  Snap a page reader. Gutenberg sends no CORS header, so the sync worker
+  fetches them (`gutenberg(id)` in `sync/worker.js`): `GET
+  https://sync.musicalmagic.uk/book/<n>` → `{ id, title, author, pics, text }`.
+  It reads the **HTML edition** (`pg<n>-images.html`, plain text as the
+  fallback) between the `pg-start/end-separator` markers (`htmlParas`):
+  `<table>`s (contents), page numbers and footnote marks dropped; inline tags
+  joined without a space (drop caps: `<span class="dropcap">M</span>RS`); a
+  picture becomes its own paragraph `[[img src="images/x.jpg" cap="…" w=".."
+  h=".."]]` (captions from `class="caption"` / `<figcaption>`; a one-letter
+  alt is a drawn initial and goes back into the text; ornaments under 90px
+  dropped; a lone capital before the rest of its word is joined: "I" + "N the
+  sea"). **The story start** (`storyStart`): front matter is skipped —
+  introduction, preface, foreword, dedication, transcriber's / editor's
+  notes, copyright text (`FRONT`, ending at the next real heading, not the
+  author's signature) and contents / lists of illustrations or chapters
+  (`LIST`, ending at the first chapter heading followed by prose or the
+  first real sentence, with its title); then the first chapter heading
+  (`HEAD`: CHAPTER / PART / BOOK, Roman numerals I.–XXXIX. only — "L. Frank
+  Baum" is not chapter L) followed by real prose (`isProse`: mostly lower
+  case, few digits, under half the words capitalised, real punctuation),
+  or else the first long prose paragraph, stepped back over opening
+  sentences, verse and dialogue (pictures not counted) to the story's own
+  title; the one picture just before the start comes with it. Cached at the
+  edge 30 days under `/__book/<n>/v14` on the worker's own host — when the
+  cleaning changes, bump that **and** `BOOK_V` in `app.js` (sent as `?v=`).
+  `GET /bookimg/<n>/<path>` passes a book's picture through (path checked:
+  `images/…jpg|png|gif`, no `..`; cached 30 days), so the game only ever
+  loads from its own domains. **The shelf** (`SHELF`, the illustrated
+  Gutenberg editions where one exists, marked "Illustrated"):
+  Winnie-the-Pooh 67098, Peter Rabbit 14838, Velveteen Rabbit 11757, Alice
+  (Rackham) 28885, Wizard of Oz (Denslow) 43936, Just So Stories 32488,
+  Wind in the Willows 27805, Jungle Book 236, Peter Pan in Kensington
+  Gardens 26999, Peter Pan 16, Pinocchio 16865, Happy Prince 902, Grimm
+  52521, Five Children and It 17314, Heidi 46409, Treasure Island 120, Anne
+  of Green Gables 64365, Secret Garden 113, Railway Children 1874, Black
+  Beauty 271; a "Carry on reading" card; a box that takes any Gutenberg
+  link or number (that book joins the shelf). Books are kept on the phone
+  in the `latin-books` cache (the service worker keeps it across updates);
+  the game re-asks once and trims itself if a book ever arrives with the
+  licence text still in it. Pages of ~200 words broken between paragraphs
+  (`paginate`; a picture counts 70 words and stays with the text after it;
+  a page never ends on a heading). In the reader (`read(text, { label,
+  back, next, done, pic })`) pictures stand in the text as `IMGMARKn` (in
+  capitals, so never turned into Latin) and become `figure.rpic` (full
+  width, at most 62% of the screen high, caption in italics) or, when 150px
+  or smaller, a floated drop cap `img.rdrop` at the start of the next
+  paragraph; every picture retries if it fails (`retryImg`). Headings
+  (short, no full stop or `CHAPTER …`, no Latin in them) are centred `.rh`
+  and stay English (`isHeading` in `Snap.latinise`; a paragraph break ends
+  a sentence only after a heading, so a photo's mid-sentence breaks don't),
+  and words in capitals are never converted. Place per book in
+  `latin.library.<id>` {books: {n: {at, pages, title, author, pics}}, last}
+  (not synced). Tested by `scratchpad/library.js` and `scratchpad/pics.js`
+  against the live worker; `scratchpad/wtest2.mjs` runs the worker's book
+  route locally over the shelf (start, words, pictures), `wdbg.mjs` prints
+  a book's opening paragraphs with the chosen start.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
   Each level is one long day on a planet (`WORLDS` in `practice.js`,

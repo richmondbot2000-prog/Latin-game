@@ -710,6 +710,11 @@ html.readermode { background: #fff; }
 .lopen .rchoice { flex: none; padding: 6px 18px; }
 .lnote { font-family: -apple-system, system-ui, sans-serif; font-size: .85rem; color: #888; padding: 6px 20px; margin: 0; }
 .lload { padding: 40px 20px; text-align: center; color: #777; font-family: -apple-system, system-ui, sans-serif; }
+.rpic { margin: 1.2em 0; text-align: center; }
+.rpic img { display: block; max-width: 100%; max-height: 62vh; width: auto; height: auto; margin: 0 auto; }
+.rpic figcaption { font-size: .82em; font-style: italic; color: #666; margin-top: .45em; line-height: 1.35; }
+.rdrop { float: left; width: 3.1em; height: auto; margin: .2em .45em 0 0; }
+html.rdark .rpic img, html.rdark .rdrop { filter: brightness(.85); } html.rdark .rpic figcaption { color: #999; }
 .paper p.rh { text-align: center; font-weight: 700; letter-spacing: .02em; margin: 1.2em 0 .9em; }
 html.rdark .libpage, html.rdark .lbook { background: #000; color: #eee; } html.rdark .libtitle { color: #f2f2f2; } html.rdark .lbook { border-bottom-color: #222; } html.rdark .lshelf { border-top-color: #222; }
 html.rdark .lcarry { background: #10203A; } html.rdark .lbar { background: #2a2a2a; } html.rdark .lopen input { background: #1C1C1E; color: #eee; border-color: #3a3a3c; }
