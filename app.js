@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '96';
+const APP_VERSION = '97';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -148,6 +148,8 @@ function route() {
   closeSheet();
   const u = current();
   const h = location.hash.slice(1);
+  const gm = h.match(/^gift\/([A-Za-z0-9-]+)$/);
+  if (gm) { store.set('latin.pendingGift', gm[1].toUpperCase()); location.hash = ''; return; }   // the hash change brings us back here, signed in or not
   if (!u) return renderSignIn();
   if (h === 'practice') return renderPractice(u);
   if (h === 'trophies') return renderTrophies(u);
@@ -309,13 +311,134 @@ function showCode(u, isNew) {
         <div class="how"><h3>${isNew ? 'Write this code down' : 'What it’s for'}</h3>
           <p>Your stars and levels are saved in the cloud under this code, with no name attached. To play on another phone, tablet or computer, choose “I've played before”, type your name and emojis, then enter this code once.</p></div>
       </div>
+      <button class="btn ghost" id="codeSave">${navigator.share ? '📤 Save my code (Notes, a message to a parent…)' : '📋 Copy my code'}</button>
       <button class="btn" id="codeOk">${isNew ? "Got it — let's play" : 'Close'}</button>
     </div>`;
   sheet.hidden = false;
   const done = () => { closeSheet(); if (isNew) route(); };
+  $('#codeSave').onclick = async () => {
+    const msg = `My Latin game sync code is ${code}. Keep it safe: it brings my stars and beasts to any device at https://latin.musicalmagic.uk`;
+    try { if (navigator.share) await navigator.share({ text: msg }); else { await navigator.clipboard.writeText(code); $('#codeSave').textContent = '✓ Copied'; } store.set('latin.codeSaved.' + u.id, true); } catch (e) {}
+  };
   $('#codeOk').onclick = done;
   sheet.onclick = e => { if (e.target === sheet) done(); };
   Sync.touch(u);
+}
+
+
+/* ---------- player names, gifts and the inbox (sync/worker.js) ---------- */
+// a player name is what friends type to send you a beast: one word, letters and digits, not a real name
+function nameSheet(u, done) {
+  sheet.innerHTML = `
+    <div class="panel" role="dialog" aria-modal="true" aria-label="Player name">
+      <div class="memo">
+        <div class="pic" aria-hidden="true">🎁</div>
+        <div class="lat" style="font-size:1.3rem">${u.player ? 'Your player name' : 'Choose a player name'}</div>
+        <p class="small">Friends type this name to send you a beast. One word, letters and numbers only — <b>not your real name</b>. Other players will see it.</p>
+        <input type="text" id="pname" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. ${esc(Sync.cleanName(Sync.codeOf(u).split('-')[0] + Sync.codeOf(u).split('-')[2]).toUpperCase())}" value="${esc((u.player || '').toUpperCase())}">
+        <p class="err" id="perr"></p>
+      </div>
+      <button class="btn" id="pOk" disabled>${u.player ? 'Change name' : 'Claim this name'}</button>
+      <button class="btn ghost" id="pNo">Not now</button>
+    </div>`;
+  sheet.hidden = false;
+  const inp = $('#pname'), ok = $('#pOk'), err = $('#perr');
+  let t = 0;
+  inp.oninput = () => {
+    const n = Sync.cleanName(inp.value); ok.disabled = true; err.textContent = '';
+    if (!Sync.validName(n)) { if (inp.value.length) err.textContent = '3 to 16 letters or numbers, no spaces.'; return; }
+    clearTimeout(t); t = setTimeout(async () => { try { const r = await fetch((store.get('latin.syncUrl', '') || 'https://sync.musicalmagic.uk') + '/name/' + n, { cache: 'no-store' }).then(x => x.json()); if (Sync.cleanName(inp.value) !== n) return; if (r.free || n === u.player) { err.textContent = '✓ ' + n.toUpperCase() + ' is free'; ok.disabled = false; } else err.textContent = n.toUpperCase() + ' is taken — try another.'; } catch (e) { err.textContent = 'Can’t reach the server right now.'; } }, 350);
+  };
+  ok.onclick = async () => {
+    ok.disabled = true; err.textContent = 'Claiming…';
+    try { const r = await Sync.claimName(u, inp.value); if (r === 'taken') { err.textContent = 'Just taken by someone else — try another.'; return; } closeSheet(); if (done) done(); }
+    catch (e) { err.textContent = 'Couldn’t claim it — check the internet and try again.'; ok.disabled = false; }
+  };
+  $('#pNo').onclick = closeSheet; sheet.onclick = e => { if (e.target === sheet) closeSheet(); };
+  inp.focus();
+}
+// give a spare of beast b away: to a player by name, or to a friend who isn't in the game yet by a share-able gift code
+function giveSheet(u, b, done) {
+  if (!u.player) { nameSheet(u, () => giveSheet(u, b, done)); return; }
+  const s = Beasts.state(u), stage = s.have[b.key] || 0, st = b.stages[stage];
+  sheet.innerHTML = `
+    <div class="panel bsheet" role="dialog" aria-modal="true" aria-label="Give ${esc(st.name)}">
+      <img class="bbig" src="${Beasts.img(b, stage)}" alt="" style="width:min(40vw,160px)">
+      <div class="bname">Give ${esc(an(st.name))}</div>
+      <p class="small">Your spare goes to them and leaves your collection.</p>
+      <label class="lbl" for="gto">To a player in the game</label>
+      <div class="typerow"><input type="text" id="gto" maxlength="16" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="their player name"><button class="btn" id="gSend" type="button">Send</button></div>
+      <p class="small" style="margin:14px 0 6px">Or a friend who isn’t in the game yet:</p>
+      <button class="btn ghost" id="gInvite">📤 Invite a friend with this ${esc(st.name)}</button>
+      <p class="err" id="gerr"></p>
+      <button class="btn ghost" id="gNo">Cancel</button>
+    </div>`;
+  sheet.hidden = false;
+  const err = $('#gerr');
+  const fail = e => { err.textContent = e.status === 404 ? 'No player has that name. Check the spelling with your friend.' : e.status === 429 ? 'That’s 10 gifts today — more tomorrow!' : e.status === 403 ? 'You don’t have a spare of that one any more.' : e.status === 400 && /self/.test(e.message) ? 'That’s you!' : 'Couldn’t send — check the internet and try again.'; };
+  $('#gSend').onclick = async () => {
+    const to = Sync.cleanName($('#gto').value); if (!Sync.validName(to)) { err.textContent = 'Type their player name.'; return; }
+    $('#gSend').disabled = true; err.textContent = 'Sending…';
+    try { Sync.flush(); await Sync.sendGift(u, to, b.key, stage); Beasts.give(u, b.key); Sync.flush(); closeSheet(); flashHome(`🎁 Your ${st.name} is on its way to ${to.toUpperCase()}!`); if (done) done(); }
+    catch (e) { fail(e); $('#gSend').disabled = false; }
+  };
+  $('#gInvite').onclick = async () => {
+    $('#gInvite').disabled = true; err.textContent = 'Making a gift code…';
+    try {
+      Sync.flush(); const code = await Sync.giftCode(u, b.key, stage); Beasts.give(u, b.key); Sync.flush();
+      const msg = `${u.player.toUpperCase()} has sent you ${an(st.name)}! Join the Latin game to open it: https://latin.musicalmagic.uk/#gift/${code}`;
+      let shared = false;
+      try { if (navigator.share) { await navigator.share({ text: msg }); shared = true; } } catch (e) {}
+      if (!shared) { try { await navigator.clipboard.writeText(msg); } catch (e) {} }
+      sheet.innerHTML = `<div class="panel memo" role="dialog"><div class="pic">🎁</div><div class="lat" style="font-size:1.2rem">Gift code ${esc(code)}</div><p class="small">${shared ? 'Sent! ' : 'Copied — paste it into a message. '}The first person to open the link and join the game gets your ${esc(st.name)}. The code lasts 60 days.</p><div class="code">${esc(msg)}</div><button class="btn" id="gOk">Done</button></div>`;
+      $('#gOk').onclick = () => { closeSheet(); if (done) done(); };
+    } catch (e) { fail(e); $('#gInvite').disabled = false; }
+  };
+  $('#gNo').onclick = closeSheet; sheet.onclick = e => { if (e.target === sheet) closeSheet(); };
+}
+function flashHome(msg) { const t = document.createElement('div'); t.className = 'toast show'; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
+// a gift arrives: the beast card in a sheet, with who it came from
+function giftSheet(ev, from, done) {
+  const b = ev.beast, st = b.stages[ev.stage], el = Beasts.ELEMENT[b.el] || ['', ''];
+  sheet.innerHTML = `<div class="panel bsheet" role="dialog" aria-modal="true" aria-label="A gift">
+      <div class="card beast egg giftcard"><div class="btitle">GIFT</div>
+        <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt=""><span class="glow"></span></div>
+        <div class="ribbon"><span>${esc(st.name)}</span></div><div class="belem">${el[0]}</div></div>
+      <p style="margin:12px 0 0">${from ? `<b>${esc(from.toUpperCase())}</b> sent you this ${esc(st.name)}${ev.spare ? ' — you already had one, so it’s a spare you can pass on' : ''}!` : `Someone opened your gift!`}</p>
+      <button class="btn" id="gfOk">Wonderful</button></div>`;
+  sheet.hidden = false;
+  Celebrate(innerWidth / 2, innerHeight / 3, 2.6);
+  $('#gfOk').onclick = () => { closeSheet(); if (done) done(); }; sheet.onclick = e => { if (e.target === sheet) { closeSheet(); if (done) done(); } };
+}
+const muteKey = u => 'latin.mutes.' + u.id;
+const an = name => (/^[aeiou]/i.test(name) ? 'an ' : 'a ') + name;
+// the inbox: gifts waiting on the server, and a pending gift link; shown as a box at the top of the home page
+async function loadInbox(u) {
+  if (!Sync.enabled()) return;
+  const box = $('#inbox'); if (!box) return;
+  const pending = store.get('latin.pendingGift', null);
+  if (pending) {
+    store.del('latin.pendingGift');
+    try { const g = await Sync.claimCode(u, pending); await Beasts.load(); const ev = Beasts.receive(u, g.beast, g.stage); if (ev) giftSheet(ev, g.from, () => renderHome(u)); }
+    catch (e) { flashHome(e.status === 404 ? 'That gift has already been opened, or the code is wrong.' : e.status === 400 ? 'That’s your own gift link!' : 'Couldn’t open the gift — check the internet and try again.'); }
+  }
+  let items; try { items = await Sync.inbox(u); } catch (e) { return; }
+  if (!document.body.contains(box)) return;
+  const mutes = store.get(muteKey(u), []);
+  for (const it of items) if (it.kind === 'gift' && mutes.includes(it.from)) { Sync.dropInbox(u, it.id).catch(() => {}); }   // gifts from muted players are thrown away unseen
+  items = items.filter(it => !(it.kind === 'gift' && mutes.includes(it.from)));
+  if (!items.length) { box.innerHTML = ''; return; }
+  await Beasts.load();
+  box.innerHTML = items.map(it => { const b = Beasts.byKey(it.beast); const nm = b ? b.stages[Math.min(it.stage || (b.stages.length - 1), b.stages.length - 1)].name : 'beast';
+    return it.kind === 'gift'
+      ? `<div class="giftbox" data-id="${it.id}"><img src="${b ? Beasts.img(b, Math.min(it.stage || 0, b.stages.length - 1)) : ''}" alt=""><div class="gtxt"><b>${esc(it.from.toUpperCase())}</b> has sent you ${/^[aeiou]/i.test(nm) ? 'an' : 'a'} <b>${esc(nm)}</b>!<div class="gbtns"><button class="btn" data-open="${it.id}">Open</button><button class="linkbtn" data-mute="${esc(it.from)}">Don’t accept from ${esc(it.from.toUpperCase())}</button></div></div></div>`
+      : `<div class="giftbox" data-id="${it.id}"><span class="gpic">🎉</span><div class="gtxt">Someone opened your <b>${esc(nm)}</b> gift and joined the game!<div class="gbtns"><button class="btn ghost" data-ok="${it.id}">Nice</button></div></div></div>`; }).join('');
+  box.onclick = async e => {
+    const o = e.target.closest('[data-open]'), m = e.target.closest('[data-mute]'), k = e.target.closest('[data-ok]');
+    if (o) { const it = items.find(x => x.id === o.dataset.open); o.disabled = true; try { await Sync.dropInbox(u, it.id); } catch (err) { o.disabled = false; return; } const ev = Beasts.receive(u, it.beast, it.stage); Sync.flush(); if (ev) giftSheet(ev, it.from, () => renderHome(u)); else renderHome(u); }
+    if (m) { if (!confirm(`Throw away gifts from ${m.dataset.mute.toUpperCase()} from now on?`)) return; store.set(muteKey(u), [...new Set([...store.get(muteKey(u), []), m.dataset.mute])]); renderHome(u); }
+    if (k) { try { await Sync.dropInbox(u, k.dataset.ok); } catch (err) {} renderHome(u); }
+  };
 }
 
 /* ---------- home ---------- */
@@ -352,6 +475,7 @@ function renderHome(u) {
   <div class="wrap">
     <div class="bar"><span class="title"></span><span class="userbox"><button class="linkbtn" id="who">Log out</button><button class="avatarbtn" id="avatarBtn" title="${u.avatar ? 'Change your photo' : 'Add a photo'}">${avatarHTML(u)}</button></span></div>
     <div class="hello"><div class="small">Salve,</div><div class="who"></div></div>
+    <div id="inbox"></div>
     ${installTip('home')}
     <div class="levels top" id="levels" role="radiogroup" aria-label="Which words">
       ${LEVELS.map(([k, n]) => `<button role="radio" data-l="${k}" aria-checked="${k === levelOf(u)}"><b>${n}</b><span>${WORDS.filter(w => inLevel(w, k)).length} words</span></button>`).join('')}
@@ -375,7 +499,8 @@ function renderHome(u) {
     </div>
     ${leaderboardHTML()}
     <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
-    ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>` : ''}
+    ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>
+    <button class="syncline" id="nameline"><span>🎁 ${u.player ? `Player name <b>${esc(u.player.toUpperCase())}</b>` : 'Choose a player name so friends can send you beasts'}</span></button>` : ''}
   </div>`;
   $('.who').textContent = u.name;
   $('#avatarBtn').onclick = () => pickPhoto(u, () => renderHome(current()));
@@ -385,7 +510,9 @@ function renderHome(u) {
     const stat = { saving: 'saving…', saved: 'saved ✓', loading: 'checking…', error: 'not reachable', off: '' };
     const show = s => { const el = $('#syncstat'); if (el) el.textContent = stat[s] || ''; };
     show(Sync.status()); Sync.onStatus(show);
+    $('#nameline').onclick = () => nameSheet(u, () => renderHome(u));
     if (pulledFor !== u.id) { pulledFor = u.id; Sync.pull(u).then(changed => { if (changed && current() && current().id === u.id && location.hash === '') renderHome(u); }); }
+    loadInbox(u);
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
   $('#readGo').onclick = () => { location.hash = 'read'; };
@@ -450,7 +577,8 @@ function renderBeasts(u) {
     const pane = $('#pane'); if (!pane) return;
     const s = Beasts.state(u), l = Beasts.latest(u);
     $('#bcount').textContent = Beasts.count(u) + ' / ' + Beasts.totalStages();
-    const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy"></button>`;
+    const sp = s.spare || {};
+    const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy">${known && i === b.stages.length - 1 && sp[b.key] > 0 ? `<span class="spare">×${1 + sp[b.key]}</span>` : ''}</button>`;
     pane.innerHTML = `
       ${l ? `<div class="pal big"><img class="bpic" src="${Beasts.img(l.beast, l.stage)}" alt=""><span class="btxt"><b>${esc(l.beast.stages[l.stage].name)}</b><span class="small">Latest find · ${Beasts.list().length} monsters, ${Beasts.totalStages()} stages to collect. Eggs drop while you play the cards; find a monster again and it evolves.</span></span></div>` : `<p class="small" style="text-align:center">Monster eggs drop at random while you play the cards. Find the same monster again and it evolves: egg, baby, teen, adult. ${Beasts.totalStages()} to collect!</p>`}
       <div class="bgrid">${Beasts.list().map(b => b.stages.map((st, i) => circ(b, i, b.key in s.have && (s.have[b.key] || 0) >= i)).join('')).join('')}</div>`;
@@ -464,9 +592,11 @@ function renderBeasts(u) {
           <div class="bname">${esc(st.name)}</div>
           <div class="small">${Beasts.STAGE[st.s]} · ${el[0]} ${el[1]}</div>
           <p class="becol">${esc(st.desc)}</p>
-          <button class="btn" id="bOk">Close</button></div>`;
+          ${i === b.stages.length - 1 && sp[b.key] > 0 ? `<p class="small">You have <b>${sp[b.key]}</b> spare ${sp[b.key] === 1 ? 'copy' : 'copies'} of this one.</p><button class="btn" id="bGive">🎁 Give one to a friend</button>` : ''}
+          <button class="btn ghost" id="bOk">Close</button></div>`;
       sheet.hidden = false;
       $('#bOk').onclick = closeSheet; sheet.onclick = ev => { if (ev.target === sheet) closeSheet(); };
+      const g = $('#bGive'); if (g) g.onclick = () => giveSheet(u, b, () => renderBeasts(u));
     };
   });
 }
@@ -878,14 +1008,15 @@ function renderPlay(u, pane) {
     const b = ev.beast, st = b.stages[ev.stage], el = Beasts.ELEMENT[b.el] || ['', ''];
     const prev = ev.kind === 'grow' ? Beasts.img(b, ev.stage - 1) : null;
     deck.innerHTML = `<div class="card beast ${ev.kind}" id="beastCard">
-        <div class="btitle">${ev.kind === 'egg' ? 'NEW' : 'EVOLVING'}</div>
+        <div class="btitle">${ev.kind === 'egg' ? 'NEW' : ev.kind === 'spare' ? 'SPARE!' : 'EVOLVING'}</div>
         <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt="${esc(st.name)}">${prev ? `<img class="bold" src="${prev}" alt="">` : ''}<span class="glow"></span></div>
         <div class="ribbon"><span>${esc(st.name)}</span></div>
         <div class="belem" title="${el[1]}">${el[0]}</div>
-        <div class="small btap">${ev.kind === 'grow' ? 'Found again — it evolves! Tap to carry on' : 'Tap to carry on'}</div>
+        <div class="small btap">${ev.kind === 'grow' ? 'Found again — it evolves! Tap to carry on' : ev.kind === 'spare' ? 'A second one — give it to a friend from the Beastpedia. Tap to carry on' : 'Tap to carry on'}</div>
       </div>${ev.kind === 'egg' ? `<img class="trumpets l" src="art/beasts/trumpets_l.png" alt=""><img class="trumpets r" src="art/beasts/trumpets_r.png" alt="">` : ''}`;
     const r = deck.getBoundingClientRect();
     if (ev.kind === 'egg') { Celebrate(r.left + r.width / 2, r.top + 10, 2.6); flash('🥚 You found an egg!'); }
+    else if (ev.kind === 'spare') Celebrate(r.left + r.width / 2, r.top + 10, 1.6);
     else setTimeout(() => Celebrate(r.left + r.width / 2, r.top + r.height * .4, 1.8), 700);
     setScene(); buddy();
     const go = () => { deck.onclick = null; done(); };

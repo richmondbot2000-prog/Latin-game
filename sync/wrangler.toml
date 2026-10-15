@@ -3,9 +3,9 @@
 name = "latin-sync"
 main = "worker.js"
 compatibility_date = "2025-01-01"
+routes = [{ pattern = "sync.musicalmagic.uk", custom_domain = true }]
 
 [[kv_namespaces]]
 binding = "LATIN"
 id = "b87820ca1ffc49b08b84f223f8c02550"
 
-routes = [{ pattern = "sync.musicalmagic.uk", custom_domain = true }]

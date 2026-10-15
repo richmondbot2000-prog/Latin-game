@@ -62,9 +62,30 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   that can still grow. The bar above the cards shows the latest find and the
   Beastpedia count. `latin.beasts.<id>`
   = { have: { key: stage }, order, last, finds, total }, synced (union, furthest
-  stage). The **Beastpedia** (`#beasts`, banner on the home page) shows every
-  stage as a circle, silhouettes for the ones still to find, and a sheet with
-  the picture, stage, element and ecology for the found ones.
+  stage). A duplicate of a **fully grown** monster is a **spare**
+  (`spare: { key: n }`, "SPARE!" fanfare, ×N badge in the Beastpedia); spares
+  are the only thing that can be given away. The **Beastpedia** (`#beasts`,
+  from the Cards & Beasts home) shows every stage as a circle, silhouettes
+  for the ones still to find, and a sheet with the picture, stage, element,
+  ecology and, for a spare, **🎁 Give one to a friend**.
+  **Player names and gifts** (`sync/worker.js`, `Sync.claimName / sendGift /
+  inbox / giftCode / claimCode`, UI in `nameSheet / giveSheet / giftSheet /
+  loadInbox` in `app.js`): a player may claim one name (3–16 letters/digits,
+  unique, first come; the game says "not your real name"; stored on the
+  worker as `n:<name>` → key and `k:<key>` → name, kept in `u.player`; looked
+  up only by exact name, never listed). Give → type a friend's name → the
+  worker checks the sender's blob really holds the spare, 10 gifts a day,
+  and drops it in the friend's inbox (`in:<key>`); the spare leaves the
+  sender. On the home page `loadInbox` shows a 🎁 box ("ANN has sent you an
+  Albadaba!") with Open (→ `Beasts.receive`: new monster at the sender's
+  stage, otherwise an evolution or a spare; `giftSheet` fanfare) and "Don't
+  accept from X" (local mute list `latin.mutes.<id>`, muted gifts are thrown
+  away). Give → **Invite a friend**: a gift code (`c:<CODE>`, 60 days) and a
+  share-sheet message with `https://latin.musicalmagic.uk/#gift/CODE`; the
+  link stores `latin.pendingGift`, survives sign-up, and `claimCode` opens
+  it; the sender's inbox gets "Someone opened your gift". No e-mail: nothing
+  about a recipient is ever stored. "Save my code" (share sheet / copy) on
+  the sync-code sheet; the sync code remains the only way back in.
 - **Read** — "Sentences" (`read.js`, `renderRead` in `app.js`): 301 hand-written
   sentences, each token mapped to its headword and checked against
   `vocab.js`: 60 + two short stories from Beginner words only, then about 60
@@ -258,7 +279,7 @@ the worker; also latin-sync.richmondbot2000.workers.dev). `SYNC_URL` in
 the profile screen (shown once when the player is created, and behind the
 ☁️ line on the home page); progress is stored under SHA-256 of the code,
 never a name. The blob (`blobOf` in `sync.js`) holds `latin.progress`,
-`streak`, `level`, `practice`, `stats`, `hammer`, `read` and `beasts` for the player;
+`streak`, `level`, `practice`, `stats`, `hammer`, `read`, `beasts` and `passages` for the player;
 `merge` keeps the best of both devices (stars by latest time, scores and
 levels by max, Hammer items as a union with coins from the device that has
 earned more, Read sentences as a union). Avatars and the player list itself

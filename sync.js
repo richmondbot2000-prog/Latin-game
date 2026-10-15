@@ -83,7 +83,8 @@ const Sync = (() => {
     // beasts: every beast either device has found, at its furthest stage; the one being raised stays the local one
     const lb = store.get('latin.beasts.' + u.id, null), rb = remote.beasts;
     if (rb && typeof rb === 'object') {
-      const a = lb || { have: {}, order: [], last: null, finds: 0, total: 0 }, m = { ...a, have: { ...(a.have || {}) }, order: [...(a.order || [])], total: Math.max(a.total || 0, rb.total || 0), finds: Math.max(a.finds || 0, rb.finds || 0) };
+      const a = lb || { have: {}, order: [], spare: {}, last: null, finds: 0, total: 0 }, m = { ...a, have: { ...(a.have || {}) }, spare: { ...(a.spare || {}) }, order: [...(a.order || [])], total: Math.max(a.total || 0, rb.total || 0), finds: Math.max(a.finds || 0, rb.finds || 0) };
+      for (const k in (rb.spare || {})) m.spare[k] = Math.max(m.spare[k] || 0, rb.spare[k] || 0);
       for (const k in (rb.have || {})) { m.have[k] = Math.max(m.have[k] || 0, rb.have[k] || 0); if (!m.order.includes(k)) m.order.push(k); }
       if (!m.last && rb.last) m.last = rb.last;
       delete m.cur; delete m.xp;
@@ -130,8 +131,30 @@ const Sync = (() => {
     if (!enabled() || !valid(code)) return null;
     return fetchBlob(code);
   }
+  // ---- player names and gifts (see sync/worker.js) ----
+  const api = async (method, path, data) => {
+    const r = await fetch(url() + path, { method, headers: data ? { 'Content-Type': 'application/json' } : {}, body: data ? JSON.stringify(data) : undefined, cache: 'no-store' });
+    if (!r.ok) { const e = new Error(await r.text().catch(() => '') || ('http ' + r.status)); e.status = r.status; throw e; }
+    const t = await r.text(); return t ? JSON.parse(t) : null;
+  };
+  const cleanName = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 16);
+  const validName = s => /^[a-z0-9]{3,16}$/.test(s);
+  const setPlayer = (u, name) => { u.player = name; store.set('latin.users', users().map(x => x.id === u.id ? { ...x, player: name } : x)); };
+  async function claimName(u, name) {   // 'taken' | 'ok'
+    name = cleanName(name); if (!validName(name)) throw new Error('invalid');
+    try { await api('PUT', '/name/' + name, { key: await keyFor(codeOf(u)) }); } catch (e) { if (e.status === 409) return 'taken'; throw e; }
+    setPlayer(u, name); return 'ok';
+  }
+  async function whoAmI(u) {   // the name this player holds on the server (another device may have claimed it)
+    const r = await api('GET', '/who/' + await keyFor(codeOf(u))); if (r && r.name && r.name !== u.player) setPlayer(u, r.name); return r && r.name;
+  }
+  const sendGift = async (u, to, beast, stage) => api('POST', '/gift', { from: await keyFor(codeOf(u)), to: cleanName(to), beast, stage });
+  const inbox = async u => (await api('GET', '/inbox/' + await keyFor(codeOf(u)))) || [];
+  const dropInbox = async (u, id) => api('DELETE', '/inbox/' + await keyFor(codeOf(u)) + '/' + id);
+  const giftCode = async (u, beast, stage) => (await api('POST', '/code', { from: await keyFor(codeOf(u)), beast, stage })).code;
+  const claimCode = async (u, code) => api('POST', '/claim/' + String(code || '').toUpperCase().replace(/[^A-Z0-9-]/g, ''), { key: await keyFor(codeOf(u)) });
   function flush() { if (pending) { clearTimeout(timer); const x = pending; pending = null; push(x); } }
   addEventListener('pagehide', flush);
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
-  return { enabled, codeOf, normalise, valid, touch, pull, link, merge, flush, status: () => status, onStatus: f => listeners.add(f) };
+  return { enabled, codeOf, normalise, valid, touch, pull, link, merge, flush, status: () => status, onStatus: f => listeners.add(f), cleanName, validName, claimName, whoAmI, sendGift, inbox, dropInbox, giftCode, claimCode };
 })();

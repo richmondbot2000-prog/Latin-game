@@ -615,3 +615,17 @@ body.noscroll { overflow: hidden; }
 .deckcount { text-align: center; color: rgba(255,255,255,.92); text-shadow: 0 1px 3px rgba(0,0,0,.45); margin: 10px 0 0; }
 .pal[hidden], .score[hidden] { display: none; }
 .play .deck { margin-top: 14px; }
+
+/* gifts */
+.bc { position: relative; }
+.bc .spare { position: absolute; right: -2px; top: -2px; background: #c04df0; color: #fff; font: 700 12px/1 system-ui, sans-serif; padding: 4px 6px; border-radius: 999px; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
+.giftbox { display: flex; gap: 12px; align-items: center; background: linear-gradient(135deg, #fff3c4, #ffe0f0); border: 2px solid #ffc93c; border-radius: 18px; padding: 12px 14px; margin: 0 0 14px; box-shadow: var(--shadow); color: #2B1A3A; animation: pop .5s ease; }
+.giftbox img, .giftbox .gpic { width: 64px; height: 64px; object-fit: contain; flex: none; font-size: 44px; display: grid; place-items: center; }
+.giftbox .gtxt { flex: 1; min-width: 0; line-height: 1.3; }
+.giftbox .gbtns { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.giftbox .gbtns .btn { width: auto; margin: 0; padding: 8px 18px; min-height: 40px; }
+.giftbox .linkbtn { font-size: 13px; color: #8E2F4A; }
+.giftcard { position: relative; inset: auto; width: min(70vw, 260px); aspect-ratio: 3 / 4; margin: 0 auto; padding: 16px 14px 10px; cursor: default; }
+.giftcard .btitle { margin: 10px 0 4px; font-size: 26px; }
+.giftcard .belem { font-size: 26px; margin-top: 6px; }
+#pname { text-transform: uppercase; text-align: center; font-weight: 700; letter-spacing: .06em; }
