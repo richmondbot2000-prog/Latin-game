@@ -181,30 +181,40 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   walking"); is/are/was/were → est/sunt/erat/erant when not a helper;
   has/have/had as a main verb → habeo. `BLOCK` lists English words never
   converted (too many meanings: like, well, even, so, there, left, kind…).
-  **The reader** (`read(text)` in `renderSnap`; `html.readermode` turns the
-  whole screen white, `.reader` max 42rem, 20px gutters, no card): a thin
-  head with ← Home, "n of m" and one **Aa** button that opens a bottom
-  sheet (`.aasheet`) with Serif / Sans and three sizes (`latin.reader`
-  {font, size}; 16 / 18 / 21px, line height 1.55, like Apple Books and
-  Kindle), the page's paragraph breaks kept (`\n\n` from the recogniser's
-  paragraphs), junk words (low confidence, no vowels, stray symbols)
-  dropped. Latin words are bold `.lw`; the word in focus is highlighted
-  yellow and a `.pop` box floats under it with **three meanings** (the
-  word's own gloss and two from other words of the same kind in the same
-  English shape, `Snap.shapeLike`: "were walking" → "were carrying",
-  "boys" → "farmers"; `avoid` lists respected). Right → the word turns into
-  its English in green and the focus hops to the next Latin word (scrolled
-  into view); wrong → the wrong choice goes red, the right one green, the
-  word shows its English in red with a wavy underline, then the hop.
+  **The start screen** (`start()` in `renderSnap`, after Google Translate):
+  white, one big "Enter text" box (`#pasted`), round **Pictures** and
+  **Camera** buttons along the bottom (a blue **Read** button appears once
+  there is text; **Last page** when there is one). **Camera** opens a
+  full-screen live view (`getUserMedia`, back camera, `.camscreen`) with a
+  white shutter and a gallery button; the shutter draws the video frame
+  to a canvas and sends it to `Snap.ocr`; if the live view is refused it
+  falls back to the phone's own camera (`capture="environment"` input).
+  **The reader** (`read(text)`; `html.readermode` turns the whole screen
+  white, `.reader` max 42rem, 20px gutters, no card): a thin head with
+  ← Home and "n of m"; Latin words bold `.lw`, the word in focus
+  highlighted yellow. **The answer panel** (`.rsheet`) is fixed across the
+  bottom fifth of the screen: a grip with the Latin word in focus, then
+  the **three meanings** as full-width buttons (the word's own gloss and
+  two from other words of the same kind in the same English shape,
+  `Snap.shapeLike`: "were walking" → "were carrying"; `avoid` lists
+  respected; fragments like "-self" skipped). Tap or drag the grip up and
+  it opens to show Font (Serif / Sans), Size (16 / 18 / 21px) and Page
+  (☀ White / ☾ Black: `html.rdark`, also on the start screen), kept in
+  `latin.reader` {font, size, dark}. Right → the button goes green, the
+  word turns into its English in green and the focus hops on, scrolled
+  clear of the panel; wrong → red, the right one green, the word's
+  English in red with a wavy underline, then the hop. The page's
+  paragraph breaks are kept and junk words dropped.
   Every answer goes through `recordAnswer` (stars, leaderboard). Tapping any
   unanswered Latin word moves the focus there. All words answered →
-  celebration, "N of M right", "Another page" / "Read it again". The
-  microphone is not used here. (`Snap.ocr` still returns the word boxes on
+  celebration and the panel shows "🏆 N of M right" with "Another page" /
+  "Read it again". The microphone is not used here. (`Snap.ocr` still returns the word boxes on
   the picture, unused since the photo overlay was dropped: book print is too
   small on a phone.) Progress
   `latin.snap.<id>` {pages, words, last} (the last text, for "The last page
   again"; not synced). Tested by `scratchpad/reader.js` (paste, right and
-  wrong answers, font and size, finishing a page) and `scratchpad/snap.js`
+  wrong answers, the panel's font, size and black page, finishing a page),
+  `scratchpad/camtest.js` (the camera screen with a fake camera) and `scratchpad/snap.js`
   (the OCR path on a rendered PNG, ~2 s in Chromium).
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.

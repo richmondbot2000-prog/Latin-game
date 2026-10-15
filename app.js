@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '110';
+const APP_VERSION = '112';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -920,41 +920,73 @@ function renderSnap(u) {
   const key = 'latin.snap.' + u.id, sv = store.get(key, { pages: 0, words: 0, last: '' });
   const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
   const lv = levelOf(u), pool = activeWords(u);
-  const shell = () => `
-  <div class="wrap">
-    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Snap a page</span><span class="lvtag" id="pcount">${sv.pages ? sv.pages + ' page' + (sv.pages === 1 ? '' : 's') : ''}</span></div>
-    <div id="snapmain"></div>
-  </div>`;
-  app.innerHTML = shell();
-  $('#back').onclick = () => { if (stop) stop(); location.hash = ''; };
-  let stop = null;
+  // the start screen: white, one big "Enter text" box, round Pictures / Camera buttons along the bottom
+  const shell = () => '';
+  const ICON = { pic: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>',
+    cam: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>',
+    go: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>' };
+  let cam = null;   // the live camera stream while the camera screen is open
+  const stopCam = () => { if (cam) { cam.getTracks().forEach(t => t.stop()); cam = null; } };
+  window.addEventListener('hashchange', () => { stopCam(); document.documentElement.classList.remove('readermode', 'rdark'); }, { once: true });
   function start(msg) {
-    if (stop) { stop(); stop = null; }
-    $('#snapmain').innerHTML = `
-      <p class="rmsg" style="margin:0 0 8px">Photograph a page of any English book. Every word from the <b>${esc(levelName(lv))}</b> list turns into Latin, in the right case or tense. Read the English, and say the English of each Latin word.</p>
-      <div class="snapbtns">
-        <label class="btn filebtn">📷 Take a photo<input type="file" accept="image/*" capture="environment" id="snapCam" hidden></label>
-        <label class="btn ghost filebtn">🖼 Choose a picture<input type="file" accept="image/*" id="snapPic" hidden></label>
+    stopCam();
+    document.documentElement.classList.add('readermode'); applyDark();
+    app.innerHTML = `<div class="snapstart">
+      <div class="rhead"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="rpos">${sv.pages ? sv.pages + ' page' + (sv.pages === 1 ? '' : 's') + ' read' : ''}</span><span style="width:44px"></span></div>
+      <textarea id="pasted" placeholder="Enter text" aria-label="Paste or type English text"></textarea>
+      ${msg ? `<p class="snapnote">${esc(msg)}</p>` : ''}
+      <div class="sfoot">
+        <label class="sround"><input type="file" accept="image/*" id="snapPic" hidden><span class="scirc">${ICON.pic}</span><span>Pictures</span></label>
+        <button class="sround" id="snapCamBtn"><span class="scirc">${ICON.cam}</span><span>Camera</span></button>
+        ${sv.last ? `<button class="sround" id="snapLast"><span class="scirc">↩</span><span>Last page</span></button>` : ''}
+        <button class="sround go" id="snapGo2" hidden><span class="scirc">${ICON.go}</span><span>Read</span></button>
       </div>
-      <div class="snapprog" id="snapprog" hidden><div class="snapbar"><span id="snapfill"></span></div><div class="small" id="snapmsg"></div></div>
-      <form id="pasteform"><textarea id="pasted" rows="4" placeholder="…or paste some English text here (on an iPhone, Live Text copies words straight out of the camera)"></textarea>
-        <div class="snapbtns"><button class="btn" type="submit">Read this text</button>${sv.last ? '<button class="btn ghost" type="button" id="snapLast">↩ The last page again</button>' : ''}</div></form>
-      <p class="small" style="text-align:center;margin-top:10px">The picture is read on this phone and never leaves it. ${msg ? '<br><b>' + esc(msg) + '</b>' : ''}</p>`;
-    const take = async file => {
-      if (!file) return;
-      $('#snapprog').hidden = false; $('#pasteform').hidden = true; document.querySelector('.snapbtns').hidden = true;
-      try {
-        const r = await Snap.ocr(file, (m, p) => { $('#snapmsg').textContent = m + (p ? ' ' + Math.round(p * 100) + '%' : ''); $('#snapfill').style.width = Math.round(p * 100) + '%'; });
-        if (!r.text || r.text.replace(/[^a-z]/gi, '').length < 10) return start('No words could be read in that picture — try a closer, straighter photo in good light.');
-        read(r.text);
-      } catch (err) { start('The picture could not be read (' + (err.message || err) + '). You can paste the text instead.'); }
-    };
-    $('#snapCam').onchange = e => take(e.target.files[0]); $('#snapPic').onchange = e => take(e.target.files[0]);
-    $('#pasteform').onsubmit = e => { e.preventDefault(); const t = $('#pasted').value.trim(); if (t.replace(/[^a-z]/gi, '').length < 10) return flashHome('Paste a few sentences first'); read(t); };
+      <input type="file" accept="image/*" capture="environment" id="snapCam" hidden>
+    </div>`;
+    $('#back').onclick = () => { document.documentElement.classList.remove('readermode', 'rdark'); location.hash = ''; };
+    $('#pasted').oninput = () => { $('#snapGo2').hidden = $('#pasted').value.trim().replace(/[^a-z]/gi, '').length < 10; };
+    $('#snapGo2').onclick = () => read($('#pasted').value.trim());
     if ($('#snapLast')) $('#snapLast').onclick = () => read(sv.last);
+    $('#snapPic').onchange = e => take(e.target.files[0]); $('#snapCam').onchange = e => take(e.target.files[0]);
+    $('#snapCamBtn').onclick = camera;
+  }
+  // a picture → the words → the reader, with a progress line on whatever screen is showing
+  async function take(file, progressEl) {
+    if (!file) return;
+    const prog = progressEl || (() => { const d = document.createElement('div'); d.className = 'snapprog2'; d.innerHTML = '<div class="snapbar"><span id="snapfill"></span></div><div class="small" id="snapmsg"></div>'; ($('.snapstart') || app).appendChild(d); return d; })();
+    try {
+      const r = await Snap.ocr(file, (m, p) => { const t = prog.querySelector('#snapmsg'), f = prog.querySelector('#snapfill'); if (t) t.textContent = m + (p ? ' ' + Math.round(p * 100) + '%' : ''); if (f) f.style.width = Math.round(p * 100) + '%'; });
+      stopCam();
+      if (!r.text || r.text.replace(/[^a-z]/gi, '').length < 10) return start('No words could be read in that picture — try a closer, straighter photo in good light.');
+      read(r.text);
+    } catch (err) { stopCam(); start('The picture could not be read (' + (err.message || err) + '). You can paste the text instead.'); }
+  }
+  // the camera screen: the live view, a shutter, a gallery button; the phone's own camera app if the live view is refused
+  async function camera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { $('#snapCam').click(); return; }
+    app.innerHTML = `<div class="camscreen">
+      <video id="camv" autoplay playsinline muted></video>
+      <div class="camtop"><button class="camback" id="camBack" aria-label="Back">‹</button><span>Snap a page</span><span style="width:44px"></span></div>
+      <div class="camhint">Hold the phone flat over the page, in good light</div>
+      <div class="cambot"><label class="camgal" aria-label="Pictures"><input type="file" accept="image/*" id="snapPic2" hidden>${ICON.pic}</label><button class="shutter" id="shutter" aria-label="Take the photo"><span></span></button><span style="width:52px"></span></div>
+      <div class="camprog" id="camprog" hidden><div class="snapbar"><span id="snapfill"></span></div><div id="snapmsg"></div></div>
+    </div>`;
+    $('#camBack').onclick = () => start();
+    $('#snapPic2').onchange = e => { $('#camprog').hidden = false; take(e.target.files[0], $('#camprog')); };
+    try {
+      cam = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 2560 }, height: { ideal: 1920 } }, audio: false });
+      $('#camv').srcObject = cam;
+    } catch (err) { stopCam(); start(); $('#snapCam').click(); return; }
+    $('#shutter').onclick = () => {
+      const v = $('#camv'); if (!v || !v.videoWidth) return;
+      const c = document.createElement('canvas'); c.width = v.videoWidth; c.height = v.videoHeight; c.getContext('2d').drawImage(v, 0, 0);
+      $('#shutter').disabled = true; $('#camprog').hidden = false;
+      c.toBlob(b => take(b, $('#camprog')), 'image/jpeg', .92);
+    };
   }
   // the reader: white paper, the Latin words in bold; the word in focus is highlighted and three meanings float under it
-  const RK = 'latin.reader', rs = Object.assign({ font: 'serif', size: 2 }, store.get(RK, null) || {});
+  const RK = 'latin.reader', rs = Object.assign({ font: 'serif', size: 2, dark: false }, store.get(RK, null) || {});
+  const applyDark = () => document.documentElement.classList.toggle('rdark', !!rs.dark);
   const saveRS = () => store.set(RK, rs);
   function read(text) {
     text = text.replace(/-\n(?=[a-z])/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 6000);
@@ -972,26 +1004,44 @@ function renderSnap(u) {
       const pick = [];
       for (let tries = 0; tries < 40 && pick.length < 2 && others.length; tries++) {
         const x = others[Math.floor(Math.random() * others.length)], e = Snap.shapeLike(gloss, x.english.split(/[,;]/)[0].trim(), k);
-        if (!e || e.toLowerCase() === gloss.toLowerCase() || pick.includes(e) || (w && w.english.toLowerCase().split(/[,;]/).map(s => s.trim()).includes(e.toLowerCase()))) continue;
+        if (!e || /^[-…(]|\.\.\.|…|\?/.test(e) || e.toLowerCase() === gloss.toLowerCase() || pick.includes(e) || (w && w.english.toLowerCase().split(/[,;]/).map(s => s.trim()).includes(e.toLowerCase()))) continue;
         pick.push(e);
       }
       const all = [gloss, ...pick]; for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }
       return all;
     };
-    document.documentElement.classList.add('readermode');
-    window.addEventListener('hashchange', () => document.documentElement.classList.remove('readermode'), { once: true });
+    document.documentElement.classList.add('readermode'); applyDark();
+    window.addEventListener('hashchange', () => document.documentElement.classList.remove('readermode', 'rdark'), { once: true });
+    // the page, and a panel across the bottom fifth of the screen with the three meanings; pulled up, it also holds
+    // the font, the size and white-on-black
     app.innerHTML = `<div class="reader">
-      <div class="rhead"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="rpos" id="rprog"></span><button class="rtool aa" id="aaBtn" aria-label="Text settings">Aa</button></div>
+      <div class="rhead"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="rpos" id="rprog"></span><span style="width:44px"></span></div>
       <div class="paper ${rs.font} size${rs.size}" id="paper"></div>
-      <p class="rmsg" id="pmsg"></p>
-      <div class="aasheet" id="aasheet" hidden><div class="rtools">
-        <button class="rtool${rs.font === 'serif' ? ' on' : ''}" data-font="serif" style="font-family:Georgia,serif">Serif</button><button class="rtool${rs.font === 'sans' ? ' on' : ''}" data-font="sans" style="font-family:system-ui,sans-serif">Sans</button>
-        <span class="rsep"></span><button class="rtool sz1${rs.size === 1 ? ' on' : ''}" data-size="1">A</button><button class="rtool sz2${rs.size === 2 ? ' on' : ''}" data-size="2">A</button><button class="rtool sz3${rs.size === 3 ? ' on' : ''}" data-size="3">A</button></div></div>
+      <div class="rsheet" id="rsheet">
+        <div class="rgrip" id="rgrip" aria-label="Pull up for text settings"><span class="rword" id="rword"></span><span class="rbar"></span><span class="rhint">Aa</span></div>
+        <div class="rans" id="rans"></div>
+        <div class="rset">
+          <div class="rrow"><span>Font</span><div class="rseg"><button class="rtool${rs.font === 'serif' ? ' on' : ''}" data-font="serif" style="font-family:Georgia,serif">Serif</button><button class="rtool${rs.font === 'sans' ? ' on' : ''}" data-font="sans" style="font-family:system-ui,sans-serif">Sans</button></div></div>
+          <div class="rrow"><span>Size</span><div class="rseg"><button class="rtool sz1${rs.size === 1 ? ' on' : ''}" data-size="1">A</button><button class="rtool sz2${rs.size === 2 ? ' on' : ''}" data-size="2">A</button><button class="rtool sz3${rs.size === 3 ? ' on' : ''}" data-size="3">A</button></div></div>
+          <div class="rrow"><span>Page</span><div class="rseg"><button class="rtool${rs.dark ? '' : ' on'}" data-dark="0">☀ White</button><button class="rtool${rs.dark ? ' on' : ''}" data-dark="1">☾ Black</button></div></div>
+        </div>
+      </div>
     </div>`;
-    $('#back').onclick = () => { document.documentElement.classList.remove('readermode'); location.hash = ''; };
-    $('#aaBtn').onclick = () => { $('#aasheet').hidden = !$('#aasheet').hidden; };
-    document.querySelectorAll('.rtool[data-font], .rtool[data-size]').forEach(b => { b.onclick = () => { if (b.dataset.font) rs.font = b.dataset.font; else rs.size = +b.dataset.size; saveRS(); document.querySelectorAll('.rtool[data-font], .rtool[data-size]').forEach(x => x.classList.toggle('on', x.dataset.font ? x.dataset.font === rs.font : +x.dataset.size === rs.size)); $('#paper').className = `paper ${rs.font} size${rs.size}`; place(); }; });
-    let html = '', k = 0, prevEnd = -1, open = true;
+    $('#back').onclick = () => { document.documentElement.classList.remove('readermode', 'rdark'); location.hash = ''; };
+    const sheet = $('#rsheet'), setOpen = o => sheet.classList.toggle('open', o);
+    // the grip: tap to open or close; drag up to open, down to close
+    let y0 = null, moved = false;
+    $('#rgrip').addEventListener('pointerdown', e => { y0 = e.clientY; moved = false; });
+    window.addEventListener('pointermove', e => { if (y0 != null && Math.abs(e.clientY - y0) > 24) { moved = true; setOpen(e.clientY < y0); y0 = e.clientY; } });
+    window.addEventListener('pointerup', () => { y0 = null; });
+    $('#rgrip').onclick = () => { if (!moved) setOpen(!sheet.classList.contains('open')); moved = false; };
+    sheet.querySelectorAll('.rtool').forEach(b => { b.onclick = () => {
+      if (b.dataset.font) rs.font = b.dataset.font; else if (b.dataset.size) rs.size = +b.dataset.size; else rs.dark = b.dataset.dark === '1';
+      saveRS(); applyDark();
+      sheet.querySelectorAll('.rtool').forEach(x => x.classList.toggle('on', x.dataset.font ? x.dataset.font === rs.font : x.dataset.size ? +x.dataset.size === rs.size : (x.dataset.dark === '1') === !!rs.dark));
+      $('#paper').className = `paper ${rs.font} size${rs.size}`;
+    }; });
+    let html = '', k = 0, prevEnd = -1;
     html += '<p>';
     for (const s of sents) {
       s.forEach((t, j) => {
@@ -1005,34 +1055,27 @@ function renderSnap(u) {
       });
     }
     html += '</p>';
-    $('#paper').innerHTML = html + '<div class="pop" id="pop" hidden></div>';
+    $('#paper').innerHTML = html;
     const lw = i => $('#paper').querySelector(`.lw[data-i="${i}"]`);
+    let busy = false;
     function show() {
       $('#rprog').textContent = `${state.filter(Boolean).length} of ${toks.length}`;
       toks.forEach((t, i) => { const el = lw(i); if (!el) return; el.className = 'lw' + (i === focus && !done ? ' focus' : '') + (state[i] === 1 ? ' ok' : state[i] === -1 ? ' bad' : ''); if (state[i]) { el.textContent = t.gloss || t.en; el.title = t.la; } else el.textContent = t.la; });
-      if (done) { $('#pop').hidden = true; return; }
+      if (done) return;
       const t = toks[focus];
-      $('#pop').innerHTML = choices(t).map(c => `<button class="popc">${esc(c)}</button>`).join('');
-      $('#pop').hidden = false;
-      $('#pop').querySelectorAll('.popc').forEach(b => { b.onclick = () => answer(b, b.textContent); });
-      place();
-      const el = lw(focus); if (el) { const r = el.getBoundingClientRect(); if (r.top < 60 || r.bottom > innerHeight - 180) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
-    }
-    // the choices sit just under the word in focus, kept inside the paper
-    function place() {
-      const el = lw(focus), pop = $('#pop'), paper = $('#paper'); if (!el || !pop || pop.hidden) return;
-      const pr = paper.getBoundingClientRect(), r = el.getBoundingClientRect();
-      pop.style.top = (r.bottom - pr.top + 6) + 'px';
-      const w = pop.offsetWidth, left = Math.max(6, Math.min(pr.width - w - 6, r.left - pr.left + r.width / 2 - w / 2));
-      pop.style.left = left + 'px';
-      pop.style.setProperty('--arrow', (r.left - pr.left + r.width / 2 - left) + 'px');
+      $('#rword').textContent = t.la;
+      $('#rans').innerHTML = choices(t).map(c => `<button class="rchoice">${esc(c)}</button>`).join('');
+      $('#rans').querySelectorAll('.rchoice').forEach(b => { b.onclick = () => answer(b, b.textContent); });
+      busy = false;
+      // keep the word in focus in view, clear of the panel
+      const el = lw(focus); if (el) { const r = el.getBoundingClientRect(), bottom = innerHeight - sheet.offsetHeight - 24; if (r.top < 56 || r.bottom > bottom) scrollBy({ top: r.top - (56 + (bottom - 56) * .35), behavior: 'smooth' }); }
     }
     function answer(btn, picked) {
+      if (busy) return; busy = true;
       const t = toks[focus], ok = picked === (t.gloss || t.en), w = byIdAll[t.id];
       if (w) recordAnswer(u, w, ok);
-      if (ok) { right++; state[focus] = 1; const r = btn.getBoundingClientRect(); Celebrate(r.left + r.width / 2, r.top, .9); }
-      else { state[focus] = -1; btn.classList.add('wrong'); $('#pop').querySelectorAll('.popc').forEach(b => { if (b.textContent === (t.gloss || t.en)) b.classList.add('isright'); }); setTimeout(next, 900); return; }
-      next();
+      if (ok) { right++; state[focus] = 1; btn.classList.add('isright'); const r = btn.getBoundingClientRect(); Celebrate(r.left + r.width / 2, r.top, .9); setTimeout(next, 250); }
+      else { state[focus] = -1; btn.classList.add('wrong'); $('#rans').querySelectorAll('.rchoice').forEach(b => { if (b.textContent === (t.gloss || t.en)) b.classList.add('isright'); }); setTimeout(next, 1000); }
     }
     function next() {
       let n = -1; for (let i = focus + 1; i < toks.length; i++) if (!state[i]) { n = i; break; }
@@ -1043,12 +1086,11 @@ function renderSnap(u) {
     function finish() {
       done = true; sv.pages = (sv.pages || 0) + 1; sv.words = (sv.words || 0) + toks.length; store.set(key, sv);
       show(); Celebrate(innerWidth / 2, innerHeight / 3, 2.6);
-      $('#pmsg').innerHTML = `🏆 Page finished — ${right} of ${toks.length} right`;
-      $('#pmsg').insertAdjacentHTML('afterend', `<div class="snapbtns"><button class="btn" id="pnext">📷 Another page</button><button class="btn ghost" id="pagain">↩ Read it again</button></div>`);
-      $('#pnext').onclick = () => { document.documentElement.classList.remove('readermode'); app.innerHTML = shell(); $('#back').onclick = () => { location.hash = ''; }; start(); }; $('#pagain').onclick = () => read(text);
+      $('#rword').textContent = `🏆 ${right} of ${toks.length} right`;
+      $('#rans').innerHTML = `<button class="rchoice main" id="pnext">📷 Another page</button><button class="rchoice" id="pagain">↩ Read it again</button>`;
+      $('#pnext').onclick = () => start(); $('#pagain').onclick = () => read(text);
     }
-    $('#paper').onclick = e => { const el = e.target.closest('.lw'); if (!el || done) return; const i = +el.dataset.i; if (!state[i]) { focus = i; show(); } };   // tap any word to jump to it
-    window.addEventListener('resize', place);
+    $('#paper').onclick = e => { const el = e.target.closest('.lw'); if (!el || done || busy) return; const i = +el.dataset.i; if (!state[i]) { focus = i; show(); } };   // tap any word to jump to it
     show();
   }
   start();
