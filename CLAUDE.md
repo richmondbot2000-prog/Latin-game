@@ -44,7 +44,8 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   `latin.read.<id>` {done{n: time}, read}. Next: longer passages.
 - **Practice** — "Squishygeddon": a Plants-vs-Zombies-style defence
   (`practice.js`), always landscape; coins come only from matching words.
-  For now one long daytime level on Earth (the owner dropped the worlds):
+  Each level is one long day on a planet (`WORLDS` in `practice.js`,
+  `worldOf(n)`: Earth, Mars, Saturn, Rainbow, round again tougher):
   wave 1 trickles in for 8 min (gap 14 s → 1.2 s, ~150 squishies, kinds by
   the minute), ended by the Chomp King (`WAVE1_BOSS`: no more spawns until
   he is beaten), then a huge wave of 250, and at the end of the game the
@@ -66,9 +67,19 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   the first time they appear, so guns and squishies counter each other
   (Flyers only fall to Handy/ice/ring/blast; ghosts ignore ice and sound but
   burn to Solar Blast; Antbun armour halves bullets; a brain-washed Kamikaze
-  explodes in the crowd). The world/level code (`WORLDS`, trophies) is still
-  there, unused; 5 right answers
-  in a row arm a Freeze, 10 a Lightning storm; 1–3 stars per level from the
+  explodes in the crowd). **Worlds** (art in `art/world/`, cut from the
+  artist's Environment and Backgrounds folders): Earth is the plain lawn;
+  **Mars** (the artist's layout picture) has trenches (`layHazards`,
+  `S.cellKind`) that cannot be built on and that walkers wade through at
+  half speed; **Saturn** has rocks the shovel digs up for 25 coins;
+  **Rainbow** has a puddle (no building unless a **Floaty** raft, 25 coins,
+  is dropped first; walkers slow to 0.7), a portal that pops squishies out
+  mid-lawn every 10 s once the huge wave is in, and a rip with tentacles at
+  the right edge while a boss is due. Every lap round the four worlds adds
+  20 % squishy health (`levelSpec(n).tough`, `sq.maxHp`); the win screen
+  goes straight to the next world. 5 right answers
+  in a row arm a Freeze, 10 a Lightning storm, 15 a Meteor shower
+  (`S.meteors`, 400 damage each on the six nearest squishies); 1–3 stars per level from the
   correct-answer ratio; a trophy cabinet (`#trophies`) of 20 trophies.
   **Weapons** (the owner's Weapons folder, rendered from the Spine rigs with
   `scratchpad/sq2/spine.py`, exported to `art/weapons/`): Blaster, Handy
