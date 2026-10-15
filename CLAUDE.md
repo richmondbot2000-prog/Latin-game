@@ -105,8 +105,19 @@ Per-player counters live in
   and a meaning; tap to smash the wrong ones, let the right ones pass. The bad
   guy (the "Decoy") opens the game saying he has changed the town's signs, and
   comes back out of the ground to club Jacques on a mistake; three lives, score
-  with a combo bonus. **Levels** alternate the two scenes (road, pier); 10 + 2
-  per level signs to clear. Clearing a level pays **coins**; the **Items**
+  with a combo bonus. **Levels** cycle through the artist's fifteen scenes
+  (`SCENES` in `hammer.js`: road, pier, park, beach, forest, blossom, Greece,
+  canyon, temple, snowy peaks, cave, spooky, Arabian night, under the sea,
+  future wave), one per level; 10 + 2 per level signs to clear. Each scene is
+  drawn in parallax from `art/jh/scenes.json` + `art/jh/scenes/*.png`: a sky
+  block stretched over the screen, `far` props (clouds, hills, suns) at 12 %
+  of run speed, `mid` props (trees, pillars, buildings) at 45 %, the ground
+  strip and `near` props at run speed, placed by a hash so a level always
+  looks the same. The pieces were cut from the artist's `Background Assets`
+  sheets by `scratchpad/scenes.py` (session scratchpad; it finds the sky and
+  ground bands by row runs, the props by connected components, classes them
+  by shape and brightness, with `scene_overrides.json` for the few it gets
+  wrong). Clearing a level pays **coins**; the **Items**
   screen (JACQUE / HAMMER / PUP / SHOP tabs, after the artist's mockup) sells
   26 costumes, 23 'hammers' and 5 pups, owned for ever and worn whenever.
   Art in `art/jh/`: pixel rigs drawn part by part (`meta.json` holds every
@@ -116,8 +127,7 @@ Per-player counters live in
   the dog `g_*`; signs `sign0-7` (+ `_l`/`_r` halves) with six wooden styles
   cycling by level and green/red once judged; `title_tall/wide.jpg` start
   screen. Progress in `latin.hammer.<id>` {best, level, cleared, coins,
-  earned, owned[], wear{skin, weapon, pup}}. Only two backgrounds exist; more
-  scenes would need pictures from the owner.
+  earned, owned[], wear{skin, weapon, pup}}.
 - Installable as a home-screen app (`manifest.webmanifest`, `sw.js`; bump the
   cache name in `sw.js` **and** `APP_VERSION` in `app.js` together on every
   publish). Updates: the worker installs each core file on its own (one

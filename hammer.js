@@ -5,8 +5,20 @@
 const Hammer = (() => {
   const LIVES = 3;
   // levels alternate between the scenes the artist made; what Jacques wears is up to the player (see the shop)
-  const SCENES = [{ scene: 'Town road', bg: 'bg_road' }, { scene: 'Fish pier', bg: 'bg_pier' }];
-  const levelOf = n => SCENES[Math.floor((n - 1) / 2) % SCENES.length];
+  // the artist's fifteen scenes (art/jh/scenes, cut from the Background Assets sheets), one per level, round and round
+  const SCENES = [{ scene: 'Town road', key: 'Road' }, { scene: 'Fish pier', key: 'Pier' }, { scene: 'The park', key: 'Default' }, { scene: 'The beach', key: 'Beach' },
+    { scene: 'The forest', key: 'Forest' }, { scene: 'Blossom lane', key: 'Blossom' }, { scene: 'Ancient Greece', key: 'Greek' }, { scene: 'The canyon', key: 'Canyon' },
+    { scene: 'The temple', key: 'Temple' }, { scene: 'Snowy peaks', key: 'SnowyPeaks' }, { scene: 'The cave', key: 'Cave' }, { scene: 'Spooky hollow', key: 'Spooky' },
+    { scene: 'Arabian night', key: 'ArabianNight' }, { scene: 'Under the sea', key: 'UnderWater' }, { scene: 'Future wave', key: 'FutureWave' }];
+  const levelOf = n => SCENES[(n - 1) % SCENES.length];
+  let SCENE_DATA = null, sceneReq = null;   // art/jh/scenes.json: for each scene the sky block, the ground strip and the props by layer
+  const sceneImg = f => img('scenes/' + f.replace(/\.png$/, ''));
+  function preloadScene(L) {
+    if (!SCENE_DATA) { if (!sceneReq) sceneReq = fetch(ART + 'scenes.json').then(r => r.json()).then(j => { SCENE_DATA = j; preloadScene(L); }).catch(() => { sceneReq = null; }); return; }
+    const d = SCENE_DATA[L.key]; if (!d) return; sceneImg(d.sky); if (d.ground) sceneImg(d.ground); for (const l of ['far', 'mid', 'near']) for (const p of d[l]) sceneImg(p.f);
+  }
+  // a repeating row of props along the run: piece i sits at a steady spacing with a little wobble, chosen by a hash so each level looks the same every time
+  const hash = (a, b) => { let h = (a * 374761393 + b * 668265263 + 1013904223) >>> 0; h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
   const quota = n => 10 + 2 * Math.min(10, n - 1);           // signs to get through on level n
   // the shop: everything the artist drew, bought with coins earned by clearing levels; owned for ever
   const COSTUMES = [['standard', 'Jacques', 0], ['beach', 'Beach', 120], ['coolbeach', 'Cool beach', 120], ['coolbeachyellow', 'Yellow beach', 120], ['farmer', 'Farmer', 120], ['farmerdenim', 'Denim farmer', 120],
@@ -167,11 +179,11 @@ const Hammer = (() => {
   const DHAND = [82, 182], DENTER = { 1: [24, 74, 149, 106], 2: [4, 43, 149, 106], 3: [11, 50, 149, 106], 4: [25, 55, 147, 106], 5: [28, 29, 139, 106], 6: [28, 8, 123, 106], 7: [29, 1, 123, 106] };
   const DOG = { sitting2: [17, 26, 73, 68], tail: [8, 21, 29, 43], run1: [8, 26, 74, 68], run2: [3, 26, 73, 68], run3: [13, 26, 79, 68], run4: [2, 26, 74, 68], legs: [12, 26, 72, 68], head: [42, 13, 83, 39], leftear: [47, 8, 63, 18], rightear: [65, 7, 77, 19],
     chin: [65, 36, 80, 44], inside: [65, 31, 79, 41], tongue: [72, 36, 80, 47], openlefteye: [65, 26, 68, 31], openrighteye: [76, 25, 79, 29], lefteyebrow: [63, 21, 69, 26], righteyebrow: [75, 21, 79, 26] };
-  const PRELOAD = ['bg_road', 'fx_ready', 'fx_tap1', 'fx_tap2', 'fx_star2', 'fx_redstar', 'fx_smallstar', 'ui_combo', ...Object.keys(DEC).map(p => 'd_' + p),
+  const PRELOAD = ['fx_ready', 'fx_tap1', 'fx_tap2', 'fx_star2', 'fx_redstar', 'fx_smallstar', 'ui_combo', ...Object.keys(DEC).map(p => 'd_' + p),
     ...[1, 2, 3, 4, 5, 6, 7].map(n => 'd_enter' + n), ...Object.keys(DOG).map(p => 'g_' + p), ...[0, 1, 2, 4, 5].map(n => 'fx_dust' + n)];
   const SKIP = /^layer /;
   function preload(n) {
-    const L = levelOf(n); img(L.bg); WEAR = wear(); img('w_' + WEAR.weapon);
+    const L = levelOf(n); preloadScene(L); WEAR = wear(); img('w_' + WEAR.weapon);
     for (const st of [(n - 1) % 6, 6, 7]) { img('sign' + st); img('sign' + st + '_l'); img('sign' + st + '_r'); }
     if (META) for (const p in META.jacque[WEAR.skin]) if (!SKIP.test(p)) img(`j_${WEAR.skin}_${p}`);
     for (const p in DOG) img(WEAR.pup + '_' + p);
@@ -206,15 +218,30 @@ const Hammer = (() => {
     return out;
   }
   function drawBackground() {
-    const g = ctx, bg = img(lev().bg);
-    if (!ok(bg)) { g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); return; }
-    g.fillStyle = lev().bg === 'bg_pier' ? '#98D4FF' : '#58BAF6'; g.fillRect(0, 0, W, H);
-    const bh = Math.min(H * .6, W * .9), sb = bh / bg.naturalHeight, tw = bg.naturalWidth * sb, top = H * GROUND + 14 * sb - bh;
-    const off = (S.dist * W * .9) % tw;
-    for (let x = -off; x < W; x += tw - .5) g.drawImage(bg, x, top, tw + 1, bh);
-    g.fillStyle = '#9a9a9a'; g.fillRect(0, top + bh - 1, W, H - top - bh + 1);
-    for (const c of S.clouds) { const ci = cloudSprite(c.i), k = (W / 390) * c.s * 1.1, cw = ci.width / 3 * k, ch = ci.height / 3 * k; g.globalAlpha = c.alpha; g.drawImage(ci, c.x * W, c.y * top - ch / 2, cw, ch); }
-    g.globalAlpha = 1;
+    const g = ctx, L = lev(), d = SCENE_DATA && SCENE_DATA[L.key], ground = H * GROUND;
+    const bh = Math.min(H * .6, W * .9), k = bh / 289;   // the artist composed these at 512x289: k maps sheet pixels to the screen
+    if (!d || !ok(sceneImg(d.sky))) { g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); return; }
+    // the sky: stretched over the whole width, its bottom on the ground line; above it the sky's own top colour
+    const sky = sceneImg(d.sky), skyH = Math.max(d.skyh * k, ground * .8), skyTop = ground - skyH;   // on a tall phone the sky block is stretched up to fill most of the screen
+    g.drawImage(sky, 0, 0, 1, 1, 0, 0, W, Math.max(0, skyTop) + 1); g.drawImage(sky, 0, skyTop, W, skyH + 1);
+    const run = S.dist * W * .9;   // how far the run has scrolled, in pixels
+    const row = (pieces, speed, spacing, place) => {   // draw a layer's props: index i covers world x = i*spacing (+ wobble), scrolled at `speed` of the run
+      if (!pieces.length) return;
+      const span = spacing * k, first = Math.floor((run * speed - W) / span) - 1, last = Math.floor((run * speed + W) / span) + 1;
+      for (let i = first; i <= last; i++) {
+        const p = pieces[Math.floor(hash(i, L.key.length) * pieces.length)], im = sceneImg(p.f); if (!ok(im)) continue;
+        const x = i * span + hash(i, 7) * span * .5 - run * speed, w = p.w * k, h = p.h * k;
+        place(im, x, w, h, p);
+      }
+    };
+    row(d.far, .12, 300, (im, x, w, h, p) => g.drawImage(im, x, skyTop + (p.y < 0 ? .5 : Math.min(p.y, .6)) * skyH, w, h));   // hills, clouds, suns, moons: barely move; a piece the artist left above the sky sits on the horizon
+    row(d.mid, .45, 420, (im, x, w, h) => g.drawImage(im, x, ground + 4 * k - h, w, h));         // trees, pillars, buildings: half speed, standing on the ground
+    if (d.ground && ok(sceneImg(d.ground))) {   // the ground strip, at run speed
+      const gi = sceneImg(d.ground), gh = d.gh * k, gw = d.gw * k, off = run % gw;
+      for (let x = -off; x < W; x += gw - .5) g.drawImage(gi, x, ground - gh + 6 * k, gw + 1, gh);
+      g.fillStyle = '#9a9a9a'; g.fillRect(0, ground + 6 * k - 1, W, H - ground + 1);
+    } else { g.fillStyle = '#9a9a9a'; g.fillRect(0, ground, W, H - ground); }
+    row(d.near, 1, 260, (im, x, w, h) => g.drawImage(im, x, ground + 6 * k - h, w, h));          // bushes, benches, grass: at run speed, in front of the ground strip
   }
   function drawJacques() {
     const g = ctx, k = jScale(), x = W * JX, ground = H * GROUND;
