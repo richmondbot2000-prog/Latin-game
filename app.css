@@ -483,10 +483,10 @@ body.noscroll { overflow: hidden; }
 .card::after { box-shadow: inset 0 0 0 2px rgba(255,255,255,.55), inset 0 0 0 3px rgba(140,120,80,.15); }
 .card.under { transform: scale(.94) translateY(12px); opacity: 1; filter: brightness(.96); }
 .card .orn { position: absolute; left: 0; right: 0; height: 64px; pointer-events: none; background: center / 240px 64px no-repeat;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 64'%3E%3Cg fill='%23b9ad8c' fill-opacity='.38'%3E%3Cpath d='M120 6 L128 24 L112 24Z'/%3E%3Cpath d='M92 10 L105 26 L89 30Z'/%3E%3Cpath d='M148 10 L151 30 L135 26Z'/%3E%3Cpath d='M66 20 L84 32 L71 42Z'/%3E%3Cpath d='M174 20 L169 42 L156 32Z'/%3E%3Cpath d='M44 36 L64 42 L55 54Z'/%3E%3Cpath d='M196 36 L185 54 L176 42Z'/%3E%3Cpath d='M24 54 L44 56 L38 64Z'/%3E%3Cpath d='M216 54 L202 64 L196 56Z'/%3E%3C/g%3E%3Ccircle cx='120' cy='40' r='22' fill='%23b9ad8c' fill-opacity='.3'/%3E%3C/svg%3E"); }
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 64'%3E%3Cg fill='%23b9ad8c' fill-opacity='.38'%3E%3Cpath d='M163 38 L149 28 L146 36Z'/%3E%3Cpath d='M153 55 L144 40 L138 46Z'/%3E%3Cpath d='M138 73 L134 48 L126 51Z'/%3E%3Cpath d='M120 76 L124 52 L116 52Z'/%3E%3Cpath d='M102 73 L114 51 L106 48Z'/%3E%3Cpath d='M87 55 L102 46 L96 40Z'/%3E%3Cpath d='M77 38 L94 36 L91 28Z'/%3E%3C/g%3E%3Ccircle cx='120' cy='22' r='22' fill='%23b9ad8c' fill-opacity='.3'/%3E%3C/svg%3E"); }
 .card .orn.top { top: 0; }
 .card .orn.bottom { bottom: 0; transform: scaleY(-1); }
-.card .orn .num { position: absolute; left: 50%; top: 40px; transform: translate(-50%, -50%); font: 700 22px/1 system-ui, sans-serif; color: #b9ad8c; }
+.card .orn .num { position: absolute; left: 50%; top: 22px; transform: translate(-50%, -50%); font: 700 22px/1 system-ui, sans-serif; color: #b9ad8c; }
 .card .cstars { top: 72px; }
 .card .lat { font-size: clamp(2rem, 11vw, 3rem); margin-top: 10px; }
 .card .rule { width: 72%; height: 2px; background: #2B1A3A; opacity: .8; margin: 14px 0; border-radius: 2px; }
