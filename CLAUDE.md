@@ -47,7 +47,16 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   For now one long daytime level on Earth (the owner dropped the worlds):
   wave 1 trickles in for 8 min (gap 14 s → 1.2 s, ~150 squishies, kinds by
   the minute), then a final wave of 250 led by the four bosses; ~10 min,
-  ~400 squishies. Numbers follow the original PvZ (Blaster = peashooter:
+  ~400 squishies. **Bosses** (`big: 3`) are three rows tall: `sq.rows`
+  lists the rows they fill, `inRow(sq, r)` is used by every hit test, they
+  chew the first gun they meet in any of their rows, set off all three
+  mowers (600 damage each, not instant death) and lose the game if they
+  reach the house. Each has a red power bar across the top of the lawn
+  (`drawBossBars`) and `spawns` smaller squishies of its own kind every few
+  seconds (Chomp King → Chomps, Brood Queen → Skitters, Ghost King → Ghosts,
+  Sharky → Sharklings, a small Sharky from the artist's `Sharky` rig).
+  HP 3000–6000; a full defence (`scratchpad/long.js`) still wins in ~10.5 min.
+  Numbers follow the original PvZ (Blaster = peashooter:
   20 dmg / 1.5 s; Chomp 100 hp crosses in ~2 min; Shield 1000 hp ≈ 40 s of
   chewing). Squishies have `res` (damage multipliers per kind: bullet, spray,
   ice, beam, ring, blast, rock, bomb), `nofreeze`, `nobrain` and a `tip` shown
