@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '95';
+const APP_VERSION = '96';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -409,16 +409,18 @@ function renderHome(u) {
 /* ---------- Cards & Beasts: the home screen — a face-down deck to swipe, and the Beastpedia ---------- */
 function renderCardsHome(u) {
   Celebrate.stop();
+  const st = store.get(streakKey(u), { cur: 0, best: 0 });
+  // the same frame as the play screen (bar, streak, deck, a row below), so the deck does not move when play starts
   app.innerHTML = `
   <div class="wrap">
     <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Cards &amp; Beasts</span><span class="lvtag">${levelName(levelOf(u))}</span></div>
-    <div id="pane" class="play chome">
-      <div class="deckhome" id="deckhome">
+    <div id="pane" class="play chome scene-earth">
+      <div class="streakbar"><div class="streak${st.cur >= 5 ? ' hot' : ''}${st.cur ? '' : ' zero'}"><span class="fire">🔥</span><span class="n">${st.cur}</span><span class="lbl">in a row</span></div><div class="best">${st.best ? 'Best ' + st.best : ''}</div></div>
+      <div class="deck" id="deckhome">
         <div class="cardback b3"></div><div class="cardback b2"></div>
-        <div class="cardback top" id="topback"><div class="orn top"></div><div class="orn bottom"></div><div class="emblem">⚡</div></div>
+        <div class="cardback top" id="topback"><div class="orn top"></div><div class="orn bottom"></div><div class="emblem">⚡</div><div class="deckhint">Swipe a card to play</div></div>
       </div>
-      <p class="deckhint">Swipe a card to play</p>
-      <button class="gamebanner" id="pediaGo" style="background-image:url('art/banners/beastpedia.jpg')"><span class="gname beasts">Beastpedia</span></button>
+      <div class="answer pediarow"><button class="gamebanner" id="pediaGo" style="background-image:url('art/banners/beastpedia.jpg')"><span class="gname beasts">Beastpedia</span></button></div>
       <p class="small deckcount" id="deckcount"></p>
     </div>
   </div>`;
@@ -855,6 +857,7 @@ function renderPlay(u, pane) {
   const deck = $('#deck', pane);
   // the scene behind the cards follows the element of the beast being raised; the bar above the cards shows it growing
   const setScene = () => { pane.className = 'play scene-' + Beasts.scene(u); };
+  pane.className = 'play scene-earth';
   function buddy() {
     const el = $('#buddy', pane); if (!el) return;
     const l = Beasts.latest(u);
