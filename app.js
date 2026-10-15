@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '106';
+const APP_VERSION = '107';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -954,13 +954,13 @@ function renderSnap(u) {
   }
   // photo: { image, words: [{ t, at, x0, y0, x1, y1 }], w, h } when the text came from a picture — the Latin then sits on the picture
   function read(text, photo) {
-    if (!photo) text = text.replace(/-\n(?=[a-z])/g, '').replace(/\s*\n\s*/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 6000);
+    text = text.replace(/-\n(?=[a-z])/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 6000);
     sv.last = text; store.set(key, sv);
     const sents = Snap.latinise(text, pool);
     if (!sents.some(s => s.some(t => t.la))) return start('None of the words on that page are in the ' + levelName(lv) + ' list — try another page, or a higher level.');
     // pages of about 45 words, broken at sentence ends
     const pages = []; let cur = [], nw = 0;
-    for (const s of sents) { cur.push(s); nw += s.filter(t => /[a-z]/i.test(t.en)).length; if (nw >= 45 && !photo) { pages.push(cur); cur = []; nw = 0; } }
+    for (const s of sents) { cur.push(s); nw += s.filter(t => /[a-z]/i.test(t.en)).length; if (nw >= 45 && !(photo && photo.onPhoto)) { pages.push(cur); cur = []; nw = 0; } }
     if (cur.length) pages.push(cur);
     const boxOf = t => {   // the box on the picture covering this Latin word and the English words folded into it
       if (!photo) return null;
@@ -977,15 +977,16 @@ function renderSnap(u) {
       add(t.gloss || t.en); const w = byIdAll[t.id]; if (w) w.english.split(/[,;]/).forEach(add); ((typeof SYNONYMS !== 'undefined' && SYNONYMS[t.id]) || []).forEach(add);
       return [...out].filter(Boolean);
     };
-    $('#snapmain').innerHTML = `<div class="rtitle" id="ptitle"></div>${photo ? `<div class="snapzoom" id="snapzoom"><div class="snapphoto" id="snapbox" style="aspect-ratio:${photo.w} / ${photo.h}"><img src="${photo.image}" alt=""></div></div><div class="snapbtns"><button class="btn ghost small" id="snapZoom">🔍 Bigger</button><button class="btn ghost small" id="snapText">📄 As text</button></div>` : `<div class="pbox card snapbox" id="snapbox"></div>`}<p class="rmsg" id="pmsg"></p>${micHTML()}`;
+    const onPhoto = !!(photo && photo.onPhoto);
+    $('#snapmain').innerHTML = `<div class="rtitle" id="ptitle"></div>${onPhoto ? `<div class="snapzoom" id="snapzoom"><div class="snapphoto" id="snapbox" style="aspect-ratio:${photo.w} / ${photo.h}"><img src="${photo.image}" alt=""></div></div><div class="snapbtns"><button class="btn ghost small" id="snapZoom">🔍 Bigger</button><button class="btn ghost small" id="snapText">📄 As text</button></div>` : `<div class="pbox card snapbox" id="snapbox"></div>${photo ? '<div class="snapbtns"><button class="btn ghost small" id="snapPhoto">📷 On the photo</button></div>' : ''}`}<p class="rmsg" id="pmsg"></p>${micHTML()}`;
     let zoom = 1;
-    if (photo) {
+    if (onPhoto) {
       $('#snapZoom').onclick = () => { zoom = zoom === 1 ? 2 : zoom === 2 ? 3 : 1; $('#snapbox').style.width = zoom * 100 + '%'; $('#snapZoom').textContent = zoom === 3 ? '🔍 Smaller' : '🔍 Bigger'; fit(); };
-      $('#snapText').onclick = () => { stopRec(); read(text); };
-    }
+      $('#snapText').onclick = () => { stopRec(); read(text, { ...photo, onPhoto: false }); };
+    } else if (photo) $('#snapPhoto').onclick = () => { stopRec(); read(text, { ...photo, onPhoto: true }); };
     // the chips are sized from the boxes once the picture has a size on screen
     function fit() {
-      const box = $('#snapbox'); if (!box || !photo) return;
+      const box = $('#snapbox'); if (!box || !onPhoto) return;
       const sc = box.clientWidth / photo.w;
       // a chip may be a quarter wider than the English word under it; longer Latin gets smaller type so it does not cover its neighbours
       box.querySelectorAll('.pw.ph').forEach(el => { const h = +el.dataset.h * sc, w = +el.dataset.w * sc, n = el.textContent.length; el.style.fontSize = Math.max(7, Math.min(h * .72, (w * 1.2) / (n * .58 + .6))) + 'px'; el.style.height = h + 'px'; });
@@ -998,7 +999,7 @@ function renderSnap(u) {
     function show() {
       $('#ptitle').innerHTML = `📷 <b>Your page</b> <span class="small">· part ${pg + 1} of ${pages.length} · ${flipped.filter(Boolean).length} / ${toks.length} words</span>`;
       let html = '', k = 0;
-      if (photo) {
+      if (onPhoto) {
         pages[pg].forEach(s => s.forEach(t => {
           if (t.skip || !t.la) return;
           const i = k++, bx = boxOf(t); if (!bx) return;
@@ -1006,10 +1007,13 @@ function renderSnap(u) {
         }));
         $('#snapbox').querySelectorAll('.pw').forEach(e => e.remove()); $('#snapbox').insertAdjacentHTML('beforeend', html); fit(); setMic(); return;
       }
+      let prevEnd = -1;
       for (const s of pages[pg]) {
         html += '<span class="snaps">';
         s.forEach((t, j) => {
           if (t.skip) return;
+          const gap = prevEnd >= 0 && t.at != null ? text.slice(prevEnd, t.at) : ''; if (t.at != null) prevEnd = t.to != null ? t.to : t.at + t.en.length;
+          if (/\n\n/.test(gap)) html += '<span class="snapbr para"></span>'; else if (/\n/.test(gap)) html += '<span class="snapbr"></span>';
           const punct = !/[a-z0-9]/i.test(t.en), sp = j === 0 || punct || /^["'(]$/.test(s[j - 1] && s[j - 1].en) ? '' : ' ';
           if (!t.la) { html += sp + esc(t.en); return; }
           const i = k++;
@@ -1039,7 +1043,7 @@ function renderSnap(u) {
     const { setMic, stopRec } = micListener(say);
     stop = stopRec; window.addEventListener('hashchange', stopRec, { once: true });
     load();
-    if (photo) requestAnimationFrame(fit);
+    if (onPhoto) requestAnimationFrame(fit);
   }
   start();
 }

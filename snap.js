@@ -339,7 +339,18 @@ const Snap = (() => {
       const r = await worker.recognize(c);
       // the words with their boxes on the picture; the text is the words joined by spaces, each word knowing its offset
       const words = []; let text = '';
-      for (const w of r.data.words || []) { const t = (w.text || '').trim(); if (!t) continue; if (text) text += ' '; words.push({ t, at: text.length, x0: w.bbox.x0, y0: w.bbox.y0, x1: w.bbox.x1, y1: w.bbox.y1 }); text += t; }
+      // paragraphs and lines are kept (a blank line between paragraphs); words the recogniser is unsure of, or that
+      // are not words at all ("e_", "dng"), are left out rather than shown as nonsense
+      const junk = t => !/[a-z]/i.test(t) ? !/^\d+$/.test(t) && !/^[.,;:!?'"()-]+$/.test(t) : (!/[aeiouy]/i.test(t.replace(/[^a-z]/gi, '')) && t.replace(/[^a-z]/gi, '').length > 2) || /[_|\\~^<>{}\[\]#@*=+]/.test(t);
+      let lastPara = null, lastLine = null;
+      const paras = r.data.paragraphs || [], lines = r.data.lines || [];
+      for (const w of r.data.words || []) {
+        let t = (w.text || '').trim().replace(/^[_|~^]+|[_|~^]+$/g, ''); if (!t || junk(t) || (w.confidence < 35 && !/^[.,;:!?]$/.test(t))) continue;
+        const li = w.line || null, pa = (li && li.paragraph) || w.paragraph || null;
+        if (text) text += pa && lastPara && pa !== lastPara ? '\n\n' : li && lastLine && li !== lastLine ? '\n' : ' ';
+        lastPara = pa || lastPara; lastLine = li || lastLine;
+        words.push({ t, at: text.length, x0: w.bbox.x0, y0: w.bbox.y0, x1: w.bbox.x1, y1: w.bbox.y1 }); text += t;
+      }
       if (!words.length) return { text: r.data.text || '', words: [], image: null, w: 0, h: 0 };
       // crop the picture to the text, with a margin, so the print is as large as the screen allows
       const mx = c.width * .03, my = c.height * .02;

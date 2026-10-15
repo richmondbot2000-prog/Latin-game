@@ -646,6 +646,9 @@ body.noscroll { overflow: hidden; }
 .snapbox .pw .f { background: #FFF1C4; }
 .snapbox .pw .b { background: #FFE066; }
 .snaps { display: inline; }
+.snapbr { display: block; height: 0; }
+.snapbr.para { height: .8em; }
+.snapbox { font-size: 1.25rem; }
 .snapzoom { overflow-x: auto; border-radius: 14px; box-shadow: var(--shadow); background: #fff; margin: 6px 0 4px; -webkit-overflow-scrolling: touch; }
 .snapphoto { position: relative; width: 100%; }
 .snapphoto img { display: block; width: 100%; height: 100%; }
