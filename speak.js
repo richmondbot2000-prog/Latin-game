@@ -70,8 +70,12 @@ const Speak = (() => {
   // a word that comes into focus is read, then read once more 2 s after the first reading ends (the 🔊 buttons read once);
   // a new word, or a tap on a button, cancels the pending repeat
   let last = 0, again = null, gen = 0;
-  function play(text, done) {
-    const f = cfg.audio && clip(text);
+  // mode: 'synth' makes the phone's voice read even when a clip exists — the 2 s repeat uses whatever the first
+  // reading used, so a word is never heard in two different voices
+  let lastSynth = false;
+  function play(text, done, mode) {
+    const f = mode !== 'synth' && cfg.audio && clip(text);
+    lastSynth = !f;
     if (f) {
       // the clip plays if it is ready within 1.5 s; on a slow connection the phone's own voice reads the word instead
       // and the clip keeps downloading, so it is there next time
@@ -82,7 +86,7 @@ const Speak = (() => {
         const start = () => { if (ok || gaveUp) return; ok = true; a.play().catch(() => {}); };
         a.addEventListener('canplaythrough', start); a.addEventListener('loadeddata', start);
         const g = gen;
-        setTimeout(() => { if (ok || g !== gen) return; gaveUp = true; try { a.pause(); } catch (e) {} if (player === a) player = null; prime(text); synth(text, done); }, 1500);
+        setTimeout(() => { if (ok || g !== gen) return; gaveUp = true; lastSynth = true; try { a.pause(); } catch (e) {} if (player === a) player = null; prime(text); synth(text, done); }, 1500);
         a.load();
         return true;
       } catch (e) {}
@@ -122,7 +126,7 @@ const Speak = (() => {
   function say(text, force) {
     if (!text || (!force && !on())) return false;
     clearTimeout(again); const g = ++gen;
-    return play(text, () => { if (g !== gen || force) return; again = setTimeout(() => { if (g === gen) play(text, null); }, 2000); });
+    return play(text, () => { if (g !== gen || force) return; const same = lastSynth ? 'synth' : 'clip'; again = setTimeout(() => { if (g === gen) play(text, null, same); }, 2000); });
   }
   const stop = () => { clearTimeout(again); gen++; try { speechSynthesis.cancel(); } catch (e) {} if (player) try { player.pause(); } catch (e) {} };
   // a small speaker button: tap to hear the text the getter returns
