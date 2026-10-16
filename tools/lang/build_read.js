@@ -54,7 +54,7 @@ for (const raw of fs.readFileSync(path.join(dir, 'sentences.txt'), 'utf8').split
       id = hits[0].id; shape = hits[0].shape;
     }
     const w = byId[id];
-    if (w.level > lv) { console.log(`line ${lineNo}: "${form}" (${id}) is level ${w.level}, sentence is level ${lv}`); bad++; }
+    if (lv < 0 ? !w.top : w.level > lv) { console.log(`line ${lineNo}: "${form}" (${id}) is ${lv < 0 ? 'not a Beginner word' : 'level ' + w.level}, sentence is level ${lv}`); bad++; }
     toks.push([form.replace(/_/g, ' '), id, gloss || english(w, shape), shape]);
   }
   const e = { la: toks, en, lv };
@@ -63,7 +63,7 @@ for (const raw of fs.readFileSync(path.join(dir, 'sentences.txt'), 'utf8').split
 }
 if (bad) { console.log(bad + ' problems'); process.exit(1); }
 const stories = new Set(out.filter(x => x.p).map(x => x.p));
-const js = `// Read: Tunisian sentences by level (lv 0 Basic … 4) and short stories (p, pt). Each token is [form, headword, English in
+const js = `// Read: Tunisian sentences by level (lv -1 Beginner, the 50 top words; 0 Basic … 4) and short stories (p, pt). Each token is [form, headword, English in
 // this form, shape] (headword = the id in vocab.js; shape nd = definite noun, n2 = plural, v3s… = verb person, p1s… = past,
 // adj, o = other); punctuation and names are [text, null]. Built by tools/lang/build_read.js from sentences.txt.
 const SENTENCES = [
@@ -75,7 +75,7 @@ const PHRASES = {};
 for (const e of out) for (const t of e.la) { if (t[1] && !PHRASES[t[1]]) { const la = e.la.map(x => x === t ? '*' + x[0] + '*' : x[0]).join(' ').replace(/ ([,.;:?!])/g, '$1').replace(/" (.*?) "/g, '"$1"'); PHRASES[t[1]] = { la, en: e.en }; } }
 fs.writeFileSync(path.join(dir, 'phrases.js'), '// Example sentences for the cards (the first sentence of read.js that holds each word). Built by tools/lang/build_read.js.\nconst PHRASES = ' + JSON.stringify(PHRASES, null, 0).replace(/\},"/g, '},\n  "') + ';\n');
 console.log(Object.keys(PHRASES).length + ' words have an example sentence');
-console.log(`${out.length} sentences, ${stories.size} stories; by level: ${[0, 1, 2, 3, 4].map(l => out.filter(x => x.lv === l).length).join(' / ')}`);
+console.log(`${out.length} sentences, ${stories.size} stories; by level: ${[-1, 0, 1, 2, 3, 4].map(l => out.filter(x => x.lv === l).length).join(' / ')} (Beginner first)`);
 
 // spoken alternatives: the dictionary senses beyond the first, plus synonyms.txt ("word: alt, alt")
 const SYN = {};

@@ -1,4 +1,61 @@
 # lv | Tunisian | English [| story id | story title]
+# ---- Beginner (lv -1: only the 50 words marked top=1) ----
+-1 | 3aslema! Ena Karim=-. | Hello! I am Karim.
+-1 | Chnowa hedha? Hedha khobz. | What is this? This is bread.
+-1 | Chkoun hedha? Hedha baba. | Who is this? This is dad.
+-1 | Win ommi? Ommi fi ed-dar. | Where is mum? Mum is in the house.
+-1 | El-weld kla el-khobz. | The boy ate the bread.
+-1 | El-bent chorbet el-ma. | The girl drank the water.
+-1 | Baba mcha led-dar=dar|to_the_house. | Dad went to the house.
+-1 | Ommi jet elyoum. | Mum came today.
+-1 | Er-rajel kbir w ed-dar kbira. | The man is big and the house is big.
+-1 | Ena n7eb el-khobz. | I love bread.
+-1 | Enti t7eb el-ma? | Do you like water?
+-1 | Houwa ya3raf baba. | He knows dad.
+-1 | Hiya tefhem. | She understands.
+-1 | A7na nemchiw ghodwa. | We go tomorrow.
+-1 | Houma jaw men ed-dar. | They came from the house.
+-1 | 3andi dar kbira. | I have a big house.
+-1 | 3andi weld w bent. | I have a son and a daughter.
+-1 | El-mra chafet er-rajel. | The woman saw the man.
+-1 | Kifech enti? Ena behi. | How are you? I am fine.
+-1 | 3lech mchit? | Why did you go?
+-1 | Tawa ena fi ed-dar. | Now I am in the house.
+-1 | Elyoum nhar behi. | Today is a good day.
+-1 | Ghodwa nji m3a baba. | Tomorrow I come with dad.
+-1 | El-wled=weld|the_boys yeklou el-khobz. | The boys eat the bread.
+-1 | El-bnet=bent|the_girls yochrbou el-ma. | The girls drink the water.
+-1 | Baba 9al: "3aychek!" | Dad said: "Thank you!"
+-1 | Ommi 9alet: "Sam7ni." | Mum said: "Sorry."
+-1 | Hedha weld behi. | This is a good boy.
+-1 | Hedha rajel kbir. | This is a big man.
+-1 | Wa7ed w wa7ed, zouz. | One and one, two.
+-1 | 3andi zouz wled=weld|boys. | I have two boys.
+-1 | Houni dar kbira. | Here is a big house.
+-1 | Enti ta3raf win ed-dar? | Do you know where the house is?
+-1 | Ena fhemt. | I understood.
+-1 | Houwa 7ab el-khobz ama hiya 7abbet el-ma. | He liked the bread but she liked the water.
+-1 | A7na klina el-khobz fi ed-dar. | We ate the bread in the house.
+-1 | Houma chafou el-weld elyoum. | They saw the boy today.
+-1 | Baba w ommi mchaw elyoum. | Dad and mum went today.
+-1 | Chkoun ja? Baba ja. | Who came? Dad came.
+-1 | Bislema! Nchoufek=chaf|I_will_see_you ghodwa. | Goodbye! I will see you tomorrow.
+-1 | Enti ta3raf 3la hedha? | Do you know about this?
+-1 | Ena w enti fi ed-dar. | You and I are in the house.
+-1 | El-mra kbira w behya. | The woman is big and good.
+-1 | Er-rajel ja men ed-dar m3a el-weld. | The man came from the house with the boy.
+-1 | Ena jit elyoum w nemchi ghodwa. | I came today and I go tomorrow.
+-1 | Baba mcha men ed-dar. | Dad went from the house. | b1 | Baba and the bread
+-1 | Chaf khobz behi. | He saw good bread. | b1 | Baba and the bread
+-1 | Kla el-khobz w chrab el-ma. | He ate the bread and drank the water. | b1 | Baba and the bread
+-1 | Ja led-dar=dar|to_the_house tawa. | He came to the house now. | b1 | Baba and the bread
+-1 | Ommi 9alet: "Win el-khobz?" | Mum said: "Where is the bread?" | b1 | Baba and the bread
+-1 | Baba 9al: "Sam7ni!" | Dad said: "Sorry!" | b1 | Baba and the bread
+-1 | Hedha Karim=-. Houwa weld behi. | This is Karim. He is a good boy. | b2 | Karim and Leila
+-1 | Karim=- ya3raf bent, Leila=-. | Karim knows a girl, Leila. | b2 | Karim and Leila
+-1 | Leila=- t7eb el-ma w Karim=- y7eb el-khobz. | Leila likes water and Karim likes bread. | b2 | Karim and Leila
+-1 | Elyoum houma fi ed-dar m3a ommi. | Today they are in the house with mum. | b2 | Karim and Leila
+-1 | Ghodwa yemchiw m3a baba. | Tomorrow they go with dad. | b2 | Karim and Leila
 # ---- Basic (level 0) ----
 0 | El-weld yemchi lel-mdrasa=mdrasa|to_school. | The boy goes to school.
 0 | El-bent tekel el-khobz. | The girl eats the bread.

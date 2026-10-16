@@ -28,7 +28,7 @@ s = rep(s, "const LEVELS = [['top', 'Top 50'], ['beginner', 'Beginner'], ['1', '
 s = rep(s, "const inLevel = (w, l) => l === 'top' ? !!w.top : l === 'beginner' ? !!w.beginner : w.level <= +l;", "const inLevel = (w, l) => l === 'top' ? !!w.top : w.level <= +l;")
 s = rep(s, "const levelOf = u => { const l = store.get(levelKey(u), 'beginner'); return LEVELS.some(x => x[0] === l) ? l : 'beginner'; };",
         "const levelOf = u => { const l = store.get(levelKey(u), '0'); return LEVELS.some(x => x[0] === l) ? l : '0'; };")
-s = rep(s, "const L = Math.max(0, ['beginner', '1', '2', '3'].indexOf(levelOf(u)));", "const L = Math.max(0, +levelOf(u) || 0);")
+s = rep(s, "const L = levelOf(u) === 'top' && topSentences() ? -1 : Math.max(0, ['beginner', '1', '2', '3'].indexOf(levelOf(u)));", "const L = levelOf(u) === 'top' && topSentences() ? -1 : Math.max(0, +levelOf(u) || 0);")
 # words: a verb shows both its forms (mcha / yemchi); the "(uncle)" tags that keep ids unique are not shown
 s = rep(s, "const showWord = w => w.replace(/\\s*\\+\\s*(abl|acc)\\.?$/, '').replace(/\\s*\\((verb|adverb|noun)\\)$/, '').split('/').join(', ');",
         "const showWord = w => w.replace(/\\s*\\(.*\\)$/, '');")
