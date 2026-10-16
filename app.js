@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '154';
+const APP_VERSION = '155';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -53,6 +53,7 @@ const levelNum = u => { const l = levelOf(u); return l === 'top' ? -1 : l === 'b
 const phraseFor = (w, u) => { const p = typeof PHRASES !== 'undefined' && PHRASES[w.word]; if (!p) return null; if (!Array.isArray(p)) return p; if (!u) return p[0]; const L = levelNum(u); return p.find(x => x.lv <= L) || null; };
 // Latin phrase with the card's word (marked *like this*) highlighted
 const phraseHTML = la => esc(la).replace(/\*([^*]+)\*/g, '<mark>$1</mark>');
+const sayForm = w => w.show.split(' / ')[0];   // what the 🔊 reads for a dictionary entry: one form, not "mcha / yemchi"
 const originOf = w => (typeof ORIGINS !== 'undefined' && ORIGINS[w.word]) || '';   // where the word comes from (origins.txt of a language), shown on the memo
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.show} means ${w.english}.` };
 // the word in the language's own script (Arabic for Tounsi: `ar` in vocab.js, the form's `ar` from Forms); nothing for Latin
@@ -1373,7 +1374,7 @@ function renderList(u, pane) {
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(w.show)}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
     $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word to see how to remember it';
   };
@@ -1401,7 +1402,7 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
       ${verdict ? `<div class="verdict bad">${verdict}</div>` : ''}
       <div class="memo">
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
-        <div class="lat">${esc(w.show)}${Speak.can() ? ` <span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(w.show)}">🔊</span>` : ''}</div>
+        <div class="lat">${esc(w.show)}${Speak.can() ? ` <span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}</div>
         ${arabHTML(w)}
         <div class="en">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
@@ -1535,7 +1536,7 @@ function renderPlay(u, pane) {
     deck.querySelectorAll('.card .lat, .card .en').forEach(el => { el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); while (el.scrollWidth > el.clientWidth + 1 && f > 14) { f -= 1; el.style.fontSize = f + 'px'; } });
     attachSwipe($('#top', deck));
     buddy();
-    Speak.say(card.form ? card.form.la : card.w.show);
+    Speak.say(card.form ? card.form.la : sayForm(card.w));
     if (!warmed) { warmed = true; Speak.warm(activeWords(u).map(w => w.show)); }   // the level's clips download in the background on the first card
     busy = false;
   }
