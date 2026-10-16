@@ -1,0 +1,12 @@
+{
+  "code": "tounsi",
+  "name": "Tounsi",
+  "flag": "🇹🇳",
+  "language": "Tunisian Arabic (Derja)",
+  "description": "Learn Tunisian Arabic with swipe cards.",
+  "greeting": "3aslema,",
+  "tagline": "Learn Tunisian Arabic (Derja), one card at a time.",
+  "levels": [["0", "Basic"], ["1", "Top 200"], ["2", "Top 300"], ["3", "Top 400"], ["4", "Top 500"]],
+  "theme": "#C9541E",
+  "tts": { "lang": "ar-TN", "fallback": "ar", "script": "chat-arabic", "auto": true, "rate": 0.85 }
+}

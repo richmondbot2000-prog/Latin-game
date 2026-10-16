@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '131';
+const APP_VERSION = '132';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -167,6 +167,15 @@ function route() {
   renderHome(u);
 }
 window.addEventListener('hashchange', route);
+// the 🔊 buttons: cards read the word on the top card, Sentences and Passages the sentence, the reader the word in focus
+document.addEventListener('click', e => {
+  const b = e.target.closest('.speakbtn'); if (!b) return; e.stopPropagation();
+  let text = '';
+  if (b.classList.contains('cardspeak')) { const t = $('#top .lat'); text = t ? t.textContent : ''; }
+  else if (b.classList.contains('gripspeak')) { const t = $('#rword'); text = t ? t.textContent : ''; }
+  else if (b.classList.contains('barspeak')) { const t = $('.rla') || $('.pline.cur'); text = t ? t.textContent.replace(/\s+/g, ' ').trim() : ''; }
+  if (text) { Speak.say(text, true); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+});
 
 /* ---------- avatars (a photo kept only in this browser, never sent anywhere) ---------- */
 const AVATAR_COLOURS = ['#E8A0B4', '#8FD3FF', '#9BE564', '#FFD23F', '#C9A7F0', '#FFB347', '#7DD3C0', '#F28B82'];
@@ -474,6 +483,15 @@ async function checkVersion() {
   let tried = 0; try { tried = +sessionStorage.getItem('latin.upd') || 0; } catch (e) {}
   if (tried < latest) { try { sessionStorage.setItem('latin.upd', String(latest)); } catch (e) {} freshen(); }
 }
+// the other language games on this site, from languages.json (all but this one)
+async function otherGames() {
+  try {
+    const me = typeof LANG !== 'undefined' ? LANG.code : 'latin';
+    const list = await (await fetch('languages.json', { cache: 'no-cache' })).json();
+    const el = $('#otherGames'); if (!el) return;
+    el.innerHTML = list.filter(l => l.code !== me).map(l => `<a class="linkbtn otherline" href="${esc(l.path)}">${esc(l.flag)} ${esc(l.name)} — the ${esc(l.language)} game</a>`).join('');
+  } catch (e) {}
+}
 function renderHome(u) {
   const { c, total } = summary(u);
   app.innerHTML = `
@@ -487,6 +505,7 @@ function renderHome(u) {
     </div>
     ${meterHTML(c, total)}
     <div class="small meterline">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
+    ${Speak.toggleHTML()}
     <div class="tile prac2" id="org">
       <h2>Organise</h2>
       <button class="gamebanner" data-t="list" style="background-image:url('art/banners/wordlist.jpg')"><span class="gname list">Word list</span></button>
@@ -507,7 +526,7 @@ function renderHome(u) {
     </div>
     ${leaderboardHTML()}
     <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
-    <a class="linkbtn otherline" href="tounsi/">🇹🇳 Tounsi — the Tunisian Arabic game</a>
+    <div id="otherGames"></div>
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>
     <button class="syncline" id="nameline"><span>🎁 ${u.player ? `Player name <b>${esc(u.player.toUpperCase())}</b>` : 'Choose a player name so friends can send you beasts'}</span></button>` : ''}
   </div>`;
@@ -531,6 +550,8 @@ function renderHome(u) {
   $('#libGo').onclick = () => { location.hash = 'library'; };
   $('#bookGo').onclick = () => { if (levelOf(u) === '3') location.hash = 'book'; else flashHome('📖 The book opens at Level 3 — choose Level 3 above to read it.'); };
   $('#verline').onclick = () => { $('#verline').textContent = 'updating…'; freshen(); };
+  Speak.wireToggle(app);
+  otherGames();
   checkVersion();
   $('#hamGo').onclick = () => { location.hash = 'hammer'; };
   $('#levels').onclick = e => {
@@ -652,7 +673,7 @@ function renderRead(u) {
   const stories = {}; avail.forEach(n => { const p = SENTENCES[n].p; if (p) (stories[p] = stories[p] || []).push(n); });
   app.innerHTML = `
   <div class="wrap">
-    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Sentences</span><span class="lvtag" id="rcount"></span></div>
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Sentences</span>${Speak.button('barspeak')}<span class="lvtag" id="rcount"></span></div>
     <p class="small" style="text-align:center;margin:0 0 6px">Read the sentence. What does the <b>highlighted word</b> mean?</p>
     <div class="rtitle" id="rtitle" hidden></div>
     <div class="rstory" id="rstory" hidden></div>
@@ -689,6 +710,7 @@ function renderRead(u) {
     $('#rsent').innerHTML = `<div class="rla">${sent.la.map(t => t[1] ? `<span class="rw ${t === cur ? 'cur' : words.indexOf(t) < i ? 'done' : ''}" data-id="${esc(t[1])}">${esc(t[0])}</span>` : `<span class="rp">${esc(t[0])}</span>`).join(' ')}</div>
       <div class="ren" id="ren"></div>`;
     if (!cur) { finish(); return; }
+    Speak.say(cur[0]);
     const w = byId[cur[1]], gloss = cur[2], shape = cur[3];
     // wrong answers are put into the same English form as the right one (horses, not horse; walks, not walk)
     const ds = distractors(w, pool).slice().sort(() => Math.random() - .5).map(d => inflect(d.english, shape)).filter(x => x !== gloss);
@@ -828,7 +850,7 @@ function renderPassages(u, book = false) {
   const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
   app.innerHTML = `
   <div class="wrap">
-    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">${book ? 'Read a book' : 'Passages'}</span><span class="lvtag" id="pcount"></span></div>
+    <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">${book ? 'Read a book' : 'Passages'}</span>${Speak.button('barspeak')}<span class="lvtag" id="pcount"></span></div>
     ${book ? `<div class="booktitle"><b>${esc(BOOK.title)}</b><span class="small">${esc(BOOK.sub)}</span></div>` : ''}
     <div class="rtitle" id="ptitle"></div>
     <div class="pbox card" id="pbox"></div>
@@ -848,7 +870,7 @@ function renderPassages(u, book = false) {
     const list = fresh.length ? fresh : PASSAGES;
     pas = list[Math.floor(Math.random() * list.length)]; at = 0; loadLine();
   }
-  function loadLine() { sent = lineObj(at); flipped = words().map(() => false); filled = enWords().map(() => false); done = false; show(); }
+  function loadLine() { sent = lineObj(at); flipped = words().map(() => false); filled = enWords().map(() => false); done = false; show(); Speak.say(sent.la.map(t => t[0]).join(' ').replace(/ ([,.;:?!])/g, '$1')); }
   function show() {
     $('#pcount').textContent = count();
     const plain = s => esc(s.la.map(t => t[0]).join(' ').replace(/ ([,.;:?!])/g, '$1').replace(/" (.*?) "/g, '"$1"'));
@@ -1039,7 +1061,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       <div class="rhead"><button class="iconbtn" id="back" aria-label="Back">${opts.back ? '← Books' : '← Home'}</button><span class="rpos" id="rprog"></span><span style="width:44px"></span></div>
       <div class="paper ${rs.font} size${rs.size}" id="paper"></div>
       <div class="rsheet" id="rsheet">
-        <div class="rgrip" id="rgrip" aria-label="Pull up for text settings"><span class="rword" id="rword"></span><span class="rbar"></span><span class="rhint">Aa</span></div>
+        <div class="rgrip" id="rgrip" aria-label="Pull up for text settings"><span class="rword" id="rword"></span><span class="rbar"></span>${Speak.button('gripspeak')}<span class="rhint">Aa</span></div>
         <div class="rans" id="rans"></div>
         <div class="rset">
           <div class="rrow"><span>Font</span><div class="rseg"><button class="rtool${rs.font === 'serif' ? ' on' : ''}" data-font="serif" style="font-family:Georgia,serif">Serif</button><button class="rtool${rs.font === 'sans' ? ' on' : ''}" data-font="sans" style="font-family:system-ui,sans-serif">Sans</button></div></div>
@@ -1055,7 +1077,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
     $('#rgrip').addEventListener('pointerdown', e => { y0 = e.clientY; moved = false; });
     window.addEventListener('pointermove', e => { if (y0 != null && Math.abs(e.clientY - y0) > 24) { moved = true; setOpen(e.clientY < y0); y0 = e.clientY; } });
     window.addEventListener('pointerup', () => { y0 = null; });
-    $('#rgrip').onclick = () => { if (!moved) setOpen(!sheet.classList.contains('open')); moved = false; };
+    $('#rgrip').onclick = e => { if (e.target.closest('.speakbtn')) return; if (!moved) setOpen(!sheet.classList.contains('open')); moved = false; };
     sheet.querySelectorAll('.rtool').forEach(b => { b.onclick = () => {
       if (b.dataset.font) rs.font = b.dataset.font; else if (b.dataset.size) rs.size = +b.dataset.size; else rs.dark = b.dataset.dark === '1';
       saveRS(); applyDark();
@@ -1100,7 +1122,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       toks.forEach((t, i) => { const el = lw(i); if (!el) return; el.className = 'lw' + (i === focus && !done ? ' focus' : '') + (state[i] === 1 ? ' ok' : state[i] === -1 ? ' bad' : ''); if (state[i]) { el.textContent = t.gloss || t.en; el.title = t.la; } else el.textContent = t.la; });
       if (done) return;
       const t = toks[focus];
-      $('#rword').textContent = t.la;
+      $('#rword').textContent = t.la; Speak.say(t.la);
       $('#rans').innerHTML = choices(t).map(c => `<button class="rchoice">${esc(c)}</button>`).join('');
       $('#rans').querySelectorAll('.rchoice').forEach(b => { b.onclick = () => answer(b, b.textContent); });
       busy = false;
@@ -1353,7 +1375,7 @@ function renderPlay(u, pane) {
   let card = null, busy = false, right = 0, seen = 0;
   const st = store.get(streakKey(u), { cur: 0, best: 0 });
   pane.innerHTML = `
-    <div class="streakbar"><div class="streak" id="streak"><span class="fire">🔥</span><span class="n" id="sn">0</span><span class="lbl">in a row</span></div><div class="best" id="best"></div></div>
+    <div class="streakbar"><div class="streak" id="streak"><span class="fire">🔥</span><span class="n" id="sn">0</span><span class="lbl">in a row</span></div><div class="best" id="best"></div>${Speak.button('cardspeak')}</div>
     <button class="pal" id="buddy" aria-label="Your beast" hidden></button>
     <div class="score" hidden><span id="sc">Swipe to answer</span><span id="left"></span></div>
     <div class="deck" id="deck"></div>
@@ -1457,6 +1479,7 @@ function renderPlay(u, pane) {
     deck.querySelectorAll('.card .lat').forEach(el => { el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); while (el.scrollWidth > el.clientWidth + 1 && f > 14) { f -= 1; el.style.fontSize = f + 'px'; } });
     attachSwipe($('#top', deck));
     buddy();
+    Speak.say(card.form ? card.form.la : card.w.show);
     busy = false;
   }
   function answer(saysMatch) {

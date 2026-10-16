@@ -34,7 +34,10 @@ const Hammer = (() => {
   const saved = () => store.get(saveKey, { best: 0 });
   const owns = (kind, id) => { const it = CATALOGUE[kind].find(x => x[0] === id); return !!it && (it[2] === 0 || (saved().owned || []).includes(kind + ':' + id)); };
   const wear = () => { const sv = saved(), w = sv.wear || {}; return { skin: owns('costume', w.skin || 'standard') ? (w.skin || 'standard') : 'standard', weapon: owns('hammer', w.weapon || 'hammer') ? (w.weapon || 'hammer') : 'hammer', pup: owns('pup', w.pup || 'g') ? (w.pup || 'g') : 'g' }; };
-  const coinsFor = (right, wrong) => 10 + 3 * right + (wrong === 0 ? 15 : 0);
+  const COIN = 3;                                                  // coins for every sign judged right, paid on the spot
+  const coinsFor = (right, wrong) => 10 + (wrong === 0 ? 15 : 0);  // the bonus on top at the end of a level (perfect: no wrong)
+  // a coin pops out behind Jacques, spins once and flies to the counter at the top right; the total ticks up when it lands
+  function earnCoin() { S.coins += COIN; S.bits.push({ kind: 'coin', t: 0, n: COIN }); }
   let S = null, ui = null, user = null, saveKey = '';
   let cv, ctx, W = 0, H = 0, stage = null, raf = 0, last = 0;
   const rnd = (a, b) => a + Math.random() * (b - a);
@@ -42,7 +45,7 @@ const Hammer = (() => {
   const boardW = () => Math.min(W * .8, H * .9);
 
   function newGame(level = 1, score = 0) {
-    S = { level, made: 0, right0: 0, wrong0: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
+    S = { level, made: 0, right0: 0, wrong0: 0, coins: 0, coinsShown: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
       swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0, dogX: null, dogHop: 0, shake: 0, card: null,
       clouds: makeClouds() };
   }
@@ -122,7 +125,7 @@ const Hammer = (() => {
       if (s.state === 'up' && s.x + bw < CX - .02) {   // it has passed him only once the whole board is behind him
         // it got past Jacques
         s.state = 'passed';
-        if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: Math.max(.2, s.x + bw / 2), t: 0 }); }
+        if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; earnCoin(); recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: Math.max(.2, s.x + bw / 2), t: 0 }); }
         else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.show}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
       }
     }
@@ -137,14 +140,14 @@ const Hammer = (() => {
         if (target) {
           target.state = 'smashed'; target.smashT = 0;
           const hx = Math.max(target.x, CX + .05); smashSign(target);
-          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '+' + pts }); }
+          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); earnCoin(); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '+' + pts }); }
           else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.show}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
         }
       }
       if (S.swing > .55) S.swing = -1;
     }
-    for (const b of S.bits) { b.t += dt; if (b.kind === 'plank') { b.x += b.vx * dt; b.vy += 2.2 * dt; b.y += b.vy * dt; b.r += 3 * dt; } else if (b.kind === 'dust') b.x -= v * dt * .6; else if (b.kind === 'half') { b.x += b.vx * dt; b.vy += H * 2.2 * dt; b.y += b.vy * dt; b.rot += b.vr * dt; } }
-    S.bits = S.bits.filter(b => b.t < (b.kind === 'plank' || b.kind === 'half' ? 1.2 : b.kind === 'dust' ? .6 : .9));
+    for (const b of S.bits) { b.t += dt; if (b.kind === 'coin') { if (b.t >= 1 && !b.landed) { b.landed = true; S.coinsShown += b.n; refreshUI(); const el = ui.score; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); } } else if (b.kind === 'plank') { b.x += b.vx * dt; b.vy += 2.2 * dt; b.y += b.vy * dt; b.r += 3 * dt; } else if (b.kind === 'dust') b.x -= v * dt * .6; else if (b.kind === 'half') { b.x += b.vx * dt; b.vy += H * 2.2 * dt; b.y += b.vy * dt; b.rot += b.vr * dt; } }
+    S.bits = S.bits.filter(b => b.t < (b.kind === 'plank' || b.kind === 'half' ? 1.2 : b.kind === 'dust' ? .6 : b.kind === 'coin' ? 1 : .9));
     for (const s of S.signs) if (s.state === 'smashed') s.smashT += dt;
     S.signs = S.signs.filter(s => !(s.state === 'smashed' && s.smashT > .1));
     refreshUI();
@@ -157,16 +160,16 @@ const Hammer = (() => {
   function levelClear() {
     const sv = store.get(saveKey, { best: 0 });
     const next = S.level + 1, L = levelOf(next), r = S.right - S.right0, w = S.wrong - S.wrong0, coins = coinsFor(r, w);
-    store.set(saveKey, { ...sv, best: Math.max(sv.best || 0, S.score), level: Math.max(sv.level || 1, next), cleared: Math.max(sv.cleared || 0, S.level), coins: (sv.coins || 0) + coins, earned: (sv.earned || 0) + coins });
+    store.set(saveKey, { ...sv, best: Math.max(sv.best || 0, S.score), level: Math.max(sv.level || 1, next), cleared: Math.max(sv.cleared || 0, S.level), coins: (sv.coins || 0) + S.coins + coins, earned: (sv.earned || 0) + S.coins + coins });
     Celebrate(innerWidth / 2, innerHeight / 3, 2);
     const go = () => { const sc = S.score; newGame(next, sc); preload(next); start(); };
-    showOverlay(`⭐ Level ${S.level} clear!`, `<b class="hcoin">+${coins} coins</b>${w === 0 ? ' (perfect!)' : ''} · you have ${(sv.coins || 0) + coins}<br>${r} right, ${w} wrong<br><br>Next: <b>Level ${next} — ${L.scene}</b>`, `Level ${next}`, go, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
+    showOverlay(`⭐ Level ${S.level} clear!`, `<b class="hcoin">+${S.coins} coins</b> on the way, <b class="hcoin">+${coins}</b> for the level${w === 0 ? ' (perfect!)' : ''} · you have ${(sv.coins || 0) + S.coins + coins}<br>${r} right, ${w} wrong<br><br>Next: <b>Level ${next} — ${L.scene}</b>`, `Level ${next}`, go, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
     ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(go); };
   }
   function gameOver() {
     const sv = store.get(saveKey, { best: 0 });
     const best = Math.max(sv.best || 0, S.score); const isBest = S.score > (sv.best || 0);
-    store.set(saveKey, { ...sv, best, plays: (sv.plays || 0) + 1 });
+    store.set(saveKey, { ...sv, best, plays: (sv.plays || 0) + 1, coins: (sv.coins || 0) + S.coins });   // the coins picked up on the way are kept
     const lv = S.level;
     showOverlay(`${isBest ? '🏆 New best score!' : 'Ouch!'}`, `Score ${S.score} · best ${best}<br>${S.right} right, ${S.wrong} wrong · best combo ×${S.bestCombo}<br><br>Level ${lv} — ${levelOf(lv).scene}`, `Try level ${lv} again`, () => { newGame(lv); start(); }, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
     ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(() => { newGame(lv); start(); }); };
@@ -468,6 +471,17 @@ const Hammer = (() => {
     S.bits.push({ kind: 'half', name: 'sign' + st + '_l', sg, posts: sg.lposts, x: s.x * W + sg.l[0] * f, y: top, f, sh, vx: -W * .25, vy: -H * .5, rot: 0, vr: -2.5, t: 0 });
     S.bits.push({ kind: 'half', name: 'sign' + st + '_r', sg, posts: sg.rposts, x: s.x * W + sg.r[0] * f, y: top, f, sh, vx: W * .3, vy: -H * .6, rot: 0, vr: 3, t: 0 });
   }
+  function drawCoin(b) {
+    const g = ctx, k = jScale(), t = b.t, e = t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    const x0 = W * JX - 10 * k, y0 = H * GROUND - 150 * k, x1 = W - 26, y1 = 18;
+    const x = x0 + (x1 - x0) * e, y = y0 + (y1 - y0) * e - Math.sin(t * Math.PI) * 90 * k;   // up, over and down to the counter
+    const r = 18 * Math.min(k, 1.6) * (1 - .45 * e), sx = Math.cos(t * Math.PI * 2);            // one full turn on the way: the face narrows to an edge and back
+    g.save(); g.translate(x, y); g.scale(Math.max(.08, Math.abs(sx)), 1);
+    g.beginPath(); g.arc(0, 0, r, 0, Math.PI * 2); g.fillStyle = '#F2C230'; g.fill(); g.lineWidth = Math.max(1.5, r * .22); g.strokeStyle = '#B8860B'; g.stroke();
+    g.beginPath(); g.arc(0, 0, r * .62, 0, Math.PI * 2); g.strokeStyle = '#D9A520'; g.lineWidth = Math.max(1, r * .12); g.stroke();
+    g.fillStyle = '#FFF4B0'; g.beginPath(); g.ellipse(-r * .3, -r * .35, r * .22, r * .14, -.6, 0, Math.PI * 2); g.fill();
+    g.restore();
+  }
   function rr(g, x, y, w, h, r) { g.beginPath(); if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); }
   function sprite(n, x, y, k, alpha = 1, rot = 0) {
     const i = img(n); if (!ok(i)) return;
@@ -506,6 +520,7 @@ const Hammer = (() => {
       else if (b.kind === 'plank') { ctx.save(); ctx.translate(b.x * W, b.y * H); ctx.rotate(b.r); ctx.globalAlpha = 1 - b.t / 1.2; ctx.fillStyle = '#E8C27A'; ctx.fillRect(-W * .03, -H * .012, W * .06, H * .024); ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 2; ctx.strokeRect(-W * .03, -H * .012, W * .06, H * .024); ctx.restore(); }
       else if (b.kind === 'pop') { sprite('fx_star2', b.x * W, H * GROUND - 120 * jScale(), k * (1 + b.t * .6), 1 - b.t, b.t * 2); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#FFD23F'; ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 4; ctx.font = `900 ${jScale() * 44}px system-ui, sans-serif`; ctx.textAlign = 'center'; const py = H * GROUND - 170 * jScale() - b.t * H * .1; ctx.strokeText(b.text, b.x * W, py); ctx.fillText(b.text, b.x * W, py); ctx.globalAlpha = 1; }
       else if (b.kind === 'tick') { const ty = H * GROUND - 170 * jScale() - b.t * H * .1; sprite('fx_smallstar', b.x * W, ty, k * 1.2, 1 - b.t, b.t * 3); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#2E7D4F'; ctx.font = `900 ${jScale() * 40}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('✓', b.x * W + jScale() * 36, ty); ctx.globalAlpha = 1; }
+      else if (b.kind === 'coin') drawCoin(b);
       else if (b.kind === 'ouch') sprite('fx_redstar', W * JX + 10, H * GROUND - jScale() * 70, k * (1.2 + b.t), 1 - b.t / .9, -b.t);
     }
     ctx.restore();
@@ -515,7 +530,8 @@ const Hammer = (() => {
 
   /* ---------- DOM ---------- */
   function refreshUI() {
-    ui.score.textContent = S.score;
+    ui.score.textContent = (saved().coins || 0) + S.coinsShown;
+    const pts = stage && stage.querySelector('#hpts'); if (pts) pts.textContent = S.score;
     if (ui.lev) ui.lev.textContent = `L${S.level} · ${S.made}/${quota(S.level)}`;
     ui.lives.textContent = '❤️'.repeat(Math.max(0, S.lives)) + '🖤'.repeat(Math.max(0, LIVES - S.lives));
   }
@@ -615,10 +631,10 @@ const Hammer = (() => {
         <span class="plev">Jacques Hammer</span><span class="hlev" id="hlev"></span>
         <span class="ptag">${esc(opts.tag || '')}</span>
         <span class="hlives" id="hlives"></span>
-        <div class="pcash"><span class="lbl">score</span><b id="hscore">0</b></div>
+        <div class="pcash"><span class="lbl">🪙</span><b id="hscore">0</b></div>
       </div>
       <div class="hbox" id="hbox"><canvas id="hcv"></canvas><div class="hwhy" id="hwhy"></div><div class="overlay" id="hover" hidden></div></div>
-      <div class="hbar"><span class="small">Tap to swing. Smash <b>wrong</b> meanings, let <b>right</b> ones past.</span><span class="small">Best ${sv.best || 0}</span></div>`;
+      <div class="hbar"><span class="small">Tap to swing. Smash <b>wrong</b> meanings, let <b>right</b> ones past.</span><span class="small">Score <b id="hpts">0</b> · best ${sv.best || 0}</span></div>`;
     ui = { box: root.querySelector('#hbox'), overlay: root.querySelector('#hover'), score: root.querySelector('#hscore'), lives: root.querySelector('#hlives'), why: root.querySelector('#hwhy'), lev: root.querySelector('#hlev') };
     cv = root.querySelector('#hcv'); ctx = cv.getContext('2d');
     document.body.classList.add('noscroll');

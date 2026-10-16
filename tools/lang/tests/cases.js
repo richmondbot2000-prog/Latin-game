@@ -1,4 +1,4 @@
-// Regression tests for the English → Tunisian converter. Run: node tounsi/tests/cases.js
+// Regression tests for the English → Tunisian converter. Run: node tools/lang/tests/cases.js  (LANG_DIR=<folder> for another language; the cases are Tunisian)
 // A case: [English sentence, the English word to look at, what it must become (null = stays English)].
 const { Snap, words } = require('./run.js');
 const CASES = [

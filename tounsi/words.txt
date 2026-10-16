@@ -1,0 +1,510 @@
+# One word per line: level | word | english | pos | options (key=value; key=value)
+# level 0-4 = the vocabulary setting it joins (0 Basic, 1 top 200, 2 top 300, 3 top 400, 4 top 500) — each level is this word and all lower ones
+# pos: N (g=m/f; pl=plural; stem=possessive stem), V (pres=he does; p1=I did, ps=past stem for she/they, pp=they do, when irregular),
+#      Adj (f=feminine; pl=plural), adv, prep, conj, pro, qu, num, phrase.  sense=group,group marks near-synonyms never offered as each other's wrong answer.
+# A word that appears twice carries a tag in brackets to keep the ids apart: 3am (year), 3am (uncle).
+# ---- level 0 ----
+0|3aslema|hello|phrase|
+0|bislema|goodbye|phrase|
+0|3aychek|thank you, please|phrase|
+0|sam7ni|sorry, excuse me|phrase|
+0|chnowa|what|qu|
+0|chkoun|who|qu|
+0|win|where|qu|
+0|waqtech|when|qu|
+0|kifech|how|qu|
+0|3lech|why|qu|
+0|ena|I|pro|
+0|enti|you|pro|
+0|houwa|he|pro|
+0|hiya|she|pro|
+0|a7na|we|pro|
+0|houma|they|pro|
+0|hedha|this|pro|pl=hedhouma;f=hedhi
+0|hedheka|that|pro|pl=hedhoukom;f=hedhika
+0|3andi|I have|phrase|
+0|3andek|you have|phrase|
+0|3andou|he has|phrase|
+0|w|and|conj|
+0|wala|or|conj|
+0|ama|but|conj|sense=but
+0|khater|because|conj|sense=because
+0|fi|in|prep|
+0|3la|on, about|prep|
+0|men|from|prep|
+0|l|to, for|prep|
+0|m3a|with|prep|
+0|houni|here|adv|
+0|ghadi|there|adv|
+0|tawa|now|adv|
+0|elyoum|today|adv|
+0|ghodwa|tomorrow|adv|
+0|elbere7|yesterday|adv|
+0|dima|always|adv|
+0|wa7ed|one|num|
+0|zouz|two|num|
+0|thletha|three|num|
+0|arb3a|four|num|
+0|khamsa|five|num|
+0|setta|six|num|
+0|sab3a|seven|num|
+0|thmenya|eight|num|
+0|tes3a|nine|num|
+0|nhar|day|N|g=m;pl=nharat
+0|lil|night|N|g=m;pl=lyeli
+0|3am (year)|year|N|g=m;pl=snin
+0|rajel|man, husband|N|g=m;pl=rjel
+0|mra|woman, wife|N|g=f;pl=nsa
+0|baba|dad, father|N|g=m;stem=bou
+0|ommi|mum, mother|N|g=f;stem=omm
+0|khouya|my brother, brother|N|g=m;pl=khouti;stem=khou
+0|okht|sister|N|g=f;pl=khwat;stem=okht
+0|weld|son, boy|N|g=m;pl=wled
+0|bent|daughter, girl|N|g=f;pl=bnet
+0|ras|head|N|g=m;pl=rous
+0|3in|eye|N|g=f;pl=3inin
+0|yed|hand|N|g=f;pl=yeddin
+0|dar|house, home|N|g=f;pl=dyar
+0|beb|door|N|g=m;pl=biben
+0|srir|bed|N|g=m;pl=srayer
+0|chams|sun|N|g=f
+0|b7ar|sea|N|g=m;pl=b7our
+0|ma|water|N|g=m
+0|9attous|cat|N|g=m;pl=9tates
+0|kalb|dog|N|g=m;pl=kleb
+0|mekla|food|N|g=f;pl=meklat
+0|khobz|bread|N|g=m
+0|7lib|milk|N|g=m
+0|blad|country, town|N|g=f;pl=bolden;sense=town
+0|souk|market|N|g=m;pl=swa9
+0|7anout|shop|N|g=m;pl=7wanet
+0|mdrasa|school|N|g=f;pl=mdares
+0|mcha|go|V|pres=yemchi
+0|ja|come|V|pres=yji
+0|kla|eat|V|pres=yekel
+0|chrab|drink|V|pres=yochrob;ps=chorb
+0|r9ad|sleep|V|pres=yor9od;ps=ro9d
+0|khdem|work|V|pres=yekhdem
+0|9ra|read, study|V|pres=ya9ra
+0|chaf|see, look|V|pres=ychouf;p1=choft
+0|9al|say|V|pres=y9oul;p1=9olt
+0|3mal|do, make|V|pres=ya3mel;ps=3aml
+0|3ta|give|V|pres=ya3ti
+0|chra|buy|V|pres=yechri
+0|jeb|bring|V|pres=yjib
+0|7ab|like, love, want|V|pres=y7eb;p1=7abbit;ps=7abb;pp=y7ebbou
+0|3raf|know|V|pres=ya3raf;ps=3arf
+0|fhem|understand|V|pres=yefhem
+0|l3ab|play|V|pres=yel3ab
+0|behi|good, nice, OK|Adj|pl=behyin;f=behya;sense=good
+0|khayeb|bad, ugly|Adj|pl=khaybin;f=khayba
+0|kbir|big, old|Adj|pl=kbar;f=kbira
+0|sghir|small, young|Adj|pl=sghar;f=sghira
+0|jdid|new|Adj|pl=jdod;f=jdida
+0|far7an|happy|Adj|pl=far7anin;f=far7ana
+0|ta3ban|tired|Adj|pl=ta3banin;f=ta3bana
+0|mridh|ill|Adj|pl=mradh;f=mridha
+# ---- level 1 ----
+1|ahla|hi, welcome|phrase|
+1|sba7 el khir|good morning|phrase|
+1|msa el khir|good evening|phrase|
+1|tesba7 3la khir|good night|phrase|
+1|inshallah|hopefully, God willing|phrase|
+1|labes|fine, OK, well|phrase|
+1|9adech|how much, how many|qu|
+1|entouma|you (plural)|pro|
+1|lekin|but, however|conj|sense=but
+1|bech|in order to, will|conj|
+1|ken|if|conj|
+1|kif|when, as, like|conj|sense=when
+1|bla|without|prep|
+1|9bal|before|prep|
+1|ba3d|after|prep|
+1|mba3d|afterwards, later|adv|
+1|fou9|above, on top|prep|
+1|ta7t|under|prep|
+1|9oddem|in front of|prep|
+1|barcha|a lot, very, many|adv|sense=alot
+1|chwaya|a little|adv|
+1|bark|only, just|adv|
+1|zeda|also, too|adv|
+1|ey|yes|adv|
+1|le|no|adv|
+1|mouch|not|adv|
+1|famma|there is, there are|phrase|
+1|mafammech|there isn't, there aren't|phrase|
+1|kol|all, every|adv|
+1|7aja|thing, something|N|g=f;pl=7ajat
+1|yezzi|enough, stop it|phrase|
+1|heya|come on, let's go|phrase|
+1|3achra|ten|num|
+1|ethnin|Monday|N|g=m
+1|jem3a|Friday, week|N|g=f;pl=jme3
+1|sebt|Saturday|N|g=m
+1|a7ad|Sunday|N|g=m
+1|sa3a|hour, watch, clock|N|g=f;pl=sa3at
+1|chta|rain, winter|N|g=f
+1|tfol|boy, child|N|g=m;pl=sghar
+1|tofla|girl|N|g=f;pl=tofal
+1|sa7eb|friend|N|g=m;pl=s7ab;sense=friend
+1|wjeh|face|N|g=m;pl=wjouh
+1|wdhen|ear|N|g=f;pl=wdhnin
+1|khchem|nose|N|g=m;pl=khchouma
+1|bit|room|N|g=m;pl=byout
+1|koujina|kitchen|N|g=f;pl=koujinat
+1|chobbek|window|N|g=m;pl=chbebek
+1|korsi|chair|N|g=m;pl=krasa
+1|tilifoun|telephone|N|g=m;pl=tilifounet
+1|ktab|book|N|g=m;pl=ktob
+1|flous|money|N|g=m
+1|9mar|moon|N|g=m
+1|sma|sky|N|g=f
+1|skhoun|hot|Adj|pl=skhan;f=skhouna
+1|bared|cold|Adj|pl=bardin;f=barda
+1|7san|horse|N|g=m;pl=khil
+1|tir|bird|N|g=m;pl=tyour
+1|7out|fish|N|g=m;pl=7out
+1|bidh|eggs|N|g=m
+1|l7am|meat|N|g=m
+1|khodhra|vegetables|N|g=f
+1|ghalla|fruit|N|g=f
+1|tfe7|apple|N|g=m
+1|9ahwa|coffee, cafe|N|g=f;pl=9hawi
+1|tey|tea|N|g=m
+1|7lou|sweet, pretty|Adj|pl=7lowin;f=7lowa
+1|ji3an|hungry|Adj|pl=ji3anin;f=ji3ana
+1|3atchan|thirsty|Adj|pl=3atchanin;f=3atchana
+1|7wayej|clothes|N|g=m
+1|mdina|city, old town|N|g=f;pl=mdon;sense=town
+1|chera3|street|N|g=m;pl=chwere3
+1|thniya|road|N|g=f;pl=thnaya;sense=road
+1|blasa|place, seat|N|g=f;pl=blayes
+1|karhba|car|N|g=f;pl=krahab
+1|rja3|come back, return|V|pres=yerja3
+1|rawwa7|go home|V|pres=yrawwa7
+1|9am|get up, stand up|V|pres=y9oum;p1=9omt
+1|9a3ad|sit, stay|V|pres=yo93od
+1|kteb|write|V|pres=yekteb
+1|t3allem|learn|V|pres=yet3allem
+1|sma3|hear, listen|V|pres=yesma3
+1|7ka|talk, tell|V|pres=ya7ki
+1|khdha|take|V|pres=yekhou;pp=yekhdhou
+1|najjem|be able to, can|V|pres=ynajjem
+1|lezem|must, have to|phrase|
+1|twil|tall, long|Adj|pl=twal;f=twila
+1|9sir|short|Adj|pl=9sar;f=9sira
+1|9wi|strong|Adj|pl=9wiyin;f=9wiya
+1|9dim|old (thing)|Adj|pl=9dom;f=9dima
+1|ndhif|clean|Adj|pl=ndhaf;f=ndhifa
+1|mwassakh|dirty|Adj|pl=mwassakhin;f=mwassakha
+1|s3ib|difficult|Adj|pl=s3ab;f=s3iba
+1|sehel|easy|Adj|pl=sehlin;f=sehla
+1|ghali|expensive|Adj|pl=ghalyin;f=ghalya
+1|rkhis|cheap|Adj|pl=rkhas;f=rkhisa
+1|kelma|word|N|g=f;pl=klem
+1|3arbi|Arabic|N|g=m
+1|englizi|English|N|g=m
+1|mochkla|problem|N|g=f;pl=machekel
+# ---- level 2 ----
+2|y3aychek|thank you, bless you|phrase|
+2|3afwen|you're welcome, sorry|phrase|
+2|min fadhlek|please|phrase|
+2|el7amdoullah|thank God|phrase|
+2|marhba|welcome|phrase|
+2|chnia a7welek|how are you?|phrase|
+2|ya3tik sa7a|well done, thank you|phrase|
+2|mabrouk|congratulations|phrase|
+2|enehou|which|qu|f=enehi
+2|enehi|which (feminine)|qu|
+2|hedhi|this (feminine)|pro|
+2|hedhika|that (feminine)|pro|
+2|hedhoukom|those|pro|
+2|mte3i|mine, my|pro|
+2|mte3ek|yours|pro|
+2|mte3ou|his|pro|
+2|mte3ha|hers|pro|
+2|3andha|she has|phrase|
+2|3andna|we have|phrase|
+2|wra|behind|prep|
+2|jenb|next to|prep|
+2|bin|between|prep|
+2|dakhel|inside|adv|
+2|barra|outside|adv|
+2|9bila|a little while ago|adv|
+2|abadan|never|adv|
+2|sa3at|sometimes|adv|
+2|yesser|too much, a lot|adv|sense=alot
+2|ma ... ch|not (around a verb)|adv|
+2|chay|thing (7atta chay = nothing)|N|g=m;sense=thing
+2|7ad|someone, anyone|pro|
+2|akher|other, last|Adj|pl=okhrin;f=okhra
+2|nafs|same|adv|
+2|bara|go, go away|phrase|
+2|ya|oh (before a name)|phrase|
+2|mela|so, then|adv|
+2|3echrin|twenty|num|
+2|mya|hundred|num|
+2|alf|thousand|num|
+2|lowel|first|Adj|pl=lowlin;f=lowla
+2|sbe7|morning|N|g=m
+2|3chiya|afternoon, evening|N|g=f
+2|chhar|month|N|g=m;pl=chhour
+2|wa9t|time|N|g=m;pl=aw9at
+2|sif|summer|N|g=m
+2|3id|festival, holiday|N|g=m;pl=a3yad
+2|jed|grandfather|N|g=m;pl=jdoud
+2|jedda|grandmother|N|g=f;pl=jeddat
+2|3am (uncle)|uncle (father's side)|N|g=m;pl=3moum
+2|khal|uncle (mother's side)|N|g=m;pl=khwal
+2|3ayla|family|N|g=f;pl=3aylat
+2|sa7ba|friend (female)|N|g=f;pl=sa7bat;sense=friend
+2|nes|people|N|g=m
+2|esm|name|N|g=m;pl=asami
+2|mou3allem|teacher|N|g=m;pl=mou3allmin
+2|fom|mouth|N|g=m;pl=fwam
+2|sa9 (leg)|leg|N|g=f;pl=si9an
+2|rjel|foot|N|g=f;pl=rjelin
+2|tawla|table|N|g=f;pl=twabel
+2|mefte7|key|N|g=m;pl=mfete7
+2|chkara|bag|N|g=f;pl=chkayer
+2|stilou|pen|N|g=m;pl=stilouwet
+2|nar|fire|N|g=f
+2|chajra|tree|N|g=f;pl=chajrat
+2|djeja|hen, chicken|N|g=f;pl=djej
+2|mel7|salt|N|g=m
+2|sokkor|sugar|N|g=m
+2|kosksi|couscous|N|g=m
+2|fter|breakfast|N|g=m
+2|ghda|lunch|N|g=m
+2|3cha|dinner|N|g=m
+2|sabbat|shoes|N|g=m;pl=sbabet
+2|mat3am|restaurant|N|g=m;pl=mata3em
+2|sbitar|hospital|N|g=m;pl=sbitarat
+2|jnina|garden|N|g=f;pl=jnayen
+2|kar|bus, coach|N|g=m;pl=kiran
+2|tren|train|N|g=m;pl=trenet
+2|dfa3|pay|V|pres=yedfa3
+2|nsa|forget|V|pres=yensa
+2|dh7ak|laugh|V|pres=yodh7ak
+2|bka|cry|V|pres=yebki
+2|jra|run|V|pres=yejri
+2|dkhal|go in|V|pres=yodkhol
+2|khraj|go out|V|pres=yokhroj
+2|7at|put|V|pres=y7ot;p1=7attit;ps=7att;pp=y7ottou
+2|l9a|find|V|pres=yel9a
+2|7all (verb)|open|V|pres=y7ell;p1=7allit
+2|sakkar|close|V|pres=ysakkar
+2|bda|start|V|pres=yebda
+2|kammal|finish|V|pres=ykammal
+2|stanna|wait|V|pres=yestanna
+2|3awen|help|V|pres=y3awen
+2|9rib|near|Adj|pl=9rab;f=9riba
+2|b3id|far|Adj|pl=b3ad;f=b3ida
+2|7azin|sad|Adj|pl=7azinin;f=7azina
+2|ghadhban|angry|Adj|pl=ghadhbanin;f=ghadhbana
+2|loun|colour|N|g=m;pl=alwan
+2|ak7al|black|Adj|pl=kou7l;f=ka7la
+2|abyadh|white|Adj|pl=boudh;f=bidha
+2|khedma|work, job|N|g=f;pl=khedmat
+# ---- level 3 ----
+3|barak allahou fik|thank you very much|phrase|
+3|bellehi|please, really?|phrase|
+3|rabbi|God|N|g=m
+3|hedhouma|these|pro|
+3|wast|middle|N|g=m
+3|yemin|right (side)|N|g=m
+3|ysar|left (side)|N|g=m
+3|fisa3|quickly|adv|
+3|bechwaya|slowly, gently|adv|
+3|7atta|even, until, not even|adv|
+3|nos|half|N|g=m;pl=nsas
+3|ethletha|Tuesday|N|g=f
+3|larb3a|Wednesday|N|g=m
+3|lekhmis|Thursday|N|g=m
+3|wled|children, boys|N|g=m
+3|bnet|girls|N|g=f
+3|tbib|doctor|N|g=m;pl=tobba
+3|tounsi|Tunisian|N|g=m;pl=twensa
+3|senna|tooth|N|g=f;pl=snen
+3|ch3ar|hair|N|g=m
+3|9alb|heart|N|g=m;pl=9loub
+3|bit el banyou|bathroom|N|g=m
+3|7it|wall|N|g=m;pl=7youta
+3|lardh|floor, ground|N|g=f
+3|ghta|blanket, cover, lid|N|g=m;pl=ghtayat
+3|dhaw|light, electricity|N|g=m
+3|thallaja|fridge|N|g=f;pl=thallajat
+3|sa7n|plate|N|g=m;pl=s7oun
+3|kes|glass, cup|N|g=m;pl=kisen
+3|mo3al9a|spoon|N|g=f;pl=m3ale9
+3|sekkina|knife|N|g=f;pl=skaken
+3|lo3ba|game, toy|N|g=f;pl=l3ab
+3|koura|ball, football|N|g=f;pl=kourat
+3|njoum|stars|N|g=m
+3|ardh|earth, land|N|g=f
+3|chatt|beach|N|g=m;pl=chtout
+3|hwa|air, wind|N|g=m
+3|thelj|snow|N|g=m
+3|7ayawan|animal|N|g=m;pl=7ayawanet
+3|b7im|donkey|N|g=m;pl=b7ayem
+3|ba9ra|cow|N|g=f;pl=b9ar
+3|3allouch|sheep|N|g=m;pl=3lalech
+3|ma3za|goat|N|g=f;pl=m3iz
+3|djej|chicken (meat)|N|g=m
+3|banan|banana|N|g=m
+3|tmar|dates|N|g=m
+3|zitoun|olives|N|g=m
+3|zit|oil|N|g=f
+3|harissa|harissa|N|g=f
+3|rouz|rice|N|g=m
+3|batata|potato|N|g=f
+3|bnin|delicious|Adj|pl=bninin;f=bnina
+3|maryoul|t-shirt, top|N|g=m;pl=mrayel
+3|serwel|trousers|N|g=m;pl=srawel
+3|7ouma|neighbourhood|N|g=f;pl=7oumat
+3|jeme3|mosque|N|g=m;pl=jwame3
+3|tayara|plane|N|g=f;pl=tayarat
+3|3allem|teach|V|pres=y3allem
+3|be3|sell|V|pres=ybi3
+3|tfakker|remember|V|pres=yetfakker
+3|fakker|think|V|pres=yfakker
+3|7as|feel|V|pres=y7es;p1=7assit;ps=7ass;pp=y7essou
+3|khaf|be afraid|V|pres=ykhaf;p1=khoft
+3|tla3|go up, climb|V|pres=yotla3;ps=tal3
+3|w9af|stop, stand|V|pres=you9ef
+3|ta7|fall|V|pres=ytih;p1=to7t
+3|n9ez|jump|V|pres=yon9ez
+3|3am (verb)|swim|V|pres=y3oum;p1=3omt
+3|sa9 (verb)|drive|V|pres=ysou9;p1=so9t
+3|rkeb|ride, get on|V|pres=yerkeb
+3|mezyen|good, lovely|Adj|pl=mezyenin;f=mezyena;sense=good
+3|smin|fat|Adj|pl=sman;f=smina
+3|dh3if|thin, weak|Adj|pl=dh3af;f=dh3ifa
+3|sri3|fast|Adj|pl=sra3;f=sri3a
+3|bati|slow|Adj|pl=batyin;f=batya
+3|s7i7|true, healthy|Adj|pl=s7a7;f=s7i7a
+3|ghalet|wrong|Adj|pl=ghaltin;f=ghalta
+3|mahboul|crazy|Adj|pl=mhabel;f=mahboula
+3|dhki|clever|Adj|pl=dhkiyin;f=dhkiya
+3|meskin|poor thing|Adj|pl=msakin;f=meskina
+3|ghani|rich|Adj|pl=ghniya;f=ghaniya
+3|a7mar|red|Adj|pl=7omr;f=7amra
+3|azra9|blue|Adj|pl=zor9;f=zar9a
+3|akhdhar|green|Adj|pl=khodhr;f=khadhra
+3|asfar|yellow|Adj|pl=sofr;f=safra
+3|klam|talk, words|N|g=m
+3|loghha|language|N|g=f;pl=loghat
+3|fransawi|French|N|g=m
+3|souel|question|N|g=m;pl=as2ila
+3|jweb|answer|N|g=m;pl=ajwiba
+3|7all (solution)|solution|N|g=m;pl=7loul
+3|fekra|idea|N|g=f;pl=afkar
+3|7kaya|story|N|g=f;pl=7kayet
+3|film|film|N|g=m;pl=aflem
+3|mousi9a|music|N|g=f
+3|ghnaya|song|N|g=f;pl=ghnayet
+3|3ers|wedding|N|g=m;pl=3ras
+3|7ayat|life|N|g=f
+3|dars|lesson|N|g=m;pl=drous
+3|9raya|studying, school|N|g=f
+# ---- level 4 ----
+4|bes7a|enjoy (to someone eating or wearing something new)|phrase|
+4|sa7a|health, cheers|N|g=f
+4|mte3na|ours|pro|
+4|mte3hom|theirs|pro|
+4|wa7dou|alone, by himself|adv|
+4|kol youm|every day|adv|
+4|okhra|other (feminine)|Adj|pl=okhrin;f=okhra
+4|mazel|still, not yet|adv|
+4|ya3ni|I mean, that is|adv|
+4|momken|maybe, possible|adv|sense=maybe
+4|marra|once, one time|N|g=f;pl=marrat
+4|rbi3|spring|N|g=m
+4|khrif|autumn|N|g=m
+4|3omr|age, life|N|g=m;pl=a3mar
+4|3amma|aunt (father's side)|N|g=f;pl=3ammat
+4|khala|aunt (mother's side)|N|g=f;pl=khalat
+4|jar|neighbour|N|g=m;pl=jiran
+4|sba3|finger|N|g=m;pl=sweba3
+4|dhahr|back|N|g=m;pl=dhhoura
+4|kerch|belly|N|g=f;pl=krouch
+4|forchita|fork|N|g=f;pl=forchitet
+4|sabon|soap|N|g=m
+4|tilivizyoun|television|N|g=f;pl=tilivizyounet
+4|wra9a|sheet of paper|N|g=f;pl=wra9
+4|dinar|dinar|N|g=m;pl=dnanir
+4|hdiya|present, gift|N|g=f;pl=hdaya
+4|jbel|mountain|N|g=m;pl=jbal
+4|ghaba|forest|N|g=f;pl=ghabat
+4|warda|flower|N|g=f;pl=wrad
+4|7jar|stone|N|g=m;pl=7jar
+4|taqs|weather|N|g=m
+4|jmal|camel|N|g=m;pl=jmel
+4|arneb|rabbit|N|g=m;pl=arenab
+4|jben|cheese|N|g=m
+4|3asir|juice|N|g=m
+4|7ar|spicy, hot|Adj|pl=7arrin;f=7arra
+4|chab3an|full (after eating)|Adj|pl=chab3anin;f=chab3ana
+4|nwadher|glasses|N|g=m
+4|taxi|taxi|N|g=m;pl=taxiyet
+4|bisklet|bicycle|N|g=f;pl=bisklet
+4|dhayya3|lose (something)|V|pres=ydhayya3
+4|tayyeb|cook|V|pres=ytayyeb
+4|ghsel|wash|V|pres=yeghsel
+4|naddhaf|clean|V|pres=ynaddhaf
+4|lbes|wear, get dressed|V|pres=yelbes
+4|kbar|grow up|V|pres=yekbar
+4|3ach|live|V|pres=y3ich;p1=3echt
+4|met|die|V|pres=ymout;p1=mott
+4|dhrab|hit|V|pres=yodhrob;ps=dharb
+4|ksar|break|V|pres=yeksar
+4|tlob|ask for, order|V|pres=yotlob
+4|sa9sa|ask (a question)|V|pres=ysa9si
+4|jaweb|answer|V|pres=yjeweb
+4|7lem|dream|V|pres=ya7lem
+4|ghanna|sing|V|pres=yghanni
+4|chta7|dance|V|pres=yochta7
+4|khalla|leave, let|V|pres=ykhalli
+4|jarrab|try|V|pres=yjarrab
+4|yest7a9|need|V|pres=yest7a9;p1=st7a9it;ps=st7a9;pp=yest7a9ou
+4|zed|add, to do again|V|pres=yzid
+4|rbe7|win|V|pres=yerba7
+4|khsar|lose (a game), to break down|V|pres=yekhsar
+4|ghabi|stupid|Adj|pl=ghabyin;f=ghabya
+4|zawali|poor|Adj|pl=zawaliya;f=zawaliya
+4|mchghoul|busy|Adj|pl=mchghoulin;f=mchghoula
+4|7adher|ready, present|Adj|pl=7adhrin;f=7adhra
+4|ghayeb|absent|Adj|pl=ghaybin;f=ghayba
+4|m3abbi|full|Adj|pl=m3abbyin;f=m3abbya
+4|faregh|empty|Adj|pl=farghin;f=fargha
+4|mfatta7|open|Adj|pl=mfatt7in;f=mfatt7a
+4|msakkar|closed|Adj|pl=msakkrin;f=msakkra
+4|yebes|dry|Adj|pl=yebsin;f=yebsa
+4|mballel|wet|Adj|pl=mballelin;f=mballela
+4|th9il|heavy|Adj|pl=th9al;f=th9ila
+4|khfif|light (not heavy)|Adj|pl=khfaf;f=khfifa
+4|3ali|high, loud|Adj|pl=3alyin;f=3alya
+4|wati|low, quiet|Adj|pl=watyin;f=watya
+4|wase3|wide, roomy|Adj|pl=was3in;f=was3a
+4|dhaya9|narrow, tight|Adj|pl=dhay9in;f=dhay9a
+4|morr|bitter|Adj|pl=morrin;f=morra
+4|7amedh|sour|Adj|pl=7amdhin;f=7amdha
+4|mkhawwef|scary|Adj|pl=mkhawwfin;f=mkhawwfa
+4|dounya|world, life|N|g=f
+4|imti7an|exam|N|g=m;pl=imti7anet
+4|7a9|truth, right|N|g=m
+4|kedhb|lie|N|g=m
+4|khir|good, goodness|N|g=m
+4|chorr|evil, harm|N|g=m
+4|7oub|love|N|g=m
+4|khouf|fear|N|g=m
+4|far7|joy|N|g=m
+4|7ozn|sadness|N|g=m
+4|dhe7ka|laugh|N|g=f;pl=dhe7kat
+4|sout|voice, sound|N|g=m;pl=aswat
+4|ri7a|smell|N|g=f;pl=rwaye7
+4|dhou9|taste|N|g=m
+4|3a9l|mind, sense|N|g=m
+4|rou7|soul, self|N|g=f;pl=arwa7
+4|7adh|luck|N|g=m;sense=luck
+4|zhar|luck|N|g=m;sense=luck

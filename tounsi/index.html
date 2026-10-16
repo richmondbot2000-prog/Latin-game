@@ -11,21 +11,22 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Tounsi">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<!-- the game lives at /tounsi/ and shares the Latin game's art and engine files from the site root -->
+<!-- DERIVED FILE (tools/lang/build_app.py from index.template.html). The game lives at /tounsi/ and shares the Latin game's art and engine files from the site root -->
 <base href="../">
 <link rel="manifest" href="tounsi/manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="stylesheet" href="app.css">
-<link rel="stylesheet" href="tounsi/tounsi.css">
+<link rel="stylesheet" href="tounsi/theme.css">
 </head>
 <body>
 <div id="app"></div>
 <div id="sheet" class="sheet" hidden></div>
-<script>const APP_NS = 'tounsi';</script>
+<script>const APP_NS = 'tounsi'; const LANG = {"code": "tounsi", "name": "Tounsi", "tts": {"lang": "ar-TN", "fallback": "ar", "script": "chat-arabic", "auto": true, "rate": 0.85}};</script>
 <script src="tounsi/vocab.js"></script>
 <script src="effects.js"></script>
 <script src="rig.js"></script>
+<script src="speak.js"></script>
 <script src="practice.js"></script>
 <script src="tounsi/forms.js"></script>
 <script src="tounsi/read.js"></script>

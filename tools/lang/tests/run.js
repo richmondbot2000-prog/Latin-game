@@ -1,5 +1,5 @@
-// Runs the Tunisian converter on sentences: node tounsi/tests/run.js "The boy goes to school." …
-const fs = require('fs'), vm = require('vm'), path = require('path'), dir = path.join(__dirname, '..');
+// Runs a language's converter on sentences: LANG=tounsi node tools/lang/tests/run.js "The boy goes to school." …
+const fs = require('fs'), vm = require('vm'), path = require('path'), dir = path.join(__dirname, '..', '..', '..', process.env.LANG_DIR || 'tounsi');
 const c = { console, document: { baseURI: 'http://x/' } }; vm.createContext(c);
 for (const f of ['vocab.js', 'forms.js', 'snap.js']) vm.runInContext(fs.readFileSync(path.join(dir, f), 'utf8').replace(/^const (\w+) =/m, 'var $1 ='), c);
 const words = c.VOCAB.map(w => ({ ...w, id: w.word }));

@@ -1,0 +1,4 @@
+[
+  { "code": "latin", "name": "Latin", "flag": "🏛️", "path": "./", "language": "Latin" },
+  { "code": "tounsi", "name": "Tounsi", "flag": "🇹🇳", "path": "tounsi/", "language": "Tunisian Arabic" }
+]

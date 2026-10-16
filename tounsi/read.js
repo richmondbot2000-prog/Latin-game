@@ -1,6 +1,6 @@
 // Read: Tunisian sentences by level (lv 0 Basic … 4) and short stories (p, pt). Each token is [form, headword, English in
 // this form, shape] (headword = the id in vocab.js; shape nd = definite noun, n2 = plural, v3s… = verb person, p1s… = past,
-// adj, o = other); punctuation and names are [text, null]. Built by tounsi/tools/build_read.js from sentences.txt.
+// adj, o = other); punctuation and names are [text, null]. Built by tools/lang/build_read.js from sentences.txt.
 const SENTENCES = [
   {"la":[["El-weld","weld","the son","nd"],["yemchi","mcha","he/she goes","v3s"],["lel-mdrasa","mdrasa","to school","o"],[".",null]],"en":"The boy goes to school.","lv":0},
   {"la":[["El-bent","bent","the daughter","nd"],["tekel","kla","you eat","v2s"],["el-khobz","khobz","the bread","nd"],[".",null]],"en":"The girl eats the bread.","lv":0},

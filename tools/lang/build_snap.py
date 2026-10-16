@@ -1,10 +1,11 @@
-# Builds ../snap.js: the English → Tunisian converter. The English analysis (tokens, the word tables, the photo
+# Builds <lang>/snap.js: the English → <language> converter. The English analysis (tokens, the word tables, the photo
 # reader, the option shaper) is taken verbatim from the Latin game's snap.js, so fixes there carry across; the
-# Tunisian grammar and the sentence rules are in snap_tn.js here. Run from tounsi/tools: python3 build_snap.py
-import re, pathlib
+# language's grammar and sentence rules are in <lang>/grammar.js. Run from the repo root: python3 tools/lang/build_snap.py <lang folder>
+import re, sys, pathlib
 root = pathlib.Path(__file__).resolve().parents[2]
+lang = root / sys.argv[1]
 la = (root / 'snap.js').read_text()
-tn = (pathlib.Path(__file__).parent / 'snap_tn.js').read_text()
+tn = (lang / 'grammar.js').read_text()
 
 def between(a, b):
     i = la.index(a); j = la.index(b, i)
@@ -24,5 +25,5 @@ shape = between('  // an English meaning of another word', '  return { latinise,
 
 out = tn.replace('/*SHARED_CONSTS*/', shared_consts).replace('/*TOKENS*/', tokens).replace('/*OCR*/', ocr).replace('/*SHAPE*/', shape)
 assert '/*' not in out.replace('/* ', '').replace('/**', ''), 'unfilled marker'
-(root / 'tounsi' / 'snap.js').write_text(out)
-print('built tounsi/snap.js', len(out.splitlines()), 'lines')
+(lang / 'snap.js').write_text(out)
+print('built', sys.argv[1] + '/snap.js', len(out.splitlines()), 'lines')

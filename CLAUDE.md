@@ -413,7 +413,7 @@ Per-player counters live in
   sheets by `scratchpad/scenes.py` (session scratchpad; it finds the sky and
   ground bands by row runs, the props by connected components, classes them
   by shape and brightness, with `scene_overrides.json` for the few it gets
-  wrong). Clearing a level pays **coins**; the **Items**
+  wrong). **Coins**: 3 for every sign judged right, paid on the spot — a gold coin pops out behind Jacques, turns once and flies to the 🪙 counter at the top right (`earnCoin`, `drawCoin`, bits of kind `coin`; the counter ticks up when it lands), plus 10 at the end of a level and 15 more for a perfect one; the score sits in the bar underneath; the **Items**
   screen (JACQUE / HAMMER / PUP / SHOP tabs, after the artist's mockup) sells
   26 costumes, 23 'hammers' and 5 pups, owned for ever and worn whenever.
   Art in `art/jh/`. **Characters are the artist's Spine rigs** played by
@@ -447,53 +447,79 @@ Per-player counters live in
   `rig.js`, `practice.js` sprite tables) retries a failed load a few seconds
   later, and Jacques Hammer says "Loading the scene…" and **does not start** (`loaded()` / `S.ready` in `hammer.js`: clock at zero, no signs made) until the scene, the sign, Jacques, the dog and, for the intro, the Decoy are all in — after 12 s it starts anyway (`scratchpad/jhslow.js` tests it with every picture 3 s late).
 
-## Tounsi — the Tunisian Arabic sister game (`tounsi/`)
+## Other languages: Tounsi (`tounsi/`) and how to add one
 
-Live at **https://latin.musicalmagic.uk/tounsi/** (same site, same rules: public
-repo, nothing personal, no accounts). The same game for Tunisian Arabic
-(Derja) in the Latin-letter spelling Tunisians text in (3 = ayn, 7 = ḥ, 9 = q,
-kh, gh, ch, dh, th). 500 words in five settings of 100: Basic, Top 200, 300,
-400, 500 (`level` 0–4). It shares the engine with the Latin game rather than
-copying it: `tounsi/index.html` has `<base href="../">`, sets `APP_NS = 'tounsi'`
-and loads the root `app.css`, `effects.js`, `rig.js`, `practice.js`,
-`hammer.js`, `beasts.js`, `sync.js` plus its own `vocab.js`, `forms.js`,
-`read.js`, `phrases.js`, `synonyms.js`, `snap.js`, `app.js`. **Storage**: the
-shared files key their progress by `NS_P / NS_H / NS_B / NS_S` (= `APP_NS` or
-`latin`), so Tounsi progress lives under `tounsi.*` while the player list
-(`latin.users`, `latin.current`) is shared — one profile plays both games;
-the sync blob is a separate one (key hash of `tounsi:` + code), player names
-for gifts are a separate namespace. **Derived files** (never edit by hand):
-`tounsi/app.js`, `sw.js`, `manifest.webmanifest` are built from the Latin
-ones by `tounsi/tools/build_app.py` (checked text replacements: five levels,
-no book, verb cards show "mcha / yemchi", English shapes `nd` "the house" and
-the past with its pronoun, Tunisian wording, a link back to Latin);
-`tounsi/snap.js` by `build_snap.py` from `tools/snap_tn.js` (the Tunisian
-grammar and sentence rules) plus the Latin `snap.js`'s English analysis,
-photo reader and option shaper; `tounsi/vocab.js` by `build_vocab.py` from
-`tools/approved.tsv` (the 500 in theme order) and `tools/words.txt` (gender,
-plurals, verb stems, levels; a word's `stem` takes possessive endings:
-ommou, bouk, khouh); `tounsi/read.js` and `phrases.js` by `build_read.js`
-from `tools/sentences.txt` (227 sentences, 10 stories, in a notation that
-looks every form up in `forms.js` and refuses a word above the sentence's
-level; `form=headword|gloss` for anything irregular, `Name=-`). **After a
-change to the Latin `app.js`, `sw.js` or `snap.js`, rerun the three build
-scripts and bump `tounsi/VERSION`** (= `APP_VERSION` and the `tounsi-vN`
-cache name). `tounsi/forms.js`: verbs from the "he does" form (present six
-persons; plural stem drops the short vowel: yekhdem → yekhdmou, or adds w
-after a vowel: yemchi → yemchiw) and the "he did" headword (past: mchit /
-mchet / mchaw / mchina / mchitou; CCVC verbs shift the vowel: khdem →
-khedmet; `p1`, `ps`, `pp` in vocab.js for the irregular ones); nouns take the
-definite article with sun letters (ed-dar, ech-chams, eth-thelj) and the
-plural from the entry; adjectives f / pl from the entry. The converter
-(`Snap.latinise`): no cases — "the" folds into a definite noun, "to the
-market" → les-souk, "my house" → dari (or karhba mte3i after -a), verbs by
-person and tense (present; past; bech + present for "will"; kan + present
-for "was doing"; ma …ch for "not"; can → ynajjem, must → lezem), is/are
-dropped, was/were → kan/kanet/kanou, has/have → 3and-, there is → famma.
-Tests: `node tounsi/tests/cases.js` (sentence cases, add one per mistake),
-`tounsi/tests/run.js "…"` prints a conversion. Browser tour:
-`scratchpad/tounsi2.js`. Known gaps: the banners still show Latin words;
-Gutenberg books convert to Tunisian live, so quality follows the converter.
+Every language game is a folder at the site root built on the Latin engine;
+**Tounsi** (Tunisian Arabic, Derja) is live at
+**https://latin.musicalmagic.uk/tounsi/** — same rules as the Latin game
+(public repo, nothing personal, no accounts). `languages.json` lists the
+games; every home page links to the others from it (`otherGames()`).
+A language folder holds the hand-written `lang.json` (code, name, flag,
+greeting, tagline, level names, theme colour, `tts`), `words.txt` (the word
+list, one per line: `level | word | english | pos | options`; the single
+source of `vocab.js`), `forms.js` (every form of a word with its shape),
+`grammar.js` (its half of the English → language converter), `sentences.txt`
+(sentences and stories by level, in a notation that looks every form up in
+`forms.js` and refuses a word above the level; `form=headword|gloss` for
+anything irregular, `Name=-`), `synonyms.txt`, `theme.css` and `VERSION`.
+`python3 tools/lang/build.py <folder>` then writes the **derived files, never
+edited by hand**: `vocab.js`, `index.html` (from
+`tools/lang/index.template.html`: `<base href="../">`, `APP_NS`, `LANG`),
+`app.js`, `sw.js`, `manifest.webmanifest` (checked text replacements of the
+Latin ones in `build_app.py`), `read.js`, `phrases.js`, `synonyms.js`
+(`build_read.js`) and `snap.js` (`build_snap.py`: `grammar.js` plus the
+Latin `snap.js`'s English analysis, photo reader and option shaper). **Rerun
+the build and bump the folder's `VERSION` after any change to the Latin
+`app.js`, `sw.js` or `snap.js`** (`VERSION` = its `APP_VERSION` and the
+`<code>-vN` cache name). The shared engine files key storage by `NS_P / NS_H /
+NS_B / NS_S` (= `APP_NS` or `latin`): a language's progress lives under
+`<code>.*`, its sync blob under the hash of `<code>:` + code, its gift names
+in their own namespace, while the player list (`latin.users`,
+`latin.current`) and the read-aloud setting are shared — one profile plays
+every game. `tools/lang/README.md` is the recipe; tests:
+`LANG_DIR=<folder> node tools/lang/tests/cases.js` (Tunisian cases, add one
+per mistake) and `tools/lang/tests/run.js "…"` prints a conversion;
+browser tour `scratchpad/tounsi2.js`.
+
+**Tounsi specifics.** 500 words in five settings of 100 (Basic, Top 200 …
+500; `level` 0–4) in the Latin-letter spelling Tunisians text in (3 = ayn,
+7 = ḥ, 9 = q, kh, gh, ch, dh, th). `forms.js`: verbs from the "he does" form
+(present in six persons; the plural stem drops a short vowel, yekhdem →
+yekhdmou, or adds w after a vowel, yemchi → yemchiw) and the "he did"
+headword (past mchit / mchet / mchaw / mchina / mchitou; CCVC verbs shift
+the vowel, khdem → khedmet; `p1`, `ps`, `pp` in words.txt for the irregular
+ones); nouns take the definite article with sun letters (ed-dar, ech-chams,
+eth-thelj; never on larb3a / lekhmis / ethletha / ethnin) and the plural from
+the entry; a `stem` takes possessive endings (ommou, bouk, khouh);
+adjectives f / pl from the entry; a word that appears twice carries a tag,
+`3am (year)`. The converter: no cases — "the" folds into a definite noun,
+"to the market" → les-souk, "my house" → dari (karhba mte3i after -a),
+verbs by person and tense (present; past; bech + present for "will"; kan +
+present for "was doing"; ma …ch for "not"; can → ynajjem, must → lezem),
+is/are dropped, was/were → kan/kanet/kanou, has/have → 3and-, there is →
+famma, "once upon a time" left alone. 227 sentences and 10 stories (two a
+level). Known gaps: the banners still show Latin words; Gutenberg books
+convert live, so quality follows the converter.
+
+## Read aloud (`speak.js`)
+
+Words are read with the phone's own voices (Web Speech API; nothing is
+sent anywhere). `LANG.tts` in each index.html: Tounsi `{ lang: 'ar-TN',
+fallback: 'ar', script: 'chat-arabic', auto: true }` — `chatToArabic` turns
+the chat spelling into Arabic script first (el-/ed-/ech- → ال, short a/e/o/u
+not written, a doubled consonant once), which the Arabic voices read; Latin
+`{ lang: 'it-IT', auto: false }` (Italian comes closest). The setting
+`latin.speak` (shared; default = `auto`) is the "Reading words aloud" line
+on the home page. `Speak.say(text)` reads when the setting is on,
+`say(text, true)` always: a card as it comes up, the highlighted word in
+Sentences, each line of Passages, the word in focus in the reader; 🔊
+buttons (`.cardspeak / .barspeak / .gripspeak`, one document click
+handler) read again. Recorded clips beat the synthetic voice: `LANG.tts.audio`
+names a folder with `index.json` ({ form: file }); `tools/lang/synth_azure.py
+<folder> ar-TN-HediNeural` records every form and sentence with Azure's
+Tunisian voices (needs `AZURE_SPEECH_KEY` / `AZURE_SPEECH_REGION` in the
+environment, never in the repo) into `<folder>/audio/`. Headless tests stub
+`speechSynthesis` (`scratchpad/speaktest.js`).
 
 ## Cloud sync (switched on)
 

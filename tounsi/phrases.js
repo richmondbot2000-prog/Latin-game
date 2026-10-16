@@ -1,4 +1,4 @@
-// Example sentences for the cards (the first sentence of read.js that holds each word). Built by tounsi/tools/build_read.js.
+// Example sentences for the cards (the first sentence of read.js that holds each word). Built by tools/lang/build_read.js.
 const PHRASES = {"weld":{"la":"*El-weld* yemchi lel-mdrasa.","en":"The boy goes to school."},
   "mcha":{"la":"El-weld *yemchi* lel-mdrasa.","en":"The boy goes to school."},
   "mdrasa":{"la":"El-weld yemchi *lel-mdrasa*.","en":"The boy goes to school."},
