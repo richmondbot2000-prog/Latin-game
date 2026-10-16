@@ -215,7 +215,7 @@ const Snap = (() => {
       if (low[k] === 'not' && /^(is|are|am)$/.test(low[k - 1] || '') && !(info[k + 1] && info[k + 1].kind === 'v')) { info[k] = { kind: 'word', la: 'mouch', id: 'mouch', len: 1 }; continue; }
       if (low[k] === 'not') continue;   // "not" with a verb is ma …ch, done in pass 2
       if (low[k] === 'to' || low[k] === 'for') {   // to the market → lel-souk (the article joins the l); to school → l mdrasa
-        let m = k + 1; while (m < n && info[m] && info[m].kind === 'fold') m++;
+        let m = k + 1; while (m < n && info[m] && (info[m].kind === 'fold' || info[m].kind === 'a')) m++;   // to the new school → lel-mdrasa el-jdida
         if (isWord(m) && info[m] && info[m].kind === 'n' && W.l) { if (info[m].def) { info[m].def = false; info[m].lel = true; info[k] = { kind: 'fold' }; } else info[k] = { kind: 'word', la: 'l', id: 'l', len: 1 }; }
         continue; }
       const s = SMALL[low[k]];
@@ -246,6 +246,20 @@ const Snap = (() => {
       if (!out[k].la) continue;
       let a = k; while (a > 0 && out[a - 1].skip && !out[a - 1].la && !out[a - 1].tail) a--;
       out[k].gloss = sent.slice(a, k + (out[k].len || 1)).join(' ');
+    }
+    // Tunisian puts the adjective after its noun, and gives it the article when the noun has one: "the old man" →
+    // er-rajel el-kbir, "a cold night" → lil bared, "the big old house" → ed-dar el-kbira el-9dima. The words are
+    // swapped in place, so the Tunisian reads in its own order and the English, once answered, in the same order.
+    const uncap = la => la && /^[A-Z]/.test(la) ? la[0].toLowerCase() + la.slice(1) : la;
+    for (let k = 0; k < n; k++) {
+      if (!(info[k] && info[k].kind === 'a' && out[k].la && (out[k].len || 1) === 1)) continue;
+      let m = k + 1; while (m < n && info[m] && info[m].kind === 'a' && out[m].la && (out[m].len || 1) === 1) m++;
+      if (!(m < n && info[m] && info[m].kind === 'n' && out[m].la && (out[m].len || 1) === 1)) continue;
+      const def = !!(info[m].def || info[m].lel || info[m].poss);
+      const pick = j => ({ la: uncap(out[j].la), id: out[j].id, gloss: out[j].gloss });
+      const run = [pick(m)]; for (let j = k; j < m; j++) { const a = pick(j); if (def) a.la = Forms.definite(a.la); run.push(a); }
+      for (let j = k; j <= m; j++) { const a = run[j - k]; out[j].la = cap(sent[j], a.la); out[j].id = a.id; out[j].gloss = a.gloss; }
+      k = m;
     }
     return out;
   }

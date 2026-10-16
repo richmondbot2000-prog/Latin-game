@@ -7,12 +7,17 @@ const CASES = [
   ['I want to go to the market tomorrow.', 'go', 'nemchi'], ['I want to go to the market tomorrow.', 'market', 'les-souk'],
   ['We did not find the key.', 'find', 'ma l9inach'],
   ['The woman saw the dog.', 'saw', 'chafet'],
+  ['I saw the old man.', 'old', 'el-kbir'], ['I saw the old man.', 'man', 'er-rajel'],
+  ['It was a cold night.', 'cold', 'bared'], ['It was a cold night.', 'night', 'lil'],
+  ['They live in the big old house.', 'big', 'el-kbira'], ['They live in the big old house.', 'old', 'el-9dima'], ['They live in the big old house.', 'house', 'ed-dar'],
+  ['She went to the new school.', 'new', 'el-jdida'], ['She went to the new school.', 'school', 'lel-mdrasa'],
+  ['The house is big.', 'big', 'kbira'],
   ['The daughters were all beautiful, but the youngest was so beautiful.', 'beautiful', 'mezyenin'], ['The girl is beautiful.', 'beautiful', 'mezyena'],
   ['They will come to the house on Friday.', 'come', 'bech yjiw'], ['They will come to the house on Friday.', 'house', 'led-dar'],
   ['You must eat the vegetables.', 'must', 'lezem'], ['You must eat the vegetables.', 'eat', 'tekel'],
   ['Can you help me?', 'Can', 'Tnajjem'], ['Can you help me?', 'help', 't3awen'],
   ['The boys were playing football in the street.', 'playing', 'kanou yel3bou'],
-  ['The girls are happy.', 'happy', 'far7anin'], ['The red car is fast.', 'red', '7amra'],
+  ['The girls are happy.', 'happy', 'far7anin'], ['The red car is fast.', 'red', 'el-7amra'],
   ['The old man was sad.', 'was', 'kan'], ['The old man was sad.', 'man', 'er-rajel'],
   ['He has two sisters.', 'has', '3andou'], ['He has two sisters.', 'sisters', 'khwat'],
   ['There is a book on the table.', 'There', 'Famma'],
@@ -25,7 +30,8 @@ const CASES = [
 let bad = 0;
 for (const [sent, word, want] of CASES) {
   const toks = Snap.latinise(sent, words).flat();
-  const t = toks.find(x => x.en === word || (x.gloss && x.gloss.split(' ').includes(word)) || (x.la && x.en.toLowerCase() === word.toLowerCase()));
+  // the Tunisian of an English word is the token whose gloss carries it (a noun and its adjective swap places, so not by position)
+  const t = toks.find(x => x.la && x.gloss && x.gloss.split(' ').includes(word)) || toks.find(x => x.en === word || (x.la && x.en.toLowerCase() === word.toLowerCase()));
   const got = t && t.la ? t.la : null;
   if (got !== want) { bad++; console.log(`✗ "${word}" → ${got} wanted ${want} | ${sent}`); }
 }
