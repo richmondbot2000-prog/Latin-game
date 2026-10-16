@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '130';
+const APP_VERSION = '131';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -507,6 +507,7 @@ function renderHome(u) {
     </div>
     ${leaderboardHTML()}
     <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
+    <a class="linkbtn otherline" href="tounsi/">🇹🇳 Tounsi — the Tunisian Arabic game</a>
     ${Sync.enabled() ? `<button class="syncline" id="syncline"><span>☁️ Sync code <b>${esc(Sync.codeOf(u))}</b></span><span class="small" id="syncstat"></span></button>
     <button class="syncline" id="nameline"><span>🎁 ${u.player ? `Player name <b>${esc(u.player.toUpperCase())}</b>` : 'Choose a player name so friends can send you beasts'}</span></button>` : ''}
   </div>`;
@@ -918,6 +919,7 @@ function renderPassages(u, book = false) {
 }
 
 /* ---------- Snap a page: a photographed (or pasted) English text with its vocabulary words turned into Latin ---------- */
+let readGen = 0;   // a reader left behind (a Snap page, then a book) must not paint over the new one from a late timer
 function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Project Gutenberg books in the same reader
   Celebrate.stop();
   const key = 'latin.snap.' + u.id, sv = store.get(key, { pages: 0, words: 0, last: '' });
@@ -998,6 +1000,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
   const saveRS = () => store.set(RK, rs);
   // opts (a book page): { label, back, next } — the head shows the book and page, ← goes to the shelf, the end of the page offers the next one
   function read(text, opts = {}) {
+    const gen = ++readGen;
     text = text.replace(/-\n(?=[a-z])/g, '').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, opts.label ? 20000 : 6000);
     // a book's pictures ([[img src="…" cap="…" w h]]) stand in the text as IMGMARKn (capitals: never turned into Latin)
     const pics = [];
@@ -1092,6 +1095,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
     const lw = i => $('#paper').querySelector(`.lw[data-i="${i}"]`);
     let busy = false;
     function show() {
+      if (gen !== readGen) return;
       $('#rprog').textContent = (opts.label ? opts.label + ' · ' : '') + `${state.filter(Boolean).length} of ${toks.length}`;
       toks.forEach((t, i) => { const el = lw(i); if (!el) return; el.className = 'lw' + (i === focus && !done ? ' focus' : '') + (state[i] === 1 ? ' ok' : state[i] === -1 ? ' bad' : ''); if (state[i]) { el.textContent = t.gloss || t.en; el.title = t.la; } else el.textContent = t.la; });
       if (done) return;

@@ -13,7 +13,7 @@ const Forms = (() => {
   const SUN = ['ch', 'dh', 'th', 't', 'd', 'r', 'z', 's', 'n', 'l'];
   function definite(w) {
     if (/^(el |ed |es |ech |en |et |er |ez )/.test(w)) return w;
-    for (const s of SUN) if (w.startsWith(s)) return 'e' + s[0] + '-' + w;
+    for (const s of SUN) if (w.startsWith(s)) return 'e' + s + '-' + w;
     return 'el-' + w;
   }
   // the final consonant run of a stem and the vowel before it, for the "drop the short vowel" rule: khdem → khdmou
@@ -44,21 +44,23 @@ const Forms = (() => {
   }
   function past(w) {
     const p = w.word.replace(/\s*\(.*\)$/, ''), st = w.ps || null;
-    if (/a$/.test(p)) { const s = p.slice(0, -1); return { p1s: w.p1 || s + 'it', p3s: s + 'et', p3p: s + 'aw' }; }
-    const sh = st || shifted(p);
-    return { p1s: w.p1 || p + 't', p3s: sh + 'et', p3p: sh + 'ou' };
+    let r;
+    if (/a$/.test(p)) { const s = p.slice(0, -1); r = { p1s: w.p1 || s + 'it', p3s: s + 'et', p3p: s + 'aw' }; }
+    else { const sh = st || shifted(p); r = { p1s: w.p1 || p + 't', p3s: sh + 'et', p3p: sh + 'ou' }; }
+    r.p1p = r.p1s.replace(/t$/, 'na'); r.p2p = r.p1s + 'ou';   // mchit → mchina / mchitou, khdemt → khdemna / khdemtou
+    return r;
   }
   function verb(w) {
     const out = [{ la: w.show || w.word, shape: 'o' }];
     const pr = present(w); if (!pr) return out;
     for (const k of ['v1s', 'v2s', 'v3s', 'v1p', 'v2p', 'v3p']) out.push({ la: pr[k], shape: k });
     const pa = past(w);
-    for (const k of ['p1s', 'p3s', 'p3p']) out.push({ la: pa[k], shape: k });
+    for (const k of ['p1s', 'p3s', 'p3p', 'p1p', 'p2p']) out.push({ la: pa[k], shape: k });
     return out;
   }
   function noun(w) {
     const head = w.word.replace(/\s*\(.*\)$/, ''), out = [{ la: head, shape: 'n1' }];
-    if (/^[A-Z]/.test(head) || /^(baba|ommi|khouya|bouya|rabbi)$/.test(head)) return out;
+    if (/^[A-Z]/.test(head) || /^(baba|ommi|khouya|bouya|rabbi)$/.test(head) || /^(ethnin|ethletha|larb3a|lekhmis)$/.test(head)) return out;
     out.push({ la: definite(head), shape: 'nd' });
     if (w.pl && w.pl !== head) { out.push({ la: w.pl, shape: 'n2' }); out.push({ la: definite(w.pl), shape: 'ndp' }); }
     return out;

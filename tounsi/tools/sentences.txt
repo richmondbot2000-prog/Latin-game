@@ -1,0 +1,233 @@
+# lv | Tunisian | English [| story id | story title]
+# ---- Basic (level 0) ----
+0 | El-weld yemchi lel-mdrasa=mdrasa|to_school. | The boy goes to school.
+0 | El-bent tekel el-khobz. | The girl eats the bread.
+0 | Baba yekhdem fi es-souk. | Dad works in the market.
+0 | Ommi techri el-7lib men el-7anout. | Mum buys the milk from the shop.
+0 | Er-rajel chaf el-b7ar. | The man saw the sea.
+0 | El-mra 3andha=-|has dar kbira. | The woman has a big house.
+0 | Khouya yel3ab m3a el-kalb. | My brother plays with the dog.
+0 | Okhti=okht|my_sister mridha elyoum. | My sister is ill today.
+0 | El-9attous r9ad fi es-srir. | The cat slept in the bed.
+0 | Ena far7an khater elyoum nhar behi. | I am happy because today is a good day.
+0 | Enti ta3ban? | Are you tired?
+0 | Houwa ja men el-blad. | He came from the town.
+0 | Hiya mchet lel-b7ar=b7ar|to_the_sea m3a ommi. | She went to the sea with mum.
+0 | A7na nekhdmou elyoum w ghodwa. | We work today and tomorrow.
+0 | Houma yel3bou fi ed-dar. | They play in the house.
+0 | 3andi zouz 9tates w kalb wa7ed. | I have two cats and one dog.
+0 | Chnowa hedha? Hedha khobz. | What is this? This is bread.
+0 | Chkoun hedheka? Hedheka khouya. | Who is that? That is my brother.
+0 | Win el-ma? El-ma houni. | Where is the water? The water is here.
+0 | Waqtech tji? Nji ghodwa. | When are you coming? I am coming tomorrow.
+0 | Kifech 3raft? | How did you know?
+0 | 3lech mchit? | Why did you go?
+0 | Sam7ni, fhemt. | Sorry, I understood.
+0 | 3aychek 3la=3la|for el-mekla! | Thank you for the food!
+0 | 3aslema! Kifech enti? | Hello! How are you?
+0 | Bislema, nchoufek=chaf|I'll_see_you ghodwa. | Goodbye, I'll see you tomorrow.
+0 | El-weld es-sghir yochrob el-7lib. | The small boy drinks the milk.
+0 | El-kalb kbir w el-9attous sghir. | The dog is big and the cat is small.
+0 | Baba jeb khobz jdid. | Dad brought new bread.
+0 | Ommi 3tat=3ta|she_gave el-khobz lel-weld=weld|to_the_boy. | Mum gave the bread to the boy.
+0 | El-bent 7abbet el-mekla. | The girl liked the food.
+0 | Ena n7eb el-b7ar. | I love the sea.
+0 | Houwa 3raf el-blad. | He knew the town.
+0 | El-mra 9alet: "Ena ta3bana." | The woman said: "I am tired."
+0 | Er-rajel 9al: "Ena mridh." | The man said: "I am ill."
+0 | Chaf ech-chams men el-beb. | He saw the sun from the door.
+0 | Fi el-lil, el-9attous yel3ab. | At night, the cat plays.
+0 | 3am=3am_(year) jdid, dar jdida. | A new year, a new house.
+0 | Thletha wled=weld w arb3a bnet=bent. | Three boys and four girls.
+0 | Khamsa, setta, sab3a, thmenya, tes3a. | Five, six, seven, eight, nine.
+0 | El-mekla khayba elyoum. | The food is bad today.
+0 | Ras el-kalb kbir. | The dog's head is big.
+0 | Yed el-bent sghira. | The girl's hand is small.
+0 | Chrabt el-ma. | I drank the water.
+0 | Mcha ghadi w ja houni. | He went there and came here.
+0 | Elbere7 khdemt, elyoum nel3ab. | Yesterday I worked, today I play.
+0 | Hiya dima far7ana. | She is always happy.
+0 | Enti tekhdem wala tel3ab? | Do you work or play?
+0 | Ama ena 3andi mdrasa ghodwa. | But I have school tomorrow.
+0 | Ena nemchi led-dar=dar|home. | I am going home.
+0 | El-9attous yor9od fi ed-dar. | The cat sleeps in the house. | s0a | The cat and the dog
+0 | El-kalb yel3ab fi es-souk. | The dog plays in the market. | s0a | The cat and the dog
+0 | El-9attous chaf el-kalb w 9al: "Chkoun enti?" | The cat saw the dog and said: "Who are you?" | s0a | The cat and the dog
+0 | El-kalb 9al: "Ena khouk=khouya|your_brother." | The dog said: "I am your brother." | s0a | The cat and the dog
+0 | El-9attous far7an w el-kalb far7an. | The cat is happy and the dog is happy. | s0a | The cat and the dog
+0 | Tawa houma yel3bou fi ed-dar. | Now they play in the house. | s0a | The cat and the dog
+0 | Elyoum nhar behi. | Today is a good day. | s0b | A day at the sea
+0 | Baba w ommi mchaw lel-b7ar=b7ar|to_the_sea. | Dad and mum went to the sea. | s0b | A day at the sea
+0 | Ena w khouya l3abna fi el-ma. | My brother and I played in the water. | s0b | A day at the sea
+0 | Okhti=okht|my_sister chorbet 7lib w klet khobz. | My sister drank milk and ate bread. | s0b | A day at the sea
+0 | Chofna ech-chams fi el-ma. | We saw the sun in the water. | s0b | A day at the sea
+0 | Fi el-lil, r9adna ta3banin w far7anin. | At night, we slept tired and happy. | s0b | A day at the sea
+# ---- Top 200 (level 1) ----
+1 | Sba7_el_khir! Kifech enti elyoum? | Good morning! How are you today?
+1 | Labes, w enti? | Fine, and you?
+1 | Famma ktab fou9 el-korsi. | There is a book on the chair.
+1 | Mafammech flous fi ed-dar. | There is no money in the house.
+1 | El-9mar fi es-sma w ech-chams fi el-b7ar. | The moon is in the sky and the sun is in the sea.
+1 | El-mekla skhouna w el-ma bared. | The food is hot and the water is cold.
+1 | 9adech 3andek flous? 3andi 3achra. | How much money do you have? I have ten.
+1 | Lezem temchi lel-mdrasa=mdrasa|to_school kol nhar. | You must go to school every day.
+1 | Ena ji3an barcha; famma khobz? | I am very hungry; is there bread?
+1 | Chrabt tey skhoun w 9ahwa barda. | I drank hot tea and cold coffee.
+1 | Et-tfol 9a3ad 9oddem el-beb. | The boy sat in front of the door.
+1 | Et-tofla ketbet kelma bel-3arbi=3arbi|in_Arabic. | The girl wrote a word in Arabic.
+1 | Kif jit, choft sa7bi=sa7eb|my_friend. | When I came, I saw my friend.
+1 | Ken temchi, ena nemchi zeda. | If you go, I go too.
+1 | Bech nrawwa7 ba3d el-mdrasa. | I will go home after school.
+1 | 9bal el-mekla, ochrob=chrab|drink ma. | Before the meal, drink water.
+1 | El-karhba 9dima lekin 9wiya. | The car is old but strong.
+1 | Hedha ghali barcha, w hedheka rkhis. | This is very expensive, and that is cheap.
+1 | El-bit ndhif w el-koujina mwassakha. | The room is clean and the kitchen is dirty.
+1 | Ech-chta jet w es-sma barda. | The rain came and the sky is cold.
+1 | Nhar es-sebt, mchina lel-mdina=mdina|to_the_city. | On Saturday, we went to the city.
+1 | El-7san twil w el-7out 9sir. | The horse is tall and the fish is short.
+1 | El-3arbi mouch s3ib, el-3arbi sehel. | Arabic is not difficult, Arabic is easy.
+1 | Yezzi! Heya nemchiw. | Enough! Let's go.
+1 | Ey, ena nnajjem na9ra el-englizi. | Yes, I can read English.
+1 | Le, ma_nnajjemch=najjem|I_can't. | No, I can't.
+1 | Sma3t tir fou9 ed-dar. | I heard a bird above the house.
+1 | Khdhit et-tilifoun w 7kit m3a ommi. | I took the phone and talked with mum.
+1 | El-flous mochkla kbira. | Money is a big problem.
+1 | 9am men es-srir w chaf ech-chobbek. | He got up from the bed and looked at the window.
+1 | 3andi sa7eb jdid fi el-mdrasa. | I have a new friend at school.
+1 | Tesba7_3la_khir, inshallah nhar behi ghodwa. | Good night, hopefully a good day tomorrow.
+1 | Nhar el-a7ad, mchit les-souk=souk|to_the_market m3a baba. | On Sunday, I went to the market with dad. | s1a | The market
+1 | Es-souk kbir w famma 7out w l7am w khodhra. | The market is big and there is fish, meat and vegetables. | s1a | The market
+1 | Baba chra tfe7 w ghalla 7lowa. | Dad bought apples and sweet fruit. | s1a | The market
+1 | Ena chrit ktab sghir. | I bought a small book. | s1a | The market
+1 | Ba3d es-souk, 9a3adna fi 9ahwa w chrabna tey. | After the market, we sat in a cafe and drank tea. | s1a | The market
+1 | Rawwa7na ta3banin lekin far7anin. | We went home tired but happy. | s1a | The market
+1 | Sa7bi=sa7eb|my_friend Ali=- tfol twil w 9wi. | My friend Ali is a tall, strong boy. | s1b | My friend Ali
+1 | Houwa 3andou dar 9dima fi el-mdina. | He has an old house in the city. | s1b | My friend Ali
+1 | Kol nhar, nemchiw lel-mdrasa=mdrasa|to_school fi eth-thniya el-kbira. | Every day, we go to school along the big road. | s1b | My friend Ali
+1 | Fi el-mdrasa, net3allmou el-englizi w el-3arbi. | At school, we learn English and Arabic. | s1b | My friend Ali
+1 | Ba3d el-mdrasa, nel3bou fi ech-chera3. | After school, we play in the street. | s1b | My friend Ali
+1 | Ali=- dima y9oul: "El-3arbi sehel!" | Ali always says: "Arabic is easy!" | s1b | My friend Ali
+# ---- Top 300 (level 2) ----
+2 | Marhba! Chnia_a7welek? | Welcome! How are you?
+2 | El7amdoullah, labes. W enti? | Thank God, fine. And you?
+2 | Mabrouk 3la ed-dar el-jdida! | Congratulations on the new house!
+2 | Jeddi=jed|my_grandfather 9a3ad jenb en-nar. | My grandfather sat next to the fire.
+2 | Jedda 3andha djeja bidha=-|white w djeja ka7la=-|black. | Grandma has a white hen and a black hen.
+2 | 3ammi=3am_(uncle)|my_uncle w khali=khal|my_uncle jaw fi el-3id. | My uncle and my mother's brother came at Eid.
+2 | El-mou3allem dkhal lel-bit=bit|into_the_room w 7at el-ktab 3la et-tawla. | The teacher came into the room and put the book on the table.
+2 | Nsit el-mefte7 fi ech-chkara! | I forgot the key in the bag!
+2 | Sa9i=sa9_(leg)|my_leg mridha w ma_nnajjemch=najjem|I_can't nejri. | My leg is hurt and I can't run.
+2 | Et-tfol bka w ba3d dh7ak. | The boy cried and then laughed.
+2 | 7all=7all_(verb) el-beb w khraj barra. | He opened the door and went outside.
+2 | Sakkar=sakkar|close ech-chobbek, el-ma bared yesser! | Close the window, it is very cold!
+2 | Stanna=stanna|wait chwaya, el-ghda 9rib. | Wait a little, lunch is near.
+2 | Fi es-sbe7 nekel fter, fi el-3chiya nekel 3cha. | In the morning I eat breakfast, in the evening I eat dinner.
+2 | Chrit kosksi w mel7 w sokkor men es-souk. | I bought couscous, salt and sugar from the market.
+2 | L9it stilou ta7t et-tawla. | I found a pen under the table.
+2 | Bdit el-khedma fi es-sbe7 w kammaltha=kammal|I_finished_it fi el-lil. | I started the work in the morning and finished it at night.
+2 | Ya Ali=-, 3awenni=3awen|help_me min_fadhlek! | Ali, help me please!
+2 | Y3aychek! 3afwen. | Thank you! You're welcome.
+2 | Enehou el-ktab mte3ek? Hedha mte3i. | Which book is yours? This one is mine.
+2 | Sa7bti=sa7ba|my_friend Amina=- 7azina khater khalha=khal|her_uncle mridh. | My friend Amina is sad because her uncle is ill.
+2 | En-nes fi es-souk ghadhbanin: el-7lib ghali yesser. | The people in the market are angry: milk is very expensive.
+2 | Dfa3t mya w 3echrin. | I paid a hundred and twenty.
+2 | Abadan ma_nensach=nsa|I_don't_forget esm sa7bi=sa7eb|my_friend. | I never forget my friend's name.
+2 | Es-sif skhoun w el-jnina behya. | Summer is hot and the garden is lovely.
+2 | Khdhit el-kar lel-mdina=mdina|to_the_city w et-tren lel-blad=blad|to_the_village. | I took the bus to the city and the train to the village.
+2 | Famma 7ad fi ed-dar? Le, mafammech 7ad. | Is there anyone in the house? No, there is nobody.
+2 | Fi el-3ayla, kol wa7ed y3awen. | In our family, everyone helps.
+2 | Fi es-sbe7, Sami=- khraj men ed-dar w sakkar el-beb. | In the morning, Sami went out of the house and closed the door. | s2a | The key
+2 | Fi el-3chiya, rja3 w ma_l9ach=l9a|he_didn't_find el-mefte7. | In the evening, he came back and didn't find the key. | s2a | The key
+2 | 9a3ad 9oddem el-beb w bda yebki. | He sat in front of the door and started to cry. | s2a | The key
+2 | Jet jeddtou=jedda|his_grandmother w 9alet: "Chnowa, ya Sami=-?" | His grandmother came and said: "What is it, Sami?" | s2a | The key
+2 | "Nsit el-mefte7 fi el-mdrasa!" | "I forgot the key at school!" | s2a | The key
+2 | Jedda dhe7ket w 7allet el-beb bel-mefte7=mefte7|with_the_key mte3ha. | Grandma laughed and opened the door with her key. | s2a | The key
+2 | Elyoum 3id, w el-3ayla kolha=kol|all_of_it fi ed-dar. | Today is Eid, and the whole family is at home. | s2b | The festival
+2 | Ommi 3amlet kosksi w 3cha kbir. | Mum made couscous and a big dinner. | s2b | The festival
+2 | Jeddi=jed|my_grandfather 9a3ad fou9 el-korsi el-kbir jenb en-nar. | Grandpa sat on the big chair next to the fire. | s2b | The festival
+2 | 3ammi=3am_(uncle)|my_uncle jeb djeja w khali=khal|my_uncle jeb ghalla 7lowa. | My uncle brought a chicken and my mother's brother brought sweet fruit. | s2b | The festival
+2 | El-wled=weld yel3bou fi el-jnina w el-bnet=bent yel3bou dakhel. | The boys play in the garden and the girls play inside. | s2b | The festival
+2 | Fi el-lil, kol wa7ed far7an w ta3ban. | At night, everyone is happy and tired. | s2b | The festival
+# ---- Top 400 (level 3) ----
+3 | Et-tbib 9al: "9albek=9alb|your_heart s7i7, lekin enti dh3if chwaya." | The doctor said: "Your heart is healthy, but you are a little weak."
+3 | El-wled=weld yel3bou koura fi el-7ouma kol 3chiya. | The boys play football in the neighbourhood every evening.
+3 | Nhar ethletha, el-mou3allem 3allemna=3allem|taught_us dars jdid. | On Tuesday, the teacher taught us a new lesson.
+3 | Et-tayara tal3et fisa3 fi es-sma. | The plane went up fast into the sky.
+3 | Rkebt el-b7im w mchit bechwaya. | I rode the donkey and went slowly.
+3 | El-ba9ra smina w el-ma3za dh3ifa. | The cow is fat and the goat is thin.
+3 | Chrabt kes ma w klit sa7n rouz bez-zit=zit|with_oil. | I drank a glass of water and ate a plate of rice with oil.
+3 | El-7ayawan el-mahboul n9ez fou9 el-7it! | The crazy animal jumped over the wall!
+3 | Ta7 el-ktab 3la lardh w el-wled=weld dhe7kou. | The book fell on the floor and the boys laughed.
+3 | Fakkert fi souel s3ib w l9it el-jweb. | I thought about a hard question and found the answer.
+3 | El-7kaya twila lekin mezyena. | The story is long but lovely.
+3 | 3andi fekra: nemchiw lech-chatt=chatt|to_the_beach nhar lekhmis. | I have an idea: let's go to the beach on Thursday.
+3 | Es-sma zar9a, ech-chams safra w el-jnina khadhra. | The sky is blue, the sun is yellow and the garden is green.
+3 | Khoft men el-7ayawan el-kbir. | I was afraid of the big animal.
+3 | Bellehi, a7ki=7ka|speak bechwaya, ma_fhemtech=fhem|I_didn't_understand. | Please, speak slowly, I didn't understand.
+3 | 7assit ta3ban ba3d el-khedma. | I felt tired after the work.
+3 | W9af fi wast ech-chera3 w chaf 3la el-yemin w el-ysar. | He stood in the middle of the street and looked right and left.
+3 | El-ghani 3andou karhba sri3a w el-meskin yemchi 3la sa9ih=sa9_(leg)|on_his_legs. | The rich man has a fast car and the poor man goes on foot.
+3 | Tfakkert jedda w 9albi=9alb|my_heart 7azin. | I remembered grandma and my heart was sad.
+3 | Fi el-3ers, famma mousi9a w ghnaya w mekla bnina. | At the wedding, there is music, a song and delicious food.
+3 | El-klam et-tounsi sehel w 7lou. | Tunisian talk is easy and sweet.
+3 | Be3t el-b7im w chrit ma3za. | I sold the donkey and bought a goat.
+3 | Nos el-wled=weld fi el-mdrasa w nos fi ed-dar. | Half of the boys are at school and half at home.
+3 | Mafammech 7atta_chay=chay|anything fi eth-thallaja. | There is nothing at all in the fridge.
+3 | Es-sekkina 3la et-tawla jenb el-mo3al9a w es-sa7n. | The knife is on the table next to the spoon and the plate.
+3 | Hedhouma el-bnet=bent dhkiyin yesser. | These girls are very clever.
+3 | Rabbi y3aychek! Barak_allahou_fik. | God keep you! Thank you very much.
+3 | Fi ech-chta, eth-thelj ytih 3la el-ardh. | In winter, the snow falls on the ground.
+3 | Sami=- w Ali=- yel3bou koura fi ech-chera3. | Sami and Ali play football in the street. | s3a | The ball
+3 | Sami=- jra fisa3 w n9ez fou9 el-koura. | Sami ran fast and jumped over the ball. | s3a | The ball
+3 | El-koura ta7et wra el-7it el-kbir. | The ball fell behind the big wall. | s3a | The ball
+3 | Ali=- 9al: "Chnowa na3mlou tawa?" | Ali said: "What do we do now?" | s3a | The ball
+3 | Sami=- fakker w 9al: "3andi fekra!" | Sami thought and said: "I have an idea!" | s3a | The ball
+3 | Tla3 fou9 el-7it bechwaya w jeb el-koura. | He climbed up the wall slowly and brought the ball. | s3a | The ball
+3 | El-wled=weld dhe7kou w rej3ou lel-lo3ba=lo3ba|to_the_game. | The boys laughed and went back to the game. | s3a | The ball
+3 | Nhar larb3a, Amina=- mridha w ta3bana. | On Wednesday, Amina is ill and tired. | s3b | The doctor
+3 | Ommha=ommi|her_mum khdhetha=khdha|took_her let-tbib=tbib|to_the_doctor. | Her mum took her to the doctor. | s3b | The doctor
+3 | Et-tbib chaf 3inha=3in|her_eye w fomha=fom|her_mouth w sma3 9albha=9alb|her_heart. | The doctor looked at her eye and her mouth and listened to her heart. | s3b | The doctor
+3 | 9al: "Mouch kbira, el-mochkla sghira." | He said: "It is not big, the problem is small." | s3b | The doctor
+3 | "Lezem tochrob ma barcha w tor9od." | "You must drink lots of water and sleep." | s3b | The doctor
+3 | Ba3d thletha nharat, Amina=- s7i7a w far7ana. | After three days, Amina is healthy and happy. | s3b | The doctor
+# ---- Top 500 (level 4) ----
+4 | Fi er-rbi3, el-wrad fi el-jbel 7omr w sofr. | In spring, the flowers on the mountain are red and yellow.
+4 | Ommi tayybet 3cha 7ar bel-harissa=harissa|with_harissa, w bes7a! | Mum cooked a spicy dinner with harissa, and enjoy!
+4 | Ghselt yeddi=yed|my_hands bes-sabon=sabon|with_soap 9bal el-mekla. | I washed my hands with soap before the meal.
+4 | El-jar mte3na 3andou jmal w arneb w bisklet. | Our neighbour has a camel, a rabbit and a bicycle.
+4 | Lbest serwel jdid w maryoul akhdhar lel-3ers=3ers|for_the_wedding. | I wore new trousers and a green top for the wedding.
+4 | Dhayya3t nwadhri=nwadher|my_glasses fi et-taxi! | I lost my glasses in the taxi!
+4 | Khsart el-lo3ba lekin rbe7t sa7eb. | I lost the game but won a friend.
+4 | Sa9sit es-souel w houwa jaweb fisa3. | I asked the question and he answered quickly.
+4 | Jarrabt el-3asir: 7amedh chwaya w 7lou chwaya. | I tried the juice: a little sour and a little sweet.
+4 | El-wra9a khfifa w el-7jar th9il. | The paper is light and the stone is heavy.
+4 | Es-sout 3ali yesser, khalli=khalla|leave et-tilivizyoun watya. | The sound is very loud, leave the TV quiet.
+4 | Mazel ma_kammaltech=kammal|I_haven't_finished el-imti7an. | I still haven't finished the exam.
+4 | Ya3ni, momken nji ghodwa wala ba3d ghodwa. | I mean, maybe I'll come tomorrow or the day after.
+4 | Marra okhra=okhra, 7lemt bel-b7ar=b7ar|about_the_sea w el-jbel. | Once again, I dreamt about the sea and the mountain.
+4 | Ksart el-kes w ommi ghadhbana. | I broke the glass and mum is angry.
+4 | Tlobt kosksi bed-djej=djej|with_chicken men el-mat3am. | I ordered couscous with chicken from the restaurant.
+4 | Jeddi=jed|my_grandfather 3ach 3omr twil w far7an. | My grandfather lived a long, happy life.
+4 | El-bit faregh w el-beb mfatta7. | The room is empty and the door is open.
+4 | Ghanna w chta7 fi el-3ers 7atta el-lil. | He sang and danced at the wedding until the night.
+4 | El-kedhb chorr w el-7a9 khir. | A lie is evil and the truth is good.
+4 | Ri7et=ri7a|the_smell_of el-khobz 7lowa w dhou9ou=dhou9|its_taste bnin. | The smell of the bread is lovely and its taste delicious.
+4 | Zidni=zed|give_me_more chwaya rouz, min_fadhlek. | Give me a bit more rice, please.
+4 | Et-taqs mkhawwef elyoum: hwa 9wi w chta. | The weather is scary today: strong wind and rain.
+4 | Nest7a9 flous bech nechri hdiya l khalti=khala|my_aunt. | I need money to buy a present for my aunt.
+4 | El-weld el-ghabi dhrab el-jar w ommou=ommi|his_mum bket. | The stupid boy hit the neighbour and his mum cried.
+4 | 7adhi=7adh|my_luck behi: rbe7t alf dinar! | My luck is good: I won a thousand dinars!
+4 | Naddhaft ed-dar wa7di=wa7dou|by_myself fi es-sbe7. | I cleaned the house by myself in the morning.
+4 | Fi el-khrif, el-ghaba safra w el-hwa bared. | In autumn, the forest is yellow and the wind is cold.
+4 | Fi el-lil, 7lemt 7elm=7lem|a_dream mkhawwef. | At night, I dreamt a scary dream. | s4a | The dream
+4 | Kont=-|I_was fi ghaba kbira wa7di=wa7dou|by_myself, w es-sma ka7la. | I was in a big forest by myself, and the sky was black. | s4a | The dream
+4 | Sma3t sout 3ali men wra ech-chajra. | I heard a loud voice from behind the tree. | s4a | The dream
+4 | Khoft w jrit fisa3 led-dar=dar|home. | I was afraid and ran home fast. | s4a | The dream
+4 | El-beb msakkar! Dhrabt el-beb barcha. | The door was closed! I hit the door a lot. | s4a | The dream
+4 | 9omt men es-srir: kan=-|it_was 7elm=7lem|a_dream bark. | I got up from the bed: it was only a dream. | s4a | The dream
+4 | 3andna jar jdid fi el-7ouma, esmou=esm|his_name Karim=-. | We have a new neighbour in the neighbourhood, his name is Karim. | s4b | The neighbour
+4 | Houwa mchghoul dima: yekhdem fi es-sbitar w ytayyeb fi el-lil. | He is always busy: he works at the hospital and cooks at night. | s4b | The neighbour
+4 | Nhar el-jem3a, jeb hdiya l ommi: warda 7amra. | On Friday, he brought a present for my mum: a red flower. | s4b | The neighbour
+4 | Ommi 9alet: "Y3aychek ya Karim=-, enti rajel mezyen." | Mum said: "Thank you Karim, you are a good man." | s4b | The neighbour
+4 | Ba3d, 9a3adna kolna=kol|all_of_us fi el-jnina w chrabna tey. | Afterwards, we all sat in the garden and drank tea. | s4b | The neighbour
+4 | Tawa Karim=- mouch jar bark, houwa sa7eb el-3ayla. | Now Karim is not just a neighbour, he is a friend of the family. | s4b | The neighbour

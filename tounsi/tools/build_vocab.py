@@ -31,7 +31,7 @@ for l in open('approved.tsv').read().splitlines():
     o={}
     for kv in opt.split(';'):
         if '=' in kv: k,v=kv.split('=',1); o[k]=v
-    en=m
+    en=gen if pick else m   # the grammar file may add a sense (mum, mother)
     if pos=='V': en=re.sub(r'(^|, )to ',r'\1',en)
     en=en.replace('; ',', ')
     words.append(dict(word=base,english=en,pos=pos,level=lv,sec=sec,**o))
@@ -55,7 +55,7 @@ print({L:len(by[L]) for L in range(5)})
 out=[]
 for x in words:
     e={'word':x['word'],'english':x['english'],'pos':x['pos'],'level':x['level']}
-    for k in ('g','pl','f','pres','p1','ps','pp','sense'):
+    for k in ('g','pl','f','pres','p1','ps','pp','sense','stem'):
         if k in x and x[k] and x[k]!='-': e[k]=x[k].split(',') if k=='sense' else x[k]
     out.append(e)
 js='// Tunisian Arabic (Derja) vocabulary: 500 words in five levels (0 Basic, 1 top 200, 2 top 300, 3 top 400, 4 top 500).\n// Built by tounsi/tools/build_vocab.py from words.txt. pos: N (g, pl), V (pres = he does; p1 = I did, ps = past stem\n// for she/they, pp = they do, where the regular rule fails), Adj (f, pl), adv, prep, conj, pro, qu, num, phrase.\nconst VOCAB = [\n'+',\n'.join('  '+json.dumps(e,ensure_ascii=False) for e in out)+'\n];\n'

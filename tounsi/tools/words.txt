@@ -64,10 +64,10 @@
 0|thmenya|eight|num|
 0|tes3a|nine|num|
 0|3achra|ten|num|
-0|baba|dad|N|g=m
-0|ommi|mum|N|g=f
-0|khouya|my brother|N|g=m;pl=khouti
-0|okht|sister|N|g=f;pl=khwat
+0|baba|dad, father|N|g=m;stem=bou
+0|ommi|mum, mother|N|g=f;stem=omm
+0|khouya|my brother, brother|N|g=m;pl=khouti;stem=khou
+0|okht|sister|N|g=f;pl=khwat;stem=okht
 0|rajel|man, husband|N|g=m;pl=rjel
 0|mra|woman, wife|N|g=f;pl=nsa
 0|weld|son, boy|N|g=m;pl=wled

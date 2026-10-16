@@ -19,7 +19,7 @@ const CASES = [
   ['The children are not at school.', 'not', 'mouch'],
   ['A little more, please.', 'little', null], ['He looked tired.', 'looked', null],
   ['The work was hard.', 'work', 'El-khedma'], ['They work every day.', 'work', 'yekhdmou'],
-  ['My house is big.', 'house', 'Dari'], ['Her car is new.', 'car', 'Karhba mte3ha'],
+  ['My house is big.', 'house', 'Dari'], ['He went with his mother.', 'mother', 'ommou'], ['Once upon a time there was a king.', 'Once', null], ['Her car is new.', 'car', 'Karhba mte3ha'],
 ];
 let bad = 0;
 for (const [sent, word, want] of CASES) {

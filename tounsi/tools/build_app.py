@@ -43,6 +43,7 @@ s = rep(s, "  $('#bookGo').onclick = () => { if (levelOf(u) === '3') location.ha
 s = rep(s, "  if (h === 'book') return levelOf(u) === '3' ? renderPassages(u, true) : renderHome(u);", "  if (h === 'book') return renderHome(u);")
 # wording
 s = rep(s, "Learn every Latin word, one card at a time.", "Learn Tunisian Arabic (Derja), one card at a time.")
+s = rep(s, '<a class="linkbtn otherline" href="tounsi/">🇹🇳 Tounsi — the Tunisian Arabic game</a>', '<a class="linkbtn otherline" href="./">🏛️ Latin — the Latin game</a>')
 s = rep(s, "`My Latin game sync code is ${code}. Keep it safe: it brings my stars and beasts to any device at https://latin.musicalmagic.uk`",
         "`My Tounsi game sync code is ${code}. Keep it safe: it brings my stars and beasts to any device at https://latin.musicalmagic.uk/tounsi/`")
 s = rep(s, "Join the Latin game to open it: https://latin.musicalmagic.uk/#gift/${code}", "Join the Tounsi game to open it: https://latin.musicalmagic.uk/tounsi/#gift/${code}")
@@ -55,8 +56,8 @@ s = "// Tounsi: the Tunisian Arabic game. DERIVED FILE — built from ../app.js 
 # ---------- sw.js ----------
 w = (root / 'sw.js').read_text()
 w = rep(w, "const CACHE = 'latin-v" + re.search(r"const CACHE = 'latin-v(\d+)'", w).group(1) + "';", f"const CACHE = 'tounsi-v{VERSION}';", where='sw.js')
-own = {'app.js', 'vocab.js', 'forms.js', 'read.js', 'synonyms.js', 'snap.js', 'manifest.webmanifest', 'index.html', './'}
-drop = {'memory.js', 'phrases.js', 'book.js'}
+own = {'app.js', 'vocab.js', 'forms.js', 'read.js', 'phrases.js', 'synonyms.js', 'snap.js', 'manifest.webmanifest', 'index.html', './'}
+drop = {'memory.js', 'book.js'}
 def fix_list(m):
     items = re.findall(r"'([^']+)'", m.group(0))
     out = []

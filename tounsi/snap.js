@@ -11,7 +11,10 @@ const Snap = (() => {
   const head = w => (w.word || '').replace(/\s*\(.*\)$/, '');
   function noun(w, def, pl, poss) {
     let la = pl && w.pl ? w.pl : head(w);
-    if (poss) { const e = POSS[poss]; return /a$/.test(la) || / /.test(la) ? la + ' mte3' + e : la + e; }
+    if (poss) {
+      if (w.stem && !pl) { const V = { my: 'ya', your: 'k', his: 'h', her: 'ha', its: 'h', our: 'na', their: 'hom' }; return /[aeiou]$/.test(w.stem) ? w.stem + V[poss] : w.stem + POSS[poss]; }   // ommou, bouk, khouh
+      const e = POSS[poss]; return /a$/.test(la) || / /.test(la) ? la + ' mte3' + e : la + e;
+    }
     return def ? Forms.definite(la) : la;
   }
   function adj(w, g, pl) { return pl ? (w.pl || w.word) : g === 'f' ? (w.f || w.word) : w.word; }
@@ -146,6 +149,7 @@ const Snap = (() => {
       if (lem === 'chaf' && /^(like|as|after|forward|up|out|round|around|down|back|well|ill|tired|sad|happy|pale|cross|surprised)$/.test(nextW)) { skipIt(); continue; }   // "look like", "looked tired"
       if (lem === 'akher' && /^(the|an)$/.test(prevW) && /^(day|night|time|week|year)$/.test(nextW)) { skipIt(); continue; }
       if (lem === 'bark' && /^(if|not)$/.test(prevW)) { skipIt(); continue; }
+      if (low[i] === 'once' && nextW === 'upon') { skipIt(); continue; }   // "once upon a time" is not "one time"
       if (lem === 'ma' && /^(a|the|some|much|more|of)$/.test(prevW) === false && /^(water)$/.test(low[i]) === false) { skipIt(); continue; }
       if (c.kind === 'v' && c.feat.f === 'ing' && !(isWord(i - 1) && /^(is|are|am|was|were)$/.test(low[i - 1]))) { i++; continue; }   // "the running boy": leave it
       if (c.kind === 'v' && c.feat.f === 'pp' && isWord(i - 1) && /^(is|are|am|was|were|be|been|being|get|got)$/.test(low[i - 1])) { i++; continue; }   // passive: leave it
