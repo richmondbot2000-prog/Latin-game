@@ -401,7 +401,7 @@ Per-player counters live in
   with a combo bonus. **Levels** cycle through the artist's fifteen scenes
   (`SCENES` in `hammer.js`: road, pier, park, beach, forest, blossom, Greece,
   canyon, temple, snowy peaks, cave, spooky, Arabian night, under the sea,
-  future wave), one per level; 10 + 2 per level signs to clear. Each scene is
+  future wave), one per level; 10 + 2 per level signs to clear. Once a sign is fully on screen the scroll holds for a second (`S.hold`; Jacques runs on the spot) so it can be read. Each scene is
   drawn in parallax from `art/jh/scenes.json` + `art/jh/scenes/*.png`: a sky
   block stretched over the screen, `far` props (clouds, hills, suns) at 12 %
   of run speed, `mid` props (trees, pillars, buildings) at 45 %, the ground

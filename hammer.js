@@ -57,7 +57,7 @@ const Hammer = (() => {
     const correct = Math.random() < .5;
     const ds = distractors(w, words);
     const shown = correct ? w.english : ds[Math.floor(Math.random() * ds.length)].english;
-    S.signs.push({ w, shown, correct, x: 1.05, state: 'up', wob: 0 }); S.made++;
+    S.signs.push({ w, shown, correct, x: 1.05, state: 'up', wob: 0, seen: false }); S.made++;
   }
 
   /* ---------- update ---------- */
@@ -71,7 +71,9 @@ const Hammer = (() => {
       return;
     }
     if (S.phase !== 'play') return;
-    const slow = S.vil ? 0 : S.ouch > 0 ? .35 : 1;
+    // once a sign is fully on screen the world holds still for a second, Jacques running on the spot, so it can be read
+    if (S.hold > 0) S.hold -= dt;
+    const slow = S.vil ? 0 : S.hold > 0 ? 0 : S.ouch > 0 ? .35 : 1;
     S.speed = Math.min(.5, S.speed + .003 * dt);
     const v = S.speed * slow;
     S.dist += v * dt;
@@ -89,7 +91,7 @@ const Hammer = (() => {
       }
     }
     for (const c of S.clouds) { c.x -= (c.drift + v * c.par) * dt; if (c.x < -.4) { c.x = 1.1 + Math.random() * .3; c.y = c.layer === 0 ? rnd(.02, .3) : c.layer === 1 ? rnd(.15, .55) : rnd(.35, .8); } }
-    if (slow) { S.dustT -= dt; if (S.dustT <= 0) { S.dustT = .22; S.bits.push({ kind: 'dust', i: [0, 1, 2, 4, 5][Math.floor(Math.random() * 5)], x: JX - .04 - Math.random() * .02, t: 0 }); } }
+    if (slow || (S.hold > 0 && !S.vil)) { S.dustT -= dt; if (S.dustT <= 0) { S.dustT = .22; S.bits.push({ kind: 'dust', i: [0, 1, 2, 4, 5][Math.floor(Math.random() * 5)], x: JX - .04 - Math.random() * .02, t: 0 }); } }
     if (S.invuln > 0) S.invuln -= dt; if (S.flashRed > 0) S.flashRed -= dt;
     if (S.ouch > 0) S.ouch -= dt; if (S.shake > 0) S.shake -= dt;
     // signs
@@ -101,6 +103,7 @@ const Hammer = (() => {
     const CX = JX;
     for (const s of S.signs) {
       s.x -= v * dt; s.wob += dt;
+      if (s.state === 'up' && !s.seen && s.x + bw <= 1) { s.seen = true; S.hold = 1; }
       if (s.state === 'up' && s.x + bw < CX - .02) {   // it has passed him only once the whole board is behind him
         // it got past Jacques
         s.state = 'passed';
