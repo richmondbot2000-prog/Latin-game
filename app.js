@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '132';
+const APP_VERSION = '133';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -170,8 +170,9 @@ window.addEventListener('hashchange', route);
 // the 🔊 buttons: cards read the word on the top card, Sentences and Passages the sentence, the reader the word in focus
 document.addEventListener('click', e => {
   const b = e.target.closest('.speakbtn'); if (!b) return; e.stopPropagation();
-  let text = '';
-  if (b.classList.contains('cardspeak')) { const t = $('#top .lat'); text = t ? t.textContent : ''; }
+  let text = b.dataset.say || '';
+  if (text) {}
+  else if (b.classList.contains('cardspeak')) { const t = $('#top .lat'); text = t ? t.textContent : ''; }
   else if (b.classList.contains('gripspeak')) { const t = $('#rword'); text = t ? t.textContent : ''; }
   else if (b.classList.contains('barspeak')) { const t = $('.rla') || $('.pline.cur'); text = t ? t.textContent.replace(/\s+/g, ' ').trim() : ''; }
   if (text) { Speak.say(text, true); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
@@ -1326,7 +1327,7 @@ function renderList(u, pane) {
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(w.show)}">🔊</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
     $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word to see how to remember it';
   };
@@ -1338,6 +1339,7 @@ function renderList(u, pane) {
   };
   $('#q', pane).oninput = e => { term = e.target.value.trim().toLowerCase(); draw(); };
   list.onclick = e => {
+    if (e.target.closest('.speakbtn')) return;
     const b = e.target.closest('button[data-i]'); if (!b) return;
     const w = WORDS[+b.dataset.i];
     openMemo(w, (p[w.id] && p[w.id].s) || 0);
@@ -1353,7 +1355,7 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
       ${verdict ? `<div class="verdict bad">${verdict}</div>` : ''}
       <div class="memo">
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
-        <div class="lat">${esc(w.show)}</div>
+        <div class="lat">${esc(w.show)}${Speak.can() ? ` <span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(w.show)}">🔊</span>` : ''}</div>
         <div class="en">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
         ${phraseFor(w) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w).la)}</p><p class="tr">${esc(phraseFor(w).en)}</p></div>` : ''}

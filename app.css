@@ -812,3 +812,5 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
 .rgrip .speakbtn { width: 30px; height: 30px; line-height: 30px; font-size: 15px; margin-right: 10px; }
 .speakline { display: block; margin: 0 auto 6px; font-size: 14px; color: var(--muted); }
 .otherline { display: block; text-align: center; margin: 2px auto 10px; font-size: 14px; color: var(--muted); text-decoration: none; }
+.speakbtn.small { display: inline-grid; place-items: center; width: 26px; height: 26px; line-height: 26px; font-size: 13px; vertical-align: middle; margin-left: 8px; }
+.memo .lat .speakbtn.small { width: 32px; height: 32px; font-size: 16px; vertical-align: 6px; }
