@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '18';
+const APP_VERSION = '19';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -656,7 +656,8 @@ function renderBeasts(u) {
       const b = Beasts.byKey(bt.dataset.k), i = +bt.dataset.i;
       if (bt.classList.contains('unknown')) { bt.classList.remove('nudge'); void bt.offsetWidth; bt.classList.add('nudge'); return; }
       const st = b.stages[i], el = Beasts.ELEMENT[b.el] || ['', ''];
-      sheet.innerHTML = `<div class="panel bsheet" role="dialog" aria-modal="true" aria-label="${esc(st.name)}">
+      sheet.innerHTML = `<div class="panel bsheet${b.rare ? ' rare' : ''}" role="dialog" aria-modal="true" aria-label="${esc(st.name)}">
+          ${b.rare ? '<div class="foil"></div><div class="rarebadge">✦ RARE ✦</div>' : ''}
           <img class="bbig" src="${Beasts.img(b, i)}" alt="">
           <div class="bname">${esc(st.name)}</div>
           <div class="small">${Beasts.STAGE[st.s]} · ${el[0]} ${el[1]}${b.rare ? ' · <b class="raretag">✦ RARE</b>' : ''}</div>

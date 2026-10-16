@@ -771,7 +771,7 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
   box-shadow: 0 0 0 7px #cfd4de, 0 0 0 9px #f4f6fa, 0 0 0 10px #8e959f, 0 12px 28px rgba(0,0,0,.45); overflow: hidden; }
 .card.beast.rare::before { background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.35) 47%, rgba(255,255,255,0) 58%); background-size: 300% 300%; animation: foilsheen 2.8s ease-in-out infinite; mix-blend-mode: screen; z-index: 1; }
 .card.beast.rare::after { box-shadow: inset 0 0 0 2px rgba(255,255,255,.5), inset 0 0 0 3px rgba(120,160,255,.25); }
-.card.beast.rare .foil { position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+.card.beast.rare .foil, .bsheet.rare .foil { position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
   background:
     radial-gradient(circle, rgba(255,255,255,.55) 0 1px, transparent 1.8px) 3px 5px / 29px 31px,
     radial-gradient(circle, rgba(255,255,255,.6) 0 1px, transparent 1.8px) 17px 21px / 37px 23px,
@@ -830,3 +830,15 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
 .card:has(.arab) .arab { line-height: 1.15; }
 .card:has(.arab) .en { font-size: clamp(2rem, 11vw, 3rem); font-weight: 700; line-height: 1.1; white-space: nowrap; overflow-wrap: normal; align-self: stretch; text-align: center; }
 .lb td.who .emo { font-size: 1.1rem; letter-spacing: 2px; }
+
+/* the Beastpedia sheet of a rare beast: the same holographic foil as its card */
+.bsheet.rare { position: relative; background: #07071a; color: #fff; box-shadow: inset 0 0 0 3px #cfd4de, inset 0 0 0 5px #8e959f; }
+.bsheet.rare::before { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.35) 47%, rgba(255,255,255,0) 58%); background-size: 300% 300%; animation: foilsheen 2.8s ease-in-out infinite; mix-blend-mode: screen; z-index: 1; }
+.bsheet.rare > :not(.foil) { position: relative; z-index: 2; }
+.bsheet.rare .rarebadge { display: table; margin: 2px auto 8px; font: 800 13px/1 system-ui, sans-serif; letter-spacing: .18em; color: #1a1536; background: linear-gradient(90deg, #ffe08a, #fff6d0, #ffd56a); padding: 6px 12px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+.bsheet.rare .bbig { filter: drop-shadow(0 0 18px rgba(170,210,255,.8)) drop-shadow(0 8px 10px rgba(0,0,0,.5)); }
+.bsheet.rare .bname { text-shadow: 0 0 14px rgba(140,200,255,.9); }
+.bsheet.rare .small { color: #d8dcea; }
+.bsheet.rare .raretag { color: #ffe08a; }
+.bsheet.rare .becol { background: rgba(255,255,255,.14); color: #fff; }
+.bsheet.rare .btn.ghost { color: #fff; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.08); }
