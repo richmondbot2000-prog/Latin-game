@@ -777,7 +777,7 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
    dots in three sizes, a moving sheen and a silver frame; the Beastpedia disc gets a rainbow ring */
 .card.beast.rare { background: #07071a; color: #fff;
   box-shadow: 0 0 0 7px #cfd4de, 0 0 0 9px #f4f6fa, 0 0 0 10px #8e959f, 0 12px 28px rgba(0,0,0,.45); overflow: hidden; }
-.card.beast.rare::before { background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.35) 47%, rgba(255,255,255,0) 58%); background-size: 300% 300%; animation: foilsheen 2.8s ease-in-out infinite; mix-blend-mode: screen; z-index: 1; }
+.card.beast.rare::before { background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.35) 47%, rgba(255,255,255,0) 58%); background-size: 300% 300%; background-repeat: no-repeat; animation: foilsheen 2.8s ease-in-out infinite; mix-blend-mode: screen; z-index: 1; }
 .card.beast.rare::after { box-shadow: inset 0 0 0 2px rgba(255,255,255,.5), inset 0 0 0 3px rgba(120,160,255,.25); }
 .card.beast.rare .foil, .bsheet.rare .foil { position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
   background:
@@ -790,6 +790,8 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
     radial-gradient(ellipse 45% 38% at 72% 72%, #8f6bff, transparent 70%), radial-gradient(ellipse 38% 34% at 18% 78%, #5bff9a, transparent 70%),
     radial-gradient(ellipse 36% 30% at 50% 48%, #ffb347, transparent 70%), radial-gradient(ellipse 30% 30% at 48% 96%, #f9f871, transparent 70%);
   opacity: .8; mix-blend-mode: screen; animation: foildrift 9s linear infinite; }
+/* the sheen is one band on an oversized, non-repeating gradient: a repeating one showed its tile edge as a line
+   crossing the card on iPhone */
 @keyframes foilsheen { 0% { background-position: 130% 130%; } 100% { background-position: -30% -30%; } }
 @keyframes foildrift { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 .card.beast.rare > :not(.foil) { z-index: 2; }
@@ -841,7 +843,7 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
 
 /* the Beastpedia sheet of a rare beast: the same holographic foil as its card */
 .bsheet.rare { position: relative; background: #07071a; color: #fff; box-shadow: inset 0 0 0 3px #cfd4de, inset 0 0 0 5px #8e959f; }
-.bsheet.rare::before { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.35) 47%, rgba(255,255,255,0) 58%); background-size: 300% 300%; animation: foilsheen 2.8s ease-in-out infinite; mix-blend-mode: screen; z-index: 1; }
+.bsheet.rare::before { content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background: linear-gradient(115deg, rgba(255,255,255,0) 35%, rgba(255,255,255,.35) 47%, rgba(255,255,255,0) 58%); background-size: 300% 300%; background-repeat: no-repeat; animation: foilsheen 2.8s ease-in-out infinite; mix-blend-mode: screen; z-index: 1; }
 .bsheet.rare > :not(.foil) { position: relative; z-index: 2; }
 .bsheet.rare .rarebadge { display: table; margin: 2px auto 8px; font: 800 13px/1 system-ui, sans-serif; letter-spacing: .18em; color: #1a1536; background: linear-gradient(90deg, #ffe08a, #fff6d0, #ffd56a); padding: 6px 12px; border-radius: 999px; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
 .bsheet.rare .bbig { filter: drop-shadow(0 0 18px rgba(170,210,255,.8)) drop-shadow(0 8px 10px rgba(0,0,0,.5)); }
