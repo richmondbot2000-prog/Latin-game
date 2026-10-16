@@ -66,7 +66,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   worker cache list and a fanfare picture that fails retries (`retryImg`). `latin.beasts.<id>`
   = { have: { key: stage }, order, last, finds, total }, synced (union, furthest
   stage). A duplicate of a **fully grown** monster is a **spare**
-  (`spare: { key: n }`, "SPARE!" fanfare, ×N badge in the Beastpedia); spares
+  (`spare: { key: n }`, "SPARE!" fanfare, ×N badge in the Beastpedia, its disc drawn as a pile: one or two discs behind, `.bc.stack`); spares
   are the only thing that can be given away. The **Beastpedia** (`#beasts`,
   from the Cards & Beasts home) shows every stage as a circle, silhouettes
   for the ones still to find, and a sheet with the picture, stage, element,

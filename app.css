@@ -623,6 +623,10 @@ body.noscroll { overflow: hidden; }
 
 /* gifts */
 .bc { position: relative; }
+/* duplicates (spares) show as a pile: one or two more discs peeping out behind */
+.bc.stack::before, .bc.stack2::after { content: ''; position: absolute; inset: 0; border-radius: 50%; z-index: -1;
+  background: radial-gradient(circle, #efe6d2, #d6c6a6); box-shadow: 0 2px 5px rgba(0,0,0,.35), inset 0 0 0 3px #b39cf5; transform: translate(7px, -7px); }
+.bc.stack2::after { transform: translate(14px, -14px); z-index: -2; background: radial-gradient(circle, #e2d6bd, #c8b693); }
 .bc .spare { position: absolute; right: -2px; top: -2px; background: #c04df0; color: #fff; font: 700 12px/1 system-ui, sans-serif; padding: 4px 6px; border-radius: 999px; box-shadow: 0 1px 4px rgba(0,0,0,.3); }
 .giftbox { display: flex; gap: 12px; align-items: center; background: linear-gradient(135deg, #fff3c4, #ffe0f0); border: 2px solid #ffc93c; border-radius: 18px; padding: 12px 14px; margin: 0 0 14px; box-shadow: var(--shadow); color: #2B1A3A; animation: pop .5s ease; }
 .giftbox img, .giftbox .gpic { width: 64px; height: 64px; object-fit: contain; flex: none; font-size: 44px; display: grid; place-items: center; }

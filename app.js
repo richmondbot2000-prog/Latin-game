@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '120';
+const APP_VERSION = '121';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -589,7 +589,7 @@ function renderBeasts(u) {
     const s = Beasts.state(u), l = Beasts.latest(u);
     $('#bcount').textContent = Beasts.count(u) + ' / ' + Beasts.totalStages();
     const sp = s.spare || {};
-    const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy">${known && i === b.stages.length - 1 && sp[b.key] > 0 ? `<span class="spare">×${1 + sp[b.key]}</span>` : ''}</button>`;
+    const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}${known && i === b.stages.length - 1 && sp[b.key] > 0 ? ' stack' + (sp[b.key] > 1 ? ' stack2' : '') : ''}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy">${known && i === b.stages.length - 1 && sp[b.key] > 0 ? `<span class="spare">×${1 + sp[b.key]}</span>` : ''}</button>`;
     pane.innerHTML = `
       ${l ? `<div class="pal big"><img class="bpic" src="${Beasts.img(l.beast, l.stage)}" alt=""><span class="btxt"><b>${esc(l.beast.stages[l.stage].name)}</b><span class="small">Latest find · ${Beasts.list().length} monsters, ${Beasts.totalStages()} stages to collect. A beast every 5 right in a row and every 20 cards; find a monster again and it evolves.</span></span></div>` : `<p class="small" style="text-align:center">A monster egg drops every 5 right answers in a row and every 20 cards played. Find the same monster again and it evolves: egg, baby, teen, adult. ${Beasts.totalStages()} to collect!</p>`}
       <div class="bgrid">${Beasts.list().map(b => b.stages.map((st, i) => circ(b, i, b.key in s.have && (s.have[b.key] || 0) >= i)).join('')).join('')}</div>`;
