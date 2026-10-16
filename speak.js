@@ -61,9 +61,11 @@ const Speak = (() => {
   };
   const pump = () => {
     if (warming || !warmQ.length) return;
-    warming = true; const batch = warmQ.splice(0, 3);
-    Promise.allSettled(batch.map(t => { const f = clip(t); if (!f || primed.has(f)) return null; primed.add(f); return fetch(cfg.audio + '/' + f, { credentials: 'same-origin' }).catch(() => primed.delete(f)); }))
-      .then(() => { warming = false; if (warmQ.length) setTimeout(pump, 150); });
+    // one clip at a time with a pause between, so the background download never crowds out the card, its own
+    // clip or a beast picture on a slow connection
+    warming = true; const t = warmQ.shift(), f = clip(t);
+    const go = f && !primed.has(f) ? (primed.add(f), fetch(cfg.audio + '/' + f, { credentials: 'same-origin' }).catch(() => primed.delete(f))) : Promise.resolve();
+    go.then(() => { warming = false; if (warmQ.length) setTimeout(pump, 700); });
   };
   // a word that comes into focus is read, then read once more 2 s after the first reading ends (the 🔊 buttons read once);
   // a new word, or a tap on a button, cancels the pending repeat

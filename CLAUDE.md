@@ -65,7 +65,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   "EVOLVING" glow). A duplicate of a fully grown monster re-rolls once for one
   that can still grow. **Ten monsters are RARE** (`rare: true` in `beasts.json`: dueljaw, royalvizaro, pulsar, nebula, crockasaur, flamondis, lizanaut, mamoth, jaxi, opal): the roll (`pool` in `beasts.js`) gives each a fifth of a plain monster's chance (~5% of drops), their fanfare and gift cards are a metallic holographic card (`.card.beast.rare`: near-black foil, drifting rainbow patches, glitter dots, a moving sheen, silver frame, a ✦ RARE badge), and their Beastpedia discs have a rainbow ring and a star (`.bc.rare`). `Beasts.force(key)` sets the next drop, for tests (`scratchpad/rare.js`). The bar above the cards shows the latest find and the
   Beastpedia count. The next beast is rolled ahead and its pictures
-  preloaded (`ahead` in `beasts.js`); all 175 pictures are in the service
+  preloaded (`ahead` in `beasts.js`: `fetchPic` reads the picture from any cache the page can see or fetches it, saves it in the page-level **`latin-art`** cache — which the service worker never deletes — and hands out a blob URL from `img()`; this matters for Tounsi, whose worker at `tounsi/` cannot intercept `../art/` requests); all 175 pictures are in the service
   worker cache list and a fanfare picture that fails retries (`retryImg`). `latin.beasts.<id>`
   = { have: { key: stage }, order, last, finds, total }, synced (union, furthest
   stage). A duplicate of a **fully grown** monster is a **spare**
@@ -528,7 +528,7 @@ hard, v as w, ae → ai, oe → oi only in poena / proelium / moenia / foedus, g
 voice). Latin now reads aloud by default too (`auto: true`). The GitHub Actions workflow `Record voices`
 (`.github/workflows/record-voices.yml`, repository secrets of the same names) can re-run a recording and commit
 the clips; the key was otherwise supplied as environment variables of the owner's cloud environment for one run.
-The clips are not in the service-worker cache list: they are fetched on demand and the worker keeps every clip it has fetched (copied across updates like the art). `Speak.prime(text)` fetches one clip ahead (the next card, in `renderPlay`), `Speak.warm(texts)` the level's headword clips three at a time in the background on the first card; a clip not ready within 1.5 s is replaced by the phone's own voice for that reading while it keeps downloading (`play` in `speak.js`). Headless tests stub
+The clips are not in the service-worker cache list: they are fetched on demand and the worker keeps every clip it has fetched (copied across updates like the art). `Speak.prime(text)` fetches one clip ahead (the next card, in `renderPlay`), `Speak.warm(texts)` the level's headword clips one at a time, 0.7 s apart, in the background on the first card (never crowding a weak connection); a clip not ready within 1.5 s is replaced by the phone's own voice for that reading while it keeps downloading (`play` in `speak.js`). Headless tests stub
 `speechSynthesis` (`scratchpad/speaktest.js`).
 
 ## Cloud sync (switched on)

@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '29';
+const APP_VERSION = '30';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1393,7 +1393,7 @@ function renderList(u, pane) {
 
 /* memory card sheet */
 function openMemo(w, stars, verdict, onClose, btnLabel) {
-  const m = memoFor(w);
+  const m = memoFor(w), u = current();
   sheet.innerHTML = `
     <div class="panel" role="dialog" aria-modal="true" aria-label="How do we remember ${esc(w.show)}?">
       ${verdict ? `<div class="verdict bad">${verdict}</div>` : ''}

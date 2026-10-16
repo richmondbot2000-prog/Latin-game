@@ -19,16 +19,29 @@ const Beasts = (() => {
   const state = u => Object.assign(fresh(), store.get(key(u), null) || {});
   const save = (u, s) => store.set(key(u), s);
   const byKey = k => (list || []).find(b => b.key === k) || null;
-  const img = (b, i) => ART + b.key + '_' + b.stages[i].s + '.webp';
+  // Pictures are kept in the 'latin-art' cache by the page itself (the Cache API), so a game served from a
+  // sub-folder (tounsi/), whose service worker cannot see ../art/, still has every beast it has met on the phone
+  // for good. A picture fetched once becomes a blob URL; img() hands that out when it has one, else the plain path
+  const resolved = {};
+  const path = (b, i) => ART + b.key + '_' + b.stages[i].s + '.webp';
+  async function fetchPic(u) {
+    if (resolved[u]) return resolved[u];
+    try {
+      let r = typeof caches !== 'undefined' ? await caches.match(u) : null;
+      if (!r) { r = await fetch(u); if (!r.ok) return u; if (typeof caches !== 'undefined') { try { const c = await caches.open('latin-art'); c.put(u, r.clone()); } catch (e) {} } }
+      return (resolved[u] = URL.createObjectURL(await r.blob()));
+    } catch (e) { return u; }
+  }
+  const img = (b, i) => { const u = path(b, i); if (!resolved[u]) fetchPic(u); return resolved[u] || u; };
   // which monster an egg turns out to be: any of them, at random, like a card from a pack. The next one is rolled
   // ahead of time and its pictures fetched, so the fanfare never waits for the network
   let next = null;
-  const preload = b => { if (!b) return; b.stages.forEach((s, i) => { const im = new Image(); im.src = img(b, i); }); };
+  const preload = b => { if (!b) return; b.stages.forEach((s, i) => fetchPic(path(b, i))); };
   // ten of the monsters are RARE (rare: true in beasts.json): they turn up a fifth as often as the others and their
   // card is a metallic holographic one
   const pool = () => list.flatMap(b => Array(b.rare ? 1 : 5).fill(b));
   const ahead = () => { if (!next && list && list.length) { const p = pool(); next = p[Math.floor(Math.random() * p.length)]; preload(next); } };
-  const force = k => { next = byKey(k) || next; };
+  const force = k => { next = byKey(k) || next; preload(next); };
   const roll = () => { ahead(); const b = next; next = null; ahead(); return b; };
   // called on every card played, right or wrong, with the streak so far. A beast drops every 5 right answers in a
   // row (5, 10, 15…), every 20 cards played (right or wrong), and on a new player's first right answer. A monster you
