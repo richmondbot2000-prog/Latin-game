@@ -180,9 +180,29 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   the helper words fold into the Latin and the gloss keeps them: "were
   walking"); is/are/was/were → est/sunt/erat/erant when not a helper;
   has/have/had as a main verb → habeo. `BLOCK` lists English words never
-  converted (too many meanings: like, well, even, so, there, left, kind…). A word with an English double meaning
-  is only converted when the sentence fits: "letter" becomes *epistula* only
-  next to write / send / receive / read / post (not "in gold letters").
+  converted (too many meanings: like, well, even, so, there, left, kind…). **Keeping the Latin right** (after a word got the
+  wrong meaning, "in gold letters" → *epistulae*): context rules right after
+  a candidate is chosen in `convert` — senses a word must not be found by
+  (`OMIT`: take → *capio*, not *duco*; race, beat, general; "bed" is not the
+  past of "be"); a verb after an article or possessive or a preposition
+  ("the rules", "doctor's orders", "in great fear") or after a copula or
+  "very" ("he was cross") stays English, as does a noun after a subject
+  pronoun or modal ("I hope") and a bare verb after made / let / saw +
+  him / her / them ("made him laugh"); words safe in one use only (*epistula*
+  only near write / send / read, *arma* only near weapons and war, *deinde*
+  not "the next", *solus* only "the only", *parvus* not "a little more",
+  *longus* not "long ago" / "as long as", *carus* not "Oh dear", *patria*
+  only "my / his / their country", *servo* not "keep quiet", *specto* not
+  "look like" / "looked tired", *silva* not "a piece of wood", *lux* not
+  "light blue"); an adjective does not agree across "of" ("Many of the
+  soldiers" → *Multi*); some / many / all / both are plural subjects; the
+  tail of a two-word sense ("went out", "look at") never joins the next
+  word's answer. **Before changing `snap.js`:** `node tests/latin-cases.js`
+  (every mistake found so far, each as a sentence with what the word must
+  become or that it stays English; add one for every new mistake) and
+  `node tests/book-audit.js` (the converter over the 20 shelf books from the
+  live worker: every English → Latin pair, how often, an example; review
+  the top few hundred for wrong meanings).
   **The start screen** (`start()` in `renderSnap`, after Google Translate):
   white, one big "Enter text" box (`#pasted`), round **Pictures** and
   **Camera** buttons along the bottom (a blue **Read** button appears once

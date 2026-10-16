@@ -102,7 +102,7 @@ const Snap = (() => {
   // words handled by their own rules rather than the dictionary senses
   const PREP = { in: ['in + abl.', 'abl'], on: ['in + abl.', 'abl'], into: ['in + acc.', 'acc'], with: ['cum + abl.', 'abl'], from: ['a/ab + abl.', 'abl'], by: ['a/ab + abl.', 'abl'], through: ['per + acc.', 'acc'], across: ['trans + acc.', 'acc'], against: ['contra + acc.', 'acc'], around: ['circum + acc.', 'acc'], near: ['prope + acc.', 'acc'], under: ['sub + abl.', 'abl'], above: ['super + acc.', 'acc'], before: ['ante + acc.', 'acc'], after: ['post + acc.', 'acc'], between: ['inter + acc.', 'acc'], among: ['inter + acc.', 'acc'], without: ['sine + abl.', 'abl'], towards: ['ad + acc.', 'acc'], about: ['de + abl.', 'abl'] };
   const SMALL = { and: 'et', but: 'sed', not: 'non', or: 'aut', because: 'quod', while: 'dum', although: 'quamquam', therefore: 'igitur', however: 'tamen', nobody: 'nemo', nothing: 'nihil', i: 'ego', we: 'nos', himself: 'se', herself: 'se', themselves: 'se', man: 'vir', men: 'vir', person: 'homo', people: 'homo' };
-  const PRON = { i: '1s', we: '1p', you: '2s', he: '3s', she: '3s', it: '3s', they: '3p', everyone: '3s', everybody: '3s', nobody: '3s', someone: '3s' };
+  const PRON = { i: '1s', we: '1p', you: '2s', he: '3s', she: '3s', it: '3s', they: '3p', everyone: '3s', everybody: '3s', nobody: '3s', someone: '3s', some: '3p', many: '3p', all: '3p', both: '3p', several: '3p', few: '3p', others: '3p' };
   const DET = new Set(['the', 'a', 'an', 'my', 'your', 'his', 'her', 'their', 'our', 'its', 'this', 'that', 'these', 'those', 'some', 'many', 'every', 'each', 'no', 'all', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'few', 'several', 'other', 'another', 'such', 'what', 'which', 'whose']);
   const MOTION = new Set(['go', 'come', 'run', 'walk', 'hurry', 'sail', 'return', 'lead', 'send', 'carry', 'take', 'bring', 'arrive', 'flee', 'march', 'travel', 'ride', 'climb', 'rush', 'move', 'drive', 'fall', 'jump', 'escape', 'depart', 'approach']);
   const PASTPART = { seen: 'see', given: 'give', taken: 'take', run: 'run', come: 'come', gone: 'go', written: 'write', drunk: 'drink', fought: 'fight', thrown: 'throw', built: 'build', held: 'hold', had: 'have', put: 'put', stood: 'stand', sent: 'send', made: 'make', done: 'do', found: 'find', fled: 'flee', caught: 'catch', left: 'leave', brought: 'bring', sat: 'sit', eaten: 'eat', fallen: 'fall', met: 'meet', sought: 'seek', told: 'tell', known: 'know', won: 'win', hidden: 'hide', driven: 'drive', overcome: 'overcome', struck: 'strike', worn: 'wear', been: 'be', said: 'say', led: 'lead', heard: 'hear', slept: 'sleep', read: 'read', beaten: 'beat', chosen: 'choose', shown: 'show', sung: 'sing', ridden: 'ride' };
@@ -119,7 +119,8 @@ const Snap = (() => {
     IDX = {}; IDXKEY = key;
     const add = (en, w, kind, feat) => { const k = en.toLowerCase(); (IDX[k] = IDX[k] || []).push({ w, kind, feat, rank: (w.level || 1) * 10 + IDX[k].length }); };
     for (const w of words) {
-      const senses = w.english.replace(/\(.*?\)/g, ' ').split(/[,;]/).map(s => s.trim()).filter(s => s && !/^(am|is|are|be)\s/.test(s) && !/\.\.\./.test(s) && !/…/.test(s));
+      const OMIT = { duco: ['take'], gens: ['race'], vinco: ['beat'], dux: ['general'], sum: ['be'] };
+      const senses = w.english.replace(/\(.*?\)/g, ' ').split(/[,;]/).map(s => s.trim()).filter(s => s && !/^(am|is|are|be)\s/.test(s) && !/\.\.\./.test(s) && !/…/.test(s) && !(OMIT[w.word] || []).includes(s));
       const kind = /^N/.test(w.pos) ? 'n' : /^V/.test(w.pos) ? 'v' : (/^Adj|^numo/.test(w.pos) || (w.pos === 'pro' && /-a, -um/.test(w.dict))) ? 'a' : 'o';
       if (w.pos === 'qu' || w.word === 'noli/nolite' || w.word === 'inquit/inquiunt' || w.word === '-que' || w.word === 'et … et …' || w.word === 'is' || w.word === 'qui' || w.word === 'hic, haec, hoc' || w.word === 'ille' || w.word === 'idem' || w.word === 'ipse' || w.word === 'se' || w.word === 'tu' || w.word === 'vos') continue;
       for (const s of senses) {
@@ -181,7 +182,33 @@ const Snap = (() => {
       const c = cands[0];
       // a word with an English double meaning only turns Latin when the sentence is about the right one:
       // epistula is a letter sent in the post, not a letter of the alphabet ("in gold letters")
-      if (c.w.word === 'epistula' && !/\b(writ|wrote|send|sent|receiv|post|deliver|envelope|stamp|messenger|read)/.test(low.join(' '))) { i += found.len; continue; }
+      const whole = low.join(' '), prevW = isWord(i - 1) ? low[i - 1] : '', nextW = isWord(i + found.len) ? low[i + found.len] : '', prev2 = isWord(i - 2) ? low[i - 2] : '';
+      const skipIt = () => { i += found.len; };
+      const DETP = /^(the|a|an|my|your|his|her|its|our|their|this|that|these|those|no|every|each|some|any)$/;
+      const NOUNISH_PREP = /^(in|with|for|of|without|from|by|into|at|on|under|after|before|about)$/;
+      if (c.w.word === 'epistula' && !/\b(writ|wrote|send|sent|receiv|post|deliver|envelope|stamp|messenger|read)/.test(whole)) { skipIt(); continue; }
+      // arma are weapons, not the arms of a body
+      if (c.w.word === 'arma' && !/\b(weapon|sword|spear|shield|war|battle|fight|soldier|army|armou?r|enem)/.test(whole)) { skipIt(); continue; }
+      // a verb used as a noun ("the rules", "the doctor's orders", "in great fear", "a walk") stays English
+      if (c.kind === 'v' && (/^(the|a|an|my|your|his|her|its|our|their|no)$/.test(prevW) || /'s$/.test(low[i - 1] || '') || NOUNISH_PREP.test(prevW) || (NOUNISH_PREP.test(prev2) && /^(great|deep|real|sudden|terrible|little|much|such)$/.test(prevW)))) { skipIt(); continue; }
+      // a verb used as an adjective ("he was cross", "very cross") stays English
+      if (c.kind === 'v' && (c.feat.f === 'base' || c.feat.f === '3s') && /^(is|was|were|am|are|be|been|very|so|too|rather|quite|felt|seemed|looked|got|getting|grew)$/.test(prevW)) { skipIt(); continue; }
+      // "made him laugh", "let her go", "saw them run": English has a bare verb here that Latin says differently
+      if (c.kind === 'v' && c.feat.f === 'base' && /^(him|her|them|me|us|it|you)$/.test(prevW) && /^(make|made|makes|let|lets|help|helped|helps|watch|watched|saw|see|sees|heard|hear|hears|felt|feel|bid|bade)$/.test(prev2)) { skipIt(); continue; }
+      // a noun used as a verb ("I hope", "we promise") stays English
+      if (c.kind === 'n' && /^(i|we|they|you|he|she|can|could|will|would|should|must|might|may|do|does|did|don't|didn't|won't|can't|cannot)$/.test(prevW)) { skipIt(); continue; }
+      // words that are only safe in one use
+      const lem = c.w.word;
+      if (lem === 'deinde' && !(nextW === '' || PRON[nextW] || /^(the|a|an)$/.test(nextW)) || (lem === 'deinde' && DETP.test(prevW))) { skipIt(); continue; }   // "Next, he…", not "the next day", "next to"
+      if (lem === 'solus' && /^only$/.test(low[i]) && !/^(the|an|my|your|his|her|our|their|its)$/.test(prevW)) { skipIt(); continue; }   // "the only way", not "if only", "only just"
+      if (lem === 'parvus' && /^little$/.test(low[i]) && (nextW === '' || /^(more|less|bit|while|too|way|further|longer|better|closer|nearer|farther|by|of|as)$/.test(nextW) || /ly$/.test(nextW))) { skipIt(); continue; }   // "a little more", "a little while"
+      if (lem === 'longus' && (/^(ago|as|before|after|enough|since|to|for)$/.test(nextW) || /^(as|how|so|too|not|any|no)$/.test(prevW))) { skipIt(); continue; }   // "long ago", "as long as", "too long"
+      if (lem === 'carus' && (/^(oh|o)$/.test(prevW) || /^(me|dear)$/.test(nextW))) { skipIt(); continue; }   // "Oh dear!", "dear me"
+      if (lem === 'patria' && !/^(my|your|his|her|our|their|own|native)$/.test(prevW)) { skipIt(); continue; }   // one's own country, not "the country" round about
+      if (lem === 'servo' && (/ing$/.test(nextW) || /^(quiet|still|away|up|on|off|back|out|warm|calm|silent|an|clear|going|in)$/.test(nextW))) { skipIt(); continue; }   // "keep quiet", "keep going"
+      if (lem === 'specto' && /^(like|as|after|forward|up|out|round|around|down|back|well|ill|tired|sad|happy|pale|cross|surprised)$/.test(nextW)) { skipIt(); continue; }   // "look like", "look out", "looked tired"
+      if (lem === 'silva' && prevW === 'of' && /^(piece|pieces|bit|bits|made|log|block|chunk|plank|lump)$/.test(prev2)) { skipIt(); continue; }   // "a piece of wood" is not a forest
+      if (lem === 'lux' && (/^(blue|green|brown|grey|gray|red|pink|yellow|as)$/.test(nextW) || /^(is|was|were|very|so|too|quite)$/.test(prevW))) { skipIt(); continue; }   // "light blue", "light as a feather"
       if (c.kind === 'v' && c.feat.f === 'ing' && !(isWord(i - 1) && /^(is|are|am|was|were)$/.test(low[i - 1]))) { i++; continue; }   // "the running boy": leave it
       if (c.kind === 'v' && c.feat.f === 'pp' && isWord(i - 1) && /^(is|are|am|was|were|be|been|being|get|got)$/.test(low[i - 1])) { i++; continue; }   // passive: leave it
       info[i] = { kind: c.kind, w: c.w, feat: c.feat, len: found.len };
@@ -228,10 +255,10 @@ const Snap = (() => {
     for (let k = 0; k < n; k++) {
       const f = info[k]; if (!f || f.kind !== 'a') continue;
       let m = -1;
-      for (let j = k + 1; j < n && j <= k + 3; j++) { if (info[j] && info[j].kind === 'n') { m = j; break; } if (!isWord(j) || (info[j] && info[j].kind === 'v') || /^(is|are|was|were)$/.test(low[j])) break; }
+      for (let j = k + 1; j < n && j <= k + 3; j++) { if (info[j] && info[j].kind === 'n') { m = j; break; } if (!isWord(j) || (info[j] && info[j].kind === 'v') || /^(is|are|was|were|of)$/.test(low[j])) break; }   // not across "of": many of the soldiers
       if (m < 0 && copulaBefore(k)) { for (let j = k - 1; j >= 0; j--) if (info[j] && info[j].kind === 'n' && info[j].cs === 'nom') { m = j; break; } }
       if (m >= 0) { f.g = info[m].g; f.cs = m > k || !copulaBefore(k) ? info[m].cs : 'nom'; f.pl = info[m].pl; }
-      else { f.g = 'm'; caseAt(k, f); f.pl = isWord(k + 1) && /s$/.test(low[k + 1]) && !/ss$/.test(low[k + 1]) && !info[k + 1]; if (copulaBefore(k)) { let j = k - 1; while (j >= 0 && !PRON[low[j]] && !/^[.;]$/.test(sent[j])) j--; if (j >= 0 && PRON[low[j]]) f.pl = /^(we|they|you)$/.test(low[j]) && low[j] !== 'you'; } }
+      else { f.g = 'm'; caseAt(k, f); f.pl = /^(many|few|all|both|several)$/.test(low[k]) || (isWord(k + 1) && /s$/.test(low[k + 1]) && !/ss$/.test(low[k + 1]) && !info[k + 1]); if (copulaBefore(k)) { let j = k - 1; while (j >= 0 && !PRON[low[j]] && !/^[.;]$/.test(sent[j])) j--; if (j >= 0 && PRON[low[j]]) f.pl = /^(we|they|you)$/.test(low[j]) && low[j] !== 'you'; } }
     }
     // verbs: person from the subject, tense from the English form and the words before it
     let lastPers = '3s';
@@ -315,12 +342,12 @@ const Snap = (() => {
       else la = head(f.w);
       if (!la) continue;
       out[k].la = cap(sent[k], la); if (k > 0 && out[k - 1].skip && /^[A-Z]/.test(sent[k - 1])) out[k].la = cap(sent[k - 1], out[k].la); out[k].id = id; out[k].len = f.len || 1;
-      for (let j = 1; j < (f.len || 1); j++) out[k + j].skip = true;   // "look at" → specto: the second word folds into the first
+      for (let j = 1; j < (f.len || 1); j++) { out[k + j].skip = true; out[k + j].tail = true; }   // "look at" → specto: the second word folds into the first
     }
     // the English behind each Latin word, folded helpers included ("were walking", "did not find" → the verb's gloss)
     for (let k = 0; k < n; k++) {
       if (!out[k].la) continue;
-      let a = k; while (a > 0 && out[a - 1].skip && !out[a - 1].la) a--;
+      let a = k; while (a > 0 && out[a - 1].skip && !out[a - 1].la && !out[a - 1].tail) a--;
       out[k].gloss = sent.slice(a, k + (out[k].len || 1)).join(' ');
     }
     return out;
@@ -334,7 +361,7 @@ const Snap = (() => {
       return /(^|\n\s*\n)\s*$/.test(text.slice(0, a)) && /^\s*(\n\s*\n|$)/.test(text.slice(b)) && para.length < 120 && (!/[.,;:!?]["'”’)]?$/.test(para) || /^(CHAPTER|Chapter|PART|Part|BOOK|Book)\b/.test(para) || (para.length < 50 && titled && !/["“”]/.test(para))); };
     return sentences(text).map(s => {
       const r = isHeading(s) ? s.map(x => ({ en: x.t, la: null, id: null })) : convert(s.map(x => x.t), idx);
-      r.forEach((t, i) => { t.at = s[i].at; let a = i; while (a > 0 && r[a - 1].skip && !r[a - 1].la) a--; t.from = s[a].at; t.to = s[i + (t.len || 1) - 1].at + s[i + (t.len || 1) - 1].t.length; });   // from…to: the English this Latin stands for
+      r.forEach((t, i) => { t.at = s[i].at; let a = i; while (a > 0 && r[a - 1].skip && !r[a - 1].la && !r[a - 1].tail) a--; t.from = s[a].at; t.to = s[i + (t.len || 1) - 1].at + s[i + (t.len || 1) - 1].t.length; });   // from…to: the English this Latin stands for
       return r;
     }).filter(s => s.some(t => /[a-z]/i.test(t.en)));
   }
