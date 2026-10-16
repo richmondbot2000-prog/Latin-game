@@ -7,6 +7,7 @@ const CASES = [
   ['I want to go to the market tomorrow.', 'go', 'nemchi'], ['I want to go to the market tomorrow.', 'market', 'les-souk'],
   ['We did not find the key.', 'find', 'ma l9inach'],
   ['The woman saw the dog.', 'saw', 'chafet'],
+  ['The daughters were all beautiful, but the youngest was so beautiful.', 'beautiful', 'mezyenin'], ['The girl is beautiful.', 'beautiful', 'mezyena'],
   ['They will come to the house on Friday.', 'come', 'bech yjiw'], ['They will come to the house on Friday.', 'house', 'led-dar'],
   ['You must eat the vegetables.', 'must', 'lezem'], ['You must eat the vegetables.', 'eat', 'tekel'],
   ['Can you help me?', 'Can', 'Tnajjem'], ['Can you help me?', 'help', 't3awen'],

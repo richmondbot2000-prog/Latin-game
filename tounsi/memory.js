@@ -370,7 +370,7 @@ const MEMORY = {
   "3am (verb)": {"pic": "🏊", "hook": "3am means swim. 'AM' — 'I AM SWIMMING.' Also year and uncle — three words in one!"},
   "sa9 (verb)": {"pic": "🚗🕹️", "hook": "sa9 means drive. 'SAK' — 'SACK the DRIVER.' Also leg! Ysou9 = he drives."},
   "rkeb": {"pic": "🐎🚌", "hook": "rkeb means ride, get on. 'R-KEB' — 'ARE KEBabs allowed on the RIDE?' Rkeb el-kar = get on the bus."},
-  "mezyen": {"pic": "🌟👌", "hook": "mezyen means good, lovely. 'MEZ-YEN' — 'MEZE, YEN — LOVELY.' Mzyan in Moroccan too."},
+  "mezyen": {"pic": "🌟😍", "hook": "mezyen means beautiful, lovely, good. 'MEZ-YEN' — 'the MEZE, YEN... BEAUTIFUL!' Bent mezyena = a beautiful girl; mzyan in Moroccan too."},
   "smin": {"pic": "🍔", "hook": "smin means fat. 'S-MEEN' — 'SMEAN' — 'this MEAN cat is FAT.' Smin / dh3if = fat / thin."},
   "dh3if": {"pic": "🪶", "hook": "dh3if means thin, weak. 'DH-EEF' — 'the THIEF was THIN and WEAK.'"},
   "sri3": {"pic": "🏎️", "hook": "sri3 means fast. 'S-REE' — 'SPREE — FAST!' Sari3 in Arabic."},

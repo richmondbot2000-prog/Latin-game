@@ -86,7 +86,7 @@ const SYNONYMS = {
   "tla3": ["climb","climbed","went up","rose"],
   "w9af": ["stand","stopped","stood"],
   "rkeb": ["get on","rode","got on"],
-  "mezyen": ["lovely"],
+  "mezyen": ["lovely","good"],
   "dh3if": ["weak"],
   "s7i7": ["healthy"],
   "klam": ["words"],

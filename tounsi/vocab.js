@@ -371,7 +371,7 @@ const VOCAB = [
   {"word": "3am (verb)", "english": "swim", "pos": "V", "level": 3, "pres": "y3oum", "p1": "3omt", "ar": "عام", "arpres": "يعوم", "arp1": "عمت"},
   {"word": "sa9 (verb)", "english": "drive", "pos": "V", "level": 3, "pres": "ysou9", "p1": "so9t", "ar": "ساق", "arpres": "يسوق", "arp1": "سقت"},
   {"word": "rkeb", "english": "ride, get on", "pos": "V", "level": 3, "pres": "yerkeb", "ar": "ركب", "arpres": "يركب"},
-  {"word": "mezyen", "english": "good, lovely", "pos": "Adj", "level": 3, "pl": "mezyenin", "f": "mezyena", "sense": ["good"], "ar": "مزيان", "arpl": "مزيانين", "arf": "مزيانة"},
+  {"word": "mezyen", "english": "beautiful, lovely, good", "pos": "Adj", "level": 3, "pl": "mezyenin", "f": "mezyena", "sense": ["good"], "ar": "مزيان", "arpl": "مزيانين", "arf": "مزيانة"},
   {"word": "smin", "english": "fat", "pos": "Adj", "level": 3, "pl": "sman", "f": "smina", "ar": "سمين", "arpl": "سمان", "arf": "سمينة"},
   {"word": "dh3if", "english": "thin, weak", "pos": "Adj", "level": 3, "pl": "dh3af", "f": "dh3ifa", "ar": "ضعيف", "arpl": "ضعاف", "arf": "ضعيفة"},
   {"word": "sri3", "english": "fast", "pos": "Adj", "level": 3, "pl": "sra3", "f": "sri3a", "ar": "سريع", "arpl": "سراع", "arf": "سريعة"},

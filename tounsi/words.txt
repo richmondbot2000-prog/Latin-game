@@ -377,7 +377,7 @@
 3|3am (verb)|swim|V|pres=y3oum;p1=3omt
 3|sa9 (verb)|drive|V|pres=ysou9;p1=so9t
 3|rkeb|ride, get on|V|pres=yerkeb
-3|mezyen|good, lovely|Adj|pl=mezyenin;f=mezyena;sense=good
+3|mezyen|beautiful, lovely, good|Adj|pl=mezyenin;f=mezyena;sense=good
 3|smin|fat|Adj|pl=sman;f=smina
 3|dh3if|thin, weak|Adj|pl=dh3af;f=dh3ifa
 3|sri3|fast|Adj|pl=sra3;f=sri3a
