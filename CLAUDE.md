@@ -481,8 +481,12 @@ every game. `tools/lang/README.md` is the recipe; tests:
 per mistake) and `tools/lang/tests/run.js "…"` prints a conversion;
 browser tour `scratchpad/tounsi2.js`.
 
-**Tounsi specifics.** 500 words in five settings of 100 (Basic, Top 200 …
-500; `level` 0–4) in the Latin-letter spelling Tunisians text in (3 = ayn,
+**Tounsi specifics.** 1,100 entries: 1,000 words in ten settings of 100 (Basic, Top 200 …
+Top 1000; `level` 0–9, each setting = its words and all lower ones) plus **Phrases**
+(`level` 10, `pos` = `phrase`: 100 sayings whose meaning is not the sum of their words,
+ma3lich, ya 7asra, 3la rasi…; a set on its own — `inLevel` gives only the phrases on
+that setting, Read and Snap then use every word, `levels` in `lang.json`; levels 5–10
+have no sentences or recorded clips yet) in the Latin-letter spelling Tunisians text in (3 = ayn,
 7 = ḥ, 9 = q, kh, gh, ch, dh, th). `forms.js`: verbs from the "he does" form
 (present in six persons; the plural stem drops a short vowel, yekhdem →
 yekhdmou, or adds w after a vowel, yemchi → yemchiw) and the "he did"

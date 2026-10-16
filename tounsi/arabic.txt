@@ -501,3 +501,604 @@ dhou9|ذوق
 rou7|روح|أرواح
 7adh|حظ
 zhar|زهر
+# ---- levels 5-9 and the phrases ----
+khammem|خمم|||يخمم||خمم
+3ayyet|عيط|||يعيط
+7aseb|حاسب|||يحاسب
+tfarrej|تفرج|||يتفرج
+3awwed|عاود|||يعاود
+rma|رمى|||يرمي
+hezz|هز|||يهز|هزيت|هز|يهزو
+mla|ملى|||يملى
+wsel|وصل|||يوصل
+khtar|ختار|||يختار||ختار
+fa9|فاق|||يفيق|فقت
+msek|مسك|||يمسك
+sellem|سلم|||يسلم
+nzel|نزل|||ينزل
+dar (verb)|دار|||يدور|درت
+fet|فات|||يفوت|فت
+sar|صار|||يصير|صرت
+7fadh|حفظ|||يحفظ||حفظ
+salla7|صلح|||يصلح
+sken|سكن|||يسكن
+youm|يوم|أيام
+d9i9a|دقيقة|دقايق
+rob3|ربع
+3otla|عطلة|عطل
+thaman|ثمن|أثمان
+mektab|مكتب|مكاتب
+chirka|شركة|شركات
+moudir|مدير|مديرين
+talib|طالب|طلبة
+tilmidh|تلميذ|تلامذة
+9ism|قسم|أقسام
+nou9ta|نقطة|نقاط
+9lam|قلم|قلومة
+karnet|كرني|كرني
+sabboura|سبورة|سبورات
+portable|بورطابل|بورطابلات
+ordinatour|أورديناتور|أورديناتورات
+radio|راديو
+salon|صالون|صالونات
+s9af|سقف|سقوف
+drouj|دروج
+four|فور|فورات
+dhra3|ذراع|ذراعين
+ktef|كتف|كتاف
+ra9ba|رقبة|رقاب
+rokba|ركبة|ركاب
+dam|دم
+9mijja|قميجة|قمايج
+kabbout|كبوط|كبابط
+fista|فيستة|فيستات
+rouba|روبة|روبات
+7zam|حزام|حزومة
+khatem|خاتم|خواتم
+makrouna|مقرونة
+chorba|شربة
+salata|سلاطة
+bsal|بصل
+thoum|ثوم
+felfel|فلفل
+tomatem|طماطم
+delle3|دلاع
+bordgan|برتقان
+limoun|ليمون
+3neb|عنب
+zebda|زبدة
+3sel|عسل
+kaskrout|كسكروت|كسكروتة
+gazouz|قازوز
+far|فار|فيران
+7nech|حنش|حنوش
+nemla|نملة|نمل
+n7la|نحلة|نحل
+sbo3|سبع|سبوعة
+dhib|ذيب|ذياب
+9ird|قرد|قرود
+fil|فيل|فيلة
+wed|واد|ويدان
+jzira|جزيرة|جزاير
+sa7ra|صحراء
+s7ab|سحاب
+ri7|ريح|رياح
+bard|برد
+elli|اللي
+kima|كيما
+wa9tella|وقتلي
+3ad|عاد
+bekri|بكري
+akid|أكيد
+tab3an|طبعا
+hakka|هكا
+hakkeka|هكاكا
+ay|أي
+b3adh|بعض
+walou|والو
+kthir|كثير
+9lil|قليل
+akther|أكثر
+a9all|أقل
+jmil|جميل|جمال|جميلة
+9bi7|قبيح|قباح|قبيحة
+kreh|كره|||يكره
+9arrar|قرر|||يقرر||قرر
+tbassem|تبسم|||يتبسم||تبس
+hrab|هرب|||يهرب||هرب
+habbat|هبط|||يهبط
+3adda|عدى|||يعدي
+7arrek|حرك|||يحرك
+chamm|شم|||يشم|شميت|شم|يشمو
+lmes|لمس|||يلمس
+7ra9|حرق|||يحرق||حرق
+9alla|قلى|||يقلي
+sabb|صب|||يصب|صبيت|صب|يصبو
+9addem|قدم|||يقدم
+sallef|سلف|||يسلف
+khalles|خلص|||يخلص
+ghlat|غلط|||يغلط||غلط
+nja7|نجح|||ينجح||نجح
+rsem|رسم|||يرسم
+sawwar|صور|||يصور
+9la9|قلق|||يقلق||قلق
+thenya|ثانية|ثواني
+sbou3|أسبوع|أسبوعات
+9ayla|قايلة
+millim|مليم|ملاليم
+7seb|حساب|حسابات
+ma3mal|معمل|معامل
+3amel|عامل|عمال
+mhandes|مهندس|مهندسين
+bouliss|بوليس
+3askri|عسكري|عسكر
+nejjar|نجار|نجارة
+khabbaz|خباز|خبازة
+jazzar|جزار|جزارة
+7alle9|حلاق|حلاقة
+chifour|شيفور|شيفورة
+fella7|فلاح|فلاحة
+mmarrdha|ممرضة|ممرضات
+mou7ami|محامي|محامين
+fannan|فنان|فنانين
+la3eb|لاعب|لعبة
+mat7af|متحف|متاحف
+sinema|سينما
+stad|ستاد
+maktba|مكتبة|مكتبات
+jemi3a|جامعة|جامعات
+outel|أوتيل|أوتيلات
+bosta|بوسطة
+twalet|طواليت
+garaj|قراج|قراجات
+ma7atta|محطة|محطات
+mtar|مطار|مطارات
+mina|مينا
+metro|ميترو
+motor|موتور|موتورات
+babour|بابور|بوابر
+flouka|فلوكة|فلايك
+brik|بريك|بريكات
+lablabi|لبلابي
+sfennarya|سفنارية
+khass|خس
+battikh|بطيخ
+frawla|فراولة
+louz|لوز
+pizza|بيتزا
+sder|صدر
+jeld|جلد
+3dham|عظم
+jebba|جبة|جبب
+chechia|شاشية|شواشي
+kaskita|كسكيطة|كسكيطات
+klasset|كلاسات
+ghsala|غسالة|غسالات
+namousa|ناموسة|ناموس
+dhebbana|ذبانة|ذبان
+farfattou|فرفطو|فرفطوات
+b7ira|بحيرة|بحيرات
+dhbab|ضباب
+bar9|برق
+ra3d|رعد
+3ris|عريس|عرسان
+3roussa|عروسة|عرايس
+nsib|نسيب|نساب
+salem|سلام
+7arb|حرب|حروب
+7oriya|حرية
+9anoun|قانون|قوانين
+7koma|حكومة
+rais|رئيس|رؤساء
+cha3b|شعب|شعوب
+3alam|عالم
+tarikh|تاريخ
+3ilm|علم|علوم
+fan|فن|فنون
+khabar|خبر|أخبار
+jarida|جريدة|جرايد
+mhemm|مهم|مهمين|مهمة
+gharib|غريب|غربة|غريبة
+3adi|عادي|عاديين|عادية
+khass (adj)|خاص|خاصين|خاصة
+7orr|حر|أحرار|حرة
+far7 (verb)|فرح|||يفرح||فرح
+7zen|حزن|||يحزن
+t3ajjeb|تعجب|||يتعجب||تعج
+na9as|نقص|||ينقص||نقص
+baddel|بدل|||يبدل
+tbaddel|تبدل|||يتبدل
+7ama|حمى|||يحمي
+knes|كنس|||يكنس
+msa7|مسح|||يمسح||مسح
+rattab|رتب|||يرتب
+9abel|قابل|||يقابل
+zar|زار|||يزور|زرت
+3zem|عزم|||يعزم||عزم
+safer|سافر|||يسافر
+bna|بنى|||يبني
+fsed|فسد|||يفسد
+7bes|حبس|||يحبس
+lamm|لم|||يلم|لميت|لم|يلمو
+farra9|فرق|||يفرق
+9sem|قسم|||يقسم
+7dach|حداش
+thnach|اثناش
+thletach|ثلطاش
+arb3tach|أربعطاش
+khamstach|خمسطاش
+settach|سطاش
+sba3tach|سبعطاش
+thmontach|ثمنطاش
+tsa3tach|تسعطاش
+thlethin|ثلاثين
+arb3in|أربعين
+khamsin|خمسين
+settin|ستين
+sab3in|سبعين
+thmanin|ثمانين
+tes3in|تسعين
+melyoun|مليون
+theni|ثاني|ثانيين|ثانية
+theleth|ثالث|ثالثين|ثالثة
+wardi|وردي|ورديين|وردية
+bortou9ali|برتقالي|برتقاليين|برتقالية
+ramadi|رمادي|رماديين|رمادية
+bonni|بني|بنيين|بنية
+banafsji|بنفسجي|بنفسجيين|بنفسجية
+dhahbi|ذهبي|ذهبيين|ذهبية
+fedhdhi|فضي|فضيين|فضية
+fate7|فاتح|فاتحين|فاتحة
+ghame9|غامق|غامقين|غامقة
+mobtadi|مبتدي|مبتدين
+7afla|حفلة|حفلات
+mousi9i|موسيقي|موسيقيين
+moughanni|مغني|مغنيين
+kateb|كاتب|كتاب
+mmathel|ممثل|ممثلين
+rasm|رسم|رسوم
+taswira|تصويرة|تصاور
+la7n|لحن|ألحان
+match|ماتش|ماتشات
+fari9|فريق|فرق
+hadaf|هدف|أهداف
+batal|بطل|أبطال
+jayza|جايزة|جوايز
+jary|جري
+3ouma|عومة
+safra|سفرة|سفرات
+re7la|رحلة|رحلات
+chanta|شنطة|شناطي
+paspor|باسبور|باسبورات
+tadhkra|تذكرة|تذاكر
+kharita|خريطة|خرايط
+3ounwan|عنوان|عناوين
+nimrou|نمرو|نمروات
+7ajz|حجز
+sa7el|ساحل
+3asima|عاصمة|عواصم
+9arya|قرية|قرى
+rif|ريف
+markez|مركز|مراكز
+zan9a|زنقة|زناقي
+jisr|جسر|جسور
+dhaw a7mar|ضو أحمر|ضواو حمر
+sa7a (noun)|ساحة|ساحات
+7adi9a|حديقة|حدايق
+mosafer|مسافر|مسافرين
+siye7|سايح|سواح
+ajnabi|أجنبي|أجانب
+visa|فيزا|فيزات
+7odoud|حدود
+khat|خط|خطوط
+tari9|طريق|طرق
+mawjoud|موجود|موجودين|موجودة
+fadhi|فاضي|فاضيين|فاضية
+mosta3jel|مستعجل|مستعجلين|مستعجلة
+a7san|أحسن
+akbar|أكبر
+asghar|أصغر
+a7la|أحلى
+arkhas|أرخص
+aghla|أغلى
+ghatta|غطى|||يغطي
+khabba|خبى|||يخبي
+ghra9|غرق|||يغرق||غرق
+dhab|ذاب|||يذوب|ذبت
+jmed|جمد|||يجمد
+tla9a|تلاقى|||يتلاقى
+kharrej|خرج|||يخرج
+dakhkhal|دخل|||يدخل
+wa99af|وقف|||يوقف
+chaghghal|شغل|||يشغل
+taffa|طفى|||يطفي
+rakkeb|ركب|||يركب
+3ayyech|عيش|||يعيش
+rabba|ربى|||يربي
+tzawwej|تزوج|||يتزوج
+khayyet|خيط|||يخيط
+wled (verb)|ولد|||يولد
+7lem (noun)|حلم|أحلام
+ra2y|رأي|آراء
+7ess (noun)|حس
+sabr|صبر
+chaja3a|شجاعة
+amal|أمل
+khayal|خيال
+dhakira|ذاكرة
+3ada|عادة|عادات
+sir|سر|أسرار
+kedhba|كذبة|كذبات
+7a9i9a|حقيقة|حقايق
+ghalta|غلطة|غلطات
+ma3na|معنى|معاني
+mithal|مثال|أمثلة
+9a3ida|قاعدة|قواعد
+tarjama|ترجمة
+7arf|حرف|حروف
+jomla|جملة|جمل
+safha|صفحة|صفحات
+9isma|قسمة|قسم
+bidaya|بداية
+nihaya|نهاية
+mostaqbal|مستقبل
+madhi|ماضي
+7adher (noun)|حاضر
+zman|زمان
+fajr|فجر
+ghroub|غروب
+lila|ليلة|ليالي
+sana|سنة|سنين
+9arn|قرن|قرون
+mowsem|موسم|مواسم
+7arara|حرارة
+rotouba|رطوبة
+3asifa|عاصفة|عواصف
+zelzel|زلزال|زلازل
+7ari9|حريق|حرايق
+dokhkhan|دخان
+ghbar|غبار
+tin|طين
+rmel|رمل
+3ochb|عشب
+jedhr|جذر|جذور
+nakhla|نخلة|نخل
+zitouna|زيتونة|زياتين
+7a9l|حقل|حقول
+3ayn (noun)|عين|عيون
+bir|بير|بيار
+chlel|شلال
+sakhra|صخرة|صخور
+ghar|غار|غيران
+koudya|كدية|كدي
+sahl|سهل|سهول
+dhal|ظل|ظلال
+9aws 9za7|قوس قزح
+fadha|فضاء
+kawkab|كوكب|كواكب
+najm|نجم|نجوم
+mardh|مرض|أمراض
+dwa|دواء|أدوية
+farmasi|فرماسي|فرماسيات
+wja3|وجع|أوجاع
+7omma|حمى
+zokem|زكام
+jar7|جرح|جروح
+dmou3|دموع
+3ara9|عرق
+ra7a|راحة
+noum|نوم
+jou3|جوع
+3atch|عطش
+mri7|مريح|مريحين|مريحة
+9al9an|قلقان|قلقانين|قلقانة
+khayef|خايف|خايفين|خايفة
+mabsout|مبسوط|مبسوطين|مبسوطة
+mestanni|مستني|مستنيين|مستنية
+ne3es|ناعس|ناعسين|ناعسة
+mdhayya3|مضيع|مضيعين|مضيعة
+wa7id|وحيد|وحيدين|وحيدة
+sa7i|صاحي|صاحيين|صاحية
+chfa|شفة|شفايف
+lsan|لسان|لسن
+7adher (verb)|حضر|||يحضر||حضر
+ghab|غاب|||يغيب|غبت
+wa3ad|وعد|||يوعد||وعد
+t3ab|تعب|||يتعب
+9tel|قتل|||يقتل
+3adh|عض|||يعض|عضيت|عض|يعضو
+9ta3|قطع|||يقطع||قطع
+9fel|قفل|||يقفل
+khbez|خبز|||يخبز
+3asar|عصر|||يعصر||عصر
+jma3|جمع|||يجمع||جمع
+hdem|هدم|||يهدم
+nadhdhem|نظم|||ينظم
+sharek|شارك|||يشارك
+tsel|اتصل|||يتصل|اتصلت
+sta3mel|استعمل|||يستعمل|استعملت
+7adhdhar|حضر|||يحضر
+zayyen|زين|||يزين
+ghayyar|غير|||يغير
+3abba|عبى|||يعبي
+farragh|فرغ|||يفرغ
+rakkez|ركز|||يركز
+9ayyem|قيم|||يقيم
+3awwel|عول|||يعول
+t7ammel|تحمل|||يتحمل
+t3awed|تعود|||يتعود
+3adel|عدل|||يعدل
+mashi|ماشي
+lhih|لهيه
+9rib (adv)|قريب
+bessif|بالسيف
+bel3ani|بالعاني
+bel7a9|بالحق
+3al a9all|عالأقل
+3al akther|عالأكثر
+3la tol|على طول
+men ba3d|من بعد
+men 9bal|من قبل
+fil akhir|في الآخر
+fil lowel|في اللول
+ba3d ghodwa|بعد غدوة
+loula bere7|لولا البارح
+jey|جاي|جايين|جاية
+fet (adj)|فات|فاتو|فاتت
+yemken|يمكن
+belkol|بالكل
+bezzef|بالزاف
+t9riban|تقريبا
+bidhabt|بالضبط
+ghir|غير
+akahaw|أكاهو
+3la khater|على خاطر
+9bal ma|قبل ما
+ba3d ma|بعد ما
+kif ma|كيف ما
+wa9t ma|وقت ما
+7atta ken|حتى كان
+ken ma|كان ما
+ella|إلا
+7adha|حذا
+dhid|ضد
+7asb|حسب
+bin ma|بين ما
+b|ب
+3and|عند
+mte3|متاع
+rou7i|روحي
+rou7ek|روحك
+rou7ou|روحو
+rou7ha|روحها
+rou7na|روحنا
+rwa7hom|رواحهم
+b3adhna|بعضنا
+kol wa7ed|كل واحد
+kol chay|كل شي
+7atta wa7ed|حتى واحد
+7atta chay|حتى شي
+9adhya|قضية|قضايا
+mawdhou3|موضوع|مواضيع
+sabab|سبب|أسباب
+natija|نتيجة|نتائج
+fer9|فرق|فروق
+chart|شرط|شروط
+fourssa|فرصة|فرص
+khatar|خطر|أخطار
+aman|أمان
+mosa3da|مساعدة
+3ala9a|علاقة|علاقات
+3adou|عدو|أعداء
+dawla|دولة|دول
+jaych|جيش|جيوش
+mawt|موت
+mas2oul|مسؤول|مسؤولين|مسؤولة
+mamnou3|ممنوع|ممنوعين|ممنوعة
+masmou7|مسموح|مسموحين|مسموحة
+mafhoum|مفهوم|مفهومين|مفهومة
+wadhe7|واضح|واضحين|واضحة
+3azouz|عزوز|عزايز
+chab|شاب|شباب
+chabba|شابة|شابات
+chbik|شبيك
+3andek el 7a9|عندك الحق
+ma 3andich khbar|ما عنديش خبر
+rabbi ysahhel|ربي يسهل
+rabbi m3ak|ربي معاك
+sa7it|صحيت
+3la kifek|على كيفك
+kif kif|كيف كيف
+nharek zin|نهارك زين
+t3ich|تعيش
+allah ybarek|الله يبارك
+machallah|ما شاء الله
+ma3lich|معليش
+mouch mouchkla|موش مشكلة
+3la rasi|على راسي
+3la 3ini|على عيني
+rabbi y7afdhek|ربي يحفظك
+taw taw|تو تو
+ya 7asra|يا حسرة
+ya khsara|يا خسارة
+ya latif|يا لطيف
+ya rabbi|يا ربي
+3la sa7tek|على صحتك
+rabbi ykhallik|ربي يخليك
+ech bech n9oullek|آش باش نقلك
+ma fama 7atta chay|ما فما حتى شي
+ma yhemmech|ما يهمش
+chadd rou7ek|شد روحك
+bechwaya bechwaya|بشوية بشوية
+chwaya chwaya|شوية شوية
+marra marra|مرة مرة
+lebes 3lik|لاباس عليك
+walla|والله
+wallahi|والله
+ya sidi|يا سيدي
+ya sa7bi|يا صاحبي
+ya weldi|يا ولدي
+ya benti|يا بنتي
+ya khouya|يا خويا
+3lech le|علاش لا
+mouch normal|موش نورمال
+nchallah khir|إن شاء الله خير
+allah ghaleb|الله غالب
+fi 3ilmek|في علمك
+ma t9la9ch|ما تقلقش
+ma tkhafch|ما تخافش
+haya bina|هيا بينا
+yalla|يلا
+chnia el 7kaya|شنية الحكاية
+chnowa sar|شنوة صار
+3la ma yram|على ما يرام
+tfadhal|تفضل
+ras el 3am|راس العام
+fi aman allah|في أمان الله
+rabbi ysalmek|ربي يسلمك
+sba7 en nour|صباح النور
+msa en nour|مسا النور
+w enti men ahlou|و إنتي من أهلو
+ahla w sahla|أهلا و سهلا
+marhba bik|مرحبا بيك
+merci|مرسي
+rabbi ybarek fik|ربي يبارك فيك
+allah yr7mou|الله يرحمو
+bismillah|بسم الله
+la 7awla|لا حول
+fi l akhir|في الآخر
+fi l lowel|في اللول
+mel lowel|من اللول
+el 3am elli fet|العام اللي فات
+el 3am ej jey|العام الجاي
+chnowa ra2yek|شنوة رأيك
+mouch khayeb|موش خايب
+rani|راني
+rahou|راهو
+hedheka howa|هذاكا هو
+3la 9add|على قد
+3al 9lila|عالقليلة
+mouch lezem|موش لازم
+3andi 7a9|عندي حق
+ma 3andekch 7a9|ما عندكش حق
+rou7 rawwa7|روح روح
+bara barra|برا برا
+a3tini|أعطيني
+9olli|قلي
+chouf|شوف
+esma3|اسمع
+ejri|اجري
+stanna chwaya|استنى شوية
+ma fhemtch|ما فهمتش
+ma na3rafch|ما نعرفش
+ma nejjemch|ما نجمش
+ma n7ebbech|ما نحبش
+n7ebbek|نحبك
+twa7achtek|توحشتك
+rabbi y3awnek|ربي يعاونك
+3id mabrouk|عيد مبروك
+3am s3id|عام سعيد
+sa7a chribtek|صحة شريبتك
+bessa7a w rra7a|بالصحة و الراحة
+3al barra|عالبرا
+ra9s|رقص

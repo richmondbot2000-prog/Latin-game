@@ -15,7 +15,7 @@
 -1 | Hiya tefhem. | She understands.
 -1 | A7na nemchiw ghodwa. | We go tomorrow.
 -1 | Houma jaw men ed-dar. | They came from the house.
--1 | 3andi dar kbira. | I have a big house.
+-1 | 3andi dar=dar kbira. | I have a big house.
 -1 | 3andi weld w bent. | I have a son and a daughter.
 -1 | El-mra chafet er-rajel. | The woman saw the man.
 -1 | Kifech enti? Ena behi. | How are you? I am fine.
@@ -31,7 +31,7 @@
 -1 | Hedha rajel kbir. | This is a big man.
 -1 | Wa7ed w wa7ed, zouz. | One and one, two.
 -1 | 3andi zouz wled=weld|boys. | I have two boys.
--1 | Houni dar kbira. | Here is a big house.
+-1 | Houni dar=dar kbira. | Here is a big house.
 -1 | Enti ta3raf win ed-dar? | Do you know where the house is?
 -1 | Ena fhemt. | I understood.
 -1 | Houwa 7ab el-khobz ama hiya 7abbet el-ma. | He liked the bread but she liked the water.
@@ -62,7 +62,7 @@
 0 | Baba yekhdem fi es-souk. | Dad works in the market.
 0 | Ommi techri el-7lib men el-7anout. | Mum buys the milk from the shop.
 0 | Er-rajel chaf el-b7ar. | The man saw the sea.
-0 | El-mra 3andha=-|has dar kbira. | The woman has a big house.
+0 | El-mra 3andha=-|has dar=dar kbira. | The woman has a big house.
 0 | Khouya yel3ab m3a el-kalb. | My brother plays with the dog.
 0 | Okhti=okht|my_sister mridha elyoum. | My sister is ill today.
 0 | El-9attous r9ad fi es-srir. | The cat slept in the bed.
@@ -94,7 +94,7 @@
 0 | Er-rajel 9al: "Ena mridh." | The man said: "I am ill."
 0 | Chaf ech-chams men el-beb. | He saw the sun from the door.
 0 | Fi el-lil, el-9attous yel3ab. | At night, the cat plays.
-0 | 3am=3am_(year) jdid, dar jdida. | A new year, a new house.
+0 | 3am=3am_(year) jdid, dar=dar jdida. | A new year, a new house.
 0 | Thletha wled=weld w arb3a bnet=bent. | Three boys and four girls.
 0 | Khamsa, setta, sab3a, thmenya, tes3a. | Five, six, seven, eight, nine.
 0 | El-mekla khayba elyoum. | The food is bad today.
@@ -159,7 +159,7 @@
 1 | Ba3d es-souk, 9a3adna fi 9ahwa w chrabna tey. | After the market, we sat in a cafe and drank tea. | s1a | The market
 1 | Rawwa7na ta3banin lekin far7anin. | We went home tired but happy. | s1a | The market
 1 | Sa7bi=sa7eb|my_friend Ali=- tfol twil w 9wi. | My friend Ali is a tall, strong boy. | s1b | My friend Ali
-1 | Houwa 3andou dar 9dima fi el-mdina. | He has an old house in the city. | s1b | My friend Ali
+1 | Houwa 3andou dar=dar 9dima fi el-mdina. | He has an old house in the city. | s1b | My friend Ali
 1 | Kol nhar, nemchiw lel-mdrasa=mdrasa|to_school fi eth-thniya el-kbira. | Every day, we go to school along the big road. | s1b | My friend Ali
 1 | Fi el-mdrasa, net3allmou el-englizi w el-3arbi. | At school, we learn English and Arabic. | s1b | My friend Ali
 1 | Ba3d el-mdrasa, nel3bou fi ech-chera3. | After school, we play in the street. | s1b | My friend Ali
@@ -177,7 +177,7 @@
 2 | Et-tfol bka w ba3d dh7ak. | The boy cried and then laughed.
 2 | 7all=7all_(verb) el-beb w khraj barra. | He opened the door and went outside.
 2 | Sakkar=sakkar|close ech-chobbek, el-ma bared yesser! | Close the window, it is very cold!
-2 | Stanna=stanna|wait chwaya, el-ghda 9rib. | Wait a little, lunch is near.
+2 | Stanna=stanna|wait chwaya, el-ghda 9rib=9rib. | Wait a little, lunch is near.
 2 | Fi es-sbe7 nekel fter, fi el-3chiya nekel 3cha. | In the morning I eat breakfast, in the evening I eat dinner.
 2 | Chrit kosksi w mel7 w sokkor men es-souk. | I bought couscous, salt and sugar from the market.
 2 | L9it stilou ta7t et-tawla. | I found a pen under the table.
@@ -218,14 +218,14 @@
 3 | Fakkert fi souel s3ib w l9it el-jweb. | I thought about a hard question and found the answer.
 3 | El-7kaya twila lekin mezyena. | The story is long but lovely.
 3 | 3andi fekra: nemchiw lech-chatt=chatt|to_the_beach nhar lekhmis. | I have an idea: let's go to the beach on Thursday.
-3 | Es-sma zar9a, ech-chams safra w el-jnina khadhra. | The sky is blue, the sun is yellow and the garden is green.
+3 | Es-sma zar9a, ech-chams safra=asfar w el-jnina khadhra. | The sky is blue, the sun is yellow and the garden is green.
 3 | Khoft men el-7ayawan el-kbir. | I was afraid of the big animal.
 3 | Bellehi, a7ki=7ka|speak bechwaya, ma_fhemtech=fhem|I_didn't_understand. | Please, speak slowly, I didn't understand.
 3 | 7assit ta3ban ba3d el-khedma. | I felt tired after the work.
 3 | W9af fi wast ech-chera3 w chaf 3la el-yemin w el-ysar. | He stood in the middle of the street and looked right and left.
 3 | El-ghani 3andou karhba sri3a w el-meskin yemchi 3la sa9ih=sa9_(leg)|on_his_legs. | The rich man has a fast car and the poor man goes on foot.
 3 | Tfakkert jedda w 9albi=9alb|my_heart 7azin. | I remembered grandma and my heart was sad.
-3 | Fi el-3ers, famma mousi9a w ghnaya w mekla bnina. | At the wedding, there is music, a song and delicious food.
+3 | Fi el-3ers, famma mousi9a w ghnaya w mekla bnina=bnin. | At the wedding, there is music, a song and delicious food.
 3 | El-klam et-tounsi sehel w 7lou. | Tunisian talk is easy and sweet.
 3 | Be3t el-b7im w chrit ma3za. | I sold the donkey and bought a goat.
 3 | Nos el-wled=weld fi el-mdrasa w nos fi ed-dar. | Half of the boys are at school and half at home.
@@ -251,7 +251,7 @@
 4 | Fi er-rbi3, el-wrad fi el-jbel 7omr w sofr. | In spring, the flowers on the mountain are red and yellow.
 4 | Ommi tayybet 3cha 7ar bel-harissa=harissa|with_harissa, w bes7a! | Mum cooked a spicy dinner with harissa, and enjoy!
 4 | Ghselt yeddi=yed|my_hands bes-sabon=sabon|with_soap 9bal el-mekla. | I washed my hands with soap before the meal.
-4 | El-jar mte3na 3andou jmal w arneb w bisklet. | Our neighbour has a camel, a rabbit and a bicycle.
+4 | El-jar mte3na 3andou jmal=jmal w arneb w bisklet. | Our neighbour has a camel, a rabbit and a bicycle.
 4 | Lbest serwel jdid w maryoul akhdhar lel-3ers=3ers|for_the_wedding. | I wore new trousers and a green top for the wedding.
 4 | Dhayya3t nwadhri=nwadher|my_glasses fi et-taxi! | I lost my glasses in the taxi!
 4 | Khsart el-lo3ba lekin rbe7t sa7eb. | I lost the game but won a friend.
@@ -275,7 +275,7 @@
 4 | El-weld el-ghabi dhrab el-jar w ommou=ommi|his_mum bket. | The stupid boy hit the neighbour and his mum cried.
 4 | 7adhi=7adh|my_luck behi: rbe7t alf dinar! | My luck is good: I won a thousand dinars!
 4 | Naddhaft ed-dar wa7di=wa7dou|by_myself fi es-sbe7. | I cleaned the house by myself in the morning.
-4 | Fi el-khrif, el-ghaba safra w el-hwa bared. | In autumn, the forest is yellow and the wind is cold.
+4 | Fi el-khrif, el-ghaba safra=asfar w el-hwa bared. | In autumn, the forest is yellow and the wind is cold.
 4 | Fi el-lil, 7lemt 7elm=7lem|a_dream mkhawwef. | At night, I dreamt a scary dream. | s4a | The dream
 4 | Kont=-|I_was fi ghaba kbira wa7di=wa7dou|by_myself, w es-sma ka7la. | I was in a big forest by myself, and the sky was black. | s4a | The dream
 4 | Sma3t sout 3ali men wra ech-chajra. | I heard a loud voice from behind the tree. | s4a | The dream
