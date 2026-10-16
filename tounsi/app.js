@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '26';
+const APP_VERSION = '27';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -101,15 +101,15 @@ const streakKey = u => 'tounsi.streak.' + u.id;
 const levelKey = u => 'tounsi.level.' + u.id;
 
 /* vocabulary settings: each one opens up more words; Level 3 is the full list */
-const LEVELS = [['top', 'Beginner'], ['0', 'Basic'], ['1', 'Top 200'], ['2', 'Top 300'], ['3', 'Top 400'], ['4', 'Top 500'], ['5', 'Top 600'], ['6', 'Top 700'], ['7', 'Top 800'], ['8', 'Top 900'], ['9', 'Top 1000'], ['10', 'Phrases']];
-const inLevel = (w, l) => l === 'top' ? !!w.top : l === '10' ? w.level === 10 : w.level <= +l;
+const LEVELS = [['top', 'Beginner'], ['0', 'Basic'], ['1', 'Top 200'], ['2', 'Top 300'], ['3', 'Top 400'], ['4', 'Top 500'], ['4p', '500 + Phrases'], ['5', 'Top 600'], ['6', 'Top 700'], ['7', 'Top 800'], ['8', 'Top 900'], ['9', 'Top 1000'], ['9p', '1000 + Phrases']];
+const inLevel = (w, l) => l === 'top' ? !!w.top : /p$/.test(l) ? (w.level <= parseInt(l) || w.level === 10) : w.level <= +l;
 // the Top 50 setting is for the cards and the games: Read opens at the next setting up — except Sentences, which opens
 // when the language has sentences written for the 50 words (lv -1 in read.js)
 const readLocked = u => levelOf(u) === 'top';
 const topSentences = () => typeof SENTENCES !== 'undefined' && SENTENCES.some(x => x.lv < 0);
 const sentencesLocked = u => readLocked(u) && !topSentences();
 const levelOf = u => { const l = store.get(levelKey(u), '0'); return LEVELS.some(x => x[0] === l) ? l : '0'; };
-const levelName = l => LEVELS.find(x => x[0] === l)[1];
+const levelName = l => { const x = LEVELS.find(x => x[0] === l); return x ? x[1] : l === '10' ? 'Phrases' : l; };
 const activeWords = u => { const l = levelOf(u); return WORDS.filter(w => inLevel(w, l)); };
 
 /* ---------- helpers ---------- */
@@ -705,8 +705,8 @@ function inflectAll(english, shape) {
 }
 function renderRead(u) {
   const byId = Object.fromEntries(WORDS.map(w => [w.id, w]));
-  const pool = levelOf(u) === '10' ? WORDS.filter(w => w.level <= 9) : activeWords(u);   // wrong answers come from the words of the chosen level
-  const L = levelOf(u) === 'top' && topSentences() ? -1 : Math.min(9, Math.max(0, +levelOf(u) || 0));
+  const pool = activeWords(u);   // wrong answers come from the words of the chosen level
+  const L = levelOf(u) === 'top' && topSentences() ? -1 : Math.max(0, parseInt(levelOf(u)) || 0);
   const key = 'tounsi.read.' + u.id;
   const sv = store.get(key, { done: {}, read: 0 });
   // the sentences for this level and below; the stories, as lists of sentence numbers in reading order
@@ -987,7 +987,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
   Celebrate.stop();
   const key = 'tounsi.snap.' + u.id, sv = store.get(key, { pages: 0, words: 0, last: '' });
   const byIdAll = Object.fromEntries(WORDS.map(w => [w.id, w]));
-  const lv = levelOf(u), pool = lv === '10' ? WORDS : activeWords(u);
+  const lv = levelOf(u), pool = activeWords(u);
   // the start screen: white, one big "Enter text" box, round Pictures / Camera buttons along the bottom
   const shell = () => '';
   const ICON = { pic: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>',

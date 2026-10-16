@@ -482,10 +482,11 @@ per mistake) and `tools/lang/tests/run.js "…"` prints a conversion;
 browser tour `scratchpad/tounsi2.js`.
 
 **Tounsi specifics.** 1,100 entries: 1,000 words in ten settings of 100 (Basic, Top 200 …
-Top 1000; `level` 0–9, each setting = its words and all lower ones) plus **Phrases**
-(`level` 10, `pos` = `phrase`: 100 sayings whose meaning is not the sum of their words,
-ma3lich, ya 7asra, 3la rasi…; a set on its own — `inLevel` gives only the phrases on
-that setting, Read and Snap then use every word, `levels` in `lang.json`; levels 5–10
+Top 1000; `level` 0–9, each setting = its words and all lower ones) plus 100 **phrases**
+(`level` 10, `pos` = `phrase`: sayings whose meaning is not the sum of their words,
+ma3lich, ya 7asra, 3la rasi…) which join the words in two settings, **500 + Phrases**
+(`4p`) after Top 500 and **1000 + Phrases** (`9p`) at the end (`inLevel`: a key ending
+in `p` = the words up to that level plus level 10; `levels` in `lang.json`; levels 5–10
 have no sentences or recorded clips yet) in the Latin-letter spelling Tunisians text in (3 = ayn,
 7 = ḥ, 9 = q, kh, gh, ch, dh, th). `forms.js`: verbs from the "he does" form
 (present in six persons; the plural stem drops a short vowel, yekhdem →

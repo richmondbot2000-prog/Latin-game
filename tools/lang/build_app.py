@@ -25,12 +25,11 @@ s = rep(s, "fetch('sw.js?v=' + Date.now(), { cache: 'no-store' })", f"fetch('{co
 levels = json.dumps(L['levels']).replace('"', "'")
 levels = "[['top', 'Beginner'], " + levels[1:]   # the 50-word setting (words marked top=1 in words.txt) comes first, called Beginner (the Latin game's 'Top 50': there Beginner is the 100-word setting)
 s = rep(s, "const LEVELS = [['top', 'Top 50'], ['beginner', 'Beginner'], ['1', 'Level 1'], ['2', 'Level 2'], ['3', 'Level 3']];", f"const LEVELS = {levels};")
-s = rep(s, "const inLevel = (w, l) => l === 'top' ? !!w.top : l === 'beginner' ? !!w.beginner : w.level <= +l;", "const inLevel = (w, l) => l === 'top' ? !!w.top : l === '10' ? w.level === 10 : w.level <= +l;")   # Phrases (level 10) is a set on its own
+s = rep(s, "const inLevel = (w, l) => l === 'top' ? !!w.top : l === 'beginner' ? !!w.beginner : w.level <= +l;", "const inLevel = (w, l) => l === 'top' ? !!w.top : /p$/.test(l) ? (w.level <= parseInt(l) || w.level === 10) : w.level <= +l;")   # '4p' / '9p': the words up to that level plus the phrases (level 10)
+s = rep(s, "const levelName = l => LEVELS.find(x => x[0] === l)[1];", "const levelName = l => { const x = LEVELS.find(x => x[0] === l); return x ? x[1] : l === '10' ? 'Phrases' : l; };")
 s = rep(s, "const levelOf = u => { const l = store.get(levelKey(u), 'beginner'); return LEVELS.some(x => x[0] === l) ? l : 'beginner'; };",
         "const levelOf = u => { const l = store.get(levelKey(u), '0'); return LEVELS.some(x => x[0] === l) ? l : '0'; };")
-s = rep(s, "const L = levelOf(u) === 'top' && topSentences() ? -1 : Math.max(0, ['beginner', '1', '2', '3'].indexOf(levelOf(u)));", "const L = levelOf(u) === 'top' && topSentences() ? -1 : Math.min(9, Math.max(0, +levelOf(u) || 0));")   # on the Phrases setting, Read and Snap use every word
-s = rep(s, "const pool = activeWords(u);   // wrong answers come from the words of the chosen level", "const pool = levelOf(u) === '10' ? WORDS.filter(w => w.level <= 9) : activeWords(u);   // wrong answers come from the words of the chosen level")
-s = rep(s, "const lv = levelOf(u), pool = activeWords(u);", "const lv = levelOf(u), pool = lv === '10' ? WORDS : activeWords(u);")   # the Phrases setting reads with every word and phrase
+s = rep(s, "const L = levelOf(u) === 'top' && topSentences() ? -1 : Math.max(0, ['beginner', '1', '2', '3'].indexOf(levelOf(u)));", "const L = levelOf(u) === 'top' && topSentences() ? -1 : Math.max(0, parseInt(levelOf(u)) || 0);")   # '4p' reads as level 4
 # words: a verb shows both its forms (mcha / yemchi); the "(uncle)" tags that keep ids unique are not shown
 s = rep(s, "const showWord = w => w.replace(/\\s*\\+\\s*(abl|acc)\\.?$/, '').replace(/\\s*\\((verb|adverb|noun)\\)$/, '').split('/').join(', ');",
         "const showWord = w => w.replace(/\\s*\\(.*\\)$/, '');")
