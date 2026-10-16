@@ -486,7 +486,7 @@ browser tour `scratchpad/tounsi2.js`.
 ma3lich, ya 7asra, 3la rasi…) which join the words in two settings, **500 + Phrases**
 (`4p`) after Top 500 and **1000 + Phrases** (`9p`) at the end (`inLevel`: a key ending
 in `p` = the words up to that level plus level 10; `levels` in `lang.json`; levels 5–10
-have no sentences or recorded clips yet) in the Latin-letter spelling Tunisians text in (3 = ayn,
+have no sentences yet; every form has a recorded clip) in the Latin-letter spelling Tunisians text in (3 = ayn,
 7 = ḥ, 9 = q, kh, gh, ch, dh, th). `forms.js`: verbs from the "he does" form
 (present in six persons; the plural stem drops a short vowel, yekhdem →
 yekhdmou, or adds w after a vowel, yemchi → yemchiw) and the "he did"
@@ -522,7 +522,7 @@ names a folder with `index.json` ({ lower-cased text without punctuation: file }
 the text has one, else the phone's voice. `tools/lang/synth_azure.py <folder> <voice>` records every form, every
 sentence word, every sentence and the book's lines with Azure's neural voices (needs `AZURE_SPEECH_KEY` /
 `AZURE_SPEECH_REGION` in the environment, never in the repo; re-runs only record what is missing): **Tounsi**
-`tounsi/audio/` (2,225 clips, `ar-TN-HediNeural`, read from the hand-written Arabic spellings) and **Latin**
+`tounsi/audio/` (4,736 clips covering every form of the 1,100 entries, `ar-TN-HediNeural`, read from the hand-written Arabic spellings) and **Latin**
 `audio/` (2,392 clips, `it-IT-IsabellaNeural` reading a classical respelling made by `classical()` — c and g always
 hard, v as w, ae → ai, oe → oi only in poena / proelium / moenia / foedus, gn → ghn, ph → f; Azure has no Latin
 voice). Latin now reads aloud by default too (`auto: true`). The GitHub Actions workflow `Record voices`
