@@ -459,9 +459,12 @@ const Snap = (() => {
     const cap = x => /^[A-Z]/.test(ws[0]) ? x[0].toUpperCase() + x.slice(1) : x;
     let f = b;
     const THIRD = { be: 'is', have: 'has', do: 'does', go: 'goes' }, PASTS = new Set([...Object.values(PAST), 'was', 'were', 'had', 'did']);
+    const PP = Object.fromEntries(Object.entries(PASTPART).map(([pp, base]) => [base, pp]));   // base → past participle (see → seen)
+    const helper = head.split(' ').pop();
     if (kind === 'v') {
       if (/ing$/.test(last)) f = ing(b);
-      else if (PASTPART[last] || /ed$/.test(last) || PASTS.has(last)) f = b === 'be' ? (last === 'were' ? 'were' : 'was') : past(b);
+      else if (/^(has|have|had|been)$/.test(helper) || (PASTPART[last] && PASTPART[last] !== last)) f = b === 'be' ? 'been' : (PP[b] || past(b));   // "has seen" → "has carried", "has given"
+      else if (/ed$/.test(last) || PASTS.has(last)) f = b === 'be' ? (last === 'were' ? 'were' : 'was') : past(b);
       else if (last === 'am' || last === 'is' || last === 'are') f = b === 'be' ? last : last === 'are' ? b : (THIRD[b] || sfx(b));
       else if (/s$/.test(last) && !/ss$/.test(last) && !(head && /^(to|will|can|must|should|could)$/.test(head.split(' ').pop()))) f = THIRD[b] || sfx(b);
     } else if (kind === 'n') { if (/s$/.test(last) && !/ss$/.test(last) && last.length > 3) f = IRRPL[b] || sfx(b); }

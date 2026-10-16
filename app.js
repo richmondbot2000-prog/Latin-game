@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '128';
+const APP_VERSION = '129';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1014,7 +1014,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       const w = byIdAll[t.id], gloss = t.gloss || t.en, k = w ? kindOf(w) : 'o';
       // a wrong option must not also be right: no word shared with any meaning of the word (its dictionary senses and the
       // spoken alternatives in synonyms.js — 'huge' is right for magnus), and no names (Troy, Rome) as wrong options
-      const STOPW = /^(a|an|the|to|be|of|in|on|at|for|with|by|from|up|out|off|and|or|not|one|some|very|is|am|are|was|were|i|you|he|she|it|we|they|my|your|his|her|its|our|their)$/;
+      const STOPW = /^(a|an|the|to|be|been|being|of|in|on|at|for|with|by|from|up|out|off|and|or|not|one|some|very|is|am|are|was|were|has|have|had|do|does|did|will|shall|would|should|could|can|may|might|must|i|you|he|she|it|we|they|my|your|his|her|its|our|their)$/;
       const bits = s => s.toLowerCase().split(/[^a-z']+/).filter(x => x && !STOPW.test(x)).map(stemWord);
       const meansSet = x => new Set([x.english, ...((typeof SYNONYMS !== 'undefined' && SYNONYMS[x.id]) || [])].flatMap(bits));
       const mine = w ? meansSet(w) : new Set(); bits(gloss).forEach(b => mine.add(b));
