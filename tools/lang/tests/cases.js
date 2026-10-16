@@ -12,6 +12,7 @@ const CASES = [
   ['They live in the big old house.', 'big', 'el-kbira'], ['They live in the big old house.', 'old', 'el-9dima'], ['They live in the big old house.', 'house', 'ed-dar'],
   ['She went to the new school.', 'new', 'el-jdida'], ['She went to the new school.', 'school', 'lel-mdrasa'],
   ['The house is big.', 'big', 'kbira'],
+  ['The old woman is kind.', 'old', 'el-kbira'], ['The old book is on the table.', 'old', 'el-9dim'], ['My grandfather is old.', 'old', 'kbir'], ['The car is old.', 'old', '9dima'],
   ['The daughters were all beautiful, but the youngest was so beautiful.', 'beautiful', 'mezyenin'], ['The girl is beautiful.', 'beautiful', 'mezyena'],
   ['They will come to the house on Friday.', 'come', 'bech yjiw'], ['They will come to the house on Friday.', 'house', 'led-dar'],
   ['You must eat the vegetables.', 'must', 'lezem'], ['You must eat the vegetables.', 'eat', 'tekel'],

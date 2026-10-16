@@ -117,6 +117,13 @@ const Snap = (() => {
       const lem = c.w.word;
       if (lem === 'sghir' && /^little$/.test(low[i]) && (nextW === '' || /^(more|less|bit|while|too|way|further|longer|better|closer|nearer|farther|by|of|as)$/.test(nextW) || /ly$/.test(nextW))) { skipIt(); continue; }   // "a little more"
       if (lem === 'kbir' && /^(great)$/.test(low[i]) && /^(deal|many|much)$/.test(nextW)) { skipIt(); continue; }
+      // "old": kbir for a person (the old man), 9dim for a thing (the old house) — the next word decides, or the subject before "is"
+      if (/^old$/.test(low[i]) && (lem === 'kbir' || lem === '9dim')) {
+        const PERSON = /^(man|men|woman|women|lady|ladies|boy|boys|girl|girls|child|children|king|queen|prince|princess|father|mother|dad|mum|grandfather|grandmother|uncle|aunt|friend|friends|people|person|folk|soldier|wizard|witch|doctor|teacher|neighbour|sailor|fisherman|farmer|gentleman|woman's|man's|one|ones|he|she|i|we|they|you)$/;
+        let who = nextW; if (!who || /^(is|was|are|were|and|,|\.)$/.test(who)) { for (let j = i - 1; j >= 0; j--) if (isWord(j) && !/^(is|was|are|were|very|so|too|quite|rather|the|a|an|grown|grew|getting|got|and)$/.test(low[j])) { who = low[j]; break; } }
+        const person = PERSON.test(who); const want = person ? 'kbir' : '9dim';
+        const alt = cands.find(x => x.w.word === want); if (alt && alt !== c) { info[i] = { kind: alt.kind, w: alt.w, feat: alt.feat, len: found.len }; i += found.len; continue; }
+      }
       if (lem === 'chaf' && /^(like|as|after|forward|up|out|round|around|down|back|well|ill|tired|sad|happy|pale|cross|surprised)$/.test(nextW)) { skipIt(); continue; }   // "look like", "looked tired"
       if (lem === 'akher' && /^(the|an)$/.test(prevW) && /^(day|night|time|week|year)$/.test(nextW)) { skipIt(); continue; }
       if (lem === 'bark' && /^(if|not)$/.test(prevW)) { skipIt(); continue; }
