@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '4';
+const APP_VERSION = '5';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1065,7 +1065,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       <div class="rhead"><button class="iconbtn" id="back" aria-label="Back">${opts.back ? '← Books' : '← Home'}</button><span class="rpos" id="rprog"></span><span style="width:44px"></span></div>
       <div class="paper ${rs.font} size${rs.size}" id="paper"></div>
       <div class="rsheet" id="rsheet">
-        <div class="rgrip" id="rgrip" aria-label="Pull up for text settings"><span class="rword" id="rword"></span><span class="rbar"></span>${Speak.button('gripspeak')}<span class="rhint">Aa</span></div>
+        <div class="rgrip" id="rgrip" aria-label="Pull up for text settings"><span class="rword" id="rword"></span><span class="rbar"></span><span class="rhint">Aa</span>${Speak.button('gripspeak')}</div>
         <div class="rans" id="rans"></div>
         <div class="rset">
           <div class="rrow"><span>Font</span><div class="rseg"><button class="rtool${rs.font === 'serif' ? ' on' : ''}" data-font="serif" style="font-family:Georgia,serif">Serif</button><button class="rtool${rs.font === 'sans' ? ' on' : ''}" data-font="sans" style="font-family:system-ui,sans-serif">Sans</button></div></div>

@@ -809,7 +809,7 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
 .speakbtn.pop { animation: speakpop .3s ease; }
 @keyframes speakpop { 50% { transform: scale(1.3); } }
 .streakbar .speakbtn { margin-left: 6px; }
-.rgrip .speakbtn { width: 30px; height: 30px; line-height: 30px; font-size: 15px; margin-right: 10px; }
+.rgrip .speakbtn { position: absolute; right: 38px; top: 2px; width: 30px; height: 30px; line-height: 30px; font-size: 15px; }   /* beside Aa, so the middle of the bar is always the grip itself */
 .speakline { display: block; margin: 0 auto 6px; font-size: 14px; color: var(--muted); }
 .otherline { display: block; text-align: center; margin: 2px auto 10px; font-size: 14px; color: var(--muted); text-decoration: none; }
 .speakbtn.small { display: inline-grid; place-items: center; width: 26px; height: 26px; line-height: 26px; font-size: 13px; vertical-align: middle; margin-left: 8px; }
