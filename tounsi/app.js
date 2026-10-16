@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '27';
+const APP_VERSION = '28';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -101,7 +101,7 @@ const streakKey = u => 'tounsi.streak.' + u.id;
 const levelKey = u => 'tounsi.level.' + u.id;
 
 /* vocabulary settings: each one opens up more words; Level 3 is the full list */
-const LEVELS = [['top', 'Beginner'], ['0', 'Basic'], ['1', 'Top 200'], ['2', 'Top 300'], ['3', 'Top 400'], ['4', 'Top 500'], ['4p', '500 + Phrases'], ['5', 'Top 600'], ['6', 'Top 700'], ['7', 'Top 800'], ['8', 'Top 900'], ['9', 'Top 1000'], ['9p', '1000 + Phrases']];
+const LEVELS = [['top', 'Beginner'], ['0', 'Basic'], ['1', 'Top 200'], ['2', 'Top 300'], ['3', 'Top 400'], ['4', 'Top 500'], ['4p', '500 + Phrases'], ['9p', '1000 + Phrases']];
 const inLevel = (w, l) => l === 'top' ? !!w.top : /p$/.test(l) ? (w.level <= parseInt(l) || w.level === 10) : w.level <= +l;
 // the Top 50 setting is for the cards and the games: Read opens at the next setting up — except Sentences, which opens
 // when the language has sentences written for the 50 words (lv -1 in read.js)
@@ -109,7 +109,7 @@ const readLocked = u => levelOf(u) === 'top';
 const topSentences = () => typeof SENTENCES !== 'undefined' && SENTENCES.some(x => x.lv < 0);
 const sentencesLocked = u => readLocked(u) && !topSentences();
 const levelOf = u => { const l = store.get(levelKey(u), '0'); return LEVELS.some(x => x[0] === l) ? l : '0'; };
-const levelName = l => { const x = LEVELS.find(x => x[0] === l); return x ? x[1] : l === '10' ? 'Phrases' : l; };
+const levelName = l => { const x = LEVELS.find(x => x[0] === l); return x ? x[1] : l === '10' ? 'Phrases' : 'Top 1000'; };
 const activeWords = u => { const l = levelOf(u); return WORDS.filter(w => inLevel(w, l)); };
 
 /* ---------- helpers ---------- */

@@ -481,8 +481,7 @@ every game. `tools/lang/README.md` is the recipe; tests:
 per mistake) and `tools/lang/tests/run.js "…"` prints a conversion;
 browser tour `scratchpad/tounsi2.js`.
 
-**Tounsi specifics.** 1,100 entries: 1,000 words in ten settings of 100 (Basic, Top 200 …
-Top 1000; `level` 0–9, each setting = its words and all lower ones) plus 100 **phrases**
+**Tounsi specifics.** 1,100 entries: 1,000 words (`level` 0–9, 100 each; the settings are Basic, Top 200 … Top 500, each = its words and all lower ones — levels 5–9 have no setting of their own) plus 100 **phrases**
 (`level` 10, `pos` = `phrase`: sayings whose meaning is not the sum of their words,
 ma3lich, ya 7asra, 3la rasi…) which join the words in two settings, **500 + Phrases**
 (`4p`) after Top 500 and **1000 + Phrases** (`9p`) at the end (`inLevel`: a key ending
