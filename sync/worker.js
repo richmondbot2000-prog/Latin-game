@@ -11,6 +11,10 @@
 //   DELETE /inbox/<key>/<id>      a gift taken out of the inbox
 //   POST /code  {from, beast, stage}       a gift code for a friend who is not in the game yet → { code }
 //   POST /claim/<code>  {key}     open a gift code → the gift; the sender's inbox gets a note that it was opened
+//   PUT /lb/<game>/<key>  {emo, days, total}   the player's tally for the leaderboard: their two emojis, words answered
+//                                 by day (last 10 days) and ever; stored with the player name this key holds (or none)
+//   GET /lb/<game>                everyone's tallies [{ id, name, emo, days, total, t }] — player names only, never a real
+//                                 name; `id` is the first 12 characters of the key, so a device can spot its own rows
 //   GET /book/<n>                 a Project Gutenberg book as { id, title, author, text } (Gutenberg sends no CORS header,
 //                                 so the game cannot fetch it itself); the licence header and footer are cut off, paragraphs
 //                                 joined into single lines, cached for 30 days
@@ -210,6 +214,29 @@ export default {
     }
     if ((m = path.match(/^\/who\/([a-f0-9]{64})$/)) && req.method === 'GET') return json({ name: (await kv.get('k:' + m[1])) || null });
 
+    if ((m = path.match(/^\/lb\/([a-z]{2,12})(?:\/([a-f0-9]{64}))?$/))) {
+      const ns = m[1];
+      if (req.method === 'PUT' && m[2]) {
+        const b = await body(); if (!b) return text('bad', 400);
+        const emo = typeof b.emo === 'string' ? [...b.emo].slice(0, 4).join('') : '';
+        const days = {};
+        if (b.days && typeof b.days === 'object') for (const k of Object.keys(b.days).filter(k => /^\d{4}-\d\d-\d\d$/.test(k)).sort().slice(-10)) days[k] = Math.max(0, Math.min(1e6, Math.floor(+b.days[k] || 0)));
+        const total = Math.max(0, Math.min(1e8, Math.floor(+b.total || 0)));
+        const name = (await kv.get('k:' + m[2])) || null;
+        // one document per game holds every row (a key listing lags by up to a minute; a document reads straight back);
+        // the newest 300 players are kept, so a player not seen for a year or so drops off
+        const all = (await getJ('lbi:' + ns)) || {};
+        all[m[2].slice(0, 12)] = { name, emo, days, total, t: Date.now() };
+        const keep = Object.entries(all).sort((a, b) => b[1].t - a[1].t).slice(0, 300);
+        await kv.put('lbi:' + ns, JSON.stringify(Object.fromEntries(keep)));
+        return new Response(null, { status: 204, headers: cors });
+      }
+      if (req.method === 'GET' && !m[2]) {
+        const all = (await getJ('lbi:' + ns)) || {};
+        return json(Object.entries(all).map(([id, r]) => ({ id, ...r })));
+      }
+      return text('method', 405);
+    }
     if (path === '/gift' && req.method === 'POST') {
       const b = await body(); if (!b || !KEY.test(b.from || '') || typeof b.to !== 'string' || typeof b.beast !== 'string') return text('bad', 400);
       const to = b.to.toLowerCase(); if (!NAME.test(to)) return text('bad name', 400);

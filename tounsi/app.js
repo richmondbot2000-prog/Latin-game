@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '13';
+const APP_VERSION = '14';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -123,12 +123,31 @@ function statsOf(u) {
   for (const k in days) if (k >= dayKey(monday)) week += days[k];
   return { today, week, ever: Math.max(st ? st.total : 0, legacy) };
 }
+const boardTable = rows => `<table class="lb"><thead><tr><th></th><th>Today</th><th>This week</th><th>Ever</th></tr></thead><tbody>
+    ${rows.map((r, i) => `<tr class="${r.me ? 'me' : ''}"><td class="who">${i === 0 && r.today ? '🥇 ' : ''}${r.who}</td><td>${r.today}</td><td>${r.week}</td><td>${r.ever}</td></tr>`).join('')}
+    </tbody></table>`;
+const sortRows = rows => rows.sort((a, b) => b.today - a.today || b.week - a.week || b.ever - a.ever);
 function leaderboardHTML() {
-  const rows = users().map(u => ({ u, ...statsOf(u) })).sort((a, b) => b.today - a.today || b.week - a.week || b.ever - a.ever);
-  return `<div class="tile board"><h2>Leaderboard</h2><p class="small" style="margin:0 0 8px">Words answered, in any game.</p>
-    <table class="lb"><thead><tr><th></th><th>Today</th><th>This week</th><th>Ever</th></tr></thead><tbody>
-    ${rows.map((r, i) => `<tr class="${current() && r.u.id === current().id ? 'me' : ''}"><td class="who">${i === 0 && r.today ? '🥇 ' : ''}${avatarHTML(r.u, 'tiny')}${esc(r.u.name)}</td><td>${r.today}</td><td>${r.week}</td><td>${r.ever}</td></tr>`).join('')}
-    </tbody></table></div>`;
+  const rows = sortRows(users().map(u => ({ me: current() && u.id === current().id, who: avatarHTML(u, 'tiny') + esc(u.name), ...statsOf(u) })));
+  return `<div class="tile board" id="board"><h2>Leaderboard</h2><p class="small" style="margin:0 0 8px" id="boardNote">Words answered, in any game.${Sync.enabled() ? ' Loading everyone…' : ''}</p>
+    ${boardTable(rows)}</div>`;
+}
+// everyone who plays: the tallies the sync worker holds for every player of this game (their two emojis and player name,
+// never a profile name); the players on this device keep their own name and face. Shown in place of the device-only table.
+async function loadBoard(u) {
+  if (!Sync.enabled()) return;
+  try {
+    const cloud = await Sync.board(), ids = {};
+    for (const x of users()) ids[await Sync.myId(x)] = x;
+    const now = new Date(), dow = (now.getDay() + 6) % 7, monday = dayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - dow).getTime());
+    const rows = cloud.map(r => { const local = ids[r.id]; let today = (r.days || {})[dayKey()] || 0, week = 0; for (const k in r.days || {}) if (k >= monday) week += r.days[k];
+      return local ? { me: current() && local.id === current().id, who: avatarHTML(local, 'tiny') + esc(local.name), ...statsOf(local), local } :
+        { me: false, who: `<span class="emo">${esc(r.emo || '')}</span>${r.name ? esc(r.name.toUpperCase()) : '<span class="small">a player</span>'}`, today, week, ever: Math.max(today, week, r.total || 0) }; });
+    for (const x of users()) if (!rows.some(r => r.local && r.local.id === x.id)) rows.push({ me: current() && x.id === current().id, who: avatarHTML(x, 'tiny') + esc(x.name), ...statsOf(x) });
+    const el = $('#board'); if (!el) return;
+    $('#boardNote').textContent = `Everyone playing · words answered, in any game.${u && !u.player ? ' Choose a player name below to show it here.' : ''}`;
+    $('table', el).outerHTML = boardTable(sortRows(rows));
+  } catch (e) { const n = $('#boardNote'); if (n) n.textContent = 'Words answered, in any game. (Everyone’s board needs a connection.)'; }
 }
 // how often a word should come up: twice as often if it was got wrong in the last day, three times if twice or more
 const boost = (p, now = Date.now()) => { const n = p && p.w ? p.w.filter(t => t > now - DAY).length : 0; return n >= 2 ? 3 : n === 1 ? 2 : 1; };
@@ -540,6 +559,7 @@ function renderHome(u) {
     <button class="syncline" id="nameline"><span>🎁 ${u.player ? `Player name <b>${esc(u.player.toUpperCase())}</b>` : 'Choose a player name so friends can send you beasts'}</span></button>` : ''}
   </div>`;
   $('.who').textContent = u.name;
+  loadBoard(u);
   $('#avatarBtn').onclick = () => pickPhoto(u, () => renderHome(current()));
   wireTip();
   if (Sync.enabled()) {

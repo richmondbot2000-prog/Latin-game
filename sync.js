@@ -104,10 +104,22 @@ const Sync = (() => {
     if (!enabled()) return;
     try {
       setStatus('saving');
-      const r = await fetch(url() + '/p/' + await keyFor(codeOf(u)), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(blobOf(u)) });
+      const key = await keyFor(codeOf(u));
+      const r = await fetch(url() + '/p/' + key, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(blobOf(u)) });
       setStatus(r.ok ? 'saved' : 'error');
+      if (r.ok) boardPush(u, key);
     } catch (e) { setStatus('error'); }
   }
+  // the leaderboard entry: the player's two emojis and the words-answered tally (never the name typed on the profile;
+  // the server adds the claimed player name, if there is one)
+  function boardPush(u, key) {
+    const st = store.get(NS_S + '.stats.' + u.id, null) || { days: {}, total: 0 };
+    const days = Object.fromEntries(Object.keys(st.days || {}).sort().slice(-10).map(k => [k, st.days[k]]));
+    const total = typeof statsOf === 'function' ? statsOf(u).ever : (st.total || 0);
+    fetch(url() + '/lb/' + NS_S + '/' + key, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ emo: (u.emojis || []).join(''), days, total }) }).catch(() => {});
+  }
+  const board = async () => (await api('GET', '/lb/' + NS_S)) || [];
+  const myId = async u => (await keyFor(codeOf(u))).slice(0, 12);
   // called whenever progress changes; batches writes so a run of swipes is one save
   function touch(u) {
     if (!enabled() || !u) return;
@@ -160,5 +172,5 @@ const Sync = (() => {
   function flush() { if (pending) { clearTimeout(timer); const x = pending; pending = null; push(x); } }
   addEventListener('pagehide', flush);
   document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
-  return { enabled, codeOf, normalise, valid, touch, pull, link, merge, flush, status: () => status, onStatus: f => listeners.add(f), cleanName, validName, claimName, whoAmI, sendGift, inbox, dropInbox, giftCode, claimCode };
+  return { enabled, codeOf, normalise, valid, touch, pull, link, merge, flush, status: () => status, onStatus: f => listeners.add(f), cleanName, validName, claimName, whoAmI, sendGift, inbox, dropInbox, giftCode, claimCode, board, myId };
 })();

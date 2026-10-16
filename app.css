@@ -829,3 +829,4 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
 .card:has(.arab) .lat { padding-top: 44px; }
 .card:has(.arab) .arab { line-height: 1.15; }
 .card:has(.arab) .en { font-size: clamp(2rem, 11vw, 3rem); font-weight: 700; line-height: 1.1; white-space: nowrap; overflow-wrap: normal; align-self: stretch; text-align: center; }
+.lb td.who .emo { font-size: 1.1rem; letter-spacing: 2px; }

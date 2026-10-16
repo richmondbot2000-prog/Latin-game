@@ -536,7 +536,8 @@ levels by max, Hammer items as a union with coins from the device that has
 earned more, Read sentences as a union). Avatars and the player list itself
 (name + emojis) stay on the device. A new device: "I have a sync code
 from another device" on the new-player or sign-in screen, type the code,
-progress merges in. The worker allows `GET`/`PUT /p/<64 hex>` from
+progress merges in. **The leaderboard shows everyone** (`loadBoard` in `app.js`, `Sync.board / myId`, `PUT /lb/<game>/<key>` and `GET /lb/<game>` in the worker): every push also sends the player's two emojis and the words-answered tally (`stats.days`, last 10 days, and ever) — never the profile name — and the worker keeps one document per game (`lbi:<game>`, newest 300 players; a key listing would lag by a minute) with the claimed player name added. The home page shows that board in place of the device-only table: players on this device with their own face and name, everyone else as emojis + PLAYER NAME (or "a player"). Other players' rows can be up to a minute stale (KV edge cache).
+The worker allows `GET`/`PUT /p/<64 hex>` from
 `latin.musicalmagic.uk` (and localhost:8765), 64 KB max, JSON only, plus the
 name / gift routes and `GET /book/<n>` (see `sync/worker.js`).
 Redeploy from `sync/` with `npx wrangler deploy`. The Cloudflare token is
