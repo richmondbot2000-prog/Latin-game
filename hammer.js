@@ -121,7 +121,7 @@ const Hammer = (() => {
     const CX = JX;
     for (const s of S.signs) {
       s.x -= v * dt; s.wob += dt;
-      if (s.state === 'up' && !s.seen && s.x + bw <= 1) { s.seen = true; S.hold = 1; }
+      if (s.state === 'up' && !s.seen && s.x + bw <= 1) { s.seen = true; S.hold = 1; if (typeof Speak !== 'undefined') Speak.say(s.w.show); }
       if (s.state === 'up' && s.x + bw < CX - .02) {   // it has passed him only once the whole board is behind him
         // it got past Jacques
         s.state = 'passed';

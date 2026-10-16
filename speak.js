@@ -48,26 +48,35 @@ const Speak = (() => {
   let clips = null, player = null;
   if (cfg.audio) fetch(cfg.audio + '/index.json').then(r => r.ok ? r.json() : {}).then(j => { clips = j; }).catch(() => { clips = {}; });
   const clip = text => { const k = text.trim().toLowerCase().replace(/[.,;:!?"]/g, ''); return clips && (clips[k] || clips[text.trim()]) || null; };
-  let last = 0;
-  function say(text, force) {
-    if (!text || (!force && !on())) return false;
+  // a word that comes into focus is read, then read once more 2 s after the first reading ends (the 🔊 buttons read once);
+  // a new word, or a tap on a button, cancels the pending repeat
+  let last = 0, again = null, gen = 0;
+  function play(text, done) {
     const f = cfg.audio && clip(text);
-    if (f) { try { if (player) player.pause(); player = new Audio(cfg.audio + '/' + f); player.play().catch(() => {}); return true; } catch (e) {} }
+    if (f) { try { if (player) player.pause(); player = new Audio(cfg.audio + '/' + f); player.onended = done; player.play().catch(() => {}); return true; } catch (e) {} }
     if (!can()) return false;
     try {
       speechSynthesis.cancel();
       const spoken = cfg.script === 'chat-arabic' ? chatToArabic(text) : text;
       const u = new SpeechSynthesisUtterance(spoken);
       const v = voice(); if (v) u.voice = v; u.lang = v ? v.lang : cfg.lang; u.rate = cfg.rate || .9;
-      last = Date.now(); speechSynthesis.speak(u);
+      u.onend = done; u.onerror = done;
+      last = Date.now(); speechSynthesis.speak(u); keep = u;   // held, or Safari drops the utterance and its onend
       return true;
     } catch (e) { return false; }
   }
+  let keep = null;
+  function say(text, force) {
+    if (!text || (!force && !on())) return false;
+    clearTimeout(again); const g = ++gen;
+    return play(text, () => { if (g !== gen || force) return; again = setTimeout(() => { if (g === gen) play(text, null); }, 2000); });
+  }
+  const stop = () => { clearTimeout(again); gen++; try { speechSynthesis.cancel(); } catch (e) {} if (player) try { player.pause(); } catch (e) {} };
   // a small speaker button: tap to hear the text the getter returns
   const button = (cls = '') => can() ? `<button class="speakbtn ${cls}" type="button" aria-label="Hear it" title="Hear it">🔊</button>` : '';
   const wire = (root, getText) => { if (!root) return; root.querySelectorAll('.speakbtn').forEach(b => { b.onclick = e => { e.stopPropagation(); say(getText(), true); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }; }); };
   // the on / off line for a settings area
   const toggleHTML = () => can() ? `<button class="linkbtn speakline" id="speakToggle">${on() ? '🔊 Reading words aloud — tap to turn off' : '🔇 Words are not read aloud — tap to turn on'}</button>` : '';
   const wireToggle = (root, after) => { const b = (root || document).querySelector('#speakToggle'); if (!b) return; b.onclick = () => { toggle(); b.outerHTML = toggleHTML(); wireToggle(root, after); if (after) after(on()); }; };
-  return { say, on, toggle, can, button, wire, toggleHTML, wireToggle, chatToArabic };
+  return { say, stop, on, toggle, can, button, wire, toggleHTML, wireToggle, chatToArabic };
 })();

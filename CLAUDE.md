@@ -510,9 +510,8 @@ the chat spelling into Arabic script first (el-/ed-/ech- → ال, short a/e/o/u
 not written, a doubled consonant once), which the Arabic voices read; Latin
 `{ lang: 'it-IT', auto: false }` (Italian comes closest). The setting
 `latin.speak` (shared; default = `auto`) is the "Reading words aloud" line
-on the home page. `Speak.say(text)` reads when the setting is on,
-`say(text, true)` always: a card as it comes up, the highlighted word in
-Sentences, each line of Passages, the word in focus in the reader; 🔊
+on the home page. `Speak.say(text)` reads when the setting is on and **reads the word again 2 s after the first reading ends** (a new word or a 🔊 tap cancels the repeat; `Speak.stop()` on every hash change), `say(text, true)` always and once: a card as it comes up, the highlighted word in
+Sentences, each line of Passages, the word in focus in the reader, the word to match in Squishygeddon, a Jacques Hammer sign as it holds on screen; 🔊
 buttons (`.cardspeak / .barspeak / .gripspeak`, one document click
 handler) read again. Recorded clips beat the synthetic voice: `LANG.tts.audio`
 names a folder with `index.json` ({ form: file }); `tools/lang/synth_azure.py

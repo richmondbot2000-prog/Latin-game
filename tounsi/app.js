@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '3';
+const APP_VERSION = '4';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -168,7 +168,7 @@ function route() {
   if (h === 'organise') return renderOrganise(u, store.get('tounsi.orgTab', 'play'));
   renderHome(u);
 }
-window.addEventListener('hashchange', route);
+window.addEventListener('hashchange', () => { if (typeof Speak !== 'undefined') Speak.stop(); route(); });
 // the 🔊 buttons: cards read the word on the top card, Sentences and Passages the sentence, the reader the word in focus
 document.addEventListener('click', e => {
   const b = e.target.closest('.speakbtn'); if (!b) return; e.stopPropagation();
