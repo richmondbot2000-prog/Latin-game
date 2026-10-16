@@ -825,3 +825,7 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
 .memo .how.mine { margin-top: 10px; }
 .memo .how.mine .linkbtn.small { padding: 0; font-size: .95rem; text-align: left; }
 .memo .how.mine textarea { width: 100%; box-sizing: border-box; margin-top: 6px; font: inherit; font-size: 1rem; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); resize: vertical; }
+/* a card with an Arabic line (Tounsi): the English answer as big as the word, shrunk to one line like the word */
+.card:has(.arab) .lat { padding-top: 44px; }
+.card:has(.arab) .arab { line-height: 1.15; }
+.card:has(.arab) .en { font-size: clamp(2rem, 11vw, 3rem); font-weight: 700; line-height: 1.1; white-space: nowrap; overflow-wrap: normal; align-self: stretch; text-align: center; }
