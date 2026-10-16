@@ -60,12 +60,29 @@ const Speak = (() => {
       const spoken = cfg.script === 'chat-arabic' ? chatToArabic(text) : text;
       const u = new SpeechSynthesisUtterance(spoken);
       const v = voice(); if (v) u.voice = v; u.lang = v ? v.lang : cfg.lang; u.rate = cfg.rate || .9;
-      u.onend = done; u.onerror = done;
+      let started = false, ended = false;
+      const finish = () => { if (ended) return; ended = true; if (done) done(); };
+      u.onstart = () => { started = true; };
+      u.onend = finish; u.onerror = finish;
       last = Date.now(); speechSynthesis.speak(u); keep = u;   // held, or Safari drops the utterance and its onend
+      const g = gen;
+      setTimeout(() => {   // nothing started: Safari dropped it (a cancel just before, or the voice still waking) — say it once more
+        if (started || ended || g !== gen) return;
+        try { speechSynthesis.cancel(); const u2 = new SpeechSynthesisUtterance(spoken); if (v) u2.voice = v; u2.lang = u.lang; u2.rate = u.rate; u2.onend = finish; u2.onerror = finish; speechSynthesis.speak(u2); keep = u2; } catch (e) { finish(); }
+      }, 1000);
       return true;
     } catch (e) { return false; }
   }
   let keep = null;
+  // iPhone: Safari only starts the voice inside a tap, and in Jacques Hammer and Squishygeddon the words come up
+  // seconds after the last tap. The first tap on any screen says a silent utterance, which unlocks the voice for
+  // the rest of the visit; a reading that Safari still drops (no start within a second) is tried once more.
+  let unlocked = false;
+  function unlock() {
+    if (unlocked || typeof speechSynthesis === 'undefined' || !cfg.lang) return;
+    try { const u = new SpeechSynthesisUtterance(' '); u.volume = 0; u.lang = cfg.lang; speechSynthesis.speak(u); unlocked = true; } catch (e) {}
+  }
+  if (typeof document !== 'undefined') for (const ev of ['touchend', 'pointerup', 'click', 'keydown']) document.addEventListener(ev, unlock, { capture: true, passive: true });
   function say(text, force) {
     if (!text || (!force && !on())) return false;
     clearTimeout(again); const g = ++gen;
