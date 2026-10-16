@@ -31,10 +31,13 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   screen shows only the back arrow, the streak, the card and the two
   buttons) — swipe cards (`app.js`): Latin word + a right or clearly-wrong
   meaning; stars 0–5 per word with spaced repetition (`REST` in `app.js`: a
-  right answer rests the word 10 min / 1 / 3 / 7 / 30 days by star count, a
-  wrong one zeroes it and brings it straight back; a word got wrong in the
-  last 24 h comes up twice as often, twice or more three times as often
-  (`boost`); all games use the rule);
+  right answer makes the word due again in 10 min / 1 / 3 / 7 / 30 days by
+  star count, a wrong one zeroes it and makes it due at once; **a word is
+  never withheld**: due words come first, and once none are due every word
+  is in play — a word got wrong in the last 24 h twice as often, twice or
+  more three times as often (`boost`) — with a gap of `GAP` cards before
+  the same word returns; the game never says "resting", only "N due" and,
+  in the word list, "due again <date>"; all games use the rule);
   Cards show the word in a random form half the time (`forms.js`: noun
   cases and plurals, adjective genders, present-tense persons, generated
   from the dictionary entry) with the English, right or wrong, in the same

@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '126';
+const APP_VERSION = '127';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1281,7 +1281,7 @@ function renderList(u, pane) {
   let filter = store.get('latin.listFilter', 'all'), term = '';
   const { c, rest, total } = summary(u);
   if (filter !== 'all' && !(filter === 'rest' ? rest : c[+filter])) filter = 'all';   // a remembered filter with nothing in it any more falls back to everything
-  const opts = [['all', 'All ' + total], ['0', 'New ' + c[0]], ...[1, 2, 3, 4, 5].map(s => [String(s), '★'.repeat(s) + ' ' + c[s]]), ['rest', 'Resting ' + rest]];
+  const opts = [['all', 'All ' + total], ['0', 'New ' + c[0]], ...[1, 2, 3, 4, 5].map(s => [String(s), '★'.repeat(s) + ' ' + c[s]]), ['rest', 'Not due ' + rest]];
   pane.innerHTML = `
     <div class="sticky">
       ${meterHTML(c, total)}
@@ -1300,7 +1300,7 @@ function renderList(u, pane) {
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">😴 resting until ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
     $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word to see how to remember it';
   };
@@ -1441,7 +1441,7 @@ function renderPlay(u, pane) {
       </div>`;
   function next() {
     const p = getProg(u), now = Date.now();
-    $('#left', pane).textContent = activeWords(u).filter(x => resting(p[x.id], now)).length + ' resting 😴';
+    $('#left', pane).textContent = activeWords(u).filter(x => !resting(p[x.id], now)).length + ' due';
     card = pending || prepare();
     if (!card) {
       deck.innerHTML = '<div class="empty">🏆 Every word is resting!<br>Come back soon to keep them fresh.</div>';
@@ -1472,7 +1472,7 @@ function renderPlay(u, pane) {
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
       right++; combo(st.cur);
       ev = Beasts.onCard(u, true, st.cur);
-      if (pw.s === 5) flash(`🏆 ${w.show} mastered! Resting for a month`); else if (pw.s >= 2) flash(`⭐ ${pw.s} stars — back in ${restText(REST[pw.s])}`);
+      if (pw.s === 5) flash(`🏆 ${w.show} mastered!`); else if (pw.s >= 2) flash(`⭐ ${pw.s} stars`);
     } else { st.cur = 0; ev = Beasts.onCard(u, false, 0); }   // the 20th card drops a beast even when it is wrong
     store.set(streakKey(u), st);
     showStreak(ok);
