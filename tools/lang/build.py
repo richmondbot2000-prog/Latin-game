@@ -3,6 +3,6 @@
 import subprocess, sys, pathlib
 root = pathlib.Path(__file__).resolve().parents[2]
 lang = sys.argv[1].strip('/')
-for cmd in [['python3', 'tools/lang/build_vocab.py', lang], ['python3', 'tools/lang/build_app.py', lang], ['node', 'tools/lang/build_read.js', lang], ['python3', 'tools/lang/build_snap.py', lang]]:
+for cmd in [['python3', 'tools/lang/build_vocab.py', lang], ['python3', 'tools/lang/build_app.py', lang], ['python3', 'tools/lang/build_memory.py', lang], ['node', 'tools/lang/build_read.js', lang], ['python3', 'tools/lang/build_snap.py', lang]]:
     r = subprocess.run(cmd, cwd=root)
     if r.returncode: sys.exit(r.returncode)

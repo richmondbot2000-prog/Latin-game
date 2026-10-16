@@ -461,12 +461,12 @@ source of `vocab.js`), `forms.js` (every form of a word with its shape),
 `grammar.js` (its half of the English → language converter), `sentences.txt`
 (sentences and stories by level, in a notation that looks every form up in
 `forms.js` and refuses a word above the level; `form=headword|gloss` for
-anything irregular, `Name=-`), `synonyms.txt`, `theme.css` and `VERSION`.
+anything irregular, `Name=-`), `synonyms.txt`, **`memory.txt`** (the "How do we remember this?" hook for every word: `id | emojis | hook`; cognates first, then word families, then sound-alike pictures — built to `memory.js` by `build_memory.py`), **`arabic.txt`** (the word in the language's own script: `id | word | plural | feminine | present | I did | past stem | they do`, merged into `vocab.js` as `ar / arpl / arf / arpres / arp1 / arps / arpp`; `forms.js` gives every form its `ar` and `Forms.show(w)` the headword's, and `app.js` shows it as the `.arab` line under the word on cards, in the word list, on the memo card and the flipped card — nothing shows for a language without it), `theme.css` and `VERSION`. The memo card also has **"My own way to remember it"**: the player's own note, kept on the device in `latin.notes.<id>` / `<code>.notes.<id>` (never synced).
 `python3 tools/lang/build.py <folder>` then writes the **derived files, never
 edited by hand**: `vocab.js`, `index.html` (from
 `tools/lang/index.template.html`: `<base href="../">`, `APP_NS`, `LANG`),
 `app.js`, `sw.js`, `manifest.webmanifest` (checked text replacements of the
-Latin ones in `build_app.py`), `read.js`, `phrases.js`, `synonyms.js`
+Latin ones in `build_app.py`), `memory.js`, `read.js`, `phrases.js`, `synonyms.js`
 (`build_read.js`) and `snap.js` (`build_snap.py`: `grammar.js` plus the
 Latin `snap.js`'s English analysis, photo reader and option shaper). **Rerun
 the build and bump the folder's `VERSION` after any change to the Latin

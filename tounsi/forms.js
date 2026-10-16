@@ -50,38 +50,58 @@ const Forms = (() => {
     r.p1p = r.p1s.replace(/t$/, 'na'); r.p2p = r.p1s + 'ou';   // mchit → mchina / mchitou, khdemt → khdemna / khdemtou
     return r;
   }
+  // the same forms in Arabic script, from the spellings in vocab.js (ar = he did, arpres = he does, arp1 = I did, arps = the
+  // past stem for she / they, arpp = they do): the script hides the short-vowel shifts, so the rules are simpler than above
+  const AR = 'ال';
+  function arPresent(w) {
+    const pres = w.arpres; if (!pres || !pres.startsWith('ي')) return null;
+    const rest = pres.slice(1);
+    const plStem = w.arpp ? w.arpp.slice(1) : rest.endsWith('ى') ? rest.slice(0, -1) + 'او' : rest + 'و';   // ينسى → ينساو, يمشي → يمشيو, يخدم → يخدمو
+    return { v1s: 'ن' + rest, v2s: 'ت' + rest, v3s: pres, v1p: 'ن' + plStem, v2p: 'ت' + plStem, v3p: 'ي' + plStem };
+  }
+  function arPast(w) {
+    const p = w.ar; if (!p) return null;
+    let r;
+    if (/[اى]$/.test(p)) { const s = p.slice(0, -1); r = { p1s: w.arp1 || s + 'يت', p3s: s + 'ات', p3p: s + 'او' }; }
+    else { const st = w.arps || p; r = { p1s: w.arp1 || p + 'ت', p3s: st + 'ت', p3p: st + 'و' }; }
+    r.p1p = r.p1s.replace(/ت$/, 'نا'); r.p2p = r.p1s + 'و';
+    return r;
+  }
+  const show = w => w.ar ? (w.pos === 'V' && w.arpres ? w.ar + ' / ' + w.arpres : w.ar) : '';
   function verb(w) {
-    const out = [{ la: w.show || w.word, shape: 'o' }];
+    const out = [{ la: w.show || w.word, shape: 'o', ar: show(w) }];
     const pr = present(w); if (!pr) return out;
-    for (const k of ['v1s', 'v2s', 'v3s', 'v1p', 'v2p', 'v3p']) out.push({ la: pr[k], shape: k });
+    const apr = arPresent(w) || {}, apa = arPast(w) || {};
+    for (const k of ['v1s', 'v2s', 'v3s', 'v1p', 'v2p', 'v3p']) out.push({ la: pr[k], shape: k, ar: apr[k] || '' });
     const pa = past(w);
-    for (const k of ['p1s', 'p3s', 'p3p', 'p1p', 'p2p']) out.push({ la: pa[k], shape: k });
+    for (const k of ['p1s', 'p3s', 'p3p', 'p1p', 'p2p']) out.push({ la: pa[k], shape: k, ar: apa[k] || '' });
     return out;
   }
   function noun(w) {
-    const head = w.word.replace(/\s*\(.*\)$/, ''), out = [{ la: head, shape: 'n1' }];
+    const head = w.word.replace(/\s*\(.*\)$/, ''), out = [{ la: head, shape: 'n1', ar: w.ar || '' }];
     if (/^[A-Z]/.test(head) || /^(baba|ommi|khouya|bouya|rabbi)$/.test(head) || /^(ethnin|ethletha|larb3a|lekhmis)$/.test(head)) return out;
-    out.push({ la: definite(head), shape: 'nd' });
-    if (w.pl && w.pl !== head) { out.push({ la: w.pl, shape: 'n2' }); out.push({ la: definite(w.pl), shape: 'ndp' }); }
+    const arDef = a => a ? (a.startsWith(AR) ? a : AR + a) : '';
+    out.push({ la: definite(head), shape: 'nd', ar: arDef(w.ar) });
+    if (w.pl && w.pl !== head) { out.push({ la: w.pl, shape: 'n2', ar: w.arpl || '' }); out.push({ la: definite(w.pl), shape: 'ndp', ar: arDef(w.arpl) }); }
     return out;
   }
   function adj(w) {
-    const head = w.word, out = [{ la: head, shape: 'adj' }];
-    if (w.f && w.f !== head) out.push({ la: w.f, shape: 'adj' });
-    if (w.pl && w.pl !== head) out.push({ la: w.pl, shape: 'adjp' });
+    const head = w.word, out = [{ la: head, shape: 'adj', ar: w.ar || '' }];
+    if (w.f && w.f !== head) out.push({ la: w.f, shape: 'adj', ar: w.arf || '' });
+    if (w.pl && w.pl !== head) out.push({ la: w.pl, shape: 'adjp', ar: w.arpl || '' });
     return out;
   }
   function of(w) {
     if (w.pos === 'N') return noun(w);
     if (w.pos === 'V') return verb(w);
     if (w.pos === 'Adj') return adj(w);
-    return [{ la: w.show || w.word, shape: 'o' }];
+    return [{ la: w.show || w.word, shape: 'o', ar: w.ar || '' }];
   }
   // pick a form for a card: half the time the headword, otherwise any other form
   function pick(w) {
     const all = of(w);
-    if (all.length < 2 || Math.random() < .5) return { la: w.show || all[0].la, shape: 'o' };
+    if (all.length < 2 || Math.random() < .5) return { la: w.show || all[0].la, shape: 'o', ar: show(w) };
     return all[1 + Math.floor(Math.random() * (all.length - 1))];
   }
-  return { of, pick, definite, present, past };
+  return { of, pick, definite, present, past, show };
 })();

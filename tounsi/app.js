@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '6';
+const APP_VERSION = '7';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -52,6 +52,13 @@ const phraseFor = w => (typeof PHRASES !== 'undefined' && PHRASES[w.word]) || nu
 // Latin phrase with the card's word (marked *like this*) highlighted
 const phraseHTML = la => esc(la).replace(/\*([^*]+)\*/g, '<mark>$1</mark>');
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.show} means ${w.english}.` };
+// the word in the language's own script (Arabic for Tounsi: `ar` in vocab.js, the form's `ar` from Forms); nothing for Latin
+const arabOf = (w, form) => (form && form.ar) || (form && form.la !== w.show ? '' : (typeof Forms !== 'undefined' && Forms.show ? Forms.show(w) : (w.ar || '')));
+const arabHTML = (w, form, cls = '') => { const a = arabOf(w, form); return a ? `<div class="arab ${cls}" dir="rtl" lang="ar">${esc(a)}</div>` : ''; };
+// the player's own way to remember a word, kept on this device only
+const NOTES = 'tounsi.notes';
+const noteOf = w => { const u = current(); const n = u ? store.get(NOTES + '.' + u.id, {}) : {}; return n[w.id] || ''; };
+const setNote = (w, text) => { const u = current(); if (!u) return; const k = NOTES + '.' + u.id, n = store.get(k, {}); if (text.trim()) n[w.id] = text.trim(); else delete n[w.id]; store.set(k, n); };
 
 function distractors(w, pool = WORDS) {
   // a wrong answer must be clearly different: no shared words, no shared meaning group (vocab.js "sense"),
@@ -1330,7 +1337,7 @@ function renderList(u, pane) {
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(w.show)}">🔊</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(w.show)}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
     $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word to see how to remember it';
   };
@@ -1359,8 +1366,10 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
       <div class="memo">
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
         <div class="lat">${esc(w.show)}${Speak.can() ? ` <span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(w.show)}">🔊</span>` : ''}</div>
+        ${arabHTML(w)}
         <div class="en">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
+        <div class="how mine"><h3>✏️ My own way to remember it</h3>${noteOf(w) ? `<p id="noteText">${esc(noteOf(w))}</p><button class="linkbtn small" id="noteEdit">Change it</button>` : `<button class="linkbtn small" id="noteEdit">Make up your own picture — the ones you invent stick best</button>`}<textarea id="noteBox" rows="2" placeholder="e.g. ghodwa: a GOOD WAY to spend tomorrow" hidden>${esc(noteOf(w))}</textarea></div>
         ${phraseFor(w) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w).la)}</p><p class="tr">${esc(phraseFor(w).en)}</p></div>` : ''}
         <div class="meta">${starsHTML(stars)} <span class="small">· ${w.kind} · ${levelName(String(w.level))}</span></div>
       </div>
@@ -1368,6 +1377,9 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
     </div>`;
   sheet.hidden = false;
   const done = () => { closeSheet(); if (onClose) onClose(); };
+  const nb = $('#noteBox'), ne = $('#noteEdit');
+  if (ne) ne.onclick = () => { ne.hidden = true; nb.hidden = false; nb.focus(); };
+  if (nb) nb.oninput = () => { setNote(w, nb.value); const t = $('#noteText'); if (t) t.textContent = nb.value; };
   $('#memoOk').onclick = done;
   sheet.onclick = e => { if (e.target === sheet) done(); };
   $('#memoOk').focus();
@@ -1466,6 +1478,7 @@ function renderPlay(u, pane) {
         <div class="kind">${c.w.kind}</div>
         ${top ? '<span class="stamp yes">✓</span><span class="stamp no">✗</span>' : ''}
         <div class="lat">${esc(c.form ? c.form.la : c.w.show)}</div>
+        ${arabHTML(c.w, c.form)}
         <div class="rule"></div>
         <div class="en">${esc(c.shown)}</div>
         ${phraseFor(c.w) ? `<div class="phrase">${phraseHTML(phraseFor(c.w).la)}</div>` : ''}
@@ -1568,7 +1581,7 @@ function renderPlay(u, pane) {
     el.classList.add('flipped');
     el.insertAdjacentHTML('beforeend', `<div class="back">
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
-        <div class="blat">${esc(w.show)}</div><div class="ben">${esc(w.english)}</div>
+        <div class="blat">${esc(w.show)}</div>${arabHTML(w, null, 'small')}<div class="ben">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
         ${ph ? `<div class="how said"><p class="la">${phraseHTML(ph.la)}</p><p class="tr">${esc(ph.en)}</p></div>` : ''}
         <div class="small">Back to no stars for this one — now you know it!</div>

@@ -60,8 +60,8 @@ s = f"// {name}: the {langname} game. DERIVED FILE — built from ../app.js by t
 # ---------- sw.js ----------
 w = (root / 'sw.js').read_text()
 w = rep(w, "const CACHE = 'latin-v" + re.search(r"const CACHE = 'latin-v(\d+)'", w).group(1) + "';", f"const CACHE = '{code}-v{VERSION}';", where='sw.js')
-own = {'app.js', 'vocab.js', 'forms.js', 'read.js', 'phrases.js', 'synonyms.js', 'snap.js', 'manifest.webmanifest', 'index.html', './', 'theme.css'}
-drop = {'memory.js', 'book.js'}
+own = {'app.js', 'vocab.js', 'memory.js', 'forms.js', 'read.js', 'phrases.js', 'synonyms.js', 'snap.js', 'manifest.webmanifest', 'index.html', './', 'theme.css'}
+drop = {'book.js'}
 def fix_list(m):
     items = re.findall(r"'([^']+)'", m.group(0))
     out = []

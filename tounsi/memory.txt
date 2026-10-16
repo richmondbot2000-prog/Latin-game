@@ -1,0 +1,503 @@
+# "How do we remember this?" — one line per word: id | picture emojis | the hook.
+# Three kinds of hook, strongest first: a borrowed word the player already knows (French / Italian / English), a word
+# family (kteb → ktab → mektba), or a sound-alike picture. Built into memory.js by tools/lang/build_memory.py.
+3aslema|👋😊|3aslema means hello. Think 'AS-LEMMA': AS you arrive, LEMMA the dog barks HELLO!
+bislema|👋🚪|bislema means goodbye. BI-SLEMA = BYE, with SLEMA (peace) — 'go in peace'. It is 3aslema's twin: hello in, bye out.
+3aychek|🙏💐|3aychek means thank you, please. Say 'AY-SHEK' — 'may you live!' It is a blessing you hand over with every favour.
+sam7ni|🙇🙏|sam7ni means sorry, excuse me. SAM-HNI: 'SAM, forgive me!' — it literally means 'forgive me'.
+chnowa|❓🤷|chnowa means what. 'SHNOW-A?' — 'SNOW? WHAT, in Tunisia?!'
+chkoun|❓🧑|chkoun means who. 'SH-KOON' — 'Shh! WHO's that coming in?' (WHO is hiding in the OO).
+win|❓📍|win means where. Sounds like WIN: 'WHERE did you WIN it?' Also 'WINdow: WHERE is it?'
+waqtech|❓⏰|waqtech means when. It starts with WA9T, time: 'WHAT TIME... WHEN?' Think 'WATCH' — look at your WATCH to see WHEN.
+kifech|❓🛠️|kifech means how. 'KEY-FESH' — 'HOW do I open it? With the KEY, FESH!'
+3lech|❓🤔|3lech means why. 'AH-LESH' — 'Ah, LESH, WHY did you do that?' All the question words end in -ech / -ach: waqtech, kifech, 3lech.
+ena|🙋|ena means I. Like 'ANA' in Arabic everywhere, and it sounds like 'ME-NA… ENA': I!
+enti|👉🧑|enti means you. 'ENTI' — 'AUNTIE, YOU!' Pointing at auntie: YOU.
+houwa|👉👨|houwa means he. 'HOO-WA' — 'WHO, WHAT? HE did it!' Ends in -A like a boy's name, Houwa.
+hiya|👉👩|hiya means she. 'HI-YA!' — SHE waves and shouts 'HIYA!'
+a7na|👥🙋|a7na means we. 'AH-NA' — WE, all of us: 'AH, NA, we are all here.'
+houma|👉👥|houma means they. 'HOO-MA' — 'WHO, MA? THEY did it!' Houwa (he) + ma = houma (they).
+hedha|👇📦|hedha means this. 'HEDH-A' — 'HEAD-A… THIS one here.' Point at it: hedha.
+hedheka|👉🏔️|hedheka means that. Hedha (this) + ka (over there) = THAT, further away. The -ka pushes it away.
+3andi|🙋🎒|3andi means I have. 'ANDY': 'ANDY has… I HAVE!' 3and- means 'with/at', -i means 'me': 'with me' = I have.
+3andek|🫵🎒|3andek means you have. 3and- (with) + -ek (you) = YOU HAVE. The -ek ending is always 'you'.
+3andou|👨🎒|3andou means he has. 3and- (with) + -ou (him) = HE HAS. The -ou ending is always 'him / his'.
+w|➕|w means and. Just 'W' — like the W in 'With'. Bread W milk.
+wala|➡️❓|wala means or. 'WALL-A' — 'tea WALLA coffee?' 'This OR that?'
+ama|🚫🤔|ama means but. 'AMA… BUT…' — 'I like it, AMA (BUT) it's expensive.'
+khater|💭➡️|khater means because. 'KHA-TER' — 'BECAUSE of the CATER-ing we are late.' Also 3la khater = 'because'.
+fi|📥|fi means in. Like the FI in 'FIll it IN'. 'Fi dar' = IN the house.
+3la|⬆️📦|3la means on, about. 'ALA' — like the Arabic in 'ALA-din'; ON the carpet.
+men|⬅️📍|men means from. 'MEN FROM Mars.' Men Tounes = FROM Tunisia.
+l|➡️👤|l means to, for. Just L — like the L in 'TO London'. Lel-dar = TO the house.
+m3a|🤝|m3a means with. 'MA-A' — 'WITH MA (mum).' M3a sa7bi = WITH my friend.
+houni|📍👇|houni means here. 'HOONI' — 'HONEY, come HERE!'
+ghadi|📍👉|ghadi means there. 'GHA-DI' — 'GOD, he's over THERE!' Houni here, ghadi there.
+tawa|⏱️👇|tawa means now. 'TA-WA' — 'TA-DA! NOW!' Also sounds like 'TOWER': the TOWER clock strikes NOW.
+elyoum|📅☀️|elyoum means today. El-youm = 'THE DAY' — the day we are in: TODAY. Youm is Arabic for day.
+ghodwa|📅➡️|ghodwa means tomorrow. 'GOOD-WA' — 'Have a GOOD WAY to TOMORROW!' The future is a good way ahead.
+elbere7|📅⬅️|elbere7 means yesterday. 'EL-BAREH' — 'EL BARRY went YESTERDAY.' It comes from 'el-bare7a', 'the past one'.
+dima|♾️🔁|dima means always. 'DEE-MA' — 'DEAR MA, ALWAYS yours.' Also like 'DIMANCHE', Sunday comes ALWAYS.
+wa7ed|1️⃣|wa7ed means one. 'WA-HED' — 'ONE HEAD' (one wa-HEAD).
+zouz|2️⃣|zouz means two. 'ZOOZ' — 'ZOO-Z': TWO of every animal at the ZOO.
+thletha|3️⃣|thletha means three. Starts with TH-L like 'THree Legs' — a THree-Legged stool.
+arb3a|4️⃣|arb3a means four. 'AR-BA' — a car has FOUR wheels: 'AR-BA, four, vroom'. Also the 'arba' in 'Arabian FOUR'.
+khamsa|5️⃣🖐️|khamsa means five. The KHAMSA hand charm has FIVE fingers — you've seen it on Tunisian doors!
+setta|6️⃣|setta means six. 'SET-TA' — like 'SIX in a SET'. Italian 'sette' is 7, so be careful: setta = SIX.
+sab3a|7️⃣|sab3a means seven. 'SAB-A' — 'SABBATH', the SEVENTH day.
+thmenya|8️⃣|thmenya means eight. 'TH-MEN-YA' — 'THE MEN, YA, there were EIGHT of them!'
+tes3a|9️⃣|tes3a means nine. 'TESS-A' — 'TESS, A NINE out of ten!' 9 is the last before 10: tes-ta.
+nhar|☀️📅|nhar means day. 'N-HAR' — 'uN-HARd day' or 'the sun is HARd all DAY'. Nhar behi = good day.
+lil|🌙🌃|lil means night. 'LIL' — 'LIttLe light at NIGHT.' Lil w nhar = night and day.
+3am (year)|📆🎂|3am means year. 'AM' — 'I AM one YEAR older.' 3am jdid = new year.
+rajel|👨|rajel means man, husband. 'RA-JEL' — 'RAJ, the MAN.' Rajel w mra = man and woman.
+mra|👩|mra means woman, wife. 'MRA' — 'MRS A' — a WOMAN / WIFE. Mra = Mrs.
+baba|👨‍🦳|baba means dad, father. Like 'PAPA' — BABA is DAD. Ali BABA's DAD.
+ommi|👩‍🦳|ommi means mum, mother. 'OM-MI' — 'MOMMY' backwards-ish: OMMI = my MUM. Omm = mother, -i = my.
+khouya|👦👬|khouya means my brother, brother. 'KHOU-YA' — 'KHOU' is brother, '-YA' my. Shout 'KHOUYA!' — 'oi, BROTHER!'
+okht|👧👭|okht means sister. 'OKHT' — 'OK, T… my SISTER is OK.' Khouya w okht = brother and sister.
+weld|👦|weld means son, boy. 'WELD' — a BOY who WELDS. Weld = boy, wled = boys.
+bent|👧|bent means daughter, girl. 'BENT' — the GIRL BENT down to tie her shoe. Bent = girl, bnet = girls.
+ras|🗣️🎩|ras means head. 'RAS' — 'RAS-ta hat on your HEAD.' Ras el 3am = 'HEAD of the year' = New Year.
+3in|👁️|3in means eye. 'EYE-N' — 'EYE-N' nearly says EYE. Also a spring (a water 'eye').
+yed|✋|yed means hand. 'YED' — 'YEAH, HAND it over!' Yed = hand, yeddin = hands.
+dar|🏠|dar means house, home. 'DAR' — 'DOOR of the HOUSE.' Ed-dar = home. Also in 'Dar es Salaam', house of peace.
+beb|🚪|beb means door. 'BEB' — 'BAB' is door everywhere in Arabic: BAB el-Bhar, the sea GATE in Tunis.
+srir|🛏️|srir means bed. 'SREER' — 'SEE-REER' — 'you can SEE the REAR of the BED.'
+chams|☀️|chams means sun. 'SHAMS' — 'SHAM-S' — 'the SUN SHAMS (shines).' Also 'SHAMPOO in the SUN'.
+b7ar|🌊|b7ar means sea. 'B-HAR' — 'B-HARbour': the SEA by the HARbour. Bab el B7ar = sea gate.
+ma|💧|ma means water. 'MA' — 'MA, water please!' Short like a drop.
+9attous|🐈|9attous means cat. 'ATTOOS' — 'A CAT, TOO!' The CAT says 'kattous'. (From Latin cattus!)
+kalb|🐕|kalb means dog. 'KALB' — 'CALL B… the DOG called Bee.' Be careful: 9alb (heart) sounds close!
+mekla|🍽️|mekla means food. 'MEK-LA' — 'MAKE-LA some FOOD.' From kla, to eat: mekla = eats = FOOD.
+khobz|🍞|khobz means bread. 'KHOBZ' — 'HOBBS' bakery makes BREAD.'
+7lib|🥛|7lib means milk. 'HLEEB' — 'HE LEAPT for the MILK.' Lib = like 'LIBation', a drink.
+blad|🏙️🌍|blad means country, town. 'BLAD' — 'the whole BLADe of land': the COUNTRY. Bladi = my country.
+souk|🛒🏪|souk means market. The SOUK — you know it: the MARKET in the medina!
+7anout|🏪|7anout means shop. 'HA-NOOT' — 'HA, NOOT, this SHOP sells nuts.'
+mdrasa|🏫|mdrasa means school. 'M-DRASA' — a MADRASA is a SCHOOL. From dars, lesson.
+mcha|🚶|mcha means go. 'M-SHA' — 'MARCH-A' — march off: GO! Yemchi = he goes.
+ja|🚶‍♂️➡️|ja means come. 'JA' — 'JA, come in!' Short, like a knock. Yji = he comes.
+kla|🍽️😋|kla means eat. 'KLA' — 'CLAW your food — EAT!' Mekla (food) comes from it.
+chrab|🥤|chrab means drink. 'SHRAB' — SHERBET and SYRUP both come from this word: DRINK!
+r9ad|😴|r9ad means sleep. 'R-KAD' — 'ARK-AD': the animals in the ARK ADded a SLEEP.'
+khdem|💪🔧|khdem means work. 'KH-DEM' — 'I'LL DEM-and you WORK.' Khedma = a job, khaddem = a worker.
+9ra|📖|9ra means read, study. 'KRA' — like the QURAN, 'the READING'. 9raya = school.
+chaf|👀|chaf means see, look. 'SHAF' — 'SHAFT of light: LOOK!' Choft = I saw.
+9al|🗣️|9al means say. 'KAL' — 'CALL out: SAY it!' 9al = he said, y9oul = he says.
+3mal|🔨|3mal means do, make. 'A-MAL' — 'AMAL MAKES things.' 3amel = a worker.
+3ta|🎁🤲|3ta means give. 'A-TA' — 'TA!' is what you say when someone GIVES you something. Ya3tik sa7a = may he GIVE you health.
+chra|🛍️💳|chra means buy. 'SHRA' — 'SHRA-p your money… BUY!' Chra / be3 = buy / sell.
+jeb|📦➡️|jeb means bring. 'JEB' — 'JEB-ring it' — BRING it! Jib = bring (do it!).
+7ab|❤️|7ab means like, love, want. 'HAB' — 'HAB-it of LOVING'. N7ebbek = I love you. 7oub = love.
+3raf|🧠✅|3raf means know. 'A-RAF' — 'A RAF pilot KNOWS the way.' Ma na3rafch = I don't know.
+fhem|💡|fhem means understand. 'F-HEM' — 'FaHEM? Ah-HEM, I UNDERSTAND.' Fhemt? = got it?
+l3ab|⚽🎮|l3ab means play. 'L-AB' — 'LAB? No — PLAY!' Lo3ba = a game, toy.
+behi|👍😊|behi means good, nice, OK. 'BAY-HEE' — 'BAY-HEE, everything's GOOD by the bay!' The Tunisian all-purpose OK.
+khayeb|👎😖|khayeb means bad, ugly. 'KHAY-EB' — 'KAY, EBB-ing away — BAD.' Behi / khayeb = good / bad.
+kbir|🐘🔝|kbir means big, old. 'K-BEER' — 'a BIG BEER' — or a BIG BEAR. Allahu akbar = God is BIGGEST.
+sghir|🐜🤏|sghir means small, young. 'S-GHEER' — 'SMALL GEAR.' Kbir / sghir = big / small.
+jdid|✨🆕|jdid means new. 'J-DEED' — 'INDEED, it's NEW!' 3am jdid = new year.
+far7an|😄🎉|far7an means happy. 'FAR-HAN' — 'FAR HAN Solo is HAPPY.' Far7 = joy.
+ta3ban|😩🥱|ta3ban means tired. 'TA-BAN' — 'TAB-AN… TIRED of the TAB.' Ta3ab = tiredness.
+mridh|🤒|mridh means ill. 'M-REEDH' — 'MR REED is ILL.' Mardh = illness.
+ahla|🤗👋|ahla means hi, welcome. 'AH-LA' — 'AH, LA-LA, hi!' Ahla w sahla = welcome!
+sba7 el khir|🌅👋|sba7 el khir means good morning. 'SBA7' = morning, 'el khir' = the good: 'MORNING of GOOD'. Reply: sba7 en-nour (morning of light).
+msa el khir|🌆👋|msa el khir means good evening. 'MSA' = evening (like 'mesa' — the evening meal), 'el khir' = the good.
+tesba7 3la khir|🌙😴|tesba7 3la khir means good night. 'May you WAKE (tesba7) ON GOOD (3la khir)'. Sba7 is in it: wake to a good morning.
+inshallah|🤲🙏|inshallah means hopefully, God willing. 'IN SHA ALLAH' = 'if God wills'. Tunisians add it to every plan.
+labes|👌😊|labes means fine, OK, well. 'LA-BES' — 'LA BAS' = 'no harm': 'no harm, I'm FINE.' Labes? Labes! = how are you? fine!
+9adech|❓💰|9adech means how much, how many. 'KA-DESH' — 'CASH? HOW MUCH?' 9adech el-wa9t = what time is it.
+entouma|👉👥|entouma means you (plural). Enti (you) + houma (they) = ENTOUMA, YOU LOT.
+lekin|🤔🚫|lekin means but, however. 'LA-KIN' — 'I like him, BUT he's no KIN of mine.' Same as Arabic 'lakin'.
+bech|➡️🔮|bech means in order to, will. 'BESH' — 'BESH-t be going — I WILL go.' Bech nemchi = I WILL go / in order to go.
+ken|❓➡️|ken means if. 'KEN' — 'IF KEN comes…' (Also 'he was', so watch the context!)
+kif|🤝⏰|kif means when, as, like. 'KEEF' — 'KEEF-like' — LIKE. Kif kif = the same.
+bla|🚫➖|bla means without. 'BLA' — 'BLA-nk': a BLANK is WITHOUT anything. Bla sokkor = without sugar.
+9bal|⬅️⏰|9bal means before. 'K-BAL' — 'the BALL came BEFORE the BELL.' Also 9bila = a little while ago.
+ba3d|➡️⏰|ba3d means after. 'BA-AD' — 'BAD comes AFTER good.' Ba3d el-ghda = after lunch.
+mba3d|⏭️|mba3d means afterwards, later. 'M-BA3D' = ba3d (after) with an M: 'M-m, AFTERWARDS.'
+fou9|⬆️|fou9 means above, on top. 'FOOK' — 'the HOOK is UP ABOVE.' Fou9 / ta7t = above / under.
+ta7t|⬇️|ta7t means under. 'TA7T' — 'TOT hid UNDER the table.'
+9oddem|⏩🧍|9oddem means in front of. 'KOD-DEM' — 'the COD swam IN FRONT OF them.'
+barcha|💯🔥|barcha means a lot, very, many. 'BAR-SHA' — 'the BAR SHAre: A LOT!' The most Tunisian word of all: barcha barcha = loads.
+chwaya|🤏|chwaya means a little. 'SHWAY-A' — 'SWAY A LITTLE.' Chwaya chwaya = bit by bit.
+bark|🛑🔂|bark means only, just. 'BARK' — 'the dog can ONLY BARK.' Wa7ed bark = just one.
+zeda|➕🙂|zeda means also, too. 'ZAY-DA' — 'ZAY-DA? ME TOO!' From zed, to add: 'added' = ALSO.
+ey|✅|ey means yes. 'EY' — 'AYE!' is YES in Scotland too.
+le|❌|le means no. 'LE' — 'LAY off — NO!' Like French 'non'. Le le = no no.
+mouch|🚫|mouch means not. 'MOOSH' — 'NOT MUSH, please.' Mouch behi = NOT good.
+famma|📍✅|famma means there is, there are. 'FAM-MA' — 'FAMMA (family) — THERE IS a family here.' Famma mochkla = there's a problem.
+mafammech|📍❌|mafammech means there isn't, there aren't. Ma + famma + ch = 'NOT there is': THERE ISN'T. Ma…ch wraps a word to say NOT.
+kol|🌐🔁|kol means all, every. 'KOL' — 'CALL ALL of them.' Kol youm = EVERY day, kol chay = EVERYTHING.
+7aja|📦❔|7aja means thing, something. 'HA-JA' — 'HA, JA — what's that THING?' 7atta 7aja = nothing.
+yezzi|🛑✋|yezzi means enough, stop it. 'YEZ-ZI' — 'YES, EASY, that's ENOUGH!' Said with a hand up.
+heya|🏃➡️|heya means come on, let's go. 'HAY-A' — 'HEY-YA, let's go!' Heya nemchiw = let's go.
+3achra|🔟|3achra means ten. 'ASH-RA' — 'ASH, RA! TEN!' Khamsa (5) twice.
+ethnin|📅2️⃣|ethnin means Monday. 'ETH-NIN' — like Arabic 'ithnayn', TWO: Monday is DAY TWO (Sunday is day one).
+jem3a|📅🕌|jem3a means Friday, week. 'JEM-A' — 'the JAM-A gathering' — Friday is the gathering day at the mosque; also a WEEK.
+sebt|📅7️⃣|sebt means Saturday. 'SEBT' — 'SABBATH' — SATURDAY. Sept-ember too: the Sabbath day.
+a7ad|📅1️⃣|a7ad means Sunday. 'A-HAD' — 'A HAD': Arabic for ONE — SUNDAY is DAY ONE of the week.
+sa3a|⌚⏰|sa3a means hour, watch, clock. 'SA-A' — 'SAY A time: an HOUR, on the WATCH.' 9adech es-sa3a? = what's the time?
+chta|🌧️❄️|chta means rain, winter. 'SHTA' — 'SHTAND under cover, it's RAINING.' RAIN is WINTER in Tunisia.
+tfol|👦|tfol means boy, child. 'T-FOL' — 'the TODDLER FOL-lowed.' Tfol / tofla = boy / girl.
+tofla|👧|tofla means girl. 'TOF-LA' — 'the GIRL TOF-ted LA LA LA.' Tfol with the -a ending that makes it feminine.
+sa7eb|🧑‍🤝‍🧑|sa7eb means friend. 'SA-HEB' — 'SAY HEB? He's my FRIEND.' Sa7bi = my friend. (Sahib in India comes from this!)
+wjeh|🙂|wjeh means face. 'W-JEH' — 'WEDGE of FACE.' Wjeh behi = a nice face.
+wdhen|👂|wdhen means ear. 'W-DHEN' — 'WHEN? Say it in my EAR.'
+khchem|👃|khchem means nose. 'KH-SHEM' — 'ACHOO-SHEM!' — a sneeze from the NOSE.
+bit|🚪🛏️|bit means room. 'BEET' — 'a BIT of the house' — a ROOM. Bit en-noum = bedroom.
+koujina|🍳|koujina means kitchen. Italian 'CUCINA' / French 'cuisine' — the KITCHEN.
+chobbek|🪟|chobbek means window. 'SHOB-BEK' — 'SHOP-BACK WINDOW.' Also 'shubbak' in Arabic.
+korsi|🪑|korsi means chair. 'KOR-SI' — 'COURSE-y — sit on the CHAIR for the COURSE.' Kursi in Arabic.
+tilifoun|📞|tilifoun means telephone. TELEPHONE — just said with a Tunisian accent!
+ktab|📕|ktab means book. 'K-TAB' — the Arabic KITAB: BOOK. From kteb, to write: a written thing.
+flous|💰|flous means money. 'FLOOS' — 'cash FLOWS' — MONEY. From Latin 'follis', a coin.
+9mar|🌙|9mar means moon. 'KMAR' — 'the MOON over 9MAR-rakesh.' Also a pretty girl's name.
+sma|☁️🌤️|sma means sky. 'SMA' — 'SMA-ll clouds in the SKY.' Sama in Arabic.
+skhoun|🔥🌡️|skhoun means hot. 'S-KHOON' — 'SKOON, this SOUP is HOT!'
+bared|🧊|bared means cold. 'BA-RED' — 'the BARE-D feet are COLD.' Skhoun / bared = hot / cold.
+7san|🐎|7san means horse. 'H-SAN' — 'HASSAN rides a HORSE.' Hisan in Arabic.
+tir|🐦|tir means bird. 'TEER' — 'the bird TEARS through the sky.' Tayara (plane) is a big tir.
+7out|🐟|7out means fish. 'HOOT' — 'the FISH went HOOT!' Also in 'Hout-ia', the whale.
+bidh|🥚|bidh means eggs. 'BEEDH' — 'BEAD-shaped EGGS.' Abyadh (white) is the same root: egg-white.
+l7am|🥩|l7am means meat. 'L-HAM' — 'HAM is MEAT.'
+khodhra|🥬|khodhra means vegetables. 'KHODH-RA' — from akhdhar, GREEN: VEGETABLES are the GREEN things.
+ghalla|🍎🍇|ghalla means fruit. 'GHAL-LA' — 'GALA apples' — FRUIT.
+tfe7|🍎|tfe7 means apple. 'T-FEH' — 'TOFFEE APPLE.'
+9ahwa|☕|9ahwa means coffee, cafe. 'KAHWA' — COFFEE: the English word comes from it!
+tey|🍵|tey means tea. TEA — 'TAY', how the Irish say it.
+7lou|🍬🥰|7lou means sweet, pretty. 'H-LOO' — 'HELLO SWEETIE.' 7alwa (halva) is a SWEET.
+ji3an|🍽️😫|ji3an means hungry. 'JEE-AN' — 'JEAN is HUNGRY.' Ji3an / chab3an = hungry / full.
+3atchan|🥤😫|3atchan means thirsty. 'AT-SHAN' — 'ATSHAN… ah, I'm THIRSTY.'
+7wayej|👕👖|7wayej means clothes. 'H-WAY-EJ' — 'WHICH WAY to the CLOTHES shop?' 7aja (thing) → 7wayej (things, clothes).
+mdina|🏘️🕌|mdina means city, old town. The MEDINA — the old CITY inside the walls.
+chera3|🛣️|chera3 means street. 'SHA-RA' — 'SHARE A STREET.' Shari3 in Arabic — Sharia means 'the way'.
+thniya|🛤️|thniya means road. 'TH-NI-YA' — 'THE KNEE-YA? No, THE ROAD.'
+blasa|📍💺|blasa means place, seat. French 'PLACE' — a PLACE, a SEAT. Famma blasa? = is there a seat?
+karhba|🚗|karhba means car. 'KAR-HBA' — CAR with extra letters: 'KAR-HBA, vroom.'
+rja3|↩️|rja3 means come back, return. 'R-JA' — 'RE-JA' — JA (come) with RE: COME BACK.
+rawwa7|🏠↩️|rawwa7 means go home. 'RAW-WAH' — 'RAW-WAH, go home and rest!' From rou7 (soul): go back to your home.
+9am|🧍⬆️|9am means get up, stand up. 'KAM' — 'CAM-era, everybody STAND UP!' 9oum! = get up!
+9a3ad|🪑|9a3ad means sit, stay. 'KA-AD' — 'SIT on a COD' (the fish). 9a3ad / 9am = sit / stand.
+kteb|✍️|kteb means write. 'K-TEB' — 'K, TAB… WRITE.' Ktab (book) and maktab (office) grow from it.
+t3allem|🎓📚|t3allem means learn. 'T-AL-LEM' — 'TELL 'EM, and they LEARN.' 3allem = teach, t3allem = learn (yourself).
+sma3|👂|sma3 means hear, listen. 'S-MA' — 'HEAR SMA-shing news.' Esma3! = listen!
+7ka|🗣️📖|7ka means talk, tell. 'HKA' — 'HE KA-n TELL a story.' 7kaya = a story.
+khdha|🤲➡️|khdha means take. 'KH-DHA' — 'KH-DHA: TAKE THAT.' Yekhou = he takes.
+najjem|💪✅|najjem means be able to, can. 'NAJ-JEM' — 'NUDGE 'EM — you CAN do it.' Nnajjem = I can.
+lezem|⚠️✅|lezem means must, have to. 'LEZ-EM' — 'LET 'EM — no, you MUST!' Lezem nemchi = I must go.
+twil|📏🦒|twil means tall, long. 'T-WEEL' — 'a TALL WHEEL' — long and tall.
+9sir|📐🐜|9sir means short. 'K-SEER' — 'CAESAR was SHORT.' Twil / 9sir = tall / short.
+9wi|💪|9wi means strong. 'KWI' — 'QUI-te STRONG.' Al-Qawi, the Strong, is one of God's names.
+9dim|🏺|9dim means old (thing). 'K-DEEM' — 'the OLD DEEM-ed treasure.' Kadim = ancient; jdid / 9dim = new / old.
+ndhif|🧼✨|ndhif means clean. 'N-DHEEF' — 'the N-DEEP CLEAN.' Nadhafa = cleanliness.
+mwassakh|🧹💩|mwassakh means dirty. 'M-WAS-SAKH' — 'MY WASH SACK is DIRTY.'
+s3ib|🧗😓|s3ib means difficult. 'S-EEB' — 'SEE? EEB-y — HARD!' Sa3b in Arabic.
+sehel|😌👌|sehel means easy. 'SAY-HEL' — 'the SAHEL is EASY, flat land.' Ahla w sahla = 'you've come to an easy place'.
+ghali|💎💸|ghali means expensive. 'GHA-LI' — 'GALLERY prices — EXPENSIVE.' Also 'dear' to you.
+rkhis|🏷️💸|rkhis means cheap. 'R-KHEES' — 'ARE KEYS CHEAP?' Ghali / rkhis = expensive / cheap.
+kelma|💬|kelma means word. 'KEL-MA' — 'KELL-MA: tell MA the WORD.' Klam = talk, words.
+3arbi|🇹🇳🔤|3arbi means Arabic. 'ARBI' — ARABIC, the language. Bel-3arbi = in Arabic.
+englizi|🇬🇧🔤|englizi means English. ENGLISH with a Tunisian ending: 'ENGLEEZI'.
+mochkla|⚠️🤯|mochkla means problem. 'MOSH-KLA' — 'MUSH-KLA — a MUCKLE of a PROBLEM.' Mochkla kbira = a big problem.
+y3aychek|🙏💐|y3aychek means thank you, bless you. 'YA-AY-SHEK' — 'may he make you live': the full form of 3aychek.
+3afwen|🙏😊|3afwen means you're welcome, sorry. 'AF-WEN' — 'AF-WHEN? — YOU'RE WELCOME, any time!'
+min fadhlek|🙏👉|min fadhlek means please. 'MIN FADH-LEK' = 'from your kindness'. Fadhl = favour.
+el7amdoullah|🤲😌|el7amdoullah means thank God. 'EL-HAMDU-LILLAH' = 'praise to God'. Said after a meal, good news, anything.
+marhba|🤗🚪|marhba means welcome. 'MAR-HBA' — 'MAR HUG-BA — WELCOME!' Marhba bik = welcome to you.
+chnia a7welek|❓🙂|chnia a7welek means how are you? 'SHNIA AHWALEK' = 'what are your conditions?' Chnia = what, a7wel = states.
+ya3tik sa7a|👏🙏|ya3tik sa7a means well done, thank you. 'May he GIVE (ya3ti) you HEALTH (sa7a)'. Said to anyone who has done a job.
+mabrouk|🎉🎊|mabrouk means congratulations. 'MA-BROOK' — 'MA, BROOK: blessed!' From baraka, blessing. Mabrouk 3lik!
+enehou|❓👉|enehou means which. 'ENA-HOU' — 'AND WHO — WHICH one?' Ends in -hou (he) for a masculine thing.
+enehi|❓👉|enehi means which (feminine). 'ENA-HI' — enehou with -hi (she) for a feminine thing.
+hedhi|👇👩|hedhi means this (feminine). Hedha (this) with the feminine -i ending: THIS (girl / car / house).
+hedhika|👉👩|hedhika means that (feminine). Hedhi (this, f.) + ka (over there) = THAT (f.).
+hedhoukom|👉👥|hedhoukom means those. Hedhouma (these) with -kom pushed away: THOSE over there.
+mte3i|🧑💼|mte3i means mine, my. 'MTA-I' — 'MY TAX? MINE.' Mte3 = belonging to, -i = me.
+mte3ek|🫵💼|mte3ek means yours. Mte3 (belonging) + -ek (you) = YOURS.
+mte3ou|👨💼|mte3ou means his. Mte3 (belonging) + -ou (him) = HIS.
+mte3ha|👩💼|mte3ha means hers. Mte3 (belonging) + -ha (her) = HERS.
+3andha|👩🎒|3andha means she has. 3and- (with) + -ha (her) = SHE HAS.
+3andna|👥🎒|3andna means we have. 3and- (with) + -na (us) = WE HAVE.
+wra|⬅️🧍|wra means behind. 'W-RA' — 'WHERE? Right BEHIND you.' Min wra = from behind.
+jenb|↔️🧍|jenb means next to. 'JENB' — 'JEN is NEXT TO Ben.' Side by side.
+bin|↔️|bin means between. 'BEEN' — 'the BIN is BETWEEN the two doors.'
+dakhel|📥🏠|dakhel means inside. 'DA-KHEL' — 'DUCK, HELL — get INSIDE!' From dkhal, to go in.
+barra|📤🌳|barra means outside. 'BAR-RA' — 'the BAR is OUTSIDE.' Also 'bara!' = go away, out!
+9bila|⏪🕐|9bila means a little while ago. 9bal (before) + -ila = 'a little BEFORE': A WHILE AGO.
+abadan|🚫♾️|abadan means never. 'ABA-DAN' — 'ABANDON — NEVER!' Abad = eternity.
+sa3at|🕐🕑|sa3at means sometimes. Sa3a (hour) in the plural: 'some HOURS' = SOMETIMES.
+yesser|📈💯|yesser means too much, a lot. 'YES-SIR' — 'YES SIR, TOO MUCH!' Like barcha, a lot.
+ma ... ch|🚫|ma ... ch means not (around a verb). MA before the verb, CH after: ma na3rafCH = I do NOT know. A sandwich of NOT.
+chay|📦❔|chay means thing (7atta chay = nothing). 'SHAY' — 'SHAY? THING? (like French 'chose')'. 7atta chay = not a thing.
+7ad|🧑❔|7ad means someone, anyone. 'HAD' — 'HAD anyone seen it?' Ma famma 7ad = there's nobody.
+akher|🔄🔚|akher means other, last. 'A-KHER' — 'ANOTHER? the LAST one!' Akher marra = the last time.
+nafs|🪞=|nafs means same. 'NAFS' — 'the NAFS — the SAME self.' Nafs el-7aja = the same thing.
+bara|🚪👋|bara means go, go away. 'BAR-RA' — 'go to the BAR, go AWAY!' Barra (outside) as an order.
+ya|📣🧑|ya means oh (before a name). 'YA Ali!' — OH Ali! You call anyone with YA first.
+mela|➡️🤔|mela means so, then. 'MAY-LA' — 'MAY-LA, SO THEN what?' Fills every pause: mela…
+3echrin|2️⃣0️⃣|3echrin means twenty. 3achra (ten) with -in (the plural ending): 'tens' = TWENTY.
+mya|💯|mya means hundred. 'MYA' — 'MY A HUNDRED!' Mi'a in Arabic.
+alf|🔢🏔️|alf means thousand. 'ALF' — ALF the alien is a THOUSAND years old. Alf layla w layla = 1001 Nights.
+lowel|🥇|lowel means first. 'LOW-WEL' — 'the LOWEL, first' — awwal in Arabic: the FIRST.
+sbe7|🌅|sbe7 means morning. 'S-BEH' — 'SO BEH… MORNING!' Sba7 el khir = good morning.
+3chiya|🌆|3chiya means afternoon, evening. 'ASH-EE-YA' — 'ASHIYA at the end of the day: EVENING.' 3cha (dinner) is eaten then.
+chhar|📅🌙|chhar means month. 'SH-HAR' — 'SHAH-R: a MONTH', shahr in Arabic — from the MOON (a month is a moon).
+wa9t|⏰|wa9t means time. 'WAKT' — 'WAKE-T up, it's TIME.' Waqtech (when) = 'what time'.
+sif|☀️🏖️|sif means summer. 'SEEF' — 'SEE the SEA in SUMMER.'
+3id|🎉🕌|3id means festival, holiday. EID — the FESTIVAL. 3id mabrouk = happy Eid.
+jed|👴|jed means grandfather. 'JED' — 'JED is GRANDAD.' Jed / jedda = grandfather / grandmother.
+jedda|👵|jedda means grandmother. Jed (grandfather) with the -a ending for a woman: GRANDMOTHER. (Jeddah the city too!)
+3am (uncle)|👨‍🦱👦|3am means uncle (father's side). 'AM' — 'UNCLE SAM.' Your dad's brother: 3am. Also 'year'!
+khal|👨‍🦱👧|khal means uncle (mother's side). 'KHAL' — 'uncle KHAL-ed' — your mum's brother. Khala = aunt.
+3ayla|👨‍👩‍👧‍👦|3ayla means family. 'AY-LA' — 'AY, LA FAMILIA.' 3a'ila in Arabic.
+sa7ba|👩‍🤝‍👩|sa7ba means friend (female). Sa7eb (friend) + -a = a GIRL friend. Sa7ebti = my friend (she).
+nes|👥|nes means people. 'NES' — 'NESt of PEOPLE.' En-nes = the people.
+esm|🏷️|esm means name. 'ESM' — 'ISM… what's your NAME?' Esmek? = your name? Esmi… = my name is…
+mou3allem|👨‍🏫|mou3allem means teacher. 'MOU-AL-LEM' — 'the MULLAH 'EM TEACHES.' From 3allem, to teach.
+fom|👄|fom means mouth. 'FOM' — 'FOAM at the MOUTH.' Fam in Arabic.
+sa9 (leg)|🦵|sa9 means leg. 'SAK' — 'a SACK on each LEG.' Also 'he drove'!
+rjel|🦶|rjel means foot. 'R-JEL' — 'a GEL on the FOOT.' Rjelin = feet.
+tawla|🍽️🪑|tawla means table. Italian 'TAVOLA' — the TABLE.
+mefte7|🔑|mefte7 means key. 'MEF-TEH' — from fta7, to open: the OPENER = KEY.
+chkara|👜|chkara means bag. 'SH-KARA' — 'SHE CARRIES a BAG.'
+stilou|🖊️|stilou means pen. French 'STYLO' — a PEN.
+nar|🔥|nar means fire. 'NAR' — 'the FIRE goes NAR-nar.' Also hell. Dhaw w nar = light and fire.
+chajra|🌳|chajra means tree. 'SHA-JRA' — 'SHAH JRA — a TREE in the shah's garden.' Shajara in Arabic.
+djeja|🐔|djeja means hen, chicken. 'D-JAJA' — 'the HEN says DJA-DJA.' Djej = chicken meat.
+mel7|🧂|mel7 means salt. 'MEL-H' — 'MEL-ted SALT.' Milh in Arabic.
+sokkor|🍬|sokkor means sugar. 'SOK-KOR' — SUGAR: the English word came from Arabic sukkar!
+kosksi|🍲|kosksi means couscous. COUSCOUS, the national dish — just said 'KOSKSI'.
+fter|🥐🌅|fter means breakfast. 'F-TER' — 'FaTER' — breaking the fast: BREAKFAST. Iftar in Ramadan.
+ghda|🍽️☀️|ghda means lunch. 'GH-DA' — 'GOD, A LUNCH!' Ghodwa (tomorrow) starts the same way.
+3cha|🍽️🌙|3cha means dinner. 'A-SHA' — 'A SHA-red DINNER.' Eaten in the 3chiya (evening).
+sabbat|👟|sabbat means shoes. 'SAB-BAT' — 'SABBATH SHOES' — your best pair. Italian 'ciabatta' (slipper)!
+mat3am|🍽️🏠|mat3am means restaurant. 'MAT-AM' — 'MAT, AM at the RESTAURANT.' From t3am, food.
+sbitar|🏥|sbitar means hospital. 'S-BITAR' — hoSPITAL with the front chopped off: SBITAR.
+jnina|🌷🌳|jnina means garden. 'J-NINA' — 'JEN and NINA in the GARDEN.' Janna (paradise) is a garden.
+kar|🚌|kar means bus, coach. French 'CAR' — a COACH. Not a car — a BUS!
+tren|🚆|tren means train. TRAIN — 'TREN', like French / Italian 'treno'.
+dfa3|💳💸|dfa3 means pay. 'D-FA' — 'DEFA-ult: you PAY.' Also to push. Dfa3t = I paid.
+nsa|🤔💭|nsa means forget. 'N-SA' — 'NASA FORGOT the rocket.' Nsit = I forgot.
+dh7ak|😂|dh7ak means laugh. 'DH-HAK' — 'the HACK LAUGHED.' Dhe7ka = a laugh.
+bka|😢|bka means cry. 'B-KA' — 'the BIKE A CRYING… boo-hoo-ka.'
+jra|🏃|jra means run. 'J-RA' — 'JERRY RAN.' Yejri = he runs.
+dkhal|🚪📥|dkhal means go in. 'D-KHAL' — 'the DUCK ALL went IN.' Dakhel = inside.
+khraj|🚪📤|khraj means go out. 'KH-RAJ' — 'RAJ went OUT.' Dkhal / khraj = in / out.
+7at|📦⬇️|7at means put. 'HAT' — 'PUT your HAT down.' 7ot-ha houni = put it here.
+l9a|🔍✅|l9a means find. 'L-KA' — 'LUCKY: I FOUND it!' L9it = I found.
+7all (verb)|🔓|7all means open. 'HAL' — 'HAL, OPEN the pod bay doors!' 7ell el-beb = open the door.
+sakkar|🔒|sakkar means close. 'SAK-KAR' — 'SACK the CAR — CLOSE the door.' 7all / sakkar = open / close.
+bda|▶️|bda means start. 'B-DA' — 'BEGIN, DA!' Bdit = I started.
+kammal|🏁✅|kammal means finish. 'KAM-MAL' — 'the CAMEL FINISHED.' Kammel! = finish it!
+stanna|⏳✋|stanna means wait. 'STAN-NA' — 'STAN, NAH — WAIT!' Stanna chwaya = wait a bit.
+3awen|🤝🆘|3awen means help. 'A-WEN' — 'A WIN with some HELP.' 3awenni = help me.
+9rib|📍🤏|9rib means near. 'K-REEB' — 'the CRIB is NEAR.' 9rib men = near to.
+b3id|📍🔭|b3id means far. 'B-EED' — 'BEE'D flown FAR.' 9rib / b3id = near / far.
+7azin|😢💔|7azin means sad. 'HA-ZEEN' — 'HAS ZEEN been SAD?' 7ozn = sadness.
+ghadhban|😠|ghadhban means angry. 'GHADH-BAN' — 'GOD, BAN him, I'm ANGRY.'
+loun|🎨|loun means colour. 'LOON' — 'a LOON of many COLOURS.' Lawn in Arabic.
+ak7al|⚫|ak7al means black. 'AK-HAL' — KOHL, the BLACK eye make-up, is the same word.
+abyadh|⚪|abyadh means white. 'AB-YADH' — 'A BEAD of WHITE.' Bidh (eggs) are white.
+khedma|💼|khedma means work, job. From khdem (work): khedma = a JOB. 'KHED-MA has a JOB.'
+barak allahou fik|🙏🤲|barak allahou fik means thank you very much. 'May God BLESS (barak) you' — the warmest thank you.
+bellehi|🙏😮|bellehi means please, really? 'BEL-LEHI' — 'by God': 'PLEASE' or 'REALLY?!'
+rabbi|🤲☁️|rabbi means God. 'RAB-BI' — 'my LORD'. (A RABBI is a 'master' in Hebrew — same root.)
+hedhouma|👇👥|hedhouma means these. Hedha (this) + houma (they) = THESE.
+wast|🎯|wast means middle. 'WAST' — 'WAIST — the MIDDLE of you.' Fi wast = in the middle of.
+yemin|➡️✋|yemin means right (side). 'YA-MEEN' — 'YEAH, MEAN — on the RIGHT.' Yemen is to the right of Mecca!
+ysar|⬅️✋|ysar means left (side). 'Y-SAR' — 'WHY SIR, on the LEFT.' Yemin / ysar = right / left.
+fisa3|⚡🏃|fisa3 means quickly. 'FEE-SA' — 'FEE SAy it QUICKLY.' Fisa3 fisa3 = quick quick!
+bechwaya|🐢|bechwaya means slowly, gently. Bi + chwaya = 'with a little': SLOWLY. Bechwaya 3lik = take it easy.
+7atta|🚫🪶|7atta means even, until, not even. 'HAT-TA' — 'the HATTER won't EVEN look UNTIL tea.' 7atta chay = nothing.
+nos|½|nos means half. 'NOS' — 'NOSE — in the middle of the face: HALF-way.' Nos sa3a = half an hour.
+ethletha|📅3️⃣|ethletha means Tuesday. Thletha (three) with the article: DAY THREE = TUESDAY.
+larb3a|📅4️⃣|larb3a means Wednesday. Arb3a (four) with the article: DAY FOUR = WEDNESDAY.
+lekhmis|📅5️⃣|lekhmis means Thursday. Khamsa (five) with the article: DAY FIVE = THURSDAY.
+wled|👦👦|wled means children, boys. Weld (boy) in the plural: 'WLED' — 'WE'LL ADd more BOYS.'
+bnet|👧👧|bnet means girls. Bent (girl) in the plural: 'B-NET' — 'the GIRLS play NET-ball.'
+tbib|👨‍⚕️|tbib means doctor. 'T-BEEB' — 'TEE-BEEB, the DOCTOR beeps.' Tabib in Arabic.
+tounsi|🇹🇳|tounsi means Tunisian. TUNISian — from Tounes, Tunis. The name of this game!
+senna|🦷|senna means tooth. 'SEN-NA' — 'SENNA: brush your TOOTH.' Snen = teeth.
+ch3ar|💇|ch3ar means hair. 'SH-AR' — 'SHEAR the HAIR.' Sha3r in Arabic.
+9alb|❤️|9alb means heart. 'KALB' — 'CALB… the HEART.' Watch out: kalb with K is dog! 9alb (heart) has the deep Q.
+bit el banyou|🛁|bit el banyou means bathroom. 'Room (bit) of the BATH (banyou — French 'bain')': BATHROOM.
+7it|🧱|7it means wall. 'HEET' — 'the HEAT comes through the WALL.'
+lardh|⬇️🟫|lardh means floor, ground. 'LARDH' — 'the LARD on the FLOOR.' Ardh = earth; lardh = THE ground.
+ghta|🛏️🧣|ghta means blanket, cover, lid. 'GHTA' — 'GOT A BLANKET?' Anything that COVERS.
+dhaw|💡|dhaw means light, electricity. 'DHAW' — 'the DAWN brings LIGHT.' Dhaw' in Arabic.
+thallaja|🧊🚪|thallaja means fridge. From thelj (snow / ice): the SNOW-maker = FRIDGE.
+sa7n|🍽️|sa7n means plate. 'SAHN' — 'SA-HN — a PLATE as flat as a SAND dune.'
+kes|🥛🍷|kes means glass, cup. 'KES' — 'a CASE of GLASSES.' Kes ma = a glass of water.
+mo3al9a|🥄|mo3al9a means spoon. 'MO-AL-KA' — 'MORE ALL CAught in the SPOON.' Mil3aqa in Arabic.
+sekkina|🔪|sekkina means knife. 'SEK-KINA' — 'the KNIFE is SICKENING.' Sikkin in Arabic.
+lo3ba|🎲🧸|lo3ba means game, toy. From l3ab (play): a thing you play = a GAME / TOY.
+koura|⚽|koura means ball, football. 'KOO-RA' — 'KOO-RA, the ball goes ROUND (kura = sphere).' Koura = football.
+njoum|⭐|njoum means stars. 'N-JOOM' — 'the STARS went ZOOM.' Najm = star. Like 'the stars of this game!'
+ardh|🌍|ardh means earth, land. 'ARDH' — 'ARDH… EARTH' — it even sounds like EARTH.
+chatt|🏖️|chatt means beach. 'SHAT' — 'we CHATted on the BEACH.' From Arabic shatt, the shore.
+hwa|💨|hwa means air, wind. 'H-WA' — 'HWA, the WIND blows.' Also 'love' in songs: hawa.
+thelj|❄️|thelj means snow. 'THELJ' — 'THE LEDGE is covered in SNOW.' Thallaja (fridge) is made from it.
+7ayawan|🐾|7ayawan means animal. 'HAYA-WAN' — 'HAY, a WAN animal.' From 7ayat (life): a living thing.
+b7im|🫏|b7im means donkey. 'B-HEEM' — 'BE-HIM, the DONKEY.' Bhima = beast.
+ba9ra|🐄|ba9ra means cow. 'BA-KRA' — 'the COW went BA-KRA… moo!' Baqara in Arabic.
+3allouch|🐑|3allouch means sheep. 'AL-LOOSH' — 'ALL LOOSE — the SHEEP got out!'
+ma3za|🐐|ma3za means goat. 'MA-ZA' — 'MA, ZA GOAT!' Ma3iz in Arabic.
+djej|🍗|djej means chicken (meat). Djeja (a hen) without the -a: the meat, CHICKEN.
+banan|🍌|banan means banana. BANANA, minus the last a. Easy!
+tmar|🌴|tmar means dates. 'T-MAR' — 'TAMAR-ind? No: TAMR, DATES.' Deglet nour are tmar.
+zitoun|🫒|zitoun means olives. 'ZI-TOON' — like Spanish 'aceituna' (olive), which came from it. Zit = oil.
+zit|🫙|zit means oil. 'ZEET' — 'olive oil ZITs… drips.' Zit zitoun = olive oil.
+harissa|🌶️|harissa means harissa. The hot red chilli paste — same word!
+rouz|🍚|rouz means rice. 'ROOZ' — like French 'riz' / Italian 'riso': RICE.
+batata|🥔|batata means potato. POTATO — 'BA-TA-TA'. Like Spanish 'patata'.
+bnin|😋|bnin means delicious. 'B-NEEN' — 'BEEN eating? DELICIOUS!' Bnin barcha = so tasty.
+maryoul|👕|maryoul means t-shirt, top. Italian 'MAGLIA' — a T-SHIRT / jersey.
+serwel|👖|serwel means trousers. 'SER-WEL' — 'SIR, WELL-dressed TROUSERS.' Sirwal in Arabic.
+7ouma|🏘️|7ouma means neighbourhood. 'HOO-MA' — 'HOME-A… the NEIGHBOURHOOD round your home.'
+jeme3|🕌|jeme3 means mosque. 'JEM-A' — like jem3a (Friday): the MOSQUE is where people GATHER on Friday.
+tayara|✈️|tayara means plane. From tir (bird): the big flying thing = PLANE. 'TAY-YARA'.
+3allem|👨‍🏫📚|3allem means teach. 'AL-LEM' — 'ALL 'EM get TAUGHT.' Mou3allem = teacher, t3allem = learn.
+be3|🏷️💰|be3 means sell. 'BA' — 'BA-rgain: SELL!' Ybi3 = he sells. Chra / be3 = buy / sell.
+tfakker|🤔💭|tfakker means remember. 'T-FAK-KER' — 'THE FACT, ER… I REMEMBER!' Fakker = think, tfakker = remember.
+fakker|🧠💭|fakker means think. 'FAK-KER' — 'FACT-ER: THINK about the facts.' Fekra = an idea.
+7as|🤲💓|7as means feel. 'HAS' — 'HAS a FEELING.' N7es = I feel.
+khaf|😨|khaf means be afraid. 'KHAF' — 'CAFF… AFRAID of the coffee?' Khouf = fear.
+tla3|⬆️🧗|tla3 means go up, climb. 'T-LA' — 'TALLA — climb UP a tall ladder.' Tla3 / habbat = up / down.
+w9af|🛑🧍|w9af means stop, stand. 'W-KAF' — 'WE CUFFed him — STOP!' W9af! = stop!
+ta7|⬇️💥|ta7 means fall. 'TAH' — 'TA-H… he FELL.' Ta7 / 9am = fall / get up.
+n9ez|🦘|n9ez means jump. 'N-KEZ' — 'IN-CASE, JUMP!' Yon9ez = he jumps.
+3am (verb)|🏊|3am means swim. 'AM' — 'I AM SWIMMING.' Also year and uncle — three words in one!
+sa9 (verb)|🚗🕹️|sa9 means drive. 'SAK' — 'SACK the DRIVER.' Also leg! Ysou9 = he drives.
+rkeb|🐎🚌|rkeb means ride, get on. 'R-KEB' — 'ARE KEBabs allowed on the RIDE?' Rkeb el-kar = get on the bus.
+mezyen|🌟👌|mezyen means good, lovely. 'MEZ-YEN' — 'MEZE, YEN — LOVELY.' Mzyan in Moroccan too.
+smin|🍔|smin means fat. 'S-MEEN' — 'SMEAN' — 'this MEAN cat is FAT.' Smin / dh3if = fat / thin.
+dh3if|🪶|dh3if means thin, weak. 'DH-EEF' — 'the THIEF was THIN and WEAK.'
+sri3|🏎️|sri3 means fast. 'S-REE' — 'SPREE — FAST!' Sari3 in Arabic.
+bati|🐌|bati means slow. 'BA-TI' — 'BATTY and SLOW.' Sri3 / bati = fast / slow.
+s7i7|✅💪|s7i7 means true, healthy. 'S-HEEH' — 'SO HE… it's TRUE and he's HEALTHY.' Sa7a = health.
+ghalet|❌|ghalet means wrong. 'GHA-LET' — 'GOT LET down — WRONG.' Ghalta = a mistake.
+mahboul|🤪|mahboul means crazy. 'MAH-BOOL' — 'MA, a BULL — he's CRAZY!' Said with a laugh.
+dhki|🧠✨|dhki means clever. 'DH-KI' — 'the KEY is to be CLEVER.' Dhaki in Arabic.
+meskin|🥺|meskin means poor thing. 'MES-KEEN' — 'MISS KEEN, POOR THING.' Said with sympathy: meskin!
+ghani|💎👑|ghani means rich. 'GHA-NI' — 'GUINEA coins — RICH.' Ghani / zawali = rich / poor.
+a7mar|🔴|a7mar means red. 'AH-MAR' — 'AH, MARS is RED.' Alhambra = 'the red one'!
+azra9|🔵|azra9 means blue. 'AZ-RAK' — 'AS RACK-ed up BLUE sky.' Azure comes from the same family.
+akhdhar|🟢|akhdhar means green. 'AKH-DHAR' — 'OKH, DAR — GREEN.' Khodhra (vegetables) are green things.
+asfar|🟡|asfar means yellow. 'AS-FAR' — 'AS FAR as the YELLOW sun.' Saffron is YELLOW — same word!
+klam|💬🗣️|klam means talk, words. 'KLAM' — 'CLAM up — no TALK.' Kelma = a word.
+loghha|🔤🗣️|loghha means language. 'LOGH-HA' — 'LOG the LANGUAGE.' Lugha in Arabic.
+fransawi|🇫🇷|fransawi means French. FRANCE with -awi: FRENCH.
+souel|❓|souel means question. 'SOU-EL' — 'SO, WELL — a QUESTION?' Su'al in Arabic.
+jweb|💡✉️|jweb means answer. 'J-WEB' — 'the WEB has the ANSWER.' Jaweb = to answer.
+7all (solution)|🔑🧩|7all means solution. From 7all (open): what OPENS a problem = the SOLUTION.
+fekra|💡|fekra means idea. From fakker (think): a thought = an IDEA. 'FEK-RA — Eureka!'
+7kaya|📖|7kaya means story. From 7ka (tell): a told thing = a STORY. 'HI-KAYA, a story for Kaya.'
+film|🎬|film means film. FILM — the same word.
+mousi9a|🎵|mousi9a means music. MUSIC — 'MOO-SEE-KA'.
+ghnaya|🎤|ghnaya means song. From ghanna (sing): a sung thing = a SONG.
+3ers|💒|3ers means wedding. 'ERS' — 'HERS and his — the WEDDING.' 3ars in Arabic.
+7ayat|🌱💓|7ayat means life. 'HA-YAT' — 'HI, YAT — that's LIFE.' 7ayawan (animal) = living thing.
+dars|📚|dars means lesson. 'DARS' — 'DARTS LESSON.' Mdrasa (school) comes from it.
+9raya|🎓|9raya means studying, school. From 9ra (read): READING = STUDYING, school.
+bes7a|🍽️😊|bes7a means enjoy (to someone eating or wearing something new). 'B-SA7A' = 'with health' — said to someone eating or wearing something new.
+sa7a|💪🥂|sa7a means health, cheers. 'SA-HA' — 'SA-HA… health!' Ya3tik sa7a = may he give you health.
+mte3na|👥💼|mte3na means ours. Mte3 (belonging) + -na (us) = OURS.
+mte3hom|👥💼|mte3hom means theirs. Mte3 (belonging) + -hom (them) = THEIRS.
+wa7dou|🧍|wa7dou means alone, by himself. Wa7ed (one) + -ou (him) = 'his one' = ALONE.
+kol youm|📅🔁|kol youm means every day. Kol (every) + youm (day) = EVERY DAY.
+okhra|🔄👩|okhra means other (feminine). Akher (other) in the feminine: marra okhra = another time.
+mazel|⏳🔁|mazel means still, not yet. 'MA-ZEL' — 'MA, ZELL — STILL here!' Mazel ma jech = he hasn't come YET.
+ya3ni|💬🤔|ya3ni means I mean, that is. 'YA-NI' — 'YA KNOW, I MEAN…' The word for every pause.
+momken|🤷✅|momken means maybe, possible. 'MOM-KEN' — 'MUM? KEN? MAYBE.' Mumkin in Arabic.
+marra|1️⃣🔂|marra means once, one time. 'MAR-RA' — 'MARRY ONCE.' Marra okhra = another time.
+rbi3|🌸|rbi3 means spring. 'R-BEE' — 'the BEE is out: SPRING.' Rabi3 in Arabic.
+khrif|🍂|khrif means autumn. 'KH-REEF' — 'the leaves fall off the REEF… AUTUMN.' Kharif in Arabic.
+3omr|🎂|3omr means age, life. 'OMR' — 'OMAR's AGE.' 9adech 3omrek? = how old are you?
+3amma|👩‍🦱👦|3amma means aunt (father's side). 3am (uncle) + -a = AUNT, on dad's side.
+khala|👩‍🦱👧|khala means aunt (mother's side). Khal (uncle) + -a = AUNT, on mum's side.
+jar|🏠🏠|jar means neighbour. 'JAR' — 'the NEIGHBOUR lends a JAR of sugar.'
+sba3|👆|sba3 means finger. 'S-BA' — 'SBA — seven (sab3a) FINGERS? no, five!' Isba3 in Arabic.
+dhahr|🔙|dhahr means back. 'DHAHR' — 'DAHR… his BACK.' Also 'noon' (dhohr) — close!
+kerch|🤰|kerch means belly. 'KERSH' — 'KERSH-ing in the BELLY.' Also a paunch!
+forchita|🍴|forchita means fork. Italian 'FORCHETTA' — FORK.
+sabon|🧼|sabon means soap. French 'SAVON' / Italian 'sapone' — SOAP.
+tilivizyoun|📺|tilivizyoun means television. TELEVISION — 'TILI-VIZ-YOUN'.
+wra9a|📄|wra9a means sheet of paper. 'WRA-KA' — 'WRAP A sheet of PAPER.' Also a leaf.
+dinar|💵|dinar means dinar. The DINAR — Tunisia's money. From Latin 'denarius'!
+hdiya|🎁|hdiya means present, gift. 'H-DIYA' — 'HEY, DIYA, a PRESENT!' Hadiya in Arabic.
+jbel|⛰️|jbel means mountain. 'J-BEL' — 'JEBEL' — Gibraltar = Jabal Tariq, Tariq's MOUNTAIN!
+ghaba|🌲🌲|ghaba means forest. 'GHA-BA' — 'GABBA in the FOREST.'
+warda|🌹|warda means flower. 'WAR-DA' — 'WARDA, the ROSE.' Ward = roses.
+7jar|🪨|7jar means stone. 'H-JAR' — 'a JAR of STONES.' Hajar in Arabic.
+taqs|🌦️|taqs means weather. 'TAKS' — 'TAX the WEATHER.' Taqs in Arabic.
+jmal|🐪|jmal means camel. 'J-MAL' — CAMEL comes from this word: jamal!
+arneb|🐇|arneb means rabbit. 'AR-NEB' — 'ARE NEB-ulous RABBITS real?' Arnab in Arabic.
+jben|🧀|jben means cheese. 'J-BEN' — 'JAY-BEN eats CHEESE.' Jubn in Arabic.
+3asir|🧃|3asir means juice. 'A-SEER' — 'A SEER drinks JUICE.' From 3asar, to squeeze.
+7ar|🌶️🔥|7ar means spicy, hot. 'HAR' — 'HARissa is SPICY HOT.' Skhoun is hot in temperature; 7ar is hot in taste.
+chab3an|😋🫃|chab3an means full (after eating). 'SHAB-AN' — 'SHOVE AN-other in? No, I'm FULL.'
+nwadher|👓|nwadher means glasses. 'N-WADHER' — 'the WEATHER through my GLASSES.' From nadhar, sight.
+taxi|🚕|taxi means taxi. TAXI — the same word.
+bisklet|🚲|bisklet means bicycle. French 'BICYCLETTE' — a BIKE.
+dhayya3|🔍❌|dhayya3 means lose (something). 'DHAY-YA' — 'THE-YA… I LOST it.' Dhayya3t el-mefte7 = I lost the key.
+tayyeb|👨‍🍳|tayyeb means cook. 'TAY-YEB' — 'TAY, YEB… COOK it.' Tayyeb also = ripe / good: 'cooked = good'.
+ghsel|🧼🚿|ghsel means wash. 'GH-SEL' — 'GUSSEL — WASH.' Ghassala = a washing machine.
+naddhaf|🧹✨|naddhaf means clean. From ndhif (clean): make clean = to CLEAN.
+lbes|👕|lbes means wear, get dressed. 'L-BES' — 'ELBES… put on a DRESS.' Lbes in Arabic.
+kbar|📈👦|kbar means grow up. From kbir (big): to get big = GROW UP.
+3ach|🌱💓|3ach means live. 'ASH' — 'ASH is alive — he LIVES.' 3aychek = may you live.
+met|💀|met means die. 'MET' — 'he MET his end — DIED.' Mout = death.
+dhrab|👊|dhrab means hit. 'DH-RAB' — 'the RABbit HIT him.' Dharb in Arabic.
+ksar|💔🔨|ksar means break. 'K-SAR' — 'KSAR… CRASH! BROKEN.' Mksour = broken.
+tlob|🙋🍽️|tlob means ask for, order. 'T-LOB' — 'the LOB — ASK for the ball.' Talab = request.
+sa9sa|❓🗣️|sa9sa means ask (a question). 'SAK-SA' — 'SAX-A question — ASK.' Sa9si! = ask!
+jaweb|💬↩️|jaweb means answer. From jweb (answer): give an ANSWER. 'JAW-EB — open your JAW to ANSWER.'
+7lem|💭🌙|7lem means dream. 'H-LEM' — 'HE LEMbered a DREAM.' 7elm = a dream.
+ghanna|🎤🎶|ghanna means sing. 'GHAN-NA' — 'GHANNA, SING!' Ghnaya = a song.
+chta7|💃|chta7 means dance. 'SH-TAH' — 'SHTAH, DANCE the night away.'
+khalla|👋🫷|khalla means leave, let. 'KHAL-LA' — 'CALL A halt — LEAVE it.' Khallini = leave me / let me.
+jarrab|🧪|jarrab means try. 'JAR-RAB' — 'GRAB a JAR and TRY.' Jarrab! = try it!
+yest7a9|🙏📦|yest7a9 means need. 'YEST-HAK' — 'YES, THE HACK NEEDS it.' Yest7a9 l- = he needs.
+zed|➕🔁|zed means add, to do again. 'ZED' — 'add a ZED… again.' Zid! = more!, zeda = also.
+rbe7|🏆|rbe7 means win. 'R-BEH' — 'ARE BEH-ind? No — WON!' Rbe7t = I won.
+khsar|😞📉|khsar means lose (a game), to break down. 'KH-SAR' — 'the KHSAR… SORRY, we LOST.' Rbe7 / khsar = win / lose.
+ghabi|🤪🙈|ghabi means stupid. 'GHA-BI' — 'GABBY is being STUPID.'
+zawali|🥺💸|zawali means poor. 'ZA-WALI' — 'the WALLY is POOR.' Ghani / zawali = rich / poor.
+mchghoul|📵💼|mchghoul means busy. 'MSH-GHOOL' — 'MISS GHOUL is BUSY.' Mashghul in Arabic.
+7adher|✅🙋|7adher means ready, present. 'HA-DHER' — 'HAD HER READY, PRESENT!' Said in class: 7adher!
+ghayeb|❌🙋|ghayeb means absent. 'GHA-YEB' — 'GAYE… B? ABSENT.' 7adher / ghayeb = present / absent.
+m3abbi|🫙💯|m3abbi means full. 'M-AB-BI' — 'MA, A BEE — the jar's FULL of them.'
+faregh|🫙⬜|faregh means empty. 'FA-REGH' — 'FAR AWAY the jar is EMPTY.' M3abbi / faregh = full / empty.
+mfatta7|🔓|mfatta7 means open. From fta7 / 7all (open): OPENED. 'M-FAT-TAH — the FAT door is OPEN.'
+msakkar|🔒|msakkar means closed. From sakkar (close): CLOSED. Mfatta7 / msakkar = open / closed.
+yebes|🏜️|yebes means dry. 'YA-BES' — 'YEAH, BEST when it's DRY.' Yabis in Arabic.
+mballel|💦|mballel means wet. 'M-BAL-LEL' — 'the BALL fell in — WET.' Yebes / mballel = dry / wet.
+th9il|🏋️|th9il means heavy. 'TH-KEEL' — 'THE KEEL is HEAVY.' Thaqil in Arabic.
+khfif|🪶|khfif means light (not heavy). 'KH-FEEF' — 'a FEATHER is LIGHT — FEEF.' Th9il / khfif = heavy / light.
+3ali|📏🔊|3ali means high, loud. 'A-LI' — 'ALI jumps HIGH.' Also 'the High' is a name of God.
+wati|📉🔈|wati means low, quiet. 'WA-TI' — 'WATER runs LOW and QUIET.' 3ali / wati = high / low.
+wase3|↔️|wase3 means wide, roomy. 'WA-SA' — 'WASA — a WIDE street.' Wasi3 in Arabic.
+dhaya9|🤏↔️|dhaya9 means narrow, tight. 'DHAY-YAK' — 'THE YAK stuck in the NARROW gap.'
+morr|☕😖|morr means bitter. 'MORR' — 'MYRRH is BITTER' — same word!
+7amedh|🍋|7amedh means sour. 'HA-MEDH' — 'HAMED ate a lemon — SOUR.' Also acid.
+mkhawwef|👻😱|mkhawwef means scary. From khaf / khouf (fear): makes you afraid = SCARY.
+dounya|🌍🌱|dounya means world, life. 'DOON-YA' — 'DOWN-YA here in the WORLD.' Dunya in Arabic.
+imti7an|📝😰|imti7an means exam. 'IM-TI-HAN' — 'I'M TIRED, HAN — EXAM day.' Imtihan in Arabic.
+7a9|⚖️✅|7a9 means truth, right. 'HAK' — 'HACK the TRUTH.' 3andek 7a9 = you're RIGHT.
+kedhb|🤥|kedhb means lie. 'KEDHB' — 'the KID B LIED.' Kedheb = a liar.
+khir|✨🙂|khir means good, goodness. 'KHEER' — 'CHEER — GOOD!' Sba7 el khir = morning of GOOD.
+chorr|😈|chorr means evil, harm. 'SHORR' — 'SHOR-e — EVIL lurks.' Khir / chorr = good / evil.
+7oub|❤️|7oub means love. 'HOOB' — 'HUB-by — LOVE.' From 7ab (to love).
+khouf|😨|khouf means fear. 'KHOOF' — 'KOOF… FEAR.' From khaf (be afraid).
+far7|🎉|far7 means joy. 'FARH' — 'FAR-H… JOY.' From far7an (happy).
+7ozn|😢|7ozn means sadness. 'HOZN' — 'HOSE-N… SADNESS.' From 7azin (sad).
+dhe7ka|😂|dhe7ka means laugh. From dh7ak (to laugh): a LAUGH.
+sout|🔊|sout means voice, sound. 'SOOT' — 'SHOUT — a VOICE / SOUND.' Sawt in Arabic.
+ri7a|👃🌸|ri7a means smell. 'REE-HA' — 'REE-HA, a SMELL.' Ri7 = wind, what carries smells.
+dhou9|👅|dhou9 means taste. 'DHOOK' — 'the DUKE has TASTE.' Dhaw9 in Arabic.
+3a9l|🧠|3a9l means mind, sense. 'A-KL' — 'ACKLE… use your MIND.' 3a9el = sensible.
+rou7|👻🌬️|rou7 means soul, self. 'ROOH' — 'ROO, the SOUL.' Rawwa7 (go home) = take yourself back.
+7adh|🍀|7adh means luck. 'HADH' — 'HAD LUCK.' 7adh behi = good luck.
+zhar|🍀🌼|zhar means luck. 'Z-HAR' — 'the Z-HAR… HAR-d luck?' Also 'orange blossom' — a lucky flower.

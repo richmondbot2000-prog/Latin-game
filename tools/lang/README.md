@@ -17,3 +17,12 @@ Then `python3 tools/lang/build.py <folder>` writes `vocab.js`, `index.html`, `ap
 `manifest.webmanifest`, `read.js`, `phrases.js`, `synonyms.js` and `snap.js` — never edit those by hand —
 and add the language to `languages.json` so the home pages link to it. Rebuild after any change to the
 Latin `app.js`, `sw.js` or `snap.js`. Test: `LANG_DIR=<folder> node tools/lang/tests/run.js "An English sentence."`
+
+## Memory hooks and the language's own script
+
+- `memory.txt`: one line per word, `id | emojis | hook`. The hook is shown on the memo card ("How do we remember this?")
+  and on a flipped card. Strongest first: a borrowed word the player already knows, a word family, a sound-alike picture.
+  `build_memory.py` turns it into `memory.js` and refuses a word list with a word missing.
+- `arabic.txt` (any script, the name is historical): `id | word | plural | feminine | present | I did | past stem | they do`;
+  merged into `vocab.js` by `build_vocab.py`. `forms.js` must give each form its `ar` and export `Forms.show(w)` for the
+  headword; the shared `app.js` then shows the `.arab` line under the word on cards, in the word list and on the memo card.
