@@ -60,7 +60,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   plus confetti); finding a monster you already have is a **duplicate, and a
   duplicate evolves it one stage** (egg → baby → teen → adult, the white
   "EVOLVING" glow). A duplicate of a fully grown monster re-rolls once for one
-  that can still grow. The bar above the cards shows the latest find and the
+  that can still grow. **Ten monsters are RARE** (`rare: true` in `beasts.json`: dueljaw, royalvizaro, pulsar, nebula, crockasaur, flamondis, lizanaut, mamoth, jaxi, opal): the roll (`pool` in `beasts.js`) gives each a fifth of a plain monster's chance (~5% of drops), their fanfare and gift cards are a metallic holographic card (`.card.beast.rare`: near-black foil, drifting rainbow patches, glitter dots, a moving sheen, silver frame, a ✦ RARE badge), and their Beastpedia discs have a rainbow ring and a star (`.bc.rare`). `Beasts.force(key)` sets the next drop, for tests (`scratchpad/rare.js`). The bar above the cards shows the latest find and the
   Beastpedia count. The next beast is rolled ahead and its pictures
   preloaded (`ahead` in `beasts.js`); all 175 pictures are in the service
   worker cache list and a fanfare picture that fails retries (`retryImg`). `latin.beasts.<id>`

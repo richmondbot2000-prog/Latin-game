@@ -23,7 +23,11 @@ const Beasts = (() => {
   // ahead of time and its pictures fetched, so the fanfare never waits for the network
   let next = null;
   const preload = b => { if (!b) return; b.stages.forEach((s, i) => { const im = new Image(); im.src = img(b, i); }); };
-  const ahead = () => { if (!next && list && list.length) { next = list[Math.floor(Math.random() * list.length)]; preload(next); } };
+  // ten of the monsters are RARE (rare: true in beasts.json): they turn up a fifth as often as the others and their
+  // card is a metallic holographic one
+  const pool = () => list.flatMap(b => Array(b.rare ? 1 : 5).fill(b));
+  const ahead = () => { if (!next && list && list.length) { const p = pool(); next = p[Math.floor(Math.random() * p.length)]; preload(next); } };
+  const force = k => { next = byKey(k) || next; };
   const roll = () => { ahead(); const b = next; next = null; ahead(); return b; };
   // called on every card played, right or wrong, with the streak so far. A beast drops every 5 right answers in a
   // row (5, 10, 15…), every 20 cards played (right or wrong), and on a new player's first right answer. A monster you
@@ -69,5 +73,5 @@ const Beasts = (() => {
   function scene(u) { const l = latest(u); return l ? l.beast.el : 'earth'; }
   const count = u => { const s = state(u); let n = 0; for (const k in s.have) n += (s.have[k] || 0) + 1; return n; };
   const totalStages = () => (list || []).reduce((n, b) => n + b.stages.length, 0);
-  return { load, state, onCard, onRight, give, receive, spares, latest, scene, count, totalStages, img, byKey, list: () => list || [], ELEMENT, STAGE, ART };
+  return { load, state, force, onCard, onRight, give, receive, spares, latest, scene, count, totalStages, img, byKey, list: () => list || [], ELEMENT, STAGE, ART };
 })();

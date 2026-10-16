@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '125';
+const APP_VERSION = '126';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -406,7 +406,7 @@ function flashHome(msg) { const t = document.createElement('div'); t.className =
 function giftSheet(ev, from, done) {
   const b = ev.beast, st = b.stages[ev.stage], el = Beasts.ELEMENT[b.el] || ['', ''];
   sheet.innerHTML = `<div class="panel bsheet" role="dialog" aria-modal="true" aria-label="A gift">
-      <div class="card beast egg giftcard"><div class="btitle">GIFT</div>
+      <div class="card beast egg giftcard${b.rare ? ' rare' : ''}">${b.rare ? '<div class="foil"></div><div class="rarebadge">✦ RARE ✦</div>' : ''}<div class="btitle">GIFT</div>
         <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt="" onerror="retryImg(this)"><span class="glow"></span></div>
         <div class="ribbon"><span>${esc(st.name)}</span></div><div class="belem">${el[0]}</div></div>
       <p style="margin:12px 0 0">${from ? `<b>${esc(from.toUpperCase())}</b> sent you this ${esc(st.name)}${ev.spare ? ' — you already had one, so it’s a spare you can pass on' : ''}!` : `Someone opened your gift!`}</p>
@@ -589,9 +589,9 @@ function renderBeasts(u) {
     const s = Beasts.state(u), l = Beasts.latest(u);
     $('#bcount').textContent = Beasts.count(u) + ' / ' + Beasts.totalStages();
     const sp = s.spare || {};
-    const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}${known && i === b.stages.length - 1 && sp[b.key] > 0 ? ' stack' + (sp[b.key] > 1 ? ' stack2' : '') : ''}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy">${known && i === b.stages.length - 1 && sp[b.key] > 0 ? `<span class="spare">×${1 + sp[b.key]}</span>` : ''}</button>`;
+    const circ = (b, i, known) => `<button class="bc${known ? '' : ' unknown'}${b.rare && known ? ' rare' : ''}${known && i === b.stages.length - 1 && sp[b.key] > 0 ? ' stack' + (sp[b.key] > 1 ? ' stack2' : '') : ''}" data-k="${b.key}" data-i="${i}" aria-label="${known ? esc(b.stages[i].name) : 'Not found yet'}"><img src="${Beasts.img(b, i)}" alt="" loading="lazy">${known && i === b.stages.length - 1 && sp[b.key] > 0 ? `<span class="spare">×${1 + sp[b.key]}</span>` : ''}</button>`;
     pane.innerHTML = `
-      ${l ? `<div class="pal big"><img class="bpic" src="${Beasts.img(l.beast, l.stage)}" alt=""><span class="btxt"><b>${esc(l.beast.stages[l.stage].name)}</b><span class="small">Latest find · ${Beasts.list().length} monsters, ${Beasts.totalStages()} stages to collect. A beast every 5 right in a row and every 20 cards; find a monster again and it evolves.</span></span></div>` : `<p class="small" style="text-align:center">A monster egg drops every 5 right answers in a row and every 20 cards played. Find the same monster again and it evolves: egg, baby, teen, adult. ${Beasts.totalStages()} to collect!</p>`}
+      ${l ? `<div class="pal big"><img class="bpic" src="${Beasts.img(l.beast, l.stage)}" alt=""><span class="btxt"><b>${esc(l.beast.stages[l.stage].name)}</b><span class="small">Latest find · ${Beasts.list().length} monsters, ${Beasts.totalStages()} stages to collect. A beast every 5 right in a row and every 20 cards; find a monster again and it evolves. Ten are ✦ RARE: holographic cards, five times harder to find.</span></span></div>` : `<p class="small" style="text-align:center">A monster egg drops every 5 right answers in a row and every 20 cards played. Find the same monster again and it evolves: egg, baby, teen, adult. ${Beasts.totalStages()} to collect!</p>`}
       <div class="bgrid">${Beasts.list().map(b => b.stages.map((st, i) => circ(b, i, b.key in s.have && (s.have[b.key] || 0) >= i)).join('')).join('')}</div>`;
     pane.onclick = e => {
       const bt = e.target.closest('.bc'); if (!bt) return;
@@ -601,7 +601,7 @@ function renderBeasts(u) {
       sheet.innerHTML = `<div class="panel bsheet" role="dialog" aria-modal="true" aria-label="${esc(st.name)}">
           <img class="bbig" src="${Beasts.img(b, i)}" alt="">
           <div class="bname">${esc(st.name)}</div>
-          <div class="small">${Beasts.STAGE[st.s]} · ${el[0]} ${el[1]}</div>
+          <div class="small">${Beasts.STAGE[st.s]} · ${el[0]} ${el[1]}${b.rare ? ' · <b class="raretag">✦ RARE</b>' : ''}</div>
           <p class="becol">${esc(st.desc)}</p>
           ${i === b.stages.length - 1 && sp[b.key] > 0 ? `<p class="small">You have <b>${sp[b.key]}</b> spare ${sp[b.key] === 1 ? 'copy' : 'copies'} of this one.</p><button class="btn" id="bGive">🎁 Give one to a friend</button>` : ''}
           <button class="btn ghost" id="bOk">Close</button></div>`;
@@ -1378,7 +1378,7 @@ function renderPlay(u, pane) {
   function showBeast(ev, done) {
     const b = ev.beast, st = b.stages[ev.stage], el = Beasts.ELEMENT[b.el] || ['', ''];
     const prev = ev.kind === 'grow' ? Beasts.img(b, ev.stage - 1) : null;
-    deck.innerHTML = `<div class="card beast ${ev.kind}" id="beastCard">
+    deck.innerHTML = `<div class="card beast ${ev.kind}${b.rare ? ' rare' : ''}" id="beastCard">${b.rare ? '<div class="foil"></div><div class="rarebadge">✦ RARE ✦</div>' : ''}
         <div class="btitle">${ev.kind === 'egg' ? 'NEW' : ev.kind === 'spare' ? 'SPARE!' : 'EVOLVING'}</div>
         <div class="bstage"><img class="bnew" src="${Beasts.img(b, ev.stage)}" alt="${esc(st.name)}" onerror="retryImg(this)">${prev ? `<img class="bold" src="${prev}" alt="">` : ''}<span class="glow"></span></div>
         <div class="ribbon"><span>${esc(st.name)}</span></div>
