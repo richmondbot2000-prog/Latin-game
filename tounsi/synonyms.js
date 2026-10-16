@@ -7,7 +7,7 @@ const SYNONYMS = {
   "sam7ni": ["excuse me","forgive me","pardon"],
   "waqtech": ["what time"],
   "kifech": ["how come"],
-  "3lech": ["what for"],
+  "3lech": ["what for","how come"],
   "ena": ["me"],
   "houwa": ["him"],
   "hiya": ["her"],

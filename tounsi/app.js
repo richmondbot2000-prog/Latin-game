@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '30';
+const APP_VERSION = '31';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -65,10 +65,15 @@ const NOTES = 'tounsi.notes';
 const noteOf = w => { const u = current(); const n = u ? store.get(NOTES + '.' + u.id, {}) : {}; return n[w.id] || ''; };
 const setNote = (w, text) => { const u = current(); if (!u) return; const k = NOTES + '.' + u.id, n = store.get(k, {}); if (text.trim()) n[w.id] = text.trim(); else delete n[w.id]; store.set(k, n); };
 
+const meaningCache = new Map();
+const meanings = w => { let m = meaningCache.get(w); if (!m) { m = new Set([...w.english.split(/\s*[,;]\s*/), ...((typeof SYNONYMS !== 'undefined' && SYNONYMS[w.word]) || [])].map(x => x.toLowerCase().replace(/\s*\(.*?\)/g, '').trim()).filter(Boolean)); meaningCache.set(w, m); } return m; };
 function distractors(w, pool = WORDS) {
   // a wrong answer must be clearly different: no shared words, no shared meaning group (vocab.js "sense"),
   // and not a pair checked by hand as too close (vocab.js "avoid", applies both ways)
+  // nor any meaning in common once the spoken alternatives (synonyms.js) are counted: "how come" is a sense of
+  // kifech and an alternative of 3lech (why), so neither may be the other's wrong answer
   const clash = o => o === w || o.english === w.english || [...o.toks].some(t => w.toks.has(t)) ||
+    [...meanings(o)].some(t => meanings(w).has(t)) ||
     (o.sense || []).some(t => (w.sense || []).includes(t)) ||
     (w.avoid || []).includes(o.word) || (o.avoid || []).includes(w.word);
   let c = pool.filter(o => o.kind === w.kind && !clash(o));

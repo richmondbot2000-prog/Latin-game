@@ -30,7 +30,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   play, the Beastpedia banner, the scene of the latest beast; the play
   screen shows only the back arrow, the streak, the card and the two
   buttons) — swipe cards (`app.js`): Latin word + a right or clearly-wrong
-  meaning; stars 0–5 per word with spaced repetition (`REST` in `app.js`: a
+  meaning (`distractors`: a wrong answer never shares a word, a `sense` group, an `avoid` pairing or **any meaning once the spoken alternatives in `synonyms.js` are counted** — `meanings(w)` = senses ∪ SYNONYMS — so "how come" (kifech) is never offered against 3lech, why); stars 0–5 per word with spaced repetition (`REST` in `app.js`: a
   right answer makes the word due again in 10 min / 1 / 3 / 7 / 30 days by
   star count, a wrong one zeroes it and makes it due at once; **a word is
   never withheld**: due words come first, and once none are due every word
