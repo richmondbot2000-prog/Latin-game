@@ -426,7 +426,7 @@ Per-player counters live in
   keys and per-slot hooks. The old part-by-part drawing (`meta.json` boxes)
   remains for the seven costumes that came only as flat pictures (disco,
   suit, samurai, astronaut, cowboy, karate, turban: `body` is one cut-out on
-  recoloured standard legs) and as a fallback; signs `sign0-7` (+ `_l`/`_r` halves) with six wooden styles
+  recoloured standard legs) and as a fallback; signs `sign0-7` (+ `_l`/`_r` halves; the halves of styles 1, 2, 6, 7 were rebuilt from the whole sign because the pale face had been cut away as background) with six wooden styles
   cycling by level and green/red once judged; `title_tall/wide.jpg` start
   screen. Progress in `latin.hammer.<id>` {best, level, cleared, coins,
   earned, owned[], wear{skin, weapon, pup}}.
