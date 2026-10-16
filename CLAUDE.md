@@ -513,11 +513,18 @@ not written, a doubled consonant once), which the Arabic voices read; Latin
 on the home page. `Speak.say(text)` reads when the setting is on and **reads the word again 2 s after the first reading ends** (a new word or a 🔊 tap cancels the repeat; `Speak.stop()` on every hash change), `say(text, true)` always and once: a card as it comes up, the highlighted word in
 Sentences, each line of Passages, the word in focus in the reader, the word to match in Squishygeddon, a Jacques Hammer sign as it holds on screen; 🔊
 buttons (`.cardspeak / .barspeak / .gripspeak`, one document click
-handler) read again. Recorded clips beat the synthetic voice: `LANG.tts.audio`
-names a folder with `index.json` ({ form: file }); `tools/lang/synth_azure.py
-<folder> ar-TN-HediNeural` records every form and sentence with Azure's
-Tunisian voices (needs `AZURE_SPEECH_KEY` / `AZURE_SPEECH_REGION` in the
-environment, never in the repo) into `<folder>/audio/`. Headless tests stub
+handler) read again. **Recorded clips** beat the synthetic voice and are in the repo for both games: `LANG.tts.audio`
+names a folder with `index.json` ({ lower-cased text without punctuation: file }); `speak.js` plays the clip when
+the text has one, else the phone's voice. `tools/lang/synth_azure.py <folder> <voice>` records every form, every
+sentence word, every sentence and the book's lines with Azure's neural voices (needs `AZURE_SPEECH_KEY` /
+`AZURE_SPEECH_REGION` in the environment, never in the repo; re-runs only record what is missing): **Tounsi**
+`tounsi/audio/` (2,225 clips, `ar-TN-HediNeural`, read from the hand-written Arabic spellings) and **Latin**
+`audio/` (2,392 clips, `it-IT-IsabellaNeural` reading a classical respelling made by `classical()` — c and g always
+hard, v as w, ae → ai, oe → oi only in poena / proelium / moenia / foedus, gn → ghn, ph → f; Azure has no Latin
+voice). Latin now reads aloud by default too (`auto: true`). The GitHub Actions workflow `Record voices`
+(`.github/workflows/record-voices.yml`, repository secrets of the same names) can re-run a recording and commit
+the clips; the key was otherwise supplied as environment variables of the owner's cloud environment for one run.
+The clips are not in the service-worker cache list (fetched on demand). Headless tests stub
 `speechSynthesis` (`scratchpad/speaktest.js`).
 
 ## Cloud sync (switched on)
