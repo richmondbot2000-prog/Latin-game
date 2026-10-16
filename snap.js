@@ -157,7 +157,8 @@ const Snap = (() => {
   }
 
   // one sentence: decide for each word whether it becomes Latin, and in which form
-  function convert(sent, idx) {
+  // brk[j]: a line break comes just before token j (a photo's or a poem's lines)
+  function convert(sent, idx, brk = []) {
     const low = sent.map(t => t.toLowerCase()), n = sent.length;
     const isWord = i => i >= 0 && i < n && /^[a-z]/.test(low[i]);
     const out = sent.map(t => ({ en: t, la: null, id: null }));
@@ -329,7 +330,7 @@ const Snap = (() => {
       else if (low[k] === 'me') info[k] = { kind: 'word', la: prevWord(k) >= 0 && /^(to|for)$/.test(low[prevWord(k)]) ? 'mihi' : 'me', id: 'ego', len: 1 };
       else if (low[k] === 'us') info[k] = { kind: 'word', la: prevWord(k) >= 0 && /^(to|for)$/.test(low[prevWord(k)]) ? 'nobis' : 'nos', id: 'nos', len: 1 };
       else if (/^(my|your|our|their|his|her)$/.test(low[k])) {
-        let m = -1; for (let j = k + 1; j < n && j <= k + 3; j++) { if (info[j] && info[j].kind === 'n') { m = j; break; } if (!isWord(j)) break; }
+        let m = -1; for (let j = k + 1; j < n && j <= k + 3; j++) { if (brk[j]) break; if (info[j] && info[j].kind === 'n') { m = j; break; } if (!isWord(j)) break; }
         if (m >= 0) { const id = { my: 'meus', your: 'tuus', our: 'noster', their: 'suus', his: 'suus', her: 'suus' }[low[k]], ww = idx.__words[id]; if (ww) info[k] = { kind: 'a', w: ww, feat: {}, len: 1, g: info[m].g, cs: info[m].cs, pl: info[m].pl }; }
       }
     }
@@ -365,7 +366,7 @@ const Snap = (() => {
       const ws = para.split(/\s+/), titled = ws.filter(w => /^[A-Z0-9]/.test(w)).length / ws.length >= .5;
       return /(^|\n\s*\n)\s*$/.test(text.slice(0, a)) && /^\s*(\n\s*\n|$)/.test(text.slice(b)) && para.length < 120 && (!/[.,;:!?]["'”’)]?$/.test(para) || /^(CHAPTER|Chapter|PART|Part|BOOK|Book)\b/.test(para) || (para.length < 50 && titled && !/["“”]/.test(para))); };
     return sentences(text).map(s => {
-      const r = isHeading(s) ? s.map(x => ({ en: x.t, la: null, id: null })) : convert(s.map(x => x.t), idx);
+      const r = isHeading(s) ? s.map(x => ({ en: x.t, la: null, id: null })) : convert(s.map(x => x.t), idx, s.map((x, i) => i > 0 && /\n/.test(text.slice(s[i - 1].at + s[i - 1].t.length, x.at))));
       r.forEach((t, i) => { t.at = s[i].at; let a = i; while (a > 0 && r[a - 1].skip && !r[a - 1].la && !r[a - 1].tail) a--; t.from = s[a].at; t.to = s[i + (t.len || 1) - 1].at + s[i + (t.len || 1) - 1].t.length; });   // from…to: the English this Latin stands for
       return r;
     }).filter(s => s.some(t => /[a-z]/i.test(t.en)));
@@ -374,40 +375,81 @@ const Snap = (() => {
   // ---------- reading the photo on the phone ----------
   let lib = null;
   const script = src => new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = () => no(new Error('could not load ' + src)); document.head.appendChild(s); });
+  // the recogniser is loaded once and kept: warm() starts it in the background as soon as Snap a page opens, so the
+  // ~6 MB of model files are on their way while the page is being framed, and the next photo needs no loading at all
+  let wk = null, onLog = null;
+  function warm() {
+    if (!wk) {
+      wk = (async () => {
+        if (!window.Tesseract) await (lib = lib || script('ocr/tesseract.min.js'));
+        const base = new URL('ocr', location.href).href;
+        return Tesseract.createWorker('eng', 1, { workerPath: base + '/worker.min.js', corePath: base, langPath: base, logger: m => onLog && onLog(m) });
+      })();
+      wk.catch(() => { wk = null; });
+    }
+    return wk;
+  }
   async function ocr(file, progress) {
-    progress('Loading the reader…', 0);
-    if (!window.Tesseract) await (lib = lib || script('ocr/tesseract.min.js'));
+    progress('Getting the reader ready…', 0);
+    onLog = m => { if (m.status === 'recognizing text') progress('Reading the words…', m.progress || 0); else if (/loading/.test(m.status)) progress('Getting the reader ready (only the first time)…', m.progress || 0); };
     const url = URL.createObjectURL(file);
     const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => no(new Error('That picture could not be opened')); i.src = url; });
     const max = 1800, sc = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
     const c = document.createElement('canvas'); c.width = Math.round(img.naturalWidth * sc); c.height = Math.round(img.naturalHeight * sc);
     const g = c.getContext('2d'); g.drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
-    const base = new URL('ocr', location.href).href;
-    const worker = await Tesseract.createWorker('eng', 1, { workerPath: base + '/worker.min.js', corePath: base, langPath: base, logger: m => { if (m.status === 'recognizing text') progress('Reading the words…', m.progress || 0); else if (/loading|initializ/.test(m.status)) progress('Loading the reader…', 0); } });
+    let worker;
     try {
+      worker = await warm();
       const r = await worker.recognize(c);
-      // the words with their boxes on the picture; the text is the words joined by spaces, each word knowing its offset
-      const words = []; let text = '';
-      // paragraphs and lines are kept (a blank line between paragraphs); words the recogniser is unsure of, or that
-      // are not words at all ("e_", "dng"), are left out rather than shown as nonsense
-      const junk = t => !/[a-z]/i.test(t) ? !/^\d+$/.test(t) && !/^[.,;:!?'"()-]+$/.test(t) : (!/[aeiouy]/i.test(t.replace(/[^a-z]/gi, '')) && t.replace(/[^a-z]/gi, '').length > 2) || /[_|\\~^<>{}\[\]#@*=+]/.test(t);
-      let lastPara = null, lastLine = null;
-      const paras = r.data.paragraphs || [], lines = r.data.lines || [];
-      for (const w of r.data.words || []) {
-        let t = (w.text || '').trim().replace(/^[_|~^]+|[_|~^]+$/g, ''); if (!t || junk(t) || (w.confidence < 35 && !/^[.,;:!?]$/.test(t))) continue;
-        const li = w.line || null, pa = (li && li.paragraph) || w.paragraph || null;
-        if (text) text += pa && lastPara && pa !== lastPara ? '\n\n' : li && lastLine && li !== lastLine ? '\n' : ' ';
-        lastPara = pa || lastPara; lastLine = li || lastLine;
-        words.push({ t, at: text.length, x0: w.bbox.x0, y0: w.bbox.y0, x1: w.bbox.x1, y1: w.bbox.y1 }); text += t;
-      }
-      if (!words.length) return { text: r.data.text || '', words: [], image: null, w: 0, h: 0 };
-      // crop the picture to the text, with a margin, so the print is as large as the screen allows
-      const mx = c.width * .03, my = c.height * .02;
-      const X0 = Math.max(0, Math.min(...words.map(w => w.x0)) - mx), Y0 = Math.max(0, Math.min(...words.map(w => w.y0)) - my), X1 = Math.min(c.width, Math.max(...words.map(w => w.x1)) + mx), Y1 = Math.min(c.height, Math.max(...words.map(w => w.y1)) + my);
-      const cc = document.createElement('canvas'); cc.width = Math.round(X1 - X0); cc.height = Math.round(Y1 - Y0); cc.getContext('2d').drawImage(c, X0, Y0, cc.width, cc.height, 0, 0, cc.width, cc.height);
-      words.forEach(w => { w.x0 -= X0; w.x1 -= X0; w.y0 -= Y0; w.y1 -= Y0; });
-      return { text, words, image: cc.toDataURL('image/jpeg', .85), w: cc.width, h: cc.height };
-    } finally { worker.terminate(); }
+      return pageText(r.data, c);
+    } catch (err) { if (worker) { try { worker.terminate(); } catch (e) {} } wk = null; throw err; }
+    finally { onLog = null; }
+  }
+  // the words of the page and nothing else. Real print reads at 80–97% confidence; the table under the paper, the
+  // print showing through from the back and the shadows read as low-confidence scraps ("ae", "ik et", "rye c") off to
+  // the side of the text. So each line keeps the run of confident words and only the near neighbours of that run;
+  // a line with no confident word at all is dropped. Line breaks are kept for verse (most lines start with a
+  // capital), a blank line between verses or paragraphs comes from the gap between the lines.
+  const junk = t => !/[a-z]/i.test(t) ? !/^\d+$/.test(t) && !/^[.,;:!?'"“”‘’()-]+$/.test(t) : (!/[aeiouy]/i.test(t.replace(/[^a-z]/gi, '')) && t.replace(/[^a-z]/gi, '').length > 2) || /[_|\\~^<>{}\[\]#@*=+%£$€¢™©®]/.test(t);
+  function pageText(data, c) {
+    const lines = [];
+    for (const li of data.lines || []) {
+      let ws = (li.words || []).map(w => ({ t: (w.text || '').trim().replace(/^[_~^]+|[_~^]+$/g, ''), c: w.confidence, b: w.bbox })).filter(w => w.t);
+      // a capital I is often read as a bar
+      ws.forEach((w, i) => { if (w.t === '|' && w.c >= 60 && ws[i + 1] && /^[a-z]/i.test(ws[i + 1].t)) w.t = 'I'; });
+      const anchor = w => !junk(w.t) && ((w.c >= 80 && /[a-z]{2,}/i.test(w.t)) || (w.c >= 88 && /^(I|a|A)$/.test(w.t)));
+      const ai = ws.map((w, i) => anchor(w) ? i : -1).filter(i => i >= 0); if (!ai.length) continue;
+      const hs = ai.map(i => ws[i].b.y1 - ws[i].b.y0).sort((x, y) => x - y), h = hs[hs.length >> 1];
+      let lo = ai[0], hi = ai[ai.length - 1];
+      const near = (a, b) => b.b.x0 - a.b.x1 < h * 1.3;
+      while (lo > 0 && ws[lo - 1].c >= 55 && !junk(ws[lo - 1].t) && near(ws[lo - 1], ws[lo])) lo--;
+      while (hi < ws.length - 1 && ws[hi + 1].c >= 55 && !junk(ws[hi + 1].t) && near(ws[hi], ws[hi + 1])) hi++;
+      ws = ws.slice(lo, hi + 1).filter(w => !junk(w.t) && (w.c >= 35 || /^[.,;:!?]$/.test(w.t)));
+      if (ws.some(w => /[a-z]{2,}/i.test(w.t))) lines.push({ ws, h, x0: ws[0].b.x0, x1: ws[ws.length - 1].b.x1, y0: Math.min(...ws.map(w => w.b.y0)), y1: Math.max(...ws.map(w => w.b.y1)) });
+    }
+    if (!lines.length) return { text: '', words: [], image: null, w: 0, h: 0 };
+    // paragraphs by the gaps between lines
+    const hs = lines.map(l => l.h).sort((x, y) => x - y), H = hs[hs.length >> 1];
+    const paras = [[lines[0]]];
+    for (let i = 1; i < lines.length; i++) { if (lines[i].y0 - lines[i - 1].y1 > H * .9) paras.push([]); paras[paras.length - 1].push(lines[i]); }
+    const words = []; let text = '';
+    paras.forEach((pl, pi) => {
+      const caps = pl.filter(l => /^["'“‘(]?[A-Z]/.test(l.ws[0].t)).length, verse = pl.length >= 2 && caps / pl.length >= .6;
+      const right = Math.max(...pl.map(l => l.x1)), width = right - Math.min(...pl.map(l => l.x0));
+      pl.forEach((l, li) => {
+        if (text) {
+          if (li === 0) text += '\n\n';
+          else { const prev = pl[li - 1], lastT = prev.ws[prev.ws.length - 1].t; text += verse || /-$/.test(lastT) || (/[.!?:"”]$/.test(lastT) && prev.x1 < right - width * .15) ? '\n' : ' '; }
+        }
+        l.ws.forEach((w, wi) => { if (wi) text += ' '; words.push({ t: w.t, at: text.length, x0: w.b.x0, y0: w.b.y0, x1: w.b.x1, y1: w.b.y1 }); text += w.t; });
+      });
+    });
+    // crop the picture to the text, with a margin
+    const mx = c.width * .03, my = c.height * .02;
+    const X0 = Math.max(0, Math.min(...words.map(w => w.x0)) - mx), Y0 = Math.max(0, Math.min(...words.map(w => w.y0)) - my), X1 = Math.min(c.width, Math.max(...words.map(w => w.x1)) + mx), Y1 = Math.min(c.height, Math.max(...words.map(w => w.y1)) + my);
+    const cc = document.createElement('canvas'); cc.width = Math.round(X1 - X0); cc.height = Math.round(Y1 - Y0); cc.getContext('2d').drawImage(c, X0, Y0, cc.width, cc.height, 0, 0, cc.width, cc.height);
+    words.forEach(w => { w.x0 -= X0; w.x1 -= X0; w.y0 -= Y0; w.y1 -= Y0; });
+    return { text, words, image: cc.toDataURL('image/jpeg', .85), w: cc.width, h: cc.height };
   }
   // an English meaning of another word, put into the same shape as a gloss ("were walking" → "were carrying"; "boys" → "farmers")
   function shapeLike(gloss, english, kind) {
@@ -427,5 +469,5 @@ const Snap = (() => {
     const out = (head ? head + ' ' : '') + f + (rest ? ' ' + rest : '');
     return cap(out);
   }
-  return { latinise, ocr, noun, adj, verb, parts, shapeLike };
+  return { latinise, ocr, warm, noun, adj, verb, parts, shapeLike };
 })();

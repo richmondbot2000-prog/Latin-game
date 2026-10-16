@@ -155,7 +155,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   tessdata_fast English model gzipped; ~10 MB, fetched on first use and
   then cached by the service worker) — nothing is uploaded. `Snap.ocr`
   draws the picture to a canvas at ≤1800px (so EXIF rotation is applied)
-  and recognises it with a progress bar. `Snap.latinise(text, words)`:
+  and recognises it with a progress bar. The recogniser is started by `Snap.warm()` when the Snap start screen opens and kept for the next photo; the shutter freezes the picture on screen and stops the camera at once ("you can put the phone down"). `pageText` keeps only real print: per line, the run of words read at ≥80% confidence and their close neighbours (the table, print showing through from the back, shadows read as low-confidence scraps off to the side); a line without a confident word is dropped; paragraphs come from the gaps between lines; verse (most lines start with a capital) keeps its line breaks, and the reader shows a photo's or pasted text's single line breaks as `<br>` (books' are not); a possessive never reaches across a line break ("told her / Another day"). `Snap.latinise(text, words)`:
   sentences → tokens `{ en, la, id, gloss, skip }`. Morphology from the
   dictionary entries: nouns in five cases and both numbers (`noun`;
   i-stems, plural-only nouns, proper nouns), adjectives agreeing in gender,

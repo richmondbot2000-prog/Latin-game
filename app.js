@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '122';
+const APP_VERSION = '123';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -952,6 +952,8 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
     if ($('#snapLast')) $('#snapLast').onclick = () => read(sv.last);
     $('#snapPic').onchange = e => take(e.target.files[0]); $('#snapCam').onchange = e => take(e.target.files[0]);
     $('#snapCamBtn').onclick = camera;
+    // start loading the recogniser now, while the page is being framed
+    setTimeout(() => Snap.warm().catch(() => {}), 300);
   }
   // a picture → the words → the reader, with a progress line on whatever screen is showing
   async function take(file, progressEl) {
@@ -984,6 +986,9 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       const v = $('#camv'); if (!v || !v.videoWidth) return;
       const c = document.createElement('canvas'); c.width = v.videoWidth; c.height = v.videoHeight; c.getContext('2d').drawImage(v, 0, 0);
       $('#shutter').disabled = true; $('#camprog').hidden = false;
+      // the picture is taken: freeze it on the screen and let the camera go, so the phone can be put down while it is read
+      const still = c.toDataURL('image/jpeg', .8); v.replaceWith(Object.assign(document.createElement('img'), { id: 'camv', className: 'camstill', src: still })); stopCam();
+      $('.camhint').textContent = 'Got it — you can put the phone down'; $('.cambot').style.visibility = 'hidden';
       c.toBlob(b => take(b, $('#camprog')), 'image/jpeg', .92);
     };
   }
@@ -1061,7 +1066,9 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
         if (t.skip) return;
         const gap = prevEnd >= 0 && t.at != null ? text.slice(prevEnd, t.at) : ''; if (t.at != null) prevEnd = t.to != null ? t.to : t.at + t.en.length;
         if (/\n\n/.test(gap)) html += '</p><p>';
-        const punct = !/[a-z0-9]/i.test(t.en), sp = j === 0 && !/\n\n/.test(gap) && html.slice(-3) !== '<p>' ? ' ' : (j === 0 || punct || /^["'(]$/.test(s[j - 1] && s[j - 1].en)) ? '' : ' ';
+        // a photo's or a pasted text's own line breaks are kept (verse reads line by line); a book's are not
+        const br = !opts.label && !/\n\n/.test(gap) && /\n/.test(gap); if (br) html += '<br>';
+        const punct = !/[a-z0-9]/i.test(t.en), sp = br ? '' : j === 0 && !/\n\n/.test(gap) && html.slice(-3) !== '<p>' ? ' ' : (j === 0 || punct || /^["'(]$/.test(s[j - 1] && s[j - 1].en)) ? '' : ' ';
         if (!t.la) { html += sp + esc(t.en); return; }
         const i = k++;
         html += sp + `<span class="lw" data-i="${i}">${esc(t.la)}</span>`;
