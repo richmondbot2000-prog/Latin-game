@@ -9,7 +9,7 @@ for l in (here / 'words.txt').read_text().splitlines():
     e = {'word': w, 'english': en, 'pos': pos, 'level': int(lv)}
     for kv in opt.split(';'):
         if '=' in kv:
-            k, v = kv.split('=', 1); e[k] = v.split(',') if k == 'sense' else v
+            k, v = kv.split('=', 1); e[k] = v.split(',') if k == 'sense' else True if k == 'top' else v
     out.append(e)
 # arabic.txt (optional): the word in the language's own script — id | word | plural | feminine | present | I did | past stem | they do
 af = here / 'arabic.txt'

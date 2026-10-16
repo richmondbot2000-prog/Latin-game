@@ -1,48 +1,49 @@
 # One word per line: level | word | english | pos | options (key=value; key=value)
+# top=1 marks the 50 words of the Top 50 setting (all in level 0)
 # level 0-4 = the vocabulary setting it joins (0 Basic, 1 top 200, 2 top 300, 3 top 400, 4 top 500) — each level is this word and all lower ones
 # pos: N (g=m/f; pl=plural; stem=possessive stem), V (pres=he does; p1=I did, ps=past stem for she/they, pp=they do, when irregular),
 #      Adj (f=feminine; pl=plural), adv, prep, conj, pro, qu, num, phrase.  sense=group,group marks near-synonyms never offered as each other's wrong answer.
 # A word that appears twice carries a tag in brackets to keep the ids apart: 3am (year), 3am (uncle).
 # ---- level 0 ----
-0|3aslema|hello, hi|phrase|
-0|bislema|goodbye, bye|phrase|
-0|3aychek|thank you, please, thanks|phrase|
-0|sam7ni|sorry, excuse me, forgive me|phrase|
-0|chnowa|what|qu|
-0|chkoun|who|qu|
-0|win|where|qu|
+0|3aslema|hello, hi|phrase|top=1
+0|bislema|goodbye, bye|phrase|top=1
+0|3aychek|thank you, please, thanks|phrase|top=1
+0|sam7ni|sorry, excuse me, forgive me|phrase|top=1
+0|chnowa|what|qu|top=1
+0|chkoun|who|qu|top=1
+0|win|where|qu|top=1
 0|waqtech|when, what time|qu|
-0|kifech|how, how come|qu|
-0|3lech|why, what for|qu|
-0|ena|I, me|pro|
-0|enti|you|pro|
-0|houwa|he, him|pro|
-0|hiya|she, her|pro|
-0|a7na|we, us|pro|
-0|houma|they, them|pro|
-0|hedha|this, this one|pro|pl=hedhouma;f=hedhi
+0|kifech|how, how come|qu|top=1
+0|3lech|why, what for|qu|top=1
+0|ena|I, me|pro|top=1
+0|enti|you|pro|top=1
+0|houwa|he, him|pro|top=1
+0|hiya|she, her|pro|top=1
+0|a7na|we, us|pro|top=1
+0|houma|they, them|pro|top=1
+0|hedha|this, this one|pro|pl=hedhouma;f=hedhi;top=1
 0|hedheka|that, that one|pro|pl=hedhoukom;f=hedhika
-0|3andi|I have|phrase|
+0|3andi|I have|phrase|top=1
 0|3andek|you have|phrase|
 0|3andou|he has, it has|phrase|
-0|w|and|conj|
+0|w|and|conj|top=1
 0|wala|or, nor|conj|
-0|ama|but, though|conj|sense=but
+0|ama|but, though|conj|sense=but;top=1
 0|khater|because|conj|sense=because
-0|fi|in, inside, at|prep|
-0|3la|on, about, onto|prep|
-0|men|from, than|prep|
+0|fi|in, inside, at|prep|top=1
+0|3la|on, about, onto|prep|top=1
+0|men|from, than|prep|top=1
 0|l|to, for|prep|
-0|m3a|with, along with|prep|
-0|houni|here, over here|adv|
+0|m3a|with, along with|prep|top=1
+0|houni|here, over here|adv|top=1
 0|ghadi|there, over there|adv|
-0|tawa|now, right now|adv|
-0|elyoum|today|adv|
-0|ghodwa|tomorrow|adv|
+0|tawa|now, right now|adv|top=1
+0|elyoum|today|adv|top=1
+0|ghodwa|tomorrow|adv|top=1
 0|elbere7|yesterday|adv|
 0|dima|always, all the time|adv|
-0|wa7ed|one|num|
-0|zouz|two, a pair|num|
+0|wa7ed|one|num|top=1
+0|zouz|two, a pair|num|top=1
 0|thletha|three|num|
 0|arb3a|four|num|
 0|khamsa|five|num|
@@ -50,55 +51,55 @@
 0|sab3a|seven|num|
 0|thmenya|eight|num|
 0|tes3a|nine|num|
-0|nhar|day, daytime|N|g=m;pl=nharat
+0|nhar|day, daytime|N|g=m;pl=nharat;top=1
 0|lil|night, night-time|N|g=m;pl=lyeli
 0|3am (year)|year|N|g=m;pl=snin
-0|rajel|man, husband|N|g=m;pl=rjel
-0|mra|woman, wife, lady|N|g=f;pl=nsa
-0|baba|dad, father, daddy|N|g=m;stem=bou
-0|ommi|mum, mother, mummy|N|g=f;stem=omm
+0|rajel|man, husband|N|g=m;pl=rjel;top=1
+0|mra|woman, wife, lady|N|g=f;pl=nsa;top=1
+0|baba|dad, father, daddy|N|g=m;stem=bou;top=1
+0|ommi|mum, mother, mummy|N|g=f;stem=omm;top=1
 0|khouya|my brother, brother|N|g=m;pl=khouti;stem=khou
 0|okht|sister|N|g=f;pl=khwat;stem=okht
-0|weld|son, boy, lad|N|g=m;pl=wled
-0|bent|daughter, girl|N|g=f;pl=bnet
+0|weld|son, boy, lad|N|g=m;pl=wled;top=1
+0|bent|daughter, girl|N|g=f;pl=bnet;top=1
 0|ras|head|N|g=m;pl=rous
 0|3in|eye|N|g=f;pl=3inin
 0|yed|hand, arm|N|g=f;pl=yeddin
-0|dar|house, home|N|g=f;pl=dyar
+0|dar|house, home|N|g=f;pl=dyar;top=1
 0|beb|door, gate|N|g=m;pl=biben
 0|srir|bed, cot|N|g=m;pl=srayer
 0|chams|sun, sunshine|N|g=f
 0|b7ar|sea, ocean|N|g=m;pl=b7our
-0|ma|water|N|g=m
+0|ma|water|N|g=m;top=1
 0|9attous|cat, kitten|N|g=m;pl=9tates
 0|kalb|dog, hound|N|g=m;pl=kleb
 0|mekla|food, meal|N|g=f;pl=meklat
-0|khobz|bread, loaf|N|g=m
+0|khobz|bread, loaf|N|g=m;top=1
 0|7lib|milk|N|g=m
 0|blad|country, town, land|N|g=f;pl=bolden;sense=town
 0|souk|market, bazaar|N|g=m;pl=swa9
 0|7anout|shop, store|N|g=m;pl=7wanet
 0|mdrasa|school|N|g=f;pl=mdares
-0|mcha|go, walk, leave|V|pres=yemchi
-0|ja|come, arrive|V|pres=yji
-0|kla|eat|V|pres=yekel
-0|chrab|drink|V|pres=yochrob;ps=chorb
+0|mcha|go, walk, leave|V|pres=yemchi;top=1
+0|ja|come, arrive|V|pres=yji;top=1
+0|kla|eat|V|pres=yekel;top=1
+0|chrab|drink|V|pres=yochrob;ps=chorb;top=1
 0|r9ad|sleep, lie down|V|pres=yor9od;ps=ro9d
 0|khdem|work|V|pres=yekhdem
 0|9ra|read, study|V|pres=ya9ra
-0|chaf|see, look, watch|V|pres=ychouf;p1=choft
-0|9al|say, tell|V|pres=y9oul;p1=9olt
+0|chaf|see, look, watch|V|pres=ychouf;p1=choft;top=1
+0|9al|say, tell|V|pres=y9oul;p1=9olt;top=1
 0|3mal|do, make|V|pres=ya3mel;ps=3aml
 0|3ta|give, hand|V|pres=ya3ti
 0|chra|buy|V|pres=yechri
 0|jeb|bring, fetch|V|pres=yjib
-0|7ab|like, love, want|V|pres=y7eb;p1=7abbit;ps=7abb;pp=y7ebbou
-0|3raf|know, recognise|V|pres=ya3raf;ps=3arf
-0|fhem|understand|V|pres=yefhem
+0|7ab|like, love, want|V|pres=y7eb;p1=7abbit;ps=7abb;pp=y7ebbou;top=1
+0|3raf|know, recognise|V|pres=ya3raf;ps=3arf;top=1
+0|fhem|understand|V|pres=yefhem;top=1
 0|l3ab|play|V|pres=yel3ab
-0|behi|good, nice, OK, fine|Adj|pl=behyin;f=behya;sense=good
+0|behi|good, nice, OK, fine|Adj|pl=behyin;f=behya;sense=good;top=1
 0|khayeb|bad, ugly, nasty|Adj|pl=khaybin;f=khayba
-0|kbir|big, old, large, great|Adj|pl=kbar;f=kbira
+0|kbir|big, old, large, great|Adj|pl=kbar;f=kbira;top=1
 0|sghir|small, young, little|Adj|pl=sghar;f=sghira
 0|jdid|new, fresh|Adj|pl=jdod;f=jdida
 0|far7an|happy, glad, pleased|Adj|pl=far7anin;f=far7ana

@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '15';
+const APP_VERSION = '16';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -100,8 +100,10 @@ const streakKey = u => 'tounsi.streak.' + u.id;
 const levelKey = u => 'tounsi.level.' + u.id;
 
 /* vocabulary settings: each one opens up more words; Level 3 is the full list */
-const LEVELS = [['0', 'Basic'], ['1', 'Top 200'], ['2', 'Top 300'], ['3', 'Top 400'], ['4', 'Top 500']];
-const inLevel = (w, l) => w.level <= +l;
+const LEVELS = [['top', 'Top 50'], ['0', 'Basic'], ['1', 'Top 200'], ['2', 'Top 300'], ['3', 'Top 400'], ['4', 'Top 500']];
+const inLevel = (w, l) => l === 'top' ? !!w.top : w.level <= +l;
+// the Top 50 setting is for the cards and the games only: Read opens at the next setting up
+const readLocked = u => levelOf(u) === 'top';
 const levelOf = u => { const l = store.get(levelKey(u), '0'); return LEVELS.some(x => x[0] === l) ? l : '0'; };
 const levelName = l => LEVELS.find(x => x[0] === l)[1];
 const activeWords = u => { const l = levelOf(u); return WORDS.filter(w => inLevel(w, l)); };
@@ -179,6 +181,7 @@ function route() {
   const gm = h.match(/^gift\/([A-Za-z0-9-]+)$/);
   if (gm) { store.set('tounsi.pendingGift', gm[1].toUpperCase()); location.hash = ''; return; }   // the hash change brings us back here, signed in or not
   if (!u) return renderSignIn();
+  if (readLocked(u) && ['read', 'passages', 'snap', 'library', 'book'].includes(h)) return renderHome(u);
   if (h === 'practice') return renderPractice(u);
   if (h === 'trophies') return renderTrophies(u);
   if (h === 'hammer') return renderHammer(u);
@@ -547,10 +550,10 @@ function renderHome(u) {
     </div>
     <div class="tile prac2" id="readtile">
       <h2>Read</h2>
-      <button class="gamebanner" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span></button>
-      <button class="gamebanner" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span></button>
-      <button class="gamebanner" id="snapGo" style="background-image:url('art/banners/snap.jpg')"><span class="gname snap">Snap a page</span></button>
-      <button class="gamebanner" id="libGo" style="background-image:url('art/banners/library.jpg')"><span class="gname lib">Library</span></button>
+      <button class="gamebanner${readLocked(u) ? ' locked' : ''}" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span>${readLocked(u) ? `<span class="corner">${LEVELS[1][1]}</span>` : ''}</button>
+      <button class="gamebanner${readLocked(u) ? ' locked' : ''}" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span>${readLocked(u) ? `<span class="corner">${LEVELS[1][1]}</span>` : ''}</button>
+      <button class="gamebanner${readLocked(u) ? ' locked' : ''}" id="snapGo" style="background-image:url('art/banners/snap.jpg')"><span class="gname snap">Snap a page</span>${readLocked(u) ? `<span class="corner">${LEVELS[1][1]}</span>` : ''}</button>
+      <button class="gamebanner${readLocked(u) ? ' locked' : ''}" id="libGo" style="background-image:url('art/banners/library.jpg')"><span class="gname lib">Library</span>${readLocked(u) ? `<span class="corner">${LEVELS[1][1]}</span>` : ''}</button>
     </div>
     ${leaderboardHTML()}
     <button class="linkbtn verline" id="verline">version ${APP_VERSION} · tap to check for updates</button>
@@ -572,11 +575,12 @@ function renderHome(u) {
     loadInbox(u);
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
-  $('#readGo').onclick = () => { location.hash = 'read'; };
+  const readGate = h => () => { if (readLocked(u)) flashHome(`📖 Reading opens at ${LEVELS[1][1]} — choose ${LEVELS[1][1]} above once you know the Top 50.`); else location.hash = h; };
+  $('#readGo').onclick = readGate('read');
   $('#cardsGo').onclick = () => { location.hash = 'cards'; };
-  $('#passGo').onclick = () => { location.hash = 'passages'; };
-  $('#snapGo').onclick = () => { location.hash = 'snap'; };
-  $('#libGo').onclick = () => { location.hash = 'library'; };
+  $('#passGo').onclick = readGate('passages');
+  $('#snapGo').onclick = readGate('snap');
+  $('#libGo').onclick = readGate('library');
   $('#verline').onclick = () => { $('#verline').textContent = 'updating…'; freshen(); };
   Speak.wireToggle(app);
   otherGames();
@@ -696,7 +700,7 @@ function inflectAll(english, shape) {
 function renderRead(u) {
   const byId = Object.fromEntries(WORDS.map(w => [w.id, w]));
   const pool = activeWords(u);   // wrong answers come from the words of the chosen level
-  const L = +levelOf(u);
+  const L = Math.max(0, +levelOf(u) || 0);
   const key = 'tounsi.read.' + u.id;
   const sv = store.get(key, { done: {}, read: 0 });
   // the sentences for this level and below; the stories, as lists of sentence numbers in reading order
