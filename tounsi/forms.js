@@ -100,7 +100,8 @@ const Forms = (() => {
   // pick a form for a card: half the time the headword, otherwise any other form
   function pick(w) {
     const all = of(w);
-    if (all.length < 2 || Math.random() < .5) return { la: w.show || all[0].la, shape: 'o', ar: show(w) };
+    // a verb's card shows the "he does" form alone (yemchi); the list and the memo card show both forms (mcha / yemchi)
+    if (all.length < 2 || Math.random() < .5) return w.pos === 'V' && w.pres ? { la: w.pres, shape: 'o', ar: w.arpres || '' } : { la: w.show || all[0].la, shape: 'o', ar: show(w) };
     return all[1 + Math.floor(Math.random() * (all.length - 1))];
   }
   return { of, pick, definite, present, past, show };
