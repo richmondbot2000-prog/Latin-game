@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '127';
+const APP_VERSION = '128';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1444,7 +1444,7 @@ function renderPlay(u, pane) {
     $('#left', pane).textContent = activeWords(u).filter(x => !resting(p[x.id], now)).length + ' due';
     card = pending || prepare();
     if (!card) {
-      deck.innerHTML = '<div class="empty">🏆 Every word is resting!<br>Come back soon to keep them fresh.</div>';
+      deck.innerHTML = '<div class="empty">No words to play at this level yet.</div>';
       return;
     }
     pending = prepare();
