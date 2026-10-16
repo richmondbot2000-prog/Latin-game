@@ -51,22 +51,41 @@ const Speak = (() => {
   // clips are fetched ahead of time: the service worker keeps every clip it has fetched once, so a word that has been
   // primed plays at once. prime(text) fetches one clip; warm(texts) fetches a list in the background, a few at a time
   const primed = new Set();
-  const prime = text => { const f = cfg.audio && text && clip(text); if (!f || primed.has(f)) return; primed.add(f); try { fetch(cfg.audio + '/' + f, { credentials: 'same-origin' }).catch(() => primed.delete(f)); } catch (e) {} };
-  let warmQ = [], warming = false;
+  const prime = text => { busyUntil = Date.now() + 2000; const f = cfg.audio && text && clip(text); if (!f || primed.has(f)) return; primed.add(f); try { fetch(cfg.audio + '/' + f, { credentials: 'same-origin' }).catch(() => primed.delete(f)); } catch (e) {} };
+  let warmQ = [], warming = false, busyUntil = 0;
   const warm = texts => {
     if (!cfg.audio) return;
     const t0 = Date.now(), tick = () => { if (clips) go(); else if (Date.now() - t0 < 10000) setTimeout(tick, 300); };
-    const go = () => { for (const t of texts) { const f = t && clip(t); if (f && !primed.has(f)) warmQ.push(t); } pump(); };
+    const go = () => { const first = []; for (const t of texts) { const f = t && clip(t); if (f && !primed.has(f)) first.push(f); } warmQ.unshift(...first); pump(); };   // the level's words go to the front of the queue
     tick();
+  };
+  // The whole library is downloaded in the background, so every clip is on the phone before it is needed: one at
+  // a time, starting a few seconds after the page opens, with a pause between clips that have to come from the
+  // network and none for ones already saved; the card's own clip (prime) and a beast picture always go first.
+  // Once every file is in, a note in localStorage skips the pass on later visits (until the index grows).
+  const DONE_KEY = 'latin.clips.' + (cfg.audio || '');
+  const warmAll = () => {
+    if (!cfg.audio || typeof caches === 'undefined') return;
+    const t0 = Date.now(), tick = () => { if (clips) go(); else if (Date.now() - t0 < 15000) setTimeout(tick, 500); };
+    const go = () => {
+      const files = [...new Set(Object.values(clips))]; if (!files.length) return;
+      let done = null; try { done = localStorage.getItem(DONE_KEY); } catch (e) {}
+      if (done === String(files.length)) return;
+      for (const f of files) if (!primed.has(f)) warmQ.push(f);
+      warmQ.push({ end: files.length }); pump();
+    };
+    setTimeout(tick, 4000);
   };
   const pump = () => {
     if (warming || !warmQ.length) return;
-    // one clip at a time with a pause between, so the background download never crowds out the card, its own
-    // clip or a beast picture on a slow connection
-    warming = true; const t = warmQ.shift(), f = clip(t);
-    const go = f && !primed.has(f) ? (primed.add(f), fetch(cfg.audio + '/' + f, { credentials: 'same-origin' }).catch(() => primed.delete(f))) : Promise.resolve();
-    go.then(() => { warming = false; if (warmQ.length) setTimeout(pump, 700); });
+    if (Date.now() < busyUntil) { setTimeout(pump, busyUntil - Date.now()); return; }
+    warming = true; const f = warmQ.shift();
+    if (f && f.end) { try { localStorage.setItem(DONE_KEY, String(f.end)); } catch (e) {} warming = false; pump(); return; }
+    const url = cfg.audio + '/' + f, t0 = Date.now();
+    const go = !f || primed.has(f) ? Promise.resolve(true) : caches.match(url).then(hit => hit ? true : (primed.add(f), fetch(url, { credentials: 'same-origin' }).then(() => false, () => { primed.delete(f); return false; })));
+    go.then(saved => { if (saved) primed.add(f); warming = false; if (warmQ.length) setTimeout(pump, saved || Date.now() - t0 < 120 ? 15 : 600); });
   };
+  if (typeof document !== 'undefined' && typeof localStorage !== 'undefined' && location.hostname !== '127.0.0.1' && location.hostname !== 'localhost') warmAll();
   // a word that comes into focus is read, then read once more 2 s after the first reading ends (the 🔊 buttons read once);
   // a new word, or a tap on a button, cancels the pending repeat
   let last = 0, again = null, gen = 0;
@@ -77,6 +96,7 @@ const Speak = (() => {
     const f = mode !== 'synth' && cfg.audio && clip(text);
     lastSynth = !f;
     if (f) {
+      busyUntil = Date.now() + 2500;
       // the clip plays if it is ready within 1.5 s; on a slow connection the phone's own voice reads the word instead
       // and the clip keeps downloading, so it is there next time
       try {
@@ -135,5 +155,5 @@ const Speak = (() => {
   // the on / off line for a settings area
   const toggleHTML = () => can() ? `<button class="linkbtn speakline" id="speakToggle">${on() ? '🔊 Reading words aloud — tap to turn off' : '🔇 Words are not read aloud — tap to turn on'}</button>` : '';
   const wireToggle = (root, after) => { const b = (root || document).querySelector('#speakToggle'); if (!b) return; b.onclick = () => { toggle(); b.outerHTML = toggleHTML(); wireToggle(root, after); if (after) after(on()); }; };
-  return { say, stop, on, toggle, can, button, wire, toggleHTML, wireToggle, chatToArabic, prime, warm };
+  return { say, stop, on, toggle, can, button, wire, toggleHTML, wireToggle, chatToArabic, prime, warm, warmAll };
 })();
