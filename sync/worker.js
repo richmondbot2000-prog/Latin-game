@@ -233,7 +233,7 @@ export default {
       }
       if (req.method === 'GET' && !m[2]) {
         const all = (await getJ('lbi:' + ns)) || {};
-        return json(Object.entries(all).map(([id, r]) => ({ id, ...r })));
+        return json(Object.entries(all).filter(([, r]) => r.total > 0).map(([id, r]) => ({ id, ...r })));   // a row needs at least one word answered
       }
       return text('method', 405);
     }

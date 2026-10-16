@@ -116,6 +116,8 @@ const Sync = (() => {
     const st = store.get(NS_S + '.stats.' + u.id, null) || { days: {}, total: 0 };
     const days = Object.fromEntries(Object.keys(st.days || {}).sort().slice(-10).map(k => [k, st.days[k]]));
     const total = typeof statsOf === 'function' ? statsOf(u).ever : (st.total || 0);
+    if (!total) return;   // nothing answered yet: no row (and no rows from headless test runs on localhost)
+    if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && !store.get('latin.syncUrl', '')) return;
     fetch(url() + '/lb/' + NS_S + '/' + key, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ emo: (u.emojis || []).join(''), days, total }) }).catch(() => {});
   }
   const board = async () => (await api('GET', '/lb/' + NS_S)) || [];
