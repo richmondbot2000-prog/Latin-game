@@ -1,0 +1,37 @@
+# Records a language's words, forms and sentences with Azure's neural voices and commits the clips to main.
+# Run it from the Actions tab ("Record voices" → Run workflow). Needs two repository secrets:
+#   AZURE_SPEECH_KEY     a key of the Azure Speech resource
+#   AZURE_SPEECH_REGION  its region, e.g. westeurope
+# The key never appears in the repo or the log. Re-runs only record what is missing.
+name: Record voices
+on:
+  workflow_dispatch:
+    inputs:
+      lang:
+        description: Language folder
+        default: tounsi
+      voice:
+        description: Azure voice
+        default: ar-TN-HediNeural
+permissions:
+  contents: write
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Record
+        env:
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+        run: python3 tools/lang/synth_azure.py "${{ github.event.inputs.lang }}" "${{ github.event.inputs.voice }}" | tail -3
+      - name: Commit the clips
+        run: |
+          git config user.name "record-voices"
+          git config user.email "record-voices@users.noreply.github.com"
+          git add "${{ github.event.inputs.lang }}/audio"
+          git diff --cached --quiet || git commit -m "Voices: recorded clips for ${{ github.event.inputs.lang }}"
+          git push
