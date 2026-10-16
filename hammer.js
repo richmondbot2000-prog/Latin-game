@@ -1,3 +1,4 @@
+const NS_H = (typeof APP_NS !== 'undefined' ? APP_NS : 'latin');   // storage namespace: 'latin', or 'tounsi' for the Tunisian game
 'use strict';
 
 /* ---------- Jacques Hammer: a runner. Signs show a Latin word with a right or wrong meaning.
@@ -605,7 +606,7 @@ const Hammer = (() => {
     update(dt); draw();
   }
   function mount(root, u, opts = {}) {
-    user = u; saveKey = 'latin.hammer.' + u.id; stage = root;
+    user = u; saveKey = NS_H + '.hammer.' + u.id; stage = root;
     const sv = store.get(saveKey, { best: 0 });
     root.className = 'pstage hstage';
     root.innerHTML = `

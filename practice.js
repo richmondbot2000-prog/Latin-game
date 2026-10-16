@@ -1,3 +1,4 @@
+const NS_P = (typeof APP_NS !== 'undefined' ? APP_NS : 'latin');   // storage namespace: 'latin', or 'tounsi' for the Tunisian game
 'use strict';
 
 /* ---------- Practice: defend the garden from squishies; earn coins by matching words ----------
@@ -1168,7 +1169,7 @@ const Practice = (() => {
 
   /* ---------- mount / unmount ---------- */
   function mount(root, u, opts = {}) {
-    user = u; saveKey = 'latin.practice.' + u.id; stage = root;
+    user = u; saveKey = NS_P + '.practice.' + u.id; stage = root;
     const sv = store.get(saveKey, { best: 1, level: 1 });
     root.className = 'pstage';
     root.innerHTML = `

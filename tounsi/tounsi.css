@@ -1,0 +1,3 @@
+/* Tounsi: the Tunisian game's own look on top of the shared app.css — a terracotta accent instead of the Latin crimson */
+:root { --accent: #C9541E; }
+.hello .who::after { content: ' 👋'; }

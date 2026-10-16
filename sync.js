@@ -6,6 +6,7 @@
    No names or anything personal leave the device. Switched off until SYNC_URL is set. */
 const SYNC_URL = 'https://sync.musicalmagic.uk';   // the Cloudflare Worker in sync/ (also at latin-sync.richmondbot2000.workers.dev)
 
+const NS_S = (typeof APP_NS !== 'undefined' ? APP_NS : 'latin');   // storage namespace: 'latin', or 'tounsi' for the Tunisian game
 const Sync = (() => {
   const WORDS = ('apple tiger moon river stone cloud lemon panda otter robin maple candle pepper rocket violet amber'
     + ' bridge castle comet daisy eagle falcon garden honey island jungle kitten ladder magnet nutmeg oyster pirate quartz rabbit saddle'
@@ -22,7 +23,7 @@ const Sync = (() => {
   const normalise = s => String(s || '').toUpperCase().replace(/[^A-Z0-9]+/g, '-').replace(/^-|-$/g, '');
   const valid = s => /^[A-Z]+-[A-Z]+-\d{4}$/.test(normalise(s));
   async function keyFor(code) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('latin:' + normalise(code)));
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(NS_S + ':' + normalise(code)));
     return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
   }
   // the player's code, created on demand for players made before sync existed
@@ -33,65 +34,65 @@ const Sync = (() => {
     return u.code;
   }
   const KEYS = ['progress', 'streak', 'level', 'practice', 'stats', 'hammer', 'read', 'beasts', 'passages', 'book'];
-  const blobOf = u => ({ v: 1, updated: Date.now(), progress: store.get('latin.progress.' + u.id, {}), streak: store.get('latin.streak.' + u.id, null),
-    level: store.get('latin.level.' + u.id, null), practice: store.get('latin.practice.' + u.id, null), stats: store.get('latin.stats.' + u.id, null),
-    hammer: store.get('latin.hammer.' + u.id, null), read: store.get('latin.read.' + u.id, null), beasts: store.get('latin.beasts.' + u.id, null), passages: store.get('latin.passages.' + u.id, null), book: store.get('latin.book.' + u.id, null) });
+  const blobOf = u => ({ v: 1, updated: Date.now(), progress: store.get(NS_S + '.progress.' + u.id, {}), streak: store.get(NS_S + '.streak.' + u.id, null),
+    level: store.get(NS_S + '.level.' + u.id, null), practice: store.get(NS_S + '.practice.' + u.id, null), stats: store.get(NS_S + '.stats.' + u.id, null),
+    hammer: store.get(NS_S + '.hammer.' + u.id, null), read: store.get(NS_S + '.read.' + u.id, null), beasts: store.get(NS_S + '.beasts.' + u.id, null), passages: store.get(NS_S + '.passages.' + u.id, null), book: store.get(NS_S + '.book.' + u.id, null) });
 
   // merge what the cloud has into this device: per word, keep the more recent answer
   function merge(u, remote) {
     if (!remote || typeof remote !== 'object') return false;
     let changed = false;
-    const local = store.get('latin.progress.' + u.id, {});
+    const local = store.get(NS_S + '.progress.' + u.id, {});
     const merged = { ...local };
     for (const w in remote.progress || {}) {
       const r = remote.progress[w], l = local[w];
       if (!l || (r.t || 0) > (l.t || 0)) { merged[w] = r; changed = true; }
     }
-    if (changed) store.set('latin.progress.' + u.id, merged);
-    const ls = store.get('latin.streak.' + u.id, null), rs = remote.streak;
-    if (rs && (!ls || rs.best > ls.best)) { store.set('latin.streak.' + u.id, { cur: ls ? ls.cur : rs.cur, best: Math.max(rs.best, ls ? ls.best : 0) }); changed = true; }
-    const lp = store.get('latin.practice.' + u.id, null), rp = remote.practice;
+    if (changed) store.set(NS_S + '.progress.' + u.id, merged);
+    const ls = store.get(NS_S + '.streak.' + u.id, null), rs = remote.streak;
+    if (rs && (!ls || rs.best > ls.best)) { store.set(NS_S + '.streak.' + u.id, { cur: ls ? ls.cur : rs.cur, best: Math.max(rs.best, ls ? ls.best : 0) }); changed = true; }
+    const lp = store.get(NS_S + '.practice.' + u.id, null), rp = remote.practice;
     if (rp) {   // best level, current level and every counter: the bigger value wins
       const m = { ...(lp || {}) }; let ch = false;
       for (const k in rp) if (typeof rp[k] === 'number' && (m[k] == null || rp[k] > m[k])) { m[k] = rp[k]; ch = true; }
       if (rp.stars) { m.stars = { ...(m.stars || {}) }; for (const l in rp.stars) if ((m.stars[l] || 0) < rp.stars[l]) { m.stars[l] = rp.stars[l]; ch = true; } }
-      if (ch) { store.set('latin.practice.' + u.id, m); changed = true; }
+      if (ch) { store.set(NS_S + '.practice.' + u.id, m); changed = true; }
     }
-    const lst = store.get('latin.stats.' + u.id, null), rst = remote.stats;
+    const lst = store.get(NS_S + '.stats.' + u.id, null), rst = remote.stats;
     if (rst) {   // the daily tallies: the bigger count for each day wins
       const m = { days: { ...((lst && lst.days) || {}) }, total: Math.max((lst && lst.total) || 0, rst.total || 0) }; let ch = !lst || m.total !== lst.total;
       for (const d in rst.days || {}) if ((m.days[d] || 0) < rst.days[d]) { m.days[d] = rst.days[d]; ch = true; }
-      if (ch) { store.set('latin.stats.' + u.id, m); changed = true; }
+      if (ch) { store.set(NS_S + '.stats.' + u.id, m); changed = true; }
     }
-    if (remote.level && !store.get('latin.level.' + u.id, null)) { store.set('latin.level.' + u.id, remote.level); changed = true; }
-    const lh = store.get('latin.hammer.' + u.id, null), rh = remote.hammer;
+    if (remote.level && !store.get(NS_S + '.level.' + u.id, null)) { store.set(NS_S + '.level.' + u.id, remote.level); changed = true; }
+    const lh = store.get(NS_S + '.hammer.' + u.id, null), rh = remote.hammer;
     if (rh) {   // Jacques Hammer: best scores and levels go up; items bought on either device are kept; coins follow whichever device has earned more
       const a = lh || {}, newer = (rh.earned || 0) > (a.earned || 0) ? rh : a;
       const m = { ...a, ...newer, best: Math.max(a.best || 0, rh.best || 0), level: Math.max(a.level || 1, rh.level || 1), cleared: Math.max(a.cleared || 0, rh.cleared || 0),
         plays: Math.max(a.plays || 0, rh.plays || 0), earned: Math.max(a.earned || 0, rh.earned || 0), owned: [...new Set([...(a.owned || []), ...(rh.owned || [])])] };
-      if (JSON.stringify(m) !== JSON.stringify(lh)) { store.set('latin.hammer.' + u.id, m); changed = true; }
+      if (JSON.stringify(m) !== JSON.stringify(lh)) { store.set(NS_S + '.hammer.' + u.id, m); changed = true; }
     }
-    const lr = store.get('latin.read.' + u.id, null), rr = remote.read;
+    const lr = store.get(NS_S + '.read.' + u.id, null), rr = remote.read;
     if (rr) {   // Read: a sentence done on either device counts as done
       const a = lr || { done: {}, read: 0 }, m = { ...a, done: { ...(a.done || {}) }, read: Math.max(a.read || 0, rr.read || 0) };
       for (const n in rr.done || {}) if (!m.done[n] || m.done[n] < rr.done[n]) m.done[n] = rr.done[n];
-      if (JSON.stringify(m) !== JSON.stringify(lr)) { store.set('latin.read.' + u.id, m); changed = true; }
+      if (JSON.stringify(m) !== JSON.stringify(lr)) { store.set(NS_S + '.read.' + u.id, m); changed = true; }
     }
     // passages: a story read on either device counts
-    const lps = store.get('latin.passages.' + u.id, null), rps = remote.passages;
-    if (rps && rps.done) { const m = { done: { ...((lps && lps.done) || {}), ...rps.done } }; if (JSON.stringify(m) !== JSON.stringify(lps)) { store.set('latin.passages.' + u.id, m); changed = true; } }
+    const lps = store.get(NS_S + '.passages.' + u.id, null), rps = remote.passages;
+    if (rps && rps.done) { const m = { done: { ...((lps && lps.done) || {}), ...rps.done } }; if (JSON.stringify(m) !== JSON.stringify(lps)) { store.set(NS_S + '.passages.' + u.id, m); changed = true; } }
     // the book: the furthest sentence reached on either device
-    const lbk = store.get('latin.book.' + u.id, null), rbk = remote.book;
-    if (rbk && typeof rbk === 'object' && (rbk.at || 0) > ((lbk && lbk.at) || 0)) { store.set('latin.book.' + u.id, { ...(lbk || {}), at: rbk.at }); changed = true; }
+    const lbk = store.get(NS_S + '.book.' + u.id, null), rbk = remote.book;
+    if (rbk && typeof rbk === 'object' && (rbk.at || 0) > ((lbk && lbk.at) || 0)) { store.set(NS_S + '.book.' + u.id, { ...(lbk || {}), at: rbk.at }); changed = true; }
     // beasts: every beast either device has found, at its furthest stage; the one being raised stays the local one
-    const lb = store.get('latin.beasts.' + u.id, null), rb = remote.beasts;
+    const lb = store.get(NS_S + '.beasts.' + u.id, null), rb = remote.beasts;
     if (rb && typeof rb === 'object') {
       const a = lb || { have: {}, order: [], spare: {}, last: null, finds: 0, total: 0 }, m = { ...a, have: { ...(a.have || {}) }, spare: { ...(a.spare || {}) }, order: [...(a.order || [])], total: Math.max(a.total || 0, rb.total || 0), finds: Math.max(a.finds || 0, rb.finds || 0) };
       for (const k in (rb.spare || {})) m.spare[k] = Math.max(m.spare[k] || 0, rb.spare[k] || 0);
       for (const k in (rb.have || {})) { m.have[k] = Math.max(m.have[k] || 0, rb.have[k] || 0); if (!m.order.includes(k)) m.order.push(k); }
       if (!m.last && rb.last) m.last = rb.last;
       delete m.cur; delete m.xp;
-      if (JSON.stringify(m) !== JSON.stringify(lb)) { store.set('latin.beasts.' + u.id, m); changed = true; }
+      if (JSON.stringify(m) !== JSON.stringify(lb)) { store.set(NS_S + '.beasts.' + u.id, m); changed = true; }
     }
     return changed;
   }

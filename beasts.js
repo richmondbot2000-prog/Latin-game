@@ -1,3 +1,4 @@
+const NS_B = (typeof APP_NS !== 'undefined' ? APP_NS : 'latin');   // storage namespace: 'latin', or 'tounsi' for the Tunisian game
 /* Beasts: monster eggs that drop at random while you answer cards, like cards from a pack, and the
    Beastpedia that collects them. A duplicate of a monster you already have evolves it one stage
    (egg → baby → teen → adult). The pictures and names are the artist's MemiBeasts set (art/beasts/):
@@ -13,7 +14,7 @@ const Beasts = (() => {
     if (list) return Promise.resolve(list);
     return loading || (loading = fetch(ART + 'beasts.json').then(r => r.json()).then(j => { list = j; ahead(); return list; }).catch(() => (list = [])));
   }
-  const key = u => 'latin.beasts.' + u.id;
+  const key = u => NS_B + '.beasts.' + u.id;
   const fresh = () => ({ have: {}, order: [], spare: {}, last: null, finds: 0, total: 0 });
   const state = u => Object.assign(fresh(), store.get(key(u), null) || {});
   const save = (u, s) => store.set(key(u), s);
