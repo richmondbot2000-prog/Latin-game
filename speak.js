@@ -48,13 +48,47 @@ const Speak = (() => {
   let clips = null, player = null;
   if (cfg.audio) fetch(cfg.audio + '/index.json').then(r => r.ok ? r.json() : {}).then(j => { clips = j; }).catch(() => { clips = {}; });
   const clip = text => { const k = text.trim().toLowerCase().replace(/[.,;:!?"]/g, ''); return clips && (clips[k] || clips[text.trim()]) || null; };
+  // clips are fetched ahead of time: the service worker keeps every clip it has fetched once, so a word that has been
+  // primed plays at once. prime(text) fetches one clip; warm(texts) fetches a list in the background, a few at a time
+  const primed = new Set();
+  const prime = text => { const f = cfg.audio && text && clip(text); if (!f || primed.has(f)) return; primed.add(f); try { fetch(cfg.audio + '/' + f, { credentials: 'same-origin' }).catch(() => primed.delete(f)); } catch (e) {} };
+  let warmQ = [], warming = false;
+  const warm = texts => {
+    if (!cfg.audio) return;
+    const t0 = Date.now(), tick = () => { if (clips) go(); else if (Date.now() - t0 < 10000) setTimeout(tick, 300); };
+    const go = () => { for (const t of texts) { const f = t && clip(t); if (f && !primed.has(f)) warmQ.push(t); } pump(); };
+    tick();
+  };
+  const pump = () => {
+    if (warming || !warmQ.length) return;
+    warming = true; const batch = warmQ.splice(0, 3);
+    Promise.allSettled(batch.map(t => { const f = clip(t); if (!f || primed.has(f)) return null; primed.add(f); return fetch(cfg.audio + '/' + f, { credentials: 'same-origin' }).catch(() => primed.delete(f)); }))
+      .then(() => { warming = false; if (warmQ.length) setTimeout(pump, 150); });
+  };
   // a word that comes into focus is read, then read once more 2 s after the first reading ends (the 🔊 buttons read once);
   // a new word, or a tap on a button, cancels the pending repeat
   let last = 0, again = null, gen = 0;
   function play(text, done) {
     const f = cfg.audio && clip(text);
-    if (f) { try { if (player) player.pause(); player = new Audio(cfg.audio + '/' + f); player.onended = done; player.play().catch(() => {}); return true; } catch (e) {} }
-    if (!can()) return false;
+    if (f) {
+      // the clip plays if it is ready within 1.5 s; on a slow connection the phone's own voice reads the word instead
+      // and the clip keeps downloading, so it is there next time
+      try {
+        if (player) player.pause();
+        const a = player = new Audio(cfg.audio + '/' + f); a.preload = 'auto'; a.onended = done;
+        let ok = false, gaveUp = false;
+        const start = () => { if (ok || gaveUp) return; ok = true; a.play().catch(() => {}); };
+        a.addEventListener('canplaythrough', start); a.addEventListener('loadeddata', start);
+        const g = gen;
+        setTimeout(() => { if (ok || g !== gen) return; gaveUp = true; try { a.pause(); } catch (e) {} if (player === a) player = null; prime(text); synth(text, done); }, 1500);
+        a.load();
+        return true;
+      } catch (e) {}
+    }
+    return synth(text, done);
+  }
+  function synth(text, done) {
+    if (!can() || !cfg.lang || typeof speechSynthesis === 'undefined') { if (done) done(); return false; }
     try {
       speechSynthesis.cancel();
       const spoken = cfg.script === 'chat-arabic' ? chatToArabic(text) : text;
@@ -95,5 +129,5 @@ const Speak = (() => {
   // the on / off line for a settings area
   const toggleHTML = () => can() ? `<button class="linkbtn speakline" id="speakToggle">${on() ? '🔊 Reading words aloud — tap to turn off' : '🔇 Words are not read aloud — tap to turn on'}</button>` : '';
   const wireToggle = (root, after) => { const b = (root || document).querySelector('#speakToggle'); if (!b) return; b.onclick = () => { toggle(); b.outerHTML = toggleHTML(); wireToggle(root, after); if (after) after(on()); }; };
-  return { say, stop, on, toggle, can, button, wire, toggleHTML, wireToggle, chatToArabic };
+  return { say, stop, on, toggle, can, button, wire, toggleHTML, wireToggle, chatToArabic, prime, warm };
 })();

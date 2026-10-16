@@ -12,5 +12,16 @@ for l in (here / 'memory.txt').read_text().splitlines():
 missing = [i for i in ids if i not in m]
 assert not missing, 'no memory hook for ' + ', '.join(missing)
 js = '// "How do we remember this?" cards, one per word. Built by tools/lang/build_memory.py from memory.txt — edit that, not this.\nconst MEMORY = {\n' + ',\n'.join('  ' + json.dumps(k, ensure_ascii=False) + ': ' + json.dumps(v, ensure_ascii=False) for k, v in m.items()) + '\n};\n'
+# origins.txt (optional): id | a note of up to 300 characters on where the word comes from — shown on the card and the memo
+o = {}
+if (here / 'origins.txt').exists():
+    for l in (here / 'origins.txt').read_text().splitlines():
+        if not l.strip() or l.startswith('#'): continue
+        f = [x.strip() for x in l.split('|', 1)]
+        assert len(f) == 2 and f[0] in ids, l
+        assert len(f[1]) <= 300, f'origin over 300 characters: {f[0]} ({len(f[1])})'
+        o[f[0]] = f[1]
+    print(len(o), 'origins;', len([i for i in ids if i not in o]), 'words without one')
+js += '// Where each word comes from, from origins.txt (optional).\nconst ORIGINS = ' + json.dumps(o, ensure_ascii=False, indent=0).replace('\n', '\n  ') + ';\n'
 (here / 'memory.js').write_text(js)
 print(len(m), 'memory hooks')

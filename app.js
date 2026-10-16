@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '149';
+const APP_VERSION = '150';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -49,6 +49,7 @@ const WORDS = VOCAB.map((v, i) => ({ ...v, id: v.word, show: showWord(v.word), k
 const phraseFor = w => (typeof PHRASES !== 'undefined' && PHRASES[w.word]) || null;
 // Latin phrase with the card's word (marked *like this*) highlighted
 const phraseHTML = la => esc(la).replace(/\*([^*]+)\*/g, '<mark>$1</mark>');
+const originOf = w => (typeof ORIGINS !== 'undefined' && ORIGINS[w.word]) || '';   // where the word comes from (origins.txt of a language), shown on the card and the memo
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.show} means ${w.english}.` };
 // the word in the language's own script (Arabic for Tounsi: `ar` in vocab.js, the form's `ar` from Forms); nothing for Latin
 const arabOf = (w, form) => (form && form.ar) || (form && form.la !== w.show ? '' : (typeof Forms !== 'undefined' && Forms.show ? Forms.show(w) : (w.ar || '')));
@@ -1395,6 +1396,7 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
         ${arabHTML(w)}
         <div class="en">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
+        ${originOf(w) ? `<div class="how"><h3>Where it comes from</h3><p>${esc(originOf(w))}</p></div>` : ''}
         <div class="how mine"><h3>✏️ My own way to remember it</h3>${noteOf(w) ? `<p id="noteText">${esc(noteOf(w))}</p><button class="linkbtn small" id="noteEdit">Change it</button>` : `<button class="linkbtn small" id="noteEdit">Make up your own picture — the ones you invent stick best</button>`}<textarea id="noteBox" rows="2" placeholder="e.g. ghodwa: a GOOD WAY to spend tomorrow" hidden>${esc(noteOf(w))}</textarea></div>
         ${phraseFor(w) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w).la)}</p><p class="tr">${esc(phraseFor(w).en)}</p></div>` : ''}
         <div class="meta">${starsHTML(stars)} <span class="small">· ${w.kind} · Level ${w.level}</span></div>
@@ -1485,7 +1487,7 @@ function renderPlay(u, pane) {
     return pool[pool.length - 1];
   }
   // a card is picked one ahead, so the next word sits underneath while the top one is swiped
-  let pending = null;
+  let pending = null, warmed = false;
   function prepare() {
     const w = pick(); if (!w) return null;
     recent.push(w.id); if (recent.length > GAP) recent.shift();
@@ -1508,6 +1510,7 @@ function renderPlay(u, pane) {
         <div class="rule"></div>
         <div class="en">${esc(c.shown)}</div>
         ${phraseFor(c.w) ? `<div class="phrase">${phraseHTML(phraseFor(c.w).la)}</div>` : ''}
+        ${originOf(c.w) ? `<div class="origin">${esc(originOf(c.w))}</div>` : ''}
       </div>`;
   function next() {
     const p = getProg(u), now = Date.now();
@@ -1518,12 +1521,14 @@ function renderPlay(u, pane) {
       return;
     }
     pending = prepare();
+    if (pending) Speak.prime(pending.form ? pending.form.la : pending.w.show);   // the next card's clip downloads while this one is on screen
     deck.innerHTML = (pending ? cardHTML(pending, p, false) : '<div class="card under" aria-hidden="true"></div>') + cardHTML(card, p, true);
     // a long word shrinks to fit the card on one line instead of breaking in two
     deck.querySelectorAll('.card .lat, .card .en').forEach(el => { el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); while (el.scrollWidth > el.clientWidth + 1 && f > 14) { f -= 1; el.style.fontSize = f + 'px'; } });
     attachSwipe($('#top', deck));
     buddy();
     Speak.say(card.form ? card.form.la : card.w.show);
+    if (!warmed) { warmed = true; Speak.warm(activeWords(u).map(w => w.show)); }   // the level's clips download in the background on the first card
     busy = false;
   }
   function answer(saysMatch) {
@@ -1609,6 +1614,7 @@ function renderPlay(u, pane) {
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
         <div class="blat">${esc(w.show)}</div>${arabHTML(w, null, 'small')}<div class="ben">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
+        ${originOf(w) ? `<div class="how"><h3>Where it comes from</h3><p>${esc(originOf(w))}</p></div>` : ''}
         ${ph ? `<div class="how said"><p class="la">${phraseHTML(ph.la)}</p><p class="tr">${esc(ph.en)}</p></div>` : ''}
         <div class="small">Back to no stars for this one — now you know it!</div>
         <button class="btn" id="flipNext">Next card</button></div>`);

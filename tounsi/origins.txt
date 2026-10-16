@@ -1,0 +1,1112 @@
+# Where each word comes from: id | a note of up to 300 characters (shown on the card and the memo). Built into memory.js by build_memory.py.
+# ---- level 0 ----
+3aslema|Short for "3la slema", "(you came) in safety": the same wish as Arabic "salam" (peace). Tunisia's own hello — Algerians and Moroccans say "salam" or "ahlan" instead, so this one word marks you as Tunisian.
+bislema|"Bi-s-slema", "with safety": Arabic "salama", wholeness and peace. The two ends of a Tunisian conversation share one root: you arrive 3aslema and leave bislema.
+3aychek|Literally "may (God) keep you alive", from 3ach, to live. A blessing turned into "thanks" and "please" — a very Tunisian word; elsewhere in the Arab world people say shukran.
+sam7ni|"Forgive me", from sma7, to forgive, pardon, allow. Classical Arabic samaha, generous forgiveness; "masmou7" (allowed) is the same root. Tunisians use it for "sorry" and "excuse me" alike.
+chnowa|From "ech" (what) + "houwa" (he/it): "what is it?" The feminine is chniya, "what is she?" Each Maghreb dialect built its own "what": Moroccans say chnou, Egyptians eh.
+chkoun|"Ech" (what) + "ykoun" (would be): "what would it be?" became "who?" Shared with Algeria and Morocco; Classical Arabic says "man", which Tunisians never use for "who".
+win|From Arabic "ayna" (where), worn down over the centuries. Egyptians say fein, Moroccans fin, Tunisians win — all the same word with the first sound changed.
+waqtech|"Waqt" (time, from Classical Arabic waqt) + "ech" (what): "what time?" The -ech ending builds many Tunisian question words: kifech, 9adech, 3lech.
+kifech|"Kif" (like, how) + "ech" (what): "like what?" Kif itself comes from Arabic "kayfa" (how). Egyptians say izzay, Moroccans kifech too.
+3lech|"3la" (on, about) + "ech" (what): "on account of what?" = why. The same pattern as kifech and 9adech: an old preposition with the question ending -ech.
+ena|Classical Arabic "ana" (I). Tunisians say it with a closed vowel, "ena", which is one of the small sounds that gives Tunisian its accent next to Egyptian or Gulf Arabic.
+enti|Classical Arabic has "anta" for a man and "anti" for a woman; Tunisian kept just one, enti, for both. A Tunisian hallmark — in Egypt saying "enti" to a man would sound odd.
+houwa|Classical Arabic "huwa" (he). The word that hides inside chnowa ("ech-houwa", what is it?).
+hiya|Classical Arabic "hiya" (she). Hides inside chniya (ech-hiya, what is she?).
+a7na|From Classical Arabic "nahnu" (we), reshaped in the Maghreb to a7na / 7na. The "we" of Algeria and Morocco as well.
+houma|Classical Arabic "hum" (they) with an extra vowel. Tunisian, like most dialects, has one "they" for men and women; the classical language had two.
+hedha|Classical Arabic "hadha" (this). The feminine is hedhi, the plural hedhouma — "these ones".
+hedheka|"Hedha" (this) + "-ka", a far-pointing ending from Classical Arabic "dhalika". This near you, that over there.
+3andi|"3and" (at, by) + "-i" (me): "at me" = I have. Arabic has no verb "to have" — you say something is "at" you. Every dialect does the same: Egyptian 3andi, Moroccan 3andi.
+3andek|"3and" (at) + "-ek" (you): "at you" = you have. The same for a man or a woman in Tunisian.
+3andou|"3and" (at) + "-ou" (him): "at him" = he has. The -ou ending is "his" wherever it appears: ktabou, his book.
+w|Classical Arabic "wa" (and), one of the oldest words in the language and unchanged for 1,500 years. Written as a single letter, و.
+wala|"Wa" (and) + "la" (no): "or". Also "nor" in "la … wala …", neither … nor. Classical Arabic uses "aw" for or; the dialects built their own.
+ama|Classical Arabic "amma" (as for …) became the everyday "but" in Tunisian. Lekin is the other, more formal "but".
+khater|From Arabic "khatir", the mind or heart; "3la khater" means "on account of". Shortened to khater, it does the job of "because". "Khatrek" also means "for your sake".
+fi|Classical Arabic "fi" (in). Unchanged from the Quran to a Tunis café. Also at the heart of "fisa3" (quickly, "in the hour").
+3la|Classical Arabic "3ala" (on, upon). Hides inside 3lech (why) and 3la kifek (as you like).
+men|Classical Arabic "min" (from); also "than" when comparing: akbar men, bigger than.
+l|Classical Arabic "li" (to, for). Sticks to the next word: lil-bit, to the room; lel-dar, to the house.
+m3a|Classical Arabic "ma3a" (with). "M3ak" = with you, "m3aya" = with me. Rabbi m3ak: God be with you.
+houni|From Classical Arabic "huna" (here). Algerians say hna, Moroccans hna; the Tunisian form keeps a second syllable.
+ghadi|From Arabic "ghada", to go, so "where one goes" — over there. Also a Moroccan word, though there it means "going to" (the future).
+tawa|From Classical Arabic "taww", "just now, at once". A Tunisian signature word: Egyptians say dilwa9ti, Moroccans daba, Algerians dork.
+elyoum|"El" (the) + "youm" (day): "the day" = today. Classical Arabic says al-yawm — the same thing.
+ghodwa|From Classical Arabic "ghadan" (tomorrow) and "ghudwa" (early morning). Moroccans say ghedda, Egyptians bokra, Tunisians ghodwa.
+elbere7|From Arabic "al-bariha", "the past night", which came to mean yesterday. Egyptians say embare7, Moroccans lbare7 — the same word everywhere.
+dima|From Arabic "da'iman" (always), from the root for lasting. Shared by every Maghreb dialect; Egyptians say dayman.
+wa7ed|Classical Arabic "wahid" (one). Also "someone": wa7ed ja, someone came. Feminine wa7da.
+zouz|From Arabic "zawj", a pair or a spouse — Tunisians count "a pair" where others say "two". Nearly all other dialects use "ithnin" (thnin); zouz marks Tunisia.
+thletha|Classical Arabic "thalatha" (three). Tunisian keeps the "th" sound that Egyptian and Lebanese turned into "t" (talata).
+arb3a|Classical Arabic "arba3a" (four). "Larb3a" is Wednesday, the fourth day.
+khamsa|Classical Arabic "khamsa" (five). The hand of Fatima, the five-fingered charm against the evil eye, is also called khamsa.
+setta|Classical Arabic "sitta" (six).
+sab3a|Classical Arabic "sab3a" (seven). "Sbou3", the week, is seven days.
+thmenya|Classical Arabic "thamaniya" (eight). Again the "th" that Tunisian keeps and Egyptian loses (tamanya).
+tes3a|Classical Arabic "tis3a" (nine).
+nhar|Classical Arabic "nahar" (daytime). Tunisians use it for the day as a span of time ("nhar twil", a long day); youm names the calendar day.
+lil|Classical Arabic "layl" (night). "Alf layla wa layla" is the Arabian Nights. Lila is one particular night.
+3am (year)|Classical Arabic "3am" (year). "Ras el 3am", the head of the year, is New Year. Sana is the formal word for the same thing.
+rajel|Classical Arabic "rajul" (man). Also "husband": rajli, my husband. Plural rjel.
+mra|From Classical Arabic "imra'a" (woman), shortened. Also "wife": marti, my wife. Plural nsa, from a different old root.
+baba|A nursery word found in many languages — Arabic "baba", Turkish "baba", English "papa". Children's babbling gave the world its fathers.
+ommi|"Omm" (mother, Classical Arabic umm) + "-i" (my). Tunisians use "ommi" even when speaking about someone else's mother. "Omm" is also Egypt's "Umm Kulthum".
+khouya|"Khou" (brother, Classical Arabic akh) + "-ya" (my). Used to any man you like: "ya khouya", mate.
+okht|Classical Arabic "ukht" (sister). "Okhti" = my sister, which, like khouya, can be any friendly woman.
+weld|Classical Arabic "walad" (boy, child). "Wled" is the plural (children, boys); "weld" + a name = son of.
+bent|Classical Arabic "bint" (girl, daughter). "Bnet" is the plural. Used to say "daughter of": bent 3ammi, my cousin.
+ras|Classical Arabic "ra's" (head). Also "cape" on a map (Ras Angela, the top of Africa) and "start": ras el 3am, New Year.
+3in|Classical Arabic "3ayn" (eye), which also means a spring of water, as in the Tunisian town names Ain Draham. The letter ع is named after it.
+yed|Classical Arabic "yad" (hand). Tunisian uses it for the arm as well. The hand of Fatima is "yed Fatma".
+dar|Classical Arabic "dar" (house, dwelling). Many Tunisian town names start with it: Dar Chaabane. Also "dar" the verb, to turn — different root, same letters.
+beb|Classical Arabic "bab" (door, gate). The old gates of Tunis are all Bab something: Bab Bhar, the sea gate.
+srir|Classical Arabic "sarir" (bed). Unchanged in sound for a thousand years.
+chams|Classical Arabic "shams" (sun). "Ech-chams", the sun, with the sun-letter assimilation that this very word gives its name to.
+b7ar|Classical Arabic "bahr" (sea). Bab Bhar in Tunis is the Sea Gate; "ba7ri" is anything from the sea, or the north wind.
+ma|Classical Arabic "ma'" (water). The glottal stop at the end has gone, leaving a bare "ma". Plural "myeh".
+9attous|From Latin "cattus" (cat) via Berber and Arabic "qitt". The Romans brought the cat and its name to North Africa; English "cat" is the same word.
+kalb|Classical Arabic "kalb" (dog). The plural "kleb" is the usual insult. Also the name of the dog star, Kalb al-Akbar.
+mekla|From "kla", to eat: a thing eaten, food. Arabic "akl" and "ma'kal", a place or thing of eating.
+khobz|Classical Arabic "khubz" (bread). "Khabbaz" is the baker. Tunisian bread is the French baguette, but the word is ancient.
+7lib|Classical Arabic "halib" (milk), from the root for milking.
+blad|Classical Arabic "balad" (country, town). "Bledi", my hometown. English borrowed it from Algerian French as "the bled", the back of beyond.
+souk|Classical Arabic "suq" (market). English and French took "souk" from the Maghreb; the covered souks of Tunis go back to the 1200s.
+7anout|Classical Arabic "hanut" (shop, wine shop). Probably originally from Aramaic, the trading language of the ancient Near East.
+mdrasa|Classical Arabic "madrasa" (school), from "darasa", to study. English uses "madrasa" for a religious school; in Tunisia it is any school.
+mcha|Classical Arabic "masha" (to walk) came to mean "to go" in the Maghreb. "Mashi" = on foot; "ya mchi" = it works.
+ja|Classical Arabic "ja'a" (to come). "Jey" = coming, next: el 3am ej jey, next year.
+kla|Classical Arabic "akala" (to eat), with its first syllable dropped: akala → kla. "Yekol" = he eats; "mekla" = food.
+chrab|Classical Arabic "shariba" (to drink). "Chorba" (soup) and "chrab" (a drink) share the root — soup is what you drink.
+r9ad|Classical Arabic "raqada" (to lie down, sleep). Formal Arabic uses "nama" for sleep; Tunisians kept the lying-down verb.
+khdem|Classical Arabic "khadama" (to serve) became "to work" in the Maghreb. "Khedma" = a job; "khadem" = a servant.
+9ra|Classical Arabic "qara'a" (to read, recite). The word "Quran" is "the recitation" from the same root. Also "to study" in Tunisian.
+chaf|Classical Arabic "shafa" (to look at, see). "Chouf!" = look! The usual Maghreb verb for seeing; Egyptians use the same.
+9al|Classical Arabic "qala" (to say). "9olli" = tell me. "9awl" = a saying.
+3mal|Classical Arabic "3amila" (to do, work). "3amel" = a worker; "ma3mal" = a factory. Tunisian uses it for both "do" and "make".
+3ta|Classical Arabic "a3ta" (to give). "A3tini" = give me. "3ata" = a gift.
+chra|Classical Arabic "ishtara" (to buy). "Chari" = a buyer; "chra w bi3", buying and selling.
+jeb|Classical Arabic "ja'a bi", "to come with" something, melted into one verb: jeb, to bring. "Jib!" = bring it!
+7ab|Classical Arabic "ahabba" (to love). Tunisian uses it for "want" too: n7eb nemchi, I want to go. "7obb" = love; "7bib" = darling.
+3raf|Classical Arabic "3arafa" (to know, recognise). "Ma3rouf" = well known; "3arif" = an expert.
+fhem|Classical Arabic "fahima" (to understand). "Mafhoum" = understood; "fahem" = someone who gets it.
+l3ab|Classical Arabic "la3iba" (to play). "La3eb" = a player; "lo3ba" = a game or toy.
+behi|From Classical Arabic "bahi", splendid, radiant. Only Tunisians use it as the everyday "good, OK" — a one-word passport. Algerians say mli7, Moroccans mezyen.
+khayeb|From Arabic "kha'ib", disappointed, failed. In Tunisian it covers ugly, bad and nasty: the opposite of behi. "Mouch khayeb" = not bad.
+kbir|Classical Arabic "kabir" (big, great). "Akbar" = bigger, as in Allahu akbar, God is greatest. Also "old" for people.
+sghir|Classical Arabic "saghir" (small, young). "Asghar" = smaller. The opposite pair kbir/sghir does for both size and age.
+jdid|Classical Arabic "jadid" (new). "Jdid" is also the slang for "cool" among young Tunisians.
+far7an|Classical Arabic "farhan" (joyful), from "farah", joy. "Far7" also means a wedding party.
+ta3ban|Classical Arabic "ta3ban" (tired), from "ta3ab", weariness. Also "run down, unwell" when said of a sick person.
+mridh|Classical Arabic "marid" (ill). "Mardh" = illness; "mmarrdha" = a nurse, the one with the sick.
+# ---- level 1 ----
+ahla|Short for "ahlan wa sahlan", the ancient Arab welcome: "(you have come to) family and easy ground". Used as a casual hi across the Arab world.
+sba7 el khir|"Morning of goodness". Classical Arabic "sabah al-khayr". The reply is "sba7 en nour", morning of light.
+msa el khir|"Evening of goodness". Classical Arabic "masa' al-khayr". Reply: "msa en nour", evening of light.
+tesba7 3la khir|"May you wake up in goodness": a wish for the morning, said at night. "Tesba7" is from sba7, to become morning.
+inshallah|"In sha' Allah", "if God wills", said of anything in the future. Spanish "ojalá" (hopefully) comes from this Arabic phrase.
+labes|"La bas", "no harm". The Maghreb's "fine, OK": "labes?" asks how you are and answers it. Egyptians say "kwayyes" instead.
+9adech|"9add" (amount, size) + "ech" (what): "what amount?" = how much. Also "9addech el wa9t", what time is it.
+entouma|"Enti" (you) + "-ouma" (plural ending, as in houma): you all. Classical Arabic has antum and antunna; Tunisian has one word.
+lekin|Classical Arabic "lakin" (but). The more formal of Tunisian's two "buts"; ama is the everyday one.
+bech|From Arabic "bi-ash", "with what" or "in order to", which became the marker of the future: bech nemchi, I'm going to go. A Maghreb invention; Egyptians say "7a-" instead.
+ken|Classical Arabic "kana" (he was) became "if" in Tunisian: ken ji, if you come. The same word means "was" when it stands as a verb.
+kif|Classical Arabic "kayfa" (how) became "like, as" and "when": kif ma t7eb, as you like; kif ja, when he came. "Kif kif" = the same.
+bla|Classical Arabic "bila" (without): "bla sokker", without sugar. "Blech" = for nothing, free.
+9bal|Classical Arabic "qabla" (before). "9bal ma" = before (doing); "men 9bal" = beforehand.
+ba3d|Classical Arabic "ba3da" (after). "Ba3d ghodwa" = the day after tomorrow.
+mba3d|"Men" (from) + "ba3d" (after) squashed together: afterwards, later. A Tunisian form; Egyptians say ba3dein.
+fou9|Classical Arabic "fawqa" (above, over). "El fou9" = upstairs.
+ta7t|Classical Arabic "tahta" (under). "El ta7t" = downstairs.
+9oddem|Classical Arabic "quddam" (in front of). "9addem" = to present, to put in front.
+barcha|A Tunisian-only word for "a lot" — the first word visitors learn. Its origin is debated: possibly from Arabic "bi-rash", or from Italian "barca", a boatload. Algerians say bezzef, Moroccans bezzaf.
+chwaya|From Arabic "shay'" (thing) in its diminutive "shuwayya", a little thing. "Chwaya chwaya" = little by little. Shared with Egypt (shwayya).
+bark|A Tunisian word for "only, just": "wa7ed bark", just one. Thought to be from Berber; Algerians use it too. Moroccans say "ghir".
+zeda|From Arabic "ziyada" (an addition, more): "also, too". "Zid" = add, carry on. "Zeda" as "too" is Tunisian; Egyptians say kaman.
+ey|Tunisian "yes". Not Classical Arabic "na3am" at all; probably from Berber or an old Arabic "ay". Egyptians say aywa, Moroccans wah.
+le|Classical Arabic "la" (no). Tunisians say it with a closed vowel, "le", which can surprise other Arabs.
+mouch|From "ma" (not) + "ech" (thing): "not a thing". Negates nouns and adjectives: mouch behi, not good. Moroccans say machi, Egyptians mish.
+famma|From "fi" (in) + "ma" (what): "there is". Algerians say kayen, Moroccans kayn, Egyptians fih — famma is Tunisia's own.
+mafammech|"Ma" + famma + "-ch": the not-sandwich around "there is". The "-ch" comes from Arabic "shay'", thing — "not a thing".
+kol|Classical Arabic "kull" (all, every). "Kol youm" = every day; "el kol" = everyone.
+7aja|Classical Arabic "haja" (a need) came to mean "a thing". "7aja khayba" = a bad thing. Egyptians use the same word.
+yezzi|A Tunisian "enough!": from Arabic "yajzi", "it suffices". "Yezzi fik" = that's enough of you.
+heya|"Hayya", Classical Arabic for "come on!", as in the call to prayer: hayya 3ala s-salah. "Heya bina" = let's go.
+3achra|Classical Arabic "3ashara" (ten). The -ach ending of the teens (7dach, thnach) is this word worn down.
+ethnin|"El ithnayn", "the second (day)": Monday. Arabic weekdays are numbered from Sunday, the first.
+jem3a|Classical Arabic "jum3a", "the gathering": Friday, the day of congregation. Also "week" in Tunisian, from one Friday to the next.
+sebt|Classical Arabic "sabt" (Saturday), from Hebrew "shabbat", the Sabbath. The same word as Spanish sábado.
+a7ad|"El a7ad", "the first (day)": Sunday. "A7ad" also means "one" or "someone" in Classical Arabic.
+sa3a|Classical Arabic "sa3a" (hour). Also a watch or clock. "9addech es-sa3a?" = what time is it?
+chta|Classical Arabic "shita'" (winter). In Tunisian it also means rain — winter is when it rains.
+tfol|Classical Arabic "tifl" (child, infant). In Tunisian it is a boy; "tofla" a girl, "sghar" the children.
+tofla|The feminine of tfol: a girl. Classical Arabic "tifla".
+sa7eb|Classical Arabic "sahib" (companion, owner). "Ya sa7bi" = mate. Also the owner: sa7eb el 7anout, the shopkeeper. Feminine sa7ba.
+wjeh|Classical Arabic "wajh" (face). "Wjeh" also means "direction"; "mwajjeh" = heading.
+wdhen|Classical Arabic "udhun" (ear). Plural "wdhnin".
+khchem|Tunisian for nose; Classical Arabic says "anf". Khchem comes from "khaysham", the nostrils. Egyptians say manakhir, Moroccans nif.
+bit|Classical Arabic "bayt" (house). In the Maghreb it shrank to a room: bit en-noum, the bedroom. The house is dar.
+koujina|From Italian "cucina" (kitchen). Italians were Tunisia's biggest European community before 1956, and the kitchen kept their word.
+chobbek|From Persian "shubbak" via Arabic: a lattice window. Egyptians say the same.
+korsi|Classical Arabic "kursi" (chair, throne). The Throne Verse of the Quran is Ayat al-Kursi.
+tilifoun|French "téléphone". The t-l-f-n consonants have given Arabic a verb too: tsel, to phone.
+ktab|Classical Arabic "kitab" (book), from "kataba", to write. "Maktba" = library, "kateb" = writer, "mektab" = office: one root, a family.
+flous|Classical Arabic "fulus", plural of "fals", a small copper coin — from Latin "follis", a bag of coins, which also gave "fils" in the Gulf.
+9mar|Classical Arabic "qamar" (moon). "9amra" = moonlight; a beautiful face is "kif el 9mar", like the moon.
+sma|Classical Arabic "sama'" (sky, heaven). "Sma" with the final glottal stop gone.
+skhoun|Classical Arabic "sakhin" (hot). "Sakhkhan" = to heat up. Tunisian uses skhoun for hot things; 7ar for hot weather or spicy food.
+bared|Classical Arabic "barid" (cold). "Bard" = the cold; "barrad" = a fridge or a teapot.
+7san|Classical Arabic "hisan" (horse). Egyptians say the same; Moroccans say 3awd.
+tir|Classical Arabic "ta'ir" (bird, flying thing), from "tara", to fly. "Tayara" = aeroplane; "mtar" = airport.
+7out|Classical Arabic "hut" means a whale or a big fish (Jonah's); the Maghreb uses it for any fish. Egyptians say samak.
+bidh|Classical Arabic "bayd" (eggs). "Bidha" = one egg; "abyadh" = white — eggs are the white things.
+l7am|Classical Arabic "lahm" (meat). Bethlehem, "Bayt Lahm", is the house of meat (or bread, in Hebrew).
+khodhra|Classical Arabic "khudra" (greenery, vegetables), from "akhdhar", green. "Khadhdhar" = greengrocer.
+ghalla|Classical Arabic "ghalla", a harvest or crop. In Tunisian the word moved to mean fruit. Elsewhere "fakiha" is fruit.
+tfe7|Classical Arabic "tuffah" (apples). "Tfe7a" is a single apple.
+9ahwa|Classical Arabic "qahwa", coffee — the word that travelled through Turkish "kahve" to Italian "caffè" and English "coffee". Also a café.
+tey|From Chinese "te" via Dutch and French "thé". Arabic "shay" took the other Chinese form, "cha", through Persia — Tunisians took the sea route word.
+7lou|Classical Arabic "hulw" (sweet). In Tunisian also pretty, cute: "bent 7lowa", a lovely girl. "7lawa" = sweets.
+ji3an|Classical Arabic "jaw3an" (hungry), from "ju3", hunger.
+3atchan|Classical Arabic "3atshan" (thirsty), from "3atash", thirst.
+7wayej|Plural of 7aja (thing): "things", which came to mean clothes. "7wayji" = my clothes. Egyptians say hidoum.
+mdina|Classical Arabic "madina" (city). In the Maghreb it also names the old walled town: the Medina of Tunis is a World Heritage site. Medina in Arabia is "The City".
+chera3|Classical Arabic "shari3" (street, highway). Also "law" in the religious sense — the same word.
+thniya|Tunisian for a road: from Arabic "thaniya", a mountain pass or a way between. "9ta3 eth-thniya" = cross the road. Elsewhere tari9.
+blasa|From French "place" or Spanish "plaza": a place or a seat. "Blasa fadhya" = a free seat. A European word gone fully Tunisian.
+karhba|From Arabic "kahraba'" (electricity), from Persian "kahruba", amber — which sparks when rubbed. A car was "the electric thing"; Egyptians say 3arabiya, Moroccans tomobil.
+rja3|Classical Arabic "raja3a" (to return). "Rja3t" = I came back.
+rawwa7|From "rou7" (soul, self): to take oneself home. "Rawwa7!" = go home. A Maghreb verb; the word also gives "ra7a", rest.
+9am|Classical Arabic "qama" (to stand up, rise). "9ayyem" = to lift or put away; "9iyama" = resurrection.
+9a3ad|Classical Arabic "qa3ada" (to sit). In Tunisian also "to stay": 9a3adt fi dar, I stayed at home. "9a3ida" = a rule, a base.
+kteb|Classical Arabic "kataba" (to write). The k-t-b root gives book, office, library, writer and clerk.
+t3allem|Classical Arabic "ta3allama" (to learn), the reflexive of 3allem, to teach: to get oneself taught. "3ilm" = knowledge.
+sma3|Classical Arabic "sami3a" (to hear). "Esma3!" = listen! "Sma3" is also the name of Sufi listening music.
+7ka|Classical Arabic "haka" (to tell, narrate). "7kaya" = a story; "chnia el 7kaya?" = what's the story? Tunisian uses it for talking in general.
+khdha|Classical Arabic "akhadha" (to take), with the first syllable dropped like kla. "Khoudh!" = take it!
+najjem|A Tunisian "can": from "najm", a star — perhaps "to find one's star", or from "najama", to result. "Ma nejjemch" = I can't. Egyptians say 9ader, Moroccans 9der.
+lezem|Classical Arabic "lazima" (to be necessary). "Lezem nemchi" = I must go. Also "mouch lezem", no need.
+twil|Classical Arabic "tawil" (long, tall). "Tol" = length; "3la tol" = straight on.
+9sir|Classical Arabic "qasir" (short). "9assar" = to shorten.
+9wi|Classical Arabic "qawiy" (strong). "9owwa" = strength.
+9dim|Classical Arabic "qadim" (old, ancient). For things only; an old person is kbir. "9adim" also means "coming" — a different word.
+ndhif|Classical Arabic "nadhif" (clean). "Nadhdhaf" = to clean.
+mwassakh|From Arabic "wasakh", dirt: made dirty. "Wassakh" = to dirty.
+s3ib|Classical Arabic "sa3b" (difficult). "So3ouba" = difficulty.
+sehel|Classical Arabic "sahl" (easy; also a plain). "Rabbi ysahhel" = may God make it easy.
+ghali|Classical Arabic "ghali" (dear, expensive). Also "precious": "ghali 3liya", dear to me.
+rkhis|Classical Arabic "rakhis" (cheap). "Arkhas" = cheaper.
+kelma|Classical Arabic "kalima" (word). "Klem" = talk, words; "tkallem" = to speak.
+3arbi|Classical Arabic "3arabi" (Arab, Arabic). "Bel 3arbi" = in Arabic, plainly.
+englizi|From "Inglizi", Arabic for English, which came through Ottoman Turkish and Italian "inglese".
+mochkla|Classical Arabic "mushkila" (problem), from "shakala", to be tangled. "Mouch mouchkla" = no problem.
+# ---- level 2 ----
+y3aychek|"May He keep you alive", from 3ach, to live, with the ya- of "he does": the fuller form of 3aychek. A wish that became Tunisia's thank-you; Egyptians say shukran.
+3afwen|Classical Arabic "3afwan", "with pardon": "you're welcome" after thanks, and "sorry" when you bump someone. From 3afa, to forgive.
+min fadhlek|"From your kindness": Classical Arabic "min fadlika", the polite "please" of the whole Arab world. "Fadhl" = favour, grace.
+el7amdoullah|"Praise be to God", the first words of the Quran. Said after eating, when asked how you are, or when anything turns out well.
+marhba|Classical Arabic "marhaban", "(you have) wide room": welcome. From ra7b, spaciousness. "Marhba bik" = welcome to you.
+chnia a7welek|"What are your states?" — "a7wel" is the plural of "7al", a state or condition. The everyday "how are you?"; the answer is labes.
+ya3tik sa7a|"May He give you health": thanks for a service or praise for work done. Said to waiters, workers, anyone who did something for you. Maghreb only.
+mabrouk|"Blessed", from "baraka", blessing — the same root as the Jewish "baruch". Congratulations on anything: a new car, an exam, a baby.
+enehou|"Ena" (which) + "hou" (he/it): "which one?" Classical Arabic uses "ayy"; the Maghreb built its own from an old "ayna-hu".
+enehi|The feminine of enehou: "ena" + "hi" (she/it). "Enehi el karhba?" = which car?
+hedhi|Classical Arabic "hadhihi" (this, feminine), shortened. "Hedhi mra" = this is a woman.
+hedhika|"Hedhi" (this, f.) + "-ka" (over there): that one, feminine. The pair with hedheka.
+hedhoukom|"Hedhou" (these) + "-kom": those over there. The plural of hedheka.
+mte3i|"Mte3" (of, belonging to) + "-i" (me): mine. Mte3 comes from Arabic "mata3", goods or possessions. A Tunisian way of saying "my": el ktab mte3i, my book.
+mte3ek|"Mte3" + "-ek" (you): yours. Moroccans say dyalek, Egyptians bta3ek — each dialect took a different noun for possession.
+mte3ou|"Mte3" + "-ou" (him): his.
+mte3ha|"Mte3" + "-ha" (her): hers.
+3andha|"3and" (at) + "-ha" (her): "at her" = she has.
+3andna|"3and" (at) + "-na" (us): "at us" = we have.
+wra|Classical Arabic "wara'a" (behind). Also "after": wra el 3cha, after dinner.
+jenb|Classical Arabic "janb" (side): "at the side of" = next to. "Jenbi" = next to me.
+bin|Classical Arabic "bayna" (between). "Bin ma" = while, in between.
+dakhel|Classical Arabic "dakhil" (interior). "Dkhal" = to go in. "El dakhel" = the inside.
+barra|From Classical Arabic "barr", dry land, the open: outside. "Bara barra!" = get out!
+9bila|A diminutive of 9bal (before): "a little before" = just now, a while ago. A Tunisian form.
+abadan|Classical Arabic "abadan" (ever), which with a negative means never. "Abad" = eternity.
+sa3at|The plural of sa3a (hour): "at hours" = sometimes. The same idea in Egyptian "sa3at".
+yesser|A Tunisian "very, a lot", from Arabic "yasir", which oddly means "little, easy" — the meaning flipped, as "awfully good" did in English.
+ma ... ch|The Tunisian negative sandwich: "ma" (Classical Arabic "ma", not) before the verb and "-ch" after, from "shay'" (thing): "I don't eat a thing". Shared with Morocco, Algeria, Egypt and Malta.
+chay|Classical Arabic "shay'" (thing). The source of the "-ch" in every negative, and of chwaya (a little thing). "7atta chay" = nothing.
+7ad|Classical Arabic "ahad" (one, someone). "7atta 7ad" = nobody.
+akher|Classical Arabic "akhar" (other) and "akhir" (last) have become one Tunisian word. "Fil akhir" = in the end; "marra okhra" = another time.
+nafs|Classical Arabic "nafs" (soul, self), which also serves for "same": nafs el 7aja, the same thing. "Nafsi" = myself.
+bara|An order to go: "bara!", off you go. From Arabic "bara'a", to be free of, or from barra (outside). "Bara barra" = get out of here.
+ya|Classical Arabic "ya", the call before a name: "ya Ali!" Spanish "olé" and "hola" are thought to carry it.
+mela|Tunisian "so, then": from Arabic "ma lahu", "what is there to it?" "Mela chnowa?" = so what then? Egyptians say yeb9a or tab.
+3echrin|Classical Arabic "3ishrin" (twenty), from 3achra (ten) with the "-in" ending of the tens.
+mya|Classical Arabic "mi'a" (hundred). "Myat" before a noun: myat dinar.
+alf|Classical Arabic "alf" (thousand). "Alf layla wa layla" = a thousand and one nights; "alf mabrouk" = a thousand congratulations.
+lowel|Classical Arabic "awwal" (first). "Fil lowel" = at first; "loula" = the first one, feminine.
+sbe7|Classical Arabic "sabah" (morning). "Sba7 el khir" = good morning; "tesba7" = you wake.
+3chiya|Classical Arabic "3ashiya" (evening), the time of the 3cha, the evening meal. In Tunisian it covers the afternoon too.
+chhar|Classical Arabic "shahr" (month). "Chhar ramadhan" = the month of Ramadan.
+wa9t|Classical Arabic "waqt" (time). "Waqtech" = what time; "wa9t ma" = whenever.
+sif|Classical Arabic "sayf" (summer). "Sayfi" = summery.
+3id|Classical Arabic "3id" (feast, festival). Eid al-Fitr ends Ramadan; "3id mabrouk" = happy Eid.
+jed|Classical Arabic "jadd" (grandfather). "Jeddi" = my grandad. Also "serious" — a different word, same letters.
+jedda|The feminine of jed: grandmother. Classical Arabic "jadda". Jeddah in Arabia is said to be named for a grandmother, Eve.
+3am (uncle)|Classical Arabic "3amm", a father's brother. "Weld 3ammi" = my cousin (on dad's side); "ya 3ammi" is also a respectful "sir".
+khal|Classical Arabic "khal", a mother's brother. Arabic has separate words for the two uncles; English lost the difference.
+3ayla|Classical Arabic "3a'ila" (family), from "3ala", to provide for. "3ayltek" = your family.
+sa7ba|The feminine of sa7eb: a female friend, or a girlfriend.
+nes|Classical Arabic "nas" (people). "En-nes" = the people, everyone. The last sura of the Quran is "An-Nas".
+esm|Classical Arabic "ism" (name). "Esmek?" = your name? "Bismillah" = in the name of God.
+mou3allem|Classical Arabic "mu3allim", one who teaches, from 3allem. In Tunisian also a master craftsman or a boss.
+fom|Classical Arabic "fam" (mouth). "Fommi" = my mouth.
+sa9 (leg)|Classical Arabic "saq" (leg, shin). Also the stem of a plant. "Sa9" the verb (to drive) is a different root.
+rjel|Classical Arabic "rijl" (foot). Tunisian uses it for the foot and the leg below the knee. Plural "rjlin".
+tawla|From Italian "tavola" (table), a Mediterranean word Tunisian took from the Italians. Classical Arabic says "ma'ida"; Moroccans say tabla, from Spanish.
+mefte7|Classical Arabic "miftah" (key), "the thing that opens", from fta7, to open. "Mfatta7" = open.
+chkara|A bag or sack; thought to be from Spanish "escarcela" or Berber. Also "chkara" = a bribe in Tunisian politics slang.
+stilou|French "stylo" (pen). Tunisian took most of its school words from French: stilou, karnet, kaskita.
+nar|Classical Arabic "nar" (fire). Also hell, "en-nar". "Nour" (light) is the same root.
+chajra|Classical Arabic "shajara" (tree). "Chjar" = trees; "shajarat al-3a'ila" = family tree.
+djeja|Classical Arabic "dajaja" (hen). "Djej" is chicken meat; "djeja" one bird.
+mel7|Classical Arabic "milh" (salt). "Male7" = salty; "mle7" = good in Algerian.
+sokkor|Classical Arabic "sukkar", from Persian and Sanskrit "sharkara" — the same word gave English "sugar" through Arabic in Sicily and Spain.
+kosksi|From Berber "seksu", the dish of steamed semolina — a North African invention older than Arabic in the region. Tunisians say kosksi; Moroccans and the French say couscous.
+fter|Classical Arabic "iftar", the breaking of a fast. The Ramadan evening meal is "iftar"; in Tunisian "fter" is ordinary breakfast — you break the night's fast.
+ghda|Classical Arabic "ghada'" (lunch). "Tghadda" = to have lunch.
+3cha|Classical Arabic "3asha'" (dinner). "T3acha" = to have dinner. "3chiya" = evening, the dinner time.
+sabbat|From Spanish "zapato" (shoe), which may itself be from Arabic "sabbat". A word that crossed the Mediterranean twice.
+mat3am|Classical Arabic "mat3am", "place of food", from ta3am, food. Tunisians often say "restaurant" too.
+sbitar|From Italian "spedale" or French "hôpital", via older "spitar". The same source as English "hospital".
+jnina|The diminutive of Arabic "janna", garden — the Quran's word for Paradise. A little paradise: a garden.
+kar|From French "car", a coach. Tunisians say kar for the bus; Egyptians say otobis.
+tren|French "train". Tunisia's railway opened in 1872, and the French word came with it.
+dfa3|Classical Arabic "dafa3a" (to push, pay). Pushing money across the counter: both meanings in one verb. "Dafe3" = a payer or a defender.
+nsa|Classical Arabic "nasiya" (to forget). "Nsit" = I forgot.
+dh7ak|Classical Arabic "dahika" (to laugh). "Dhe7ka" = a laugh. Isaac's Arabic name Is7a9 means "he laughs".
+bka|Classical Arabic "baka" (to cry). "Bkeya" = crying.
+jra|Classical Arabic "jara" (to run, flow). "Ejri!" = hurry! "Jary" = running.
+dkhal|Classical Arabic "dakhala" (to enter). "Dakhel" = inside; "dakhkhal" = put in.
+khraj|Classical Arabic "kharaja" (to go out). "Kharrej" = take out; "kharij" = abroad.
+7at|Classical Arabic "hatta" (to put down). "7at" = put; "ma7atta" = a station, where you are set down.
+l9a|Classical Arabic "laqiya" (to meet, find). "Tla9a" = to meet each other.
+7all (verb)|Classical Arabic "halla" (to untie, solve, open). "7all el beb" = open the door; "7all" = a solution.
+sakkar|Tunisian for "close": from Arabic "sakkara", to shut, bolt. Moroccans say sedd, Egyptians 9afal — this one is a Maghreb-Tunisian choice.
+bda|Classical Arabic "bada'a" (to begin). "Bidaya" = beginning; "mobtadi" = beginner.
+kammal|Classical Arabic "kammala" (to complete), from "kamil", perfect. "Kamel" = whole.
+stanna|A Maghreb and Egyptian "wait", probably from Classical Arabic "ista'na", to wait patiently. "Mestanni" = waiting; "stanna chwaya" = hang on.
+3awen|Classical Arabic "3awana" (to help). "Mosa3da" = help; "rabbi y3awnek" = God help you.
+9rib|Classical Arabic "qarib" (near). Also a relative, "someone near". "T9riban" = nearly.
+b3id|Classical Arabic "ba3id" (far). "Ab3ad" = further.
+7azin|Classical Arabic "hazin" (sad). "7ozn" = sadness.
+ghadhban|Classical Arabic "ghadban" (angry), from "ghadab", wrath.
+loun|Classical Arabic "lawn" (colour). "Lwan" = colours.
+ak7al|Classical Arabic "akhal", "black-eyed", from "kuhl", the black eye powder — kohl in English. Tunisian uses it for black itself; "aswad" is the classical word.
+abyadh|Classical Arabic "abyad" (white). "Bidh" (eggs) are the white things.
+khedma|Classical Arabic "khidma" (service): a job, work. "Khadem" = servant; "khdem" = to work.
+# ---- level 3 ----
+barak allahou fik|"May God bless you": the Maghreb's warm thank-you. "Baraka" is blessing; "mabrouk" is the same root.
+bellehi|"By God!" — "bi-llahi". Said as "please" when asking, and as "really?" when surprised. A Tunisian signature.
+rabbi|"My Lord", from Classical Arabic "rabb", lord, master. Tunisians say rabbi where others say Allah: rabbi m3ak, God be with you.
+hedhouma|"Hedhou" (these) + "-ma": these ones. The plural of hedha and hedhi.
+wast|Classical Arabic "wasat" (middle). "Fil wast" = in the middle; "mtawasset" = average, Mediterranean (the middle sea).
+yemin|Classical Arabic "yamin" (right hand). Also an oath, sworn on the right hand. Yemen is "the land on the right" when facing east.
+ysar|Classical Arabic "yasar" (left). "3al ysar" = on the left.
+fisa3|"Fi" (in) + "sa3a" (hour): "within the hour" = quickly. Tunisian only; Egyptians say bsor3a.
+bechwaya|"Bi" (with) + "chwaya" (a little): slowly, gently. "Bechwaya bechwaya" = step by step.
+7atta|Classical Arabic "hatta" (until, even). "7atta wa7ed" = not even one.
+nos|Classical Arabic "nisf" (half). "Nos w nos" = half and half. Tunisian dropped the f.
+ethletha|"El thalatha", "the third (day)": Tuesday. Days are counted from Sunday in Arabic.
+larb3a|"El arba3a", "the fourth": Wednesday.
+lekhmis|"El khamis", "the fifth": Thursday.
+wled|The plural of weld: children, boys. "Wledi" = my kids.
+bnet|The plural of bent: girls, daughters.
+tbib|Classical Arabic "tabib" (doctor), from "tibb", medicine. The feminine is tbiba.
+tounsi|"Tunisian", from Tounes, the city that gave the country its name — itself from the Berber or Punic settlement older than Carthage.
+senna|Classical Arabic "sinn" (tooth). Also "age". "Snen" = teeth.
+ch3ar|Classical Arabic "sha3r" (hair). "Ch3ara" = one hair.
+9alb|Classical Arabic "qalb" (heart). "9albi" = my darling, my heart. Also "to turn over" as a verb.
+bit el banyou|"Room of the bath": "banyou" is French "bain" or Italian "bagno". A French-Arabic blend for the bathroom.
+7it|Classical Arabic "ha'it" (wall). "7itan" = walls.
+lardh|"El ardh", "the earth": the floor or ground. Ardh is the planet and the land too.
+ghta|From Arabic "ghita'", a cover, from "ghatta", to cover. A blanket, a lid, a cover.
+dhaw|Classical Arabic "daw'" (light). In Tunisian also electricity: "ma fammech dhaw", the power is off.
+thallaja|From "thelj" (snow, ice): the ice-maker, a fridge. A modern Arabic coinage; Moroccans say the same.
+sa7n|Classical Arabic "sahn" (plate, dish). Also the courtyard of a mosque — a flat open thing.
+kes|Classical Arabic "ka's" (cup, glass). "Ka's el 3alam" = the World Cup.
+mo3al9a|Classical Arabic "mil3aqa" (spoon), from "la3iqa", to lick. "Mo3al9a sghira" = a teaspoon.
+sekkina|Classical Arabic "sikkin" (knife). Tunisian gives it a feminine ending.
+lo3ba|Classical Arabic "lu3ba" (game, toy), from l3ab, to play.
+koura|Classical Arabic "kura" (ball, sphere). Also football, the game: "nel3ab koura".
+njoum|Classical Arabic "nujum" (stars), the plural of najm. "Najjem" (can) may be its cousin.
+ardh|Classical Arabic "ard" (earth, land). The planet Earth is "al-ardh".
+chatt|Classical Arabic "shatt" (shore, bank). "Chott el Jerid" is Tunisia's great salt lake — a "shore" of salt.
+hwa|Classical Arabic "hawa'" (air). Also "wind" in Tunisian, and, as "hawa", love or desire — a different word.
+thelj|Classical Arabic "thalj" (snow). In Tunisian ice too; "thallaja" = fridge.
+7ayawan|Classical Arabic "hayawan" (animal), from "hayat", life — a living thing. Also an insult, like "beast".
+b7im|Tunisian for donkey: from Arabic "bahim", a beast of burden. Elsewhere "7mar"; Tunisians kept 7mar for the insult and b7im for the animal.
+ba9ra|Classical Arabic "baqara" (cow). The longest sura of the Quran is "Al-Baqara", The Cow.
+3allouch|Tunisian for sheep: from Berber "alluc". The classical word "kharuf" is understood but not used. A word that marks Tunisia.
+ma3za|Classical Arabic "ma3z" (goats). One goat: ma3za.
+djej|Classical Arabic "dajaj" (chicken, collective): chicken meat. "Djeja" is one hen.
+banan|French "banane", from Wolof via Portuguese. Arabic "mawz" is understood but Tunisians say banan.
+tmar|Classical Arabic "tamr" (dates). Tunisia's Deglet Nour, "the finger of light", is the world's finest date.
+zitoun|Classical Arabic "zaytun" (olives). Spanish "aceituna" comes from it; so does "zit", oil, which gave the Spanish "aceite".
+zit|Classical Arabic "zayt" (oil), originally olive oil. Spanish "aceite" is "az-zayt".
+harissa|From Arabic "harasa", to crush or pound: the pounded chilli paste. Tunisia's national condiment, now a world word.
+rouz|Classical Arabic "ruzz" (rice), from Greek "oryza" — the same source as English "rice".
+batata|From Spanish "patata", from Taíno (Caribbean) "batata", the sweet potato. The New World word came to Tunisia through Spain.
+bnin|Tunisian for "delicious": from Arabic "banin", tasty, or "bann", a flavour. Egyptians say lazeez.
+maryoul|From Italian "maglia" or French "maillot", a knitted top. A t-shirt or jumper.
+serwel|Classical Arabic "sirwal" (trousers), from Persian "shalvar". The same word as Indian "shalwar" and old English "sirwals".
+7ouma|Classical Arabic "hawma", a quarter or district. "Weld el 7ouma" = a local lad.
+jeme3|Classical Arabic "jami3", "the gatherer": the Friday mosque. "Jem3a" (Friday) is the same root. Spanish "aljama" comes from it.
+tayara|Classical Arabic "ta'ira", "the flying one", from "tara", to fly. A modern coinage for the aeroplane.
+3allem|Classical Arabic "3allama" (to teach), from 3ilm, knowledge. "Mou3allem" = teacher.
+be3|Classical Arabic "ba3a" (to sell). "Bay3" = a sale.
+tfakker|Classical Arabic "tafakkara" (to reflect): in Tunisian, to remember. The reflexive of fakker.
+fakker|Classical Arabic "fakkara" (to think). "Fekra" = an idea.
+7as|Classical Arabic "ahassa" (to feel, sense). "7ess" = a feeling; "7asses" = sensitive.
+khaf|Classical Arabic "khafa" (to fear). "Khouf" = fear; "khayef" = afraid.
+tla3|Classical Arabic "tala3a" (to rise, go up). "Tali3" = rising. The sun "tla3" in the morning.
+w9af|Classical Arabic "waqafa" (to stand, stop). "Mow9af" = a bus stop; "wa99af" = to park.
+ta7|Classical Arabic "taha" (to fall, to wander). "Ta7 el 7it" = the wall fell down.
+n9ez|Tunisian "jump": from Arabic "naqaza", to leap. Egyptians say natt.
+3am (verb)|Classical Arabic "3ama" (to swim, float). "3ouma" = swimming. The same letters as 3am, year — different word.
+sa9 (verb)|Classical Arabic "saqa" (to drive animals) is now driving cars. "Sayye9" or "chifour" = driver.
+rkeb|Classical Arabic "rakiba" (to ride, mount). "Rokba" = the knee; "markeb" = a boat.
+mezyen|From Arabic "muzayyan", adorned, decorated — from "zin", beauty. The Maghreb's everyday "beautiful"; Moroccans use it for "good".
+smin|Classical Arabic "samin" (fat), from "samn", clarified butter.
+dh3if|Classical Arabic "da3if" (weak). In Tunisian also thin.
+sri3|Classical Arabic "sari3" (fast). "Sor3a" = speed.
+bati|Classical Arabic "bati'" (slow). "Bati bechwaya" = slowly does it.
+s7i7|Classical Arabic "sahih" (sound, correct). "Sa7a" = health. A hadith graded "sahih" is authentic.
+ghalet|Classical Arabic "ghalat" (a mistake), used as an adjective: wrong. "Ghlat" = to make a mistake.
+mahboul|Classical Arabic "mahbul" (crazy), from "habal". A word Tunisians use with affection: "ya mahboul!"
+dhki|Classical Arabic "dhakiy" (clever). "Dhaka'" = intelligence.
+meskin|Classical Arabic "miskin" (poor, humble), from Akkadian "mushkenu". Italian "meschino" and French "mesquin" come from this Arabic word.
+ghani|Classical Arabic "ghaniy" (rich). "Ghna" = wealth. "Ghanna" (sing) is a different root.
+a7mar|Classical Arabic "ahmar" (red). "7amra" = feminine; the Alhambra is "al-hamra'", the red one.
+azra9|Classical Arabic "azraq" (blue). "Zar9a" = feminine.
+akhdhar|Classical Arabic "akhdar" (green). "Khodhra" = vegetables, the green things.
+asfar|Classical Arabic "asfar" (yellow). "Safra" = feminine; "sfar" = to turn yellow.
+klam|Classical Arabic "kalam" (speech, words). "Kelma" = a word; "tkallem" = to speak.
+loghha|Classical Arabic "lugha" (language). "Loghhat" = languages.
+fransawi|"French", from "Fransa" — with the -awi ending Tunisians add to places: fransawi, englizi, tounsi.
+souel|Classical Arabic "su'al" (question), from "sa'ala", to ask. "Sa9sa" = to ask.
+jweb|Classical Arabic "jawab" (answer). "Jaweb" = to answer.
+7all (solution)|Classical Arabic "hall" (solution), from "halla", to untie. The verb 7all means to open or solve.
+fekra|Classical Arabic "fikra" (idea), from "fakkara", to think.
+7kaya|Classical Arabic "hikaya" (tale), from "haka", to tell. "Chnia el 7kaya?" = what's the story?
+film|English and French "film". A word Tunisian took straight in.
+mousi9a|Classical Arabic "musiqa", from Greek "mousike", the art of the Muses. "Mousi9i" = a musician.
+ghnaya|From "ghanna", to sing: a song. Classical Arabic "ughniya".
+3ers|Classical Arabic "3urs" (wedding). "3ris" = groom; "3roussa" = bride.
+7ayat|Classical Arabic "hayat" (life). "7ayawan" (animal) is a living thing.
+dars|Classical Arabic "dars" (lesson), from "darasa", to study. "Mdrasa" = school.
+9raya|From 9ra (to read, study): studying, schooling. "Fil 9raya" = at school.
+# ---- level 4 ----
+bes7a|"Bi-s-sa7a", "with health": said to someone eating, washing or wearing something new. The reply is "allah ya3tik sa7a".
+sa7a|Classical Arabic "sihha" (health). "Sa7it" = thanks (your health); "3la sa7tek" = cheers.
+mte3na|"Mte3" (of) + "-na" (us): ours.
+mte3hom|"Mte3" (of) + "-hom" (them): theirs.
+wa7dou|"Wa7ed" (one) + "-ou" (him): "his one self" = alone. "Wa7di" = on my own.
+kol youm|"Kol" (every) + "youm" (day): every day. Classical Arabic says the same.
+okhra|The feminine of akher (other): "marra okhra", another time.
+mazel|From "ma zala", "has not ceased": still. "Mazel" with a negative means "not yet". Egyptians say lissa, Moroccans baqi.
+ya3ni|Classical Arabic "ya3ni", "it means": the Arab world's "I mean, you know", said many times a day.
+momken|Classical Arabic "mumkin" (possible). "Momken?" = may I? Egyptians use the same word.
+marra|Classical Arabic "marra" (a time, once). "Marra marra" = now and then; "marrat" = times.
+rbi3|Classical Arabic "rabi3" (spring). Also fresh grass. "Rabi3" is a common name.
+khrif|Classical Arabic "kharif" (autumn). From "kharafa", to pick fruit.
+3omr|Classical Arabic "3umr" (lifetime, age). "9addech 3omrek?" = how old are you?
+3amma|Classical Arabic "3amma", a father's sister. The feminine of 3am (uncle).
+khala|Classical Arabic "khala", a mother's sister. The feminine of khal.
+jar|Classical Arabic "jar" (neighbour). "Jirane" = neighbours.
+sba3|Classical Arabic "isba3" (finger). Plural "sweba3". Also a toe.
+dhahr|Classical Arabic "dhahr" (back). "Dhohr" (noon) is the same root — the back of the day.
+kerch|Classical Arabic "karish" (belly, paunch). Also tripe, as in the dish.
+forchita|From Italian "forchetta" (fork). The Italian kitchen left Tunisian its fork and its kitchen.
+sabon|From Italian "sapone" or French "savon", both from Latin "sapo". Arabic "sabun" is the same word.
+tilivizyoun|French "télévision". Everyday Tunisian keeps French for most modern machines.
+wra9a|Classical Arabic "waraqa" (a leaf, a sheet). "Wra9" = paper or leaves.
+dinar|From Latin "denarius", the Roman silver coin, through Byzantine Greek. The Umayyads struck the first Arab dinar in 696; Tunisia's dates from 1960.
+hdiya|Classical Arabic "hadiya" (gift), from "hada", to guide or to offer.
+jbel|Classical Arabic "jabal" (mountain). Gibraltar is "Jabal Tariq", Tariq's mountain.
+ghaba|Classical Arabic "ghaba" (forest). "Ghabi" (stupid) is from a different root.
+warda|Classical Arabic "warda" (rose, flower), from Aramaic "warda". Persian gave the East its other rose, "gul". "Wardi" = pink.
+7jar|Classical Arabic "hajar" (stone). "7jar" is the collective; "7ajra" one stone. "7ajar al-aswad" = the Black Stone of Mecca.
+taqs|Classical Arabic "taqs" (weather, climate), originally "rite" from Greek "taxis", order.
+jmal|Classical Arabic "jamal" (camel) — the source of English "camel" via Greek and Latin. "Jmil" (beautiful) is a different root.
+arneb|Classical Arabic "arnab" (rabbit, hare).
+jben|Classical Arabic "jubn" (cheese). The same letters as "jubn", cowardice.
+3asir|Classical Arabic "3asir" (juice), from "3asara", to squeeze.
+7ar|Classical Arabic "harr" (hot). For food, spicy; for weather, hot. "7arara" = temperature.
+chab3an|Classical Arabic "shab3an" (sated), from "shabi3a", to be full.
+nwadher|From Arabic "nadhara", to look: "the lookers" = glasses. A Maghreb word; Egyptians say naddara.
+taxi|International "taxi", from French "taximètre". Tunis's yellow taxis are "taxi".
+bisklet|French "bicyclette". The French word with its ending trimmed.
+dhayya3|Classical Arabic "dayya3a" (to lose, waste). "Mdhayya3" = lost.
+tayyeb|Classical Arabic "tayyaba", to make good or to cook. "Tayyeb" also means "good" and "OK" in Egyptian.
+ghsel|Classical Arabic "ghasala" (to wash). "Ghsala" = washing machine; "ghosl" = the ritual wash.
+naddhaf|From "ndhif" (clean): to make clean. Classical Arabic "nadhdhafa".
+lbes|Classical Arabic "labisa" (to wear). "Lbes" = clothes too; "lebes" (fine) is a different word.
+kbar|Classical Arabic "kabura" (to grow big). From kbir, big: to grow up.
+3ach|Classical Arabic "3asha" (to live). "3aychek" and "y3aychek" (thanks) are wishes that you live.
+met|Classical Arabic "mata" (to die). "Mawt" = death; "mayyet" = dead.
+dhrab|Classical Arabic "daraba" (to hit, strike). "Dharba" = a blow; also "to multiply" in maths.
+ksar|Classical Arabic "kasara" (to break). "Maksour" = broken.
+tlob|Classical Arabic "talaba" (to ask for, seek). "Talib" = a student, one who seeks knowledge.
+sa9sa|Tunisian for "ask a question", from Arabic "sa'ala" doubled up. Egyptians say sa'al. A Maghreb form.
+jaweb|Classical Arabic "jawaba" (to answer). "Jweb" = an answer.
+7lem|Classical Arabic "halama" (to dream). "7lem" = a dream too.
+ghanna|Classical Arabic "ghanna" (to sing). "Ghnaya" = a song; "moughanni" = singer.
+chta7|Tunisian for "dance": from Arabic "shataha", to stray or wander — dancing was wandering about. Egyptians say ra9as; ra9s is the noun in Tunisian too.
+khalla|Classical Arabic "khalla" (to leave, let). "Khallini" = let me; "rabbi ykhallik" = may God keep you.
+jarrab|Classical Arabic "jarraba" (to try, test). "Tajriba" = an experiment.
+yest7a9|Classical Arabic "istahaqqa", to deserve or be owed: in Tunisian, to need. "Yest7a9 flous" = he needs money.
+zed|Classical Arabic "zada" (to add, increase). "Zeda" = also; "ziyada" = extra.
+rbe7|Classical Arabic "rabiha" (to gain, win). "Rbe7" = profit.
+khsar|Classical Arabic "khasira" (to lose). "Ya khsara" = what a shame, what a loss.
+ghabi|Classical Arabic "ghabiy" (stupid), from "ghaba", to be hidden — slow to see.
+zawali|Tunisian for "poor": from Arabic "zawal", decline, passing away. Someone whose fortune has passed. A Maghreb word; meskin is the softer one.
+mchghoul|Classical Arabic "mashghul" (occupied, busy), from "shaghala", to occupy. "Choghl" = work.
+7adher|Classical Arabic "hadir" (present, ready). "7adher!" = ready, at your service.
+ghayeb|Classical Arabic "gha'ib" (absent). "Ghab" = to be away.
+m3abbi|From "3abba", to fill or load: filled, full. "3abba el karhba" = fill up the car.
+faregh|Classical Arabic "farigh" (empty). "Farragh" = to empty.
+mfatta7|From "fta7", to open: opened, open. "Mefte7" (key) is the same root.
+msakkar|From "sakkar", to close: closed. "Msakkar bel mefte7" = locked.
+yebes|Classical Arabic "yabis" (dry). "Ybes" = to dry up.
+mballel|From "balla", to wet: wet, soaked. "Mballel bel ma" = soaking wet.
+th9il|Classical Arabic "thaqil" (heavy). "Th9al" = to become heavy.
+khfif|Classical Arabic "khafif" (light). Also "quick, nimble".
+3ali|Classical Arabic "3ali" (high). Also loud: "sout 3ali", a loud voice. "Ali" the name is "the exalted".
+wati|Tunisian for "low": from Arabic "wati'", low, trodden. Also quiet: "sout wati".
+wase3|Classical Arabic "wasi3" (wide, spacious). "Wassa3" = to widen.
+dhaya9|Classical Arabic "dayyiq" (narrow, tight). "Dhi9" = tightness, distress.
+morr|Classical Arabic "murr" (bitter). Myrrh is "murr", the bitter resin.
+7amedh|Classical Arabic "hamid" (sour), from "hamud", acid. "7amedh" = sour; also lemons in Egypt.
+mkhawwef|From "khawwef", to frighten: frightening. "Khouf" = fear.
+dounya|Classical Arabic "dunya", "the lower (world)": this life as against the next. "Ed-dounya behia" = life is good.
+imti7an|Classical Arabic "imtihan" (examination), from "mahana", to test.
+7a9|Classical Arabic "haqq" (truth, right). "3andek el 7a9" = you're right; "Al-Haqq" is a name of God.
+kedhb|Classical Arabic "kidhb" (lying). "Kedhba" = a lie; "kadhdhab" = a liar.
+khir|Classical Arabic "khayr" (good, goodness). "Sba7 el khir" = good morning; "nchallah khir" = let's hope.
+chorr|Classical Arabic "sharr" (evil). "Khir w chorr" = good and evil.
+7oub|Classical Arabic "hubb" (love). "7bibi" = my darling.
+khouf|Classical Arabic "khawf" (fear). "Khaf" = to fear.
+far7|Classical Arabic "farah" (joy). Also a wedding celebration.
+7ozn|Classical Arabic "huzn" (sadness). "7azin" = sad.
+dhe7ka|From dh7ak (to laugh): a laugh. Classical Arabic "dahka".
+sout|Classical Arabic "sawt" (voice, sound). Also a vote.
+ri7a|Classical Arabic "ra'iha" (smell), from "rih", wind — a smell is carried on the wind.
+dhou9|Classical Arabic "dhawq" (taste). Also good taste, style.
+3a9l|Classical Arabic "3aql" (reason, mind), from "3aqala", to tie up — the mind holds things together. "3a9el" = sensible.
+rou7|Classical Arabic "ruh" (spirit, soul), from "rih", wind, breath. "Rou7i" = myself; "rou7!" = go!
+7adh|Classical Arabic "hadhdh" (luck, share). "7adh behi" = good luck.
+zhar|Tunisian for "luck": from Arabic "zahr", a flower or dice (Spanish "azar", chance, and English "hazard" come from it). "3andou zhar" = he's lucky.
+# ---- level 5 ----
+khammem|From Arabic "khammana", to guess or estimate: in Tunisian, to think something over. "Khammem fiha" = think about it. Fakker is the plainer "think".
+3ayyet|Tunisian for "to call out": from Arabic "3ayyata", to shout. "3ayyet li" = call me (on the phone too). Egyptians use the same word for crying!
+7aseb|Classical Arabic "hasaba" (to count, reckon). "7seb" = the bill; "7asb" = according to; "7isab" = an account, maths.
+tfarrej|From Arabic "tafarraja", to watch a show, from "farja", a spectacle. "Tfarrej fil match" = watch the match.
+3awwed|Classical Arabic "3awwada", to repeat or to accustom. "3awed!" = say it again; "3ada" = a habit.
+rma|Classical Arabic "rama" (to throw). "Rma fiz-zebla" = threw it in the bin.
+hezz|Classical Arabic "hazza" (to shake, lift). In Tunisian, to carry or take away: "hezz el chkara" = carry the bag.
+mla|Classical Arabic "mala'a" (to fill). "Mali" = full, in Egypt; Tunisians say m3abbi.
+wsel|Classical Arabic "wasala" (to arrive, reach). "Wselt" = I'm here; "tsel" = to get in touch, reach by phone.
+khtar|Classical Arabic "ikhtara" (to choose). "Mokhtar", the chosen one, is a common name.
+fa9|Classical Arabic "faqa" (to wake, come round). "Fa9t" = I woke up; "fayye9" = wake someone up.
+msek|Classical Arabic "masaka" (to hold, grasp). "Emsek!" = hold it; "mesk" (musk) is a different word.
+sellem|Classical Arabic "sallama" (to greet, hand over), from "salam", peace. "Sellem 3lih" = say hello to him from me.
+nzel|Classical Arabic "nazala" (to descend). "Nzel mel kar" = get off the bus; "manzel" = a house, where you alight.
+dar (verb)|Classical Arabic "dara" (to turn, go round). "Dawra" = a tour; "moudir" = a manager, who runs things round.
+fet|Classical Arabic "fata" (to pass by, elapse). "El 3am elli fet" = last year; "fayet" = past.
+sar|Classical Arabic "sara" (to become): in Tunisian, to happen. "Chnowa sar?" = what happened?
+7fadh|Classical Arabic "hafidha" (to keep, memorise). "Hafidh" = someone who knows the Quran by heart; "rabbi y7afdhek" = God keep you.
+salla7|Classical Arabic "sallaha" (to repair, put right), from "salah", goodness. "Islah" = reform.
+sken|Classical Arabic "sakana" (to dwell, be still). "Sekna" = a flat; "sakin" = a resident, and also "quiet".
+youm|Classical Arabic "yawm" (day). "Elyoum" = today; "youmi" = daily.
+d9i9a|Classical Arabic "daqiqa" (minute), from "daqiq", fine, precise. "D9i9a!" = just a minute.
+rob3|Classical Arabic "rub3" (quarter), from arb3a, four. "Rob3 sa3a" = a quarter of an hour.
+3otla|Classical Arabic "3utla" (holiday, stoppage), from "3attala", to idle. "3otla s3ida" = happy holidays.
+thaman|Classical Arabic "thaman" (price). "9addech thamanou?" = how much is it?
+mektab|Classical Arabic "maktab", "place of writing": an office or desk. From kteb.
+chirka|Classical Arabic "sharika" (company), from "sharaka", to share. "Sharik" = a partner.
+moudir|Classical Arabic "mudir" (director), from dar, to turn, run things. The head of a school or a firm.
+talib|Classical Arabic "talib" (seeker, student), from tlob. The Taliban are "the students".
+tilmidh|Classical Arabic "tilmidh" (pupil), from Aramaic "talmid", a disciple — the same word as the Talmud, "learning".
+9ism|Classical Arabic "qism" (part, division), from 9sem, to divide: a class at school.
+nou9ta|Classical Arabic "nuqta" (dot, point). Marks at school, a point in a game, a full stop.
+9lam|Classical Arabic "qalam" (pen), from Greek "kalamos", a reed. In Tunisian the pencil; the pen is stilou.
+karnet|French "carnet" (notebook). School Tunisian is full of French.
+sabboura|Classical Arabic "sabbura" (blackboard), a word of uncertain origin — perhaps from "sabr", aloe, whose dark slab it resembles. Egyptians say the same; "lawha" is the formal word.
+portable|French "portable" (a mobile phone, "the carryable"). Tunisians took the French name wholesale.
+ordinatour|French "ordinateur" (computer), coined in 1955 from Latin "ordinator", one who puts in order.
+radio|International "radio", from Latin "radius", a ray.
+salon|French "salon" (sitting room), from Italian "salone", a big hall.
+s9af|Classical Arabic "saqf" (ceiling, roof). "S9af" with the vowel moved.
+drouj|From Arabic "daraj", steps, stairs. "Daraja" = a degree, a step; "drouj" = the staircase.
+four|French "four" (oven), from Latin "furnus" — the same source as English "furnace".
+dhra3|Classical Arabic "dhira3" (arm, forearm). Also the old measure, the cubit — an arm's length.
+ktef|Classical Arabic "katif" (shoulder). "Ktef 3la ktef" = shoulder to shoulder.
+ra9ba|Classical Arabic "raqaba" (neck). Also "ra9eb", to watch — you crane your neck.
+rokba|Classical Arabic "rukba" (knee). "Rkeb" (ride) is the same root — you ride on your knees.
+dam|Classical Arabic "dam" (blood). "Khfif ed-dam" = light-blooded, i.e. charming.
+9mijja|From Italian "camicia" (shirt), from Latin "camisia" — which also gave English "chemise".
+kabbout|From French "capote", a hooded coat, from Latin "cappa", cape. Tunisian for an overcoat.
+fista|From Italian "veste" or French "veste" (jacket), from Latin "vestis", clothing.
+rouba|French "robe" (dress). A borrowing of the last century.
+7zam|Classical Arabic "hizam" (belt), from "hazama", to tie up.
+khatem|Classical Arabic "khatam" (seal ring). A ring was a seal; "khatma" = the end, the sealing.
+makrouna|From Italian "maccheroni" (macaroni). Tunisia's pasta word came with the Sicilians.
+chorba|From Persian "shurba", soup, through Turkish "çorba" and Arabic "shurba" — the same root as chrab, to drink.
+salata|From Italian "insalata", salted (vegetables). Salad in every Mediterranean tongue.
+bsal|Classical Arabic "basal" (onion). "Bsala" = one onion.
+thoum|Classical Arabic "thum" (garlic). "Thouma" = one clove.
+felfel|Classical Arabic "fulful" (pepper), from Sanskrit "pippali" — the same source as English "pepper".
+tomatem|From French "tomate", from Spanish "tomate", from Nahuatl (Aztec) "tomatl". A New World word.
+delle3|Tunisian for watermelon: from Arabic "dalla3", to spoil or pamper — a fruit of summer. Egyptians say batteekh; Tunisians keep battikh for the melon.
+bordgan|From "Portugal": the Portuguese brought the sweet orange from China in the 1500s. Greek "portokali" and Turkish "portakal" tell the same story.
+limoun|From Persian "limun" through Arabic "laymun" — the word that gave English "lemon" via Spanish and French.
+3neb|Classical Arabic "3inab" (grapes). "3neba" = one grape.
+zebda|Classical Arabic "zubda" (butter, the best part). "Zebda" = butter and also "the cream of".
+3sel|Classical Arabic "3asal" (honey). "Chahr el 3sel" = honeymoon.
+kaskrout|French "casse-croûte", "break-crust", a snack: the Tunisian sandwich. Only in the Maghreb.
+gazouz|From French "gazeuse" (fizzy). Any fizzy drink: "gazouz" is the Tunisian pop.
+far|Classical Arabic "fa'r" (mouse). "Far" with the glottal stop gone; plural "firan".
+7nech|Classical Arabic "hanash" (snake). Elsewhere "th3ban" or "7ayya".
+nemla|Classical Arabic "namla" (ant). "Nmel" = ants; the sura "An-Naml" tells of Solomon and the ants.
+n7la|Classical Arabic "nahla" (bee). "N7al" = bees; "An-Nahl" is a sura of the Quran.
+sbo3|Classical Arabic "sab3" (lion, beast of prey). Maghreb lion; Egyptians say asad.
+dhib|Classical Arabic "dhi'b" (wolf). A common Tunisian family name too.
+9ird|Classical Arabic "qird" (monkey).
+fil|Classical Arabic "fil" (elephant), from Persian "pil". The sura "Al-Fil" tells of the elephant army at Mecca.
+wed|Classical Arabic "wadi" (valley, riverbed). "Oued" on French maps; English "wadi".
+jzira|Classical Arabic "jazira" (island). Al Jazeera = "the peninsula", Arabia. Jerba is Tunisia's island.
+sa7ra|Classical Arabic "sahra'" (desert). The Sahara is simply "the desert"; Tunisians say "es-sa7ra".
+s7ab|Classical Arabic "sahab" (clouds). "S7aba" = one cloud.
+ri7|Classical Arabic "rih" (wind). "Ri7a" = smell; "rou7" = spirit, breath. All one family.
+bard|Classical Arabic "bard" (cold). "Bared" = cold (adjective); "bard" = the cold itself.
+elli|Classical Arabic "alladhi" (who, which), worn down to "elli" in every dialect. "Er-rajel elli ja" = the man who came.
+kima|"Ki" (like) + "ma" (what): "like what" = as, like. "Kima enti" = like you. Classical Arabic "kama".
+wa9tella|"Wa9t" (time) + "elli" (that): "the time that" = when. A Tunisian joiner.
+3ad|Tunisian "then, so, again": from Arabic "3ada", to return. "3awed 3ad" = do it again then.
+bekri|Classical Arabic "bukra" (early morning, tomorrow). Tunisian "bekri" = early; Egyptian "bokra" = tomorrow — the same word, two meanings.
+akid|Classical Arabic "akid" (certain), from "akkada", to confirm. "Akid!" = sure!
+tab3an|Classical Arabic "tab3an" (naturally), from "tab3", nature. "Of course".
+hakka|"Ha" (here) + "ka" (thus): like this. Classical Arabic "hakadha". "Hakka" and "hakkeka" are this way and that way.
+hakkeka|Hakka (like this) + the far-pointing "-ka": like that. Classical Arabic "hakadhalika".
+ay|Classical Arabic "ayy" (any, which). "Ay 7aja" = anything.
+b3adh|Classical Arabic "ba3d" (some, part). "B3adh en-nes" = some people; "b3adhna" = each other.
+walou|A Maghreb word for "nothing": from Arabic "wa law", "even if" — "not even (one)". Algerians and Moroccans say it too.
+kthir|Classical Arabic "kathir" (many, much). Tunisians say barcha more often; "akther" = more.
+9lil|Classical Arabic "qalil" (little, few). "Chwaya" is the everyday word; "a9all" = less.
+akther|Classical Arabic "akthar" (more), the comparative of kthir. "3al akther" = at most.
+a9all|Classical Arabic "aqall" (less), the comparative of 9lil. "3al a9all" = at least.
+jmil|Classical Arabic "jamil" (beautiful). "Jamal" = beauty. The formal word; mezyen is everyday.
+9bi7|Classical Arabic "qabih" (ugly). Khayeb is the everyday word.
+# ---- level 6 ----
+kreh|Classical Arabic "kariha" (to hate). "Makrouh" = disliked, the opposite of "ma7boub".
+9arrar|Classical Arabic "qarrara" (to decide). "9arar" = a decision; "9arr" = settled.
+tbassem|Classical Arabic "tabassama" (to smile). "Ibtisama" = a smile.
+hrab|Classical Arabic "haraba" (to flee). "Harab" = running away; also "to smuggle".
+habbat|Classical Arabic "habbata" (to bring down), from "habata", to descend. "Habbat ech-chanta" = put the bag down.
+3adda|Classical Arabic "3adda" (to pass, count): in Tunisian, to pass by, cross, or spend time. "3addina nhar behi" = we had a good day.
+7arrek|Classical Arabic "harraka" (to move something). "7araka" = movement; "mt7arrek" = moving.
+chamm|Classical Arabic "shamma" (to smell). "Chamm el hwa" = take the air.
+lmes|Classical Arabic "lamasa" (to touch). "Lams" = touch.
+7ra9|Classical Arabic "haraqa" (to burn). "7ari9" = a fire; "7arga" = the burning, the slang for crossing illegally to Europe.
+9alla|Classical Arabic "qala" (to fry). "Ma9li" = fried.
+sabb|Classical Arabic "sabba" (to pour). "Sabb ech-chta" = it poured with rain.
+9addem|Classical Arabic "qaddama" (to present, put in front), from 9oddem. "Mo9addima" = an introduction.
+sallef|Classical Arabic "sallafa" (to lend). "Salaf" = a loan; also the ancestors, "those who went before".
+khalles|Classical Arabic "khallasa" (to settle, free). "Khlas!" = done, finished; "khalles" = to pay up.
+ghlat|Classical Arabic "ghalita" (to err). "Ghalta" = a mistake; "ghalet" = wrong.
+nja7|Classical Arabic "najaha" (to succeed). "Naja7" = success; "naje7" = passed.
+rsem|Classical Arabic "rasama" (to draw, mark). "Rasm" = a drawing; "rasmi" = official (drawn up).
+sawwar|Classical Arabic "sawwara" (to shape, picture). "Soura" = a picture; "taswira" = a photo.
+9la9|Classical Arabic "qaliqa" (to be anxious). In Tunisian, to get annoyed. "9al9an" = fed up.
+thenya|From "theni" (second): a second of time, the second division of the minute.
+sbou3|Classical Arabic "usbu3" (week), from sab3a, seven. Jem3a (Friday) also means week in Tunisian.
+9ayla|Classical Arabic "qaylula", the midday nap. Tunisian "9ayla" is the heat of noon and the siesta both.
+millim|From French "millime", a thousandth: the thousandth of a dinar since 1960. The Spanish "milésima".
+7seb|From 7aseb (to count): the bill, the reckoning. "El 7seb" = the bill, please.
+ma3mal|Classical Arabic "ma3mal", "place of work": a factory, a lab. From 3mal.
+3amel|Classical Arabic "3amil" (worker, doer). From 3mal, to do.
+mhandes|Classical Arabic "muhandis" (engineer), from "handasa", geometry — from Persian "andaza", measure.
+bouliss|French "police". The Tunisian police are "el bouliss"; a single policeman too.
+3askri|Classical Arabic "3askari" (soldier), from "3askar", army — from Persian "lashkar".
+nejjar|Classical Arabic "najjar" (carpenter). Also a family name.
+khabbaz|Classical Arabic "khabbaz" (baker), from khobz. The -az ending makes a trade.
+jazzar|Classical Arabic "jazzar" (butcher), from "jazara", to slaughter. The Algerian footballer Djezzar carries it.
+7alle9|From Arabic "halaqa", to shave: the barber. "7ala9a" = a shave or haircut.
+chifour|French "chauffeur", originally "the stoker" of a steam engine.
+fella7|Classical Arabic "fallah" (peasant, farmer), from "falaha", to till. English "fellah".
+mmarrdha|From "mridh" (ill): the one who tends the sick. Classical Arabic "mumarrida".
+mou7ami|Classical Arabic "muhami" (lawyer), from "hama", to protect.
+fannan|Classical Arabic "fannan" (artist), from fan, art.
+la3eb|Classical Arabic "la3ib" (player), from l3ab.
+mat7af|Classical Arabic "mathaf" (museum), from "tuhfa", a treasure: the house of treasures.
+sinema|French "cinéma", from Greek "kinema", movement.
+stad|French "stade" (stadium), from Greek "stadion", a running track.
+maktba|Classical Arabic "maktaba", "place of books": a library or a bookshop. From kteb.
+jemi3a|Classical Arabic "jami3a" (university), from "jama3a", to gather. Al-Zaytouna in Tunis is one of the world's oldest.
+outel|French "hôtel". The h is silent in French, so Tunisians say "outel".
+bosta|From Italian "posta" (post). The Tunisian post office is "el bosta".
+twalet|French "toilettes". Tunisian borrowed the French plural as one word.
+garaj|French "garage". Also any workshop for cars.
+ma7atta|Classical Arabic "mahatta" (station), from 7at, to set down.
+mtar|Classical Arabic "matar" (airport), "place of flying", from "tara", to fly.
+mina|Classical Arabic "mina'" (port), from Greek "limen" (harbour) through Aramaic. "Marina" sounds alike but is a cousin by sound only.
+metro|French "métro", short for "chemin de fer métropolitain". Tunis's light rail is "el metro".
+motor|From French "moto" or Italian "motore": a motorbike. "3la motor" = on a bike.
+babour|From Italian "vapore", a steamship: any ship. "Babour" carries the memory of steam.
+flouka|From Italian "feluca", a small boat, which may come from Arabic "fulk" — a word that went round the Mediterranean and came home.
+brik|The Tunisian fried pastry, from Turkish "börek" — the Ottoman word for a filled pastry. The Tunisian version has an egg inside.
+lablabi|The chickpea soup; the name is probably from Turkish "leblebi", roasted chickpeas. A Tunis breakfast.
+sfennarya|Tunisian for carrot; from Greek "staphylinos" through Arabic "isfanariya". Egyptians say gazar, Moroccans khizzou.
+khass|Classical Arabic "khass" (lettuce). "Khassa" = one lettuce.
+battikh|Classical Arabic "bittikh" (melon). In Egypt it means watermelon; in Tunisia the yellow melon.
+frawla|From Italian "fragola" (strawberry). Egyptians say the same.
+louz|Classical Arabic "lawz" (almonds). "Louza" = one almond.
+pizza|Italian "pizza", unchanged. Tunisia has had pizza since the Italians came.
+sder|Classical Arabic "sadr" (chest). Also the front or the top seat.
+jeld|Classical Arabic "jild" (skin, leather). "Jelda" = a hide.
+3dham|Classical Arabic "3adhm" (bone). "3adhma" = one bone.
+jebba|The Tunisian men's robe, from Arabic "jubba" — the word that gave Italian "giubba" and the English "jubbah" and perhaps "jumper".
+chechia|The red felt hat, from Arabic "shashiya", from "Shash", a town in Central Asia whose cloth was famous. The Tunis chechia-makers' souk is 400 years old.
+kaskita|French "casquette" (cap). The flat cap of the French came with its name.
+klasset|French "chaussettes" (socks). Tunisian turned the "ch" into "k".
+ghsala|From ghsel (to wash): the washer. A modern Tunisian word for the washing machine.
+namousa|Classical Arabic "namusa" (mosquito). "Namousiya" = a mosquito net, and so a bed in Tunisian.
+dhebbana|Classical Arabic "dhubaba" (fly). "Dhebben" = flies.
+farfattou|From Italian "farfalla" (butterfly), with a Tunisian ending. Moroccans say farfatta too.
+b7ira|Classical Arabic "buhayra", the diminutive of b7ar: "little sea" = lake. Lake Tunis is "el b7ira".
+dhbab|Classical Arabic "dabab" (fog, mist).
+bar9|Classical Arabic "barq" (lightning). "Barqiya" = a telegram, the lightning message.
+ra3d|Classical Arabic "ra3d" (thunder). The sura "Ar-Ra3d" is named for it.
+3ris|Classical Arabic "3aris" (bridegroom), from 3ers, wedding.
+3roussa|Classical Arabic "3arus" (bride). Also a doll in the Maghreb — a dressed-up figure.
+nsib|Classical Arabic "nasib" (relation by marriage). "Nsibi" = my father-in-law or brother-in-law.
+salem|Classical Arabic "salam" (peace). "Es-salamu 3alaykum" = peace be upon you. Salem is also a name.
+7arb|Classical Arabic "harb" (war). "Mi7rab" (the prayer niche) is, oddly, the same root — a place of struggle.
+7oriya|Classical Arabic "hurriya" (freedom), from 7orr, free. The slogan of the 2011 revolution.
+9anoun|Classical Arabic "qanun" (law), from Greek "kanon", a rule — the same as English "canon".
+7koma|Classical Arabic "hukuma" (government), from "hakama", to judge, rule. "7akem" = a ruler.
+rais|Classical Arabic "ra'is" (head, chief), from ras, head. The president; also the captain of a boat (the Mediterranean "reis").
+cha3b|Classical Arabic "sha3b" (people, nation). "Ech-cha3b yourid" = the people want — the chant of 2011.
+3alam|Classical Arabic "3alam" (world), from "3alima", to know? Related to 3ilm. "Ka's el 3alam" = the World Cup.
+tarikh|Classical Arabic "tarikh" (date, history), from "arrakha", to date. Both a date on a letter and history itself.
+3ilm|Classical Arabic "3ilm" (knowledge, science). "3alim" = a scholar; "3allem" = to teach.
+fan|Classical Arabic "fann" (art, craft). "Founoun" = the arts; "fannan" = an artist.
+khabar|Classical Arabic "khabar" (news, report). "Akhbar" = the news; "ma 3andich khbar" = I have no idea.
+jarida|Classical Arabic "jarida" (newspaper), originally a palm leaf stripped for writing on.
+mhemm|Classical Arabic "muhimm" (important), from "hamma", to concern. "Ma yhemmech" = it doesn't matter.
+gharib|Classical Arabic "gharib" (strange, stranger), from "gharaba", to go west, far away. "Gharb" = the west; the Maghreb is "the far west".
+3adi|Classical Arabic "3adi" (ordinary), from "3ada", habit. "3adi!" = no big deal.
+khass (adj)|Classical Arabic "khass" (special, private). "Khass bik" = your own; "khassa" = specially.
+7orr|Classical Arabic "hurr" (free, noble). "7oriya" = freedom.
+# ---- level 7 ----
+far7 (verb)|Classical Arabic "fariha" (to rejoice). "Far7" = joy; "far7an" = happy.
+7zen|Classical Arabic "hazina" (to be sad). "7ozn" = sadness; "7azin" = sad.
+t3ajjeb|Classical Arabic "ta3ajjaba" (to marvel). "3ajib" = amazing; "3ajeb" = a wonder.
+na9as|Classical Arabic "naqasa" (to decrease, lack). "Na9es" = missing, short of.
+baddel|Classical Arabic "baddala" (to change, exchange). "Badal" = instead; "tabdil" = a change.
+tbaddel|The reflexive of baddel: to change by itself, be changed. "Tbaddel el jaw" = the weather changed.
+7ama|Classical Arabic "hama" (to protect). "7imaya" = protection; "mou7ami" = lawyer.
+knes|Classical Arabic "kanasa" (to sweep). "Meknsa" = a broom; "kanis" is Hebrew for a synagogue, from the same Semitic root — a gathering.
+msa7|Classical Arabic "masaha" (to wipe, survey). "Masih", the Messiah, is "the anointed", wiped with oil — the same root.
+rattab|Classical Arabic "rattaba" (to arrange), from "ratib", orderly. "Tartib" = order; "ratb" = a salary.
+9abel|Classical Arabic "qabala" (to meet, face). "Mo9abala" = an interview or a match; "9bal" = before.
+zar|Classical Arabic "zara" (to visit). "Ziyara" = a visit; "zawiya" = a saint's shrine you visit.
+3zem|Classical Arabic "3azama" (to invite, resolve). "3azouma" = a dinner invitation.
+safer|Classical Arabic "safara" (to travel). "Safra" = a trip; "safir" = an ambassador; "mosafer" = a traveller.
+bna|Classical Arabic "bana" (to build). "Bina" = a building; "bennay" = a builder.
+fsed|Classical Arabic "fasada" (to go bad, be corrupt). "Fased" = rotten or corrupt — both.
+7bes|Classical Arabic "habasa" (to confine). "7abs" = prison; "7bes!" = stop!
+lamm|Classical Arabic "lamma" (to gather). "Lamma" = a gathering, a get-together.
+farra9|Classical Arabic "farraqa" (to separate, distribute). "Fer9" = a difference; "fari9" = a team, a set-apart group.
+9sem|Classical Arabic "qasama" (to divide). "9ism" = a class; "9isma" = a share, fate.
+7dach|"Wa7ed" (one) + "3ach" (ten) squashed: eleven. Classical Arabic "ahada 3ashar".
+thnach|"Thnin" (two) + "3ach": twelve. Classical Arabic "ithna 3ashar".
+thletach|"Thletha" (three) + "3ach": thirteen.
+arb3tach|"Arb3a" (four) + "t3ach": fourteen.
+khamstach|"Khamsa" (five) + "t3ach": fifteen.
+settach|"Setta" (six) + "3ach": sixteen.
+sba3tach|"Sab3a" (seven) + "t3ach": seventeen.
+thmontach|"Thmenya" (eight) + "t3ach": eighteen.
+tsa3tach|"Tes3a" (nine) + "t3ach": nineteen.
+thlethin|Classical Arabic "thalathin" (thirty): three with the "-in" of the tens.
+arb3in|Classical Arabic "arba3in" (forty). "Arb3in" is also the fortieth day after a death, a day of mourning.
+khamsin|Classical Arabic "khamsin" (fifty). The hot "khamsin" wind of Egypt blows for fifty days.
+settin|Classical Arabic "sittin" (sixty).
+sab3in|Classical Arabic "sab3in" (seventy).
+thmanin|Classical Arabic "thamanin" (eighty).
+tes3in|Classical Arabic "tis3in" (ninety).
+melyoun|French "million", from Italian "milione", a big thousand.
+theni|Classical Arabic "thani" (second), from thnin, two. Also "other": "marra thenya" = another time.
+theleth|Classical Arabic "thalith" (third), from thletha.
+wardi|From warda (rose): rose-coloured, pink. Classical Arabic "wardi".
+bortou9ali|From bordgan (orange, the fruit): orange, the colour. Classical Arabic "burtuqali".
+ramadi|From Arabic "ramad" (ash): ash-coloured, grey.
+bonni|From Arabic "bunn" (coffee beans): coffee-coloured, brown. "Bunn" is the Ethiopian "buna", the bean the drink was first made from.
+banafsji|From Arabic "banafsaj" (violet, the flower), from Persian "banafsha": violet, purple.
+dhahbi|From Arabic "dhahab" (gold): golden.
+fedhdhi|From Arabic "fidhdha" (silver): silver-coloured.
+fate7|Classical Arabic "fatih" (opening, light), from fta7, to open: a light shade.
+ghame9|Classical Arabic "ghamiq" (deep, dark). A dark shade.
+mobtadi|Classical Arabic "mubtadi'" (beginner), from bda, to begin.
+7afla|Classical Arabic "hafla" (party, ceremony), from "hafala", to assemble.
+mousi9i|From mousi9a: a musician. Classical Arabic "musiqi".
+moughanni|Classical Arabic "mughanni" (singer), from ghanna.
+kateb|Classical Arabic "katib" (writer, clerk), from kteb.
+mmathel|Classical Arabic "mumaththil" (actor, representative), from "maththala", to represent.
+rasm|Classical Arabic "rasm" (drawing). "Rasmi" = official.
+taswira|From sawwar (to picture): a photo. Classical Arabic "taswira".
+la7n|Classical Arabic "lahn" (melody). "Mola7en" = a composer.
+ra9s|Classical Arabic "raqs" (dance). The noun; the Tunisian verb is chta7.
+match|English "match" through French. Tunisians say "el match".
+fari9|Classical Arabic "fariq" (team, party), from farra9, to set apart.
+hadaf|Classical Arabic "hadaf" (target, goal). Both a football goal and an aim.
+batal|Classical Arabic "batal" (hero, champion). "Boutoula" = a championship.
+jayza|Classical Arabic "ja'iza" (prize), from "jaza", to reward.
+jary|From jra (to run): running. Classical Arabic "jary".
+3ouma|From 3am (to swim): swimming. Classical Arabic "3awm".
+safra|From safer (to travel): a trip. "Safra s3ida" = bon voyage.
+re7la|Classical Arabic "rihla" (journey). Ibn Battuta's travel book is the "Rihla".
+chanta|From Turkish "çanta" (bag). Egyptians say shanta too — an Ottoman word.
+paspor|French "passeport", "pass the port": the paper that lets you through the gate.
+tadhkra|Classical Arabic "tadhkira" (ticket, reminder), from "dhakara", to remember.
+kharita|Classical Arabic "kharita" (map), from Greek "chartes", a sheet — the same as English "chart".
+3ounwan|Classical Arabic "3unwan" (address, title).
+nimrou|French "numéro" (number). Tunisians use it for phone and house numbers.
+7ajz|Classical Arabic "hajz" (reservation), from "hajaza", to hold back.
+sa7el|Classical Arabic "sahil" (coast). The Tunisian Sahel is the east coast; the African Sahel is the "shore" of the Sahara.
+3asima|Classical Arabic "3asima" (capital), from "3asama", to protect — the protected city.
+9arya|Classical Arabic "qarya" (village). "El 9arya" is also a district of Tunis.
+rif|Classical Arabic "rif" (countryside). The Rif mountains of Morocco carry the name.
+markez|Classical Arabic "markaz" (centre), from "rakaza", to plant firmly.
+zan9a|A Maghreb word for alley, from Arabic "zanqa", a narrow lane. In Morocco any street.
+jisr|Classical Arabic "jisr" (bridge).
+dhaw a7mar|"Red light": dhaw (light) + a7mar (red). The traffic light, named by its most important colour.
+sa7a (noun)|Classical Arabic "saha" (open space, square). Also the same letters as sa7a, health — a different root.
+7adi9a|Classical Arabic "hadiqa" (garden, park). Jnina is the everyday word.
+mosafer|Classical Arabic "musafir" (traveller), from safer.
+siye7|Classical Arabic "sa'ih" (tourist, wanderer), from "saha", to roam. "Siya7a" = tourism.
+ajnabi|Classical Arabic "ajnabi" (foreigner), from "janb", side — one from the side, outside.
+visa|French and international "visa", Latin "(charta) visa", a paper that has been seen.
+7odoud|Classical Arabic "hudud" (limits, borders), plural of "hadd". Also the legal "limits".
+khat|Classical Arabic "khatt" (line). Also handwriting, calligraphy, and a bus route.
+tari9|Classical Arabic "tariq" (road, way). Tariq the name means "the one who knocks" — a different sense.
+mawjoud|Classical Arabic "mawjud" (existing, present), from "wajada", to find. "Mawjoud!" = present, here.
+fadhi|Classical Arabic "fadi" (empty, free). "Enti fadhi?" = are you free?
+mosta3jel|Classical Arabic "musta3jil" (in a hurry), from "3ajila", to hurry. "3ajala" = haste.
+a7san|Classical Arabic "ahsan" (better), from "hasan", good. "A7san 7aja" = the best thing.
+akbar|Classical Arabic "akbar" (bigger), from kbir. "Allahu akbar" = God is greatest.
+asghar|Classical Arabic "asghar" (smaller), from sghir.
+a7la|From 7lou (sweet): sweeter, nicer. Classical Arabic "ahla".
+arkhas|From rkhis (cheap): cheaper. Classical Arabic "arkhas".
+aghla|From ghali (expensive): dearer. Classical Arabic "aghla".
+# ---- level 8 ----
+ghatta|Classical Arabic "ghatta" (to cover). "Ghta" = a cover, blanket; "mghatti" = covered.
+khabba|Classical Arabic "khabba'a" (to hide). "Mkhabbi" = hidden; "khabya" = a storage jar.
+ghra9|Classical Arabic "ghariqa" (to drown, sink). "Ghar9an" = drowning, swamped with work.
+dhab|Classical Arabic "dhaba" (to melt). "Dhayeb" = melted.
+jmed|Classical Arabic "jamada" (to freeze, solidify). "Jamed" = frozen, stiff; "jmed fi blastou" = he froze on the spot.
+tla9a|From l9a (to find): to meet one another. Classical Arabic "talaqa".
+kharrej|The causative of khraj (go out): to make go out, take out. "Kharrej el flous" = get the money out.
+dakhkhal|The causative of dkhal (go in): to put in. The doubled middle letter turns "go in" into "make go in".
+wa99af|The causative of w9af (stop): to stop something, to park. "Wa99af el karhba" = park the car.
+chaghghal|From Arabic "shaghghala", to set working: to switch on. "Choghl" = work; "mchghoul" = busy.
+taffa|Classical Arabic "atfa'a" (to put out a fire). Now the light switch too: "taffa edh-dhaw".
+rakkeb|The causative of rkeb (ride): to make something ride on — fit, install. "Rakkeb el 3ajla" = put the wheel on.
+3ayyech|The causative of 3ach (live): to keep alive, feed. "Y3aychek" (thanks) is this verb as a wish.
+rabba|Classical Arabic "rabba" (to raise, bring up). "Tarbiya" = upbringing, education; "rabb" = lord.
+tzawwej|Classical Arabic "tazawwaja" (to marry), from "zawj", a pair — the source of zouz, two.
+7lem (noun)|Classical Arabic "hulm" (dream). The verb 7lem shares the letters.
+ra2y|Classical Arabic "ra'y" (opinion), from "ra'a", to see — what you see of a matter. "Chnowa ra2yek?" = what do you think?
+7ess (noun)|Classical Arabic "hiss" (feeling, sense). "7as" = to feel; "7ass" = sensitive.
+sabr|Classical Arabic "sabr" (patience). "Sbor!" = be patient; the aloe plant is also "sabr", bitter and enduring.
+chaja3a|Classical Arabic "shaja3a" (courage). "Chouja3" = brave.
+amal|Classical Arabic "amal" (hope). A common girl's name.
+khayal|Classical Arabic "khayal" (imagination, shadow). "Khayal edh-dhil" = shadow theatre.
+dhakira|Classical Arabic "dhakira" (memory), from "dhakara", to remember. "Tdhakkar" = to recall.
+3ada|Classical Arabic "3ada" (habit, custom). "3adi" = normal; "3awwed" = to repeat.
+sir|Classical Arabic "sirr" (secret). "Sirri" = secret, adjective.
+kedhba|From kedhb (lying): one lie. Classical Arabic "kidhba".
+7a9i9a|Classical Arabic "haqiqa" (truth, reality), from 7a9. "Bel 7a9i9a" = in truth.
+ghalta|Classical Arabic "ghalta" (mistake), from ghlat.
+ma3na|Classical Arabic "ma3na" (meaning). "Ya3ni" = it means.
+mithal|Classical Arabic "mithal" (example, likeness). "Mathalan" = for example; "mmathel" = an actor.
+9a3ida|Classical Arabic "qa3ida" (base, rule), from 9a3ad, to sit: what things rest on. Al-Qaeda means "the base".
+tarjama|Classical Arabic "tarjama" (translation), from Aramaic "targum" — the same word as the Jewish Targum, the Aramaic Bible.
+7arf|Classical Arabic "harf" (letter, edge). "7rouf" = the alphabet.
+jomla|Classical Arabic "jumla" (sentence, sum). "Bil jomla" = wholesale, altogether.
+safha|Classical Arabic "safha" (page, surface). "Sa7n" (plate) is a cousin.
+9isma|Classical Arabic "qisma" (share, portion), from 9sem — the source of English "kismet", fate.
+bidaya|Classical Arabic "bidaya" (beginning), from bda.
+nihaya|Classical Arabic "nihaya" (end). "Fi n-nihaya" = in the end.
+mostaqbal|Classical Arabic "mustaqbal" (future), "what is faced", from 9abel.
+madhi|Classical Arabic "madi" (past), from "mada", to pass. Also the past tense in grammar.
+7adher (noun)|Classical Arabic "hadir" (present time), the same word as 7adher, present/ready.
+zman|Classical Arabic "zaman" (time, era). "Fi zman" = once upon a time; "zman" = the old days.
+fajr|Classical Arabic "fajr" (dawn). The first prayer of the day.
+ghroub|Classical Arabic "ghurub" (sunset), from "gharaba", to set in the west. The Maghreb is where the sun sets.
+lila|Classical Arabic "layla" (a night). "Lilt el bere7" = last night; Layla the name is "night-dark".
+sana|Classical Arabic "sana" (year). The formal word; 3am is everyday.
+9arn|Classical Arabic "qarn" (century, horn). "El 9arn el 3echrin" = the twentieth century.
+mowsem|Classical Arabic "mawsim" (season, fair) — the source of English "monsoon", via Portuguese, the season of winds.
+7arara|Classical Arabic "harara" (heat), from 7ar, hot. "Darajat el 7arara" = the temperature.
+rotouba|Classical Arabic "rutuba" (humidity), from "ratb", moist.
+3asifa|Classical Arabic "3asifa" (storm), from "3asafa", to blow hard.
+zelzel|Classical Arabic "zilzal" (earthquake), from "zalzala", to shake. "Az-Zalzala" is a sura of the Quran.
+7ari9|Classical Arabic "hariq" (fire, blaze), from 7ra9, to burn.
+dokhkhan|Classical Arabic "dukhan" (smoke). "Dakhkhan" = to smoke; "Ad-Dukhan" is a sura.
+ghbar|Classical Arabic "ghubar" (dust).
+tin|Classical Arabic "tin" (clay, mud). Adam was made from tin, the Quran says.
+rmel|Classical Arabic "raml" (sand). "Rmel" with the vowel moved; "ramli" = sandy.
+3ochb|Classical Arabic "3ushb" (grass, herbs). "A3cheb" = herbs.
+jedhr|Classical Arabic "jidhr" (root). Also the root of a word or a number.
+nakhla|Classical Arabic "nakhla" (palm tree). "Nkhal" = palms; Tozeur has a million of them.
+zitouna|From zitoun (olives): one olive tree. Ez-Zitouna, the great mosque of Tunis, was built in 698 beside an olive tree.
+7a9l|Classical Arabic "haql" (field).
+3ayn (noun)|Classical Arabic "3ayn" means both eye and spring: a spring is the earth's eye. Ain Draham, "spring of silver".
+bir|Classical Arabic "bi'r" (well). Beersheba is "seven wells" in Hebrew, the same word.
+chlel|Classical Arabic "shallal" (waterfall), from "shalla", to pour down.
+sakhra|Classical Arabic "sakhra" (rock). The Dome of the Rock is "Qubbat as-Sakhra".
+ghar|Classical Arabic "ghar" (cave). The Prophet's cave of Hira is "ghar Hira".
+koudya|Classical Arabic "kudya" (hillock). A Maghreb word; Tunis has many "koudyat".
+sahl|Classical Arabic "sahl" (plain, flat land) — the same word as sehel, easy: flat ground is easy going.
+dhal|Classical Arabic "dhill" (shade, shadow). "Fi dhal" = in the shade.
+9aws 9za7|"Qaws Quzah", the bow of Quzah — Quzah was a pre-Islamic weather god of Arabia. The rainbow is his bow.
+fadha|Classical Arabic "fada'" (space, open expanse). Outer space is "el fadha".
+kawkab|Classical Arabic "kawkab" (planet, star). Kawkab was also a girl's name — "little star".
+najm|Classical Arabic "najm" (star). "An-Najm" is a sura; a "najm" is also a celebrity.
+wled (verb)|Classical Arabic "walada" (to give birth). "Weld" = son; "mawloud" = a newborn; "milad" = birth.
+mardh|Classical Arabic "marad" (illness). "Mridh" = ill.
+dwa|Classical Arabic "dawa'" (medicine). "Dawa" = to treat; "dwa" with the glottal stop gone.
+farmasi|French "pharmacie", from Greek "pharmakon", a drug.
+wja3|Classical Arabic "waja3" (pain). "Wja3 ras" = headache; "ya waj3i" = oh my aching.
+7omma|Classical Arabic "humma" (fever), from "hamma", to heat.
+zokem|Classical Arabic "zukam" (a cold). "Mzakkem" = having a cold.
+jar7|Classical Arabic "jarh" (wound). "Majrou7" = wounded.
+dmou3|Classical Arabic "dumu3" (tears), plural of "dam3a".
+3ara9|Classical Arabic "3araq" (sweat). Also the aniseed spirit "arak", and Iraq — "the well-watered".
+ra7a|Classical Arabic "raha" (rest, ease). "Rawwa7" = go home; "mri7" = comfortable.
+noum|Classical Arabic "nawm" (sleep). "Bit en-noum" = bedroom; "nayem" = asleep.
+jou3|Classical Arabic "ju3" (hunger). "Ji3an" = hungry.
+3atch|Classical Arabic "3atash" (thirst). "3atchan" = thirsty.
+mri7|Classical Arabic "murih" (restful), from ra7a: comfortable. "Mrta7" = at ease.
+9al9an|From 9la9: anxious, fed up. "Ma t9la9ch" = don't worry.
+khayef|Classical Arabic "kha'if" (afraid), from khaf.
+mabsout|Classical Arabic "mabsut" (spread out, at ease): happy, pleased. From "basata", to spread — "bsat" is a carpet.
+mestanni|From stanna (wait): waiting. "Mestanni fik" = waiting for you.
+ne3es|Classical Arabic "na3is" (drowsy), from "nu3as", drowsiness.
+mdhayya3|From dhayya3 (lose): lost. "Ena mdhayya3" = I'm lost.
+wa7id|Classical Arabic "wahid" (one, alone). "Wa7idi" = my only one.
+sa7i|From Arabic "saha", to wake, clear up: awake, alert. "Sa7i!" = wake up!
+chfa|Classical Arabic "shafa" (lip). "Chfayef" = lips.
+lsan|Classical Arabic "lisan" (tongue, language). "Lsan 3arbi" = the Arabic tongue.
+# ---- level 9 ----
+7adher (verb)|From 7adher (present): to be present at, attend. Classical Arabic "hadara".
+ghab|Classical Arabic "ghaba" (to be absent, set). "Ghayeb" = absent; "ghroub" = sunset.
+wa3ad|Classical Arabic "wa3ada" (to promise). "Wa3d" = a promise; "mi3ad" = an appointment.
+t3ab|Classical Arabic "ta3iba" (to tire). "Ta3ban" = tired.
+9tel|Classical Arabic "qatala" (to kill). "9atel" = a killer; "9taltni bedh-dhe7k" = you're killing me laughing.
+3adh|Classical Arabic "3adda" (to bite). "3adhdha" = a bite.
+9ta3|Classical Arabic "qata3a" (to cut). "9ta3 eth-thniya" = cross the road; "m9atta3" = cut up.
+9fel|Classical Arabic "qafala" (to lock). "9fel" = a padlock; "mo9fel" = locked.
+khayyet|Classical Arabic "khayyata" (to sew), from "khayt", thread. "Khayyat" = a tailor.
+khbez|From khobz (bread): to bake. Classical Arabic "khabaza".
+3asar|Classical Arabic "3asara" (to squeeze). "3asir" = juice; "3asr" = the afternoon, and an age.
+jma3|Classical Arabic "jama3a" (to gather). "Jem3a" = Friday, the gathering; "jeme3" = mosque.
+hdem|Classical Arabic "hadama" (to demolish). "Hdim" = a ruin.
+nadhdhem|Classical Arabic "nadhdhama" (to organise). "Nidham" = order, system.
+sharek|Classical Arabic "sharaka" (to share, take part). "Chirka" = a company; "sharik" = a partner.
+tsel|Classical Arabic "ittasala" (to get in touch, connect), from wsel. "Tsel bi" = phone someone.
+sta3mel|Classical Arabic "ista3mala" (to use), from 3mal. "Mosta3mel" = used, second-hand.
+7adhdhar|Classical Arabic "haddhara" (to prepare). "7adher" = ready.
+zayyen|Classical Arabic "zayyana" (to adorn). "Zin" = beauty; "mezyen" = beautiful.
+ghayyar|Classical Arabic "ghayyara" (to change). "Taghyir" = change; "ghir" = other than.
+3abba|Classical Arabic "3abba'a" (to fill, load). "M3abbi" = full.
+farragh|From faregh (empty): to empty. Classical Arabic "farragha".
+rakkez|Classical Arabic "rakkaza" (to concentrate, fix). "Markez" = centre.
+9ayyem|From 9am (stand): to stand something up, lift, put away. "9ayyem 7wayjek" = put your things away.
+3awwel|Classical Arabic "3awwala" (to rely on). "3awwel 3lih" = count on him.
+t7ammel|Classical Arabic "tahammala" (to bear, put up with), from "hamala", to carry.
+t3awed|Classical Arabic "ta3awwada" (to get used to), from 3ada, habit.
+3adel|Classical Arabic "3adala" (to be fair, straighten). "3adl" = justice; "3adil" = fair.
+mashi|Classical Arabic "mashi" (walking), from mcha. "Mashi" also means "fine, OK" in Egypt and Morocco.
+lhih|"L" (to) + "hih" (there): that way, over there. A Tunisian pointer.
+9rib (adv)|From 9rib (near): soon. "9rib nemchi" = I'm leaving soon.
+bessif|"Bi" (with) + "sif" (sword): by the sword, by force. "Bessif 3lik" = you have no choice.
+bel3ani|"Bi" (with) + "3ani" (meaning): with intent, on purpose. From 3na, to mean.
+bel7a9|"Bi" (with) + "el 7a9" (the truth): really, truly. A Tunisian "seriously?".
+3al a9all|"3la" (on) + "a9all" (less): at least. Classical Arabic "3ala l-aqall".
+3al akther|"3la" (on) + "akther" (more): at most.
+3la tol|"3la" (on) + "tol" (length): along the length — straight on, or straight away. "3la tol!" = right now.
+men ba3d|"Men" (from) + "ba3d" (after): afterwards.
+men 9bal|"Men" (from) + "9bal" (before): beforehand.
+fil akhir|"Fi" (in) + "el akhir" (the last): in the end.
+fil lowel|"Fi" (in) + "el lowel" (the first): at first.
+ba3d ghodwa|"Ba3d" (after) + "ghodwa" (tomorrow): the day after tomorrow.
+loula bere7|"Loula" (the first) + "bere7" (yesterday): the earlier yesterday — the day before yesterday. Tunisian only.
+jey|From ja (come): coming, next. "El jem3a ej jeya" = next week.
+fet (adj)|From fet (pass): past, last. "El 3am elli fet" = last year.
+yemken|Classical Arabic "yumkin" (it is possible): maybe. "Momken" is its twin.
+belkol|"Bi" (with) + "el kol" (the all): completely; with a negative, at all.
+bezzef|From Arabic "bi-l-jazaf", "in bulk": a lot. The Algerian and Moroccan word for barcha, heard in Tunisia too.
+t9riban|Classical Arabic "taqriban" (approximately), from 9rib, near.
+bidhabt|"Bi" (with) + "dhabt" (precision): exactly. From "dabata", to control.
+ghir|Classical Arabic "ghayr" (other than): only, except. "Ghir enti" = only you.
+akahaw|A Tunisian-only "that's all": from "aka" (that) + "hou" (it) — "just that". Said to end a list or a story.
+3la khater|"3la" (on) + "khater" (mind): on account of — because. The full form of khater.
+9bal ma|"9bal" (before) + "ma" (that): before doing. "9bal ma nemchi" = before I go.
+ba3d ma|"Ba3d" (after) + "ma" (that): after doing.
+kif ma|"Kif" (like) + "ma" (that): the way that, as. "Kif ma t7eb" = as you like.
+wa9t ma|"Wa9t" (time) + "ma" (that): whenever.
+7atta ken|"7atta" (even) + "ken" (if): even if.
+ken ma|"Ken" (if) + "ma" (not): unless.
+ella|Classical Arabic "illa" (except). "Ella enti" = except you.
+7adha|Classical Arabic "hidha'" (beside, alongside). "7adhaya" = next to me.
+dhid|Classical Arabic "didd" (against, opposite). "Tounes dhid Masr" = Tunisia v Egypt.
+7asb|Classical Arabic "hasab" (according to), from 7aseb, to reckon.
+bin ma|"Bin" (between) + "ma" (that): while, in the time between.
+b|Classical Arabic "bi" (with, by, in). Sticks to its word: "bel kar" = by bus; "bessif" = by force.
+3and|Classical Arabic "3inda" (at, by, with). "3andi" = I have; "3and Ali" = at Ali's.
+mte3|From Arabic "mata3" (goods, property): of, belonging to. "El dar mte3 Ali" = Ali's house. Tunisian and Libyan; Moroccans say dyal.
+rou7i|"Rou7" (soul) + "-i" (my): myself. Arabic has no "self" word, so it uses the soul.
+rou7ek|"Rou7" (soul) + "-ek" (your): yourself. "Chadd rou7ek" = hold yourself together.
+rou7ou|"Rou7" (soul) + "-ou" (his): himself.
+rou7ha|"Rou7" (soul) + "-ha" (her): herself.
+rou7na|"Rou7" (soul) + "-na" (our): ourselves.
+rwa7hom|"Rwa7" (souls) + "-hom" (their): themselves.
+b3adhna|"B3adh" (some) + "-na" (us): "some of us (to the others)" — each other.
+kol wa7ed|"Kol" (every) + "wa7ed" (one): everyone, each.
+kol chay|"Kol" (every) + "chay" (thing): everything.
+7atta wa7ed|"7atta" (not even) + "wa7ed" (one): nobody.
+7atta chay|"7atta" (not even) + "chay" (thing): nothing.
+9adhya|Classical Arabic "qadiya" (matter, case), from "qada", to judge. "9adhi" = a judge.
+mawdhou3|Classical Arabic "mawdu3" (subject, topic), "what is put down", from "wada3a", to place.
+sabab|Classical Arabic "sabab" (cause, reason). "Bsabab" = because of.
+natija|Classical Arabic "natija" (result), from "nataja", to produce.
+fer9|Classical Arabic "farq" (difference), from farra9, to separate. "Ma famma 7atta fer9" = no difference at all.
+chart|Classical Arabic "shart" (condition). "Bchart" = on condition that.
+fourssa|Classical Arabic "fursa" (opportunity). "Fourssa behia" = a good chance.
+khatar|Classical Arabic "khatar" (danger). "Khatir" = dangerous.
+aman|Classical Arabic "aman" (safety, security). "Fi aman allah" = in God's safety, goodbye.
+mosa3da|Classical Arabic "musa3ada" (help), from "sa3ada", to assist. "Sa3ed" = help.
+3ala9a|Classical Arabic "3alaqa" (connection, relationship), from "3aliqa", to cling.
+3adou|Classical Arabic "3aduw" (enemy). "3adawa" = enmity.
+dawla|Classical Arabic "dawla" (state, dynasty), from "dala", to turn — power that passes round.
+jaych|Classical Arabic "jaysh" (army).
+mawt|Classical Arabic "mawt" (death). "Met" = to die; "mayyet" = dead.
+mas2oul|Classical Arabic "mas'ul" (responsible), "the one who is asked", from souel, question.
+mamnou3|Classical Arabic "mamnu3" (forbidden), from "mana3a", to prevent.
+masmou7|Classical Arabic "masmuh" (allowed), from "samaha", to permit, forgive — the root of sam7ni.
+mafhoum|Classical Arabic "mafhum" (understood), from fhem. "Mafhoum?" = got it?
+wadhe7|Classical Arabic "wadih" (clear, obvious). "Wadhdha7" = to explain.
+3azouz|Tunisian for an old man; from Arabic "3ajuz", old person — or from "3aziz", dear. "3azouza" = an old woman.
+chab|Classical Arabic "shabb" (young man). "Chbeb" = young people, youth. Raï singers are "Cheb" — young.
+chabba|The feminine of chab: a young woman. Classical Arabic "shabba".
+# ---- level 10: phrases ----
+chbik|"Ech" (what) + "bik" (in you): what is in you? What's wrong, what's up. "Chbih?" = what's up with him?
+3andek el 7a9|"You have the truth": you're right. 7a9 is truth and a right at once.
+ma 3andich khbar|"I have no news": I've no idea. Khbar is news, information.
+rabbi ysahhel|"May my Lord make (it) easy", from sehel, easy. Said to anyone setting out on something.
+rabbi m3ak|"My Lord (is) with you": good luck, and a goodbye. Tunisians say rabbi where others say Allah.
+sa7it|"Your health", from sa7a: thanks, especially for small favours. Also "cheers". The Algerian "sa7a" is the same.
+3la kifek|"On your taste": as you like. Kif here is pleasure, from Arabic "kayf" — the same word as "kif", the hashish of the Rif.
+kif kif|"Like like": the same. The French army brought "kif-kif" home from Algeria and it is still French slang.
+nharek zin|"Your day (is) lovely": have a nice day. Zin is beauty, from the same root as mezyen.
+t3ich|"May you live", from 3ach: thanks. A shorter 3aychek. The reply is "w enti" — and you.
+allah ybarek|"God blesses": said in admiration so the evil eye does not follow. Praise without it can sound like envy.
+machallah|"What God has willed": wonderful. Said of a child, a house, anything good — again to ward off the eye.
+ma3lich|"Nothing on it" (ma 3alayhi shay'): never mind, no harm done. Heard across the whole Arab world.
+mouch mouchkla|"Not a problem". Mochkla from Arabic "mushkila".
+3la rasi|"On my head": with pleasure — I carry your request on my head. The old way of saying "at your service".
+3la 3ini|"On my eye": gladly. Like 3la rasi: your wish sits on something precious.
+rabbi y7afdhek|"May my Lord keep you", from 7fadh: thank you, bless you.
+taw taw|"Now now", from tawa: right away, or just a moment ago. Tunisian only.
+ya 7asra|"Oh sorrow": what a pity — and "those were the days". The Tunisian sigh for the past. 7asra is grief for what is lost.
+ya khsara|"Oh loss", from khsar: what a shame.
+ya latif|"Oh Gentle One": Al-Latif is one of the 99 names of God. Said when something shocks you.
+ya rabbi|"Oh my Lord": oh dear, oh God. The everyday sigh.
+3la sa7tek|"To your health": cheers, when drinking. Sa7a is health.
+rabbi ykhallik|"May my Lord keep you", from khalla: please — and thank you. Said when asking a favour.
+ech bech n9oullek|"What shall I tell you": what can I say. Ech (what) + bech (will) + n9oullek (I tell you).
+ma fama 7atta chay|"There isn't even a thing": nothing at all. The reply to thanks or to "what's wrong?".
+ma yhemmech|"It doesn't matter", from mhemm, important: the not-sandwich round "it concerns".
+chadd rou7ek|"Hold your soul": hold on, take care of yourself. Chadd = hold; rou7ek = yourself.
+bechwaya bechwaya|"Slowly slowly": step by step, take it easy. Doubling a word softens it in Arabic.
+chwaya chwaya|"A little a little": little by little.
+marra marra|"A time a time": now and then.
+lebes 3lik|"No harm on you": are you alright? Also "it suits you" of clothes. From labes, fine.
+walla|"By God", short for wallahi: really, I swear. Also "really?" when surprised.
+wallahi|"By God" (wa-llahi): I swear. The oath that opens many Tunisian sentences.
+ya sidi|"Oh my master": sir — used to anyone, often teasingly: "ya sidi, come on then". Sidi is also a saint's title: Sidi Bou Said.
+ya sa7bi|"Oh my friend": mate. Sa7eb is friend or owner.
+ya weldi|"Oh my son": to any boy or young man, warmly. Weld = son.
+ya benti|"Oh my daughter": to any girl. Bent = daughter.
+ya khouya|"Oh my brother": mate, to any man. Khou = brother.
+3lech le|"Why no": why not. Le is the Tunisian "no".
+mouch normal|"Not normal": unbelievable, amazing — in a good way. French "normal" inside a Tunisian phrase.
+nchallah khir|"God willing, good": let's hope so, fingers crossed. Khir = goodness.
+allah ghaleb|"God prevails": it can't be helped, what can you do. The shrug of the Maghreb.
+fi 3ilmek|"In your knowledge": for your information. 3ilm = knowledge.
+ma t9la9ch|"Don't get annoyed", from 9la9: don't worry. The not-sandwich round a command.
+ma tkhafch|"Don't fear", from khaf: don't be scared.
+haya bina|"Come on with us": let's go. Haya is Classical Arabic "hayya", the call to prayer's "come".
+yalla|"Ya Allah", "oh God": come on, let's go. The Arab world's most-used word of all.
+chnia el 7kaya|"What is the story": what's going on? 7kaya = story.
+chnowa sar|"What happened", from sar: what became?
+3la ma yram|"As it should be": fine, all good. Arabic "3ala ma yuram".
+tfadhal|"Be so kind", from "fadhl", kindness: here you are, go ahead, come in. The all-purpose offer of the Arab world.
+ras el 3am|"The head of the year": New Year. Ras = head; 3am = year.
+fi aman allah|"In God's safety": goodbye, safe journey. Aman = safety.
+rabbi ysalmek|"May my Lord keep you safe": you're welcome, the reply to thanks. From salem, peace.
+sba7 en nour|"Morning of light": the reply to sba7 el khir. You answer goodness with light.
+msa en nour|"Evening of light": the reply to msa el khir.
+w enti men ahlou|"And you are of its people": and you too — the reply to a feast-day greeting. Ahl = family, people.
+ahla w sahla|"Family and easy ground": welcome. "Ahlan wa sahlan": you have come to kin and to level ground — the ancient Arab welcome.
+marhba bik|"Wide room for you": welcome. From ra7b, spacious. Marhaba is the Arab world's hello.
+merci|French "merci", from Latin "merces", reward. Tunisians say it all day, often as "merci barcha".
+rabbi ybarek fik|"May my Lord bless in you": bless you, thank you. From baraka.
+allah yr7mou|"May God have mercy on him": rest in peace. From ra7ma, mercy. "Allah yr7emha" for a woman.
+bismillah|"In the name of God": said before eating, starting a car, beginning anything. The first words of every sura but one.
+la 7awla|Short for "la hawla wa la quwwata illa bi-llah", "there is no power and no strength save in God": oh dear, nothing to be done.
+fi l akhir|"In the last": in the end. Fil akhir written as it sounds.
+fi l lowel|"In the first": at first.
+mel lowel|"From the first": from the start. Men + el lowel.
+el 3am elli fet|"The year that passed", from fet: last year.
+el 3am ej jey|"The year that is coming", from ja: next year.
+chnowa ra2yek|"What is your opinion", from ra2y: what do you think?
+mouch khayeb|"Not bad": not bad at all. Khayeb = bad, ugly.
+rani|"Ra" (see, look) + "ni" (me): "here I am", "look, I…". A Maghreb word that stresses what you say: rani ji3an, I'm hungry, really.
+rahou|"Ra" (look) + "hou" (him): here he is; also "the thing is…". The Maghreb's way of pointing at a fact.
+hedheka howa|"That (is) it": exactly, that's it. Hedheka = that; howa = he/it.
+3la 9add|"On the size of", from 9add, amount: according to, as much as. "3la 9add flousek" = as much as your money allows.
+3al 9lila|"On the little": at least. The everyday twin of 3al a9all.
+mouch lezem|"Not necessary": no need. Lezem = must.
+3andi 7a9|"I have truth": I'm right.
+ma 3andekch 7a9|"You don't have truth": you're wrong.
+rou7 rawwa7|"Go, go home": both verbs from rou7, the soul. Rawwa7 = take yourself home.
+bara barra|"Go outside": get out, go away. Bara (go) and barra (outside) are two words that sound alike.
+a3tini|"Give me": from 3ta (give) + ni (me). Classical Arabic "a3tini".
+9olli|"Tell me": from 9al (say) + li (to me).
+chouf|"Look": the order from chaf, to see. "Chouf chouf" = look here.
+esma3|"Listen": the order from sma3, to hear.
+ejri|"Run": the order from jra. Means "hurry up!".
+stanna chwaya|"Wait a little": hang on. Stanna (wait) + chwaya (a bit).
+ma fhemtch|"I did not understand": ma + fhemt + ch, the not-sandwich round the past tense of fhem.
+ma na3rafch|"I don't know": the not-sandwich round na3raf, I know. Said with a shrug.
+ma nejjemch|"I can't": the not-sandwich round nejjem, I can.
+ma n7ebbech|"I don't want / like": the not-sandwich round n7eb, I want. 7ab is both love and want.
+n7ebbek|"I love you": n7eb (I love) + ek (you). The same for a man or a woman.
+twa7achtek|"I missed you", from wa7ch, a wild beast — longing was a wildness in the old poems. Twa7ach = to miss someone.
+rabbi y3awnek|"May my Lord help you", from 3awen: good luck, God help you.
+3id mabrouk|"Blessed feast": happy Eid. 3id = feast; mabrouk = blessed.
+3am s3id|"Happy year": happy new year. S3id = happy, from sa3ada, happiness.
+sa7a chribtek|"Health (to) your drink": enjoy your drink. Said to someone having coffee.
+bessa7a w rra7a|"With health and rest": enjoy — said to someone eating, washing, or wearing something new. Sa7a + ra7a.
+3al barra|"On the outside": outside. 3la + barra.
