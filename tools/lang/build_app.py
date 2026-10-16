@@ -84,11 +84,13 @@ w = f"// {name} service worker. DERIVED FILE — built from ../sw.js by tools/la
 m = (root / 'manifest.webmanifest').read_text()
 m = rep(m, '"name": "Latin"', f'"name": "{name}"', where='manifest').replace('"short_name": "Latin"', f'"short_name": "{name}"')
 m = rep(m, '"description": "Learn every ISEB Latin word with swipe cards."', f'"description": "{L["description"]}"', where='manifest')
-m = m.replace('"src": "icons/', '"src": "../icons/').replace('"theme_color": "#8E2F4A"', f'"theme_color": "{L["theme"]}"')
+own_icons = (lang / 'icons' / 'icon-512.png').exists()   # a language with its own icons (tools/lang/make_icon.py) uses them; else the Latin ones
+m = m.replace('"src": "icons/', '"src": "icons/' if own_icons else '"src": "../icons/').replace('"theme_color": "#8E2F4A"', f'"theme_color": "{L["theme"]}"')
 (lang / 'manifest.webmanifest').write_text(m)
 
 # ---------- index.html ----------
 t = (root / 'tools' / 'lang' / 'index.template.html').read_text()
+t = t.replace('href="icons/', f'href="{code}/icons/') if own_icons else t
 t = t.replace('{{CODE}}', code).replace('{{NAME}}', name).replace('{{DESCRIPTION}}', L['description']).replace('{{LANG_JSON}}', json.dumps({ 'code': code, 'name': name, 'tts': L.get('tts', {}) }))
 (lang / 'index.html').write_text(t)
 print(f'built index.html, app.js, sw.js, manifest for {code} v{VERSION}')
