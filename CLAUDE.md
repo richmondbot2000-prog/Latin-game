@@ -40,7 +40,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   from the dictionary entry) with the English, right or wrong, in the same
   number or person (`inflectAll`); tap a card to flip it (word to 0 stars,
   streak kept). Memory cards (`memory.js`); example phrases
-  (`phrases.js`); fireworks (`effects.js`); vocabulary settings Beginner / Level
+  (`phrases.js`); fireworks (`effects.js`); the example phrase sits under the meaning on the card, the three centred together; vocabulary settings Beginner / Level
   1 / 2 / 3. Players = first name + two emojis, no passwords.
   The card screen follows the artist's own MemiBeasts app (the preview video
   and screenshots in the Drive `MemiBeasts/` folder): grey-framed cream cards

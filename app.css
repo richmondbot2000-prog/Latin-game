@@ -495,7 +495,10 @@ body.noscroll { overflow: hidden; }
 .card .means { display: none; }
 .card .en { font-size: clamp(1.25rem, 6vw, 1.6rem); }
 .card .kind { bottom: 52px; left: 50%; right: auto; transform: translateX(-50%); color: var(--frame); background: none; padding: 0; }
-.card .phrase { position: static; margin: 8px 0 0; font-size: .95rem; color: #6E6378; }
+.card .phrase { position: static; margin: 0 0 auto; padding-top: 18px; font-size: 1.2rem; color: #6E6378; }
+/* the example sentence sits under the meaning: the space below it, not above it, takes up the slack */
+.card:has(.phrase) .en { margin-bottom: 0; }
+.card:has(.phrase) .lat { margin-top: auto; }
 .card .frame { display: none; }
 .card .stamp { top: 10px; width: 54px; height: 54px; border-radius: 50%; border: 0; padding: 0; display: grid; place-items: center; font: 900 30px/1 system-ui, sans-serif; color: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.3), inset 0 -3px 0 rgba(0,0,0,.15); }
 .card .stamp.yes { right: 10px; background: #43b14b; transform: none; }

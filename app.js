@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '119';
+const APP_VERSION = '120';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1425,12 +1425,12 @@ function renderPlay(u, pane) {
         <div class="orn top"><span class="num">${seen + (top ? 1 : 2)}</span></div>
         <div class="orn bottom"></div>
         <div class="cstars">${starsHTML((p[c.w.id] && p[c.w.id].s) || 0)}</div>
-        ${phraseFor(c.w) ? `<div class="phrase">${phraseHTML(phraseFor(c.w).la)}</div>` : ''}
         <div class="kind">${c.w.kind}</div>
         ${top ? '<span class="stamp yes">✓</span><span class="stamp no">✗</span>' : ''}
         <div class="lat">${esc(c.form ? c.form.la : c.w.show)}</div>
         <div class="rule"></div>
         <div class="en">${esc(c.shown)}</div>
+        ${phraseFor(c.w) ? `<div class="phrase">${phraseHTML(phraseFor(c.w).la)}</div>` : ''}
       </div>`;
   function next() {
     const p = getProg(u), now = Date.now();
