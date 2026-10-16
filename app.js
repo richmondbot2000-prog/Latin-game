@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '121';
+const APP_VERSION = '122';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1442,6 +1442,8 @@ function renderPlay(u, pane) {
     }
     pending = prepare();
     deck.innerHTML = (pending ? cardHTML(pending, p, false) : '<div class="card under" aria-hidden="true"></div>') + cardHTML(card, p, true);
+    // a long word shrinks to fit the card on one line instead of breaking in two
+    deck.querySelectorAll('.card .lat').forEach(el => { el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); while (el.scrollWidth > el.clientWidth + 1 && f > 14) { f -= 1; el.style.fontSize = f + 'px'; } });
     attachSwipe($('#top', deck));
     buddy();
     busy = false;

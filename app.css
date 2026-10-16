@@ -490,12 +490,12 @@ body.noscroll { overflow: hidden; }
 .card .orn.bottom { bottom: 0; transform: scaleY(-1); }
 .card .orn .num { position: absolute; left: 50%; top: 22px; transform: translate(-50%, -50%); font: 700 22px/1 system-ui, sans-serif; color: #b9ad8c; }
 .card .cstars { top: 72px; }
-.card .lat { font-size: clamp(2rem, 11vw, 3rem); margin-top: 10px; }
+.card .lat { font-size: clamp(2rem, 11vw, 3rem); margin-top: 10px; white-space: nowrap; overflow-wrap: normal; align-self: stretch; text-align: center; }
 .card .rule { width: 72%; height: 2px; background: #2B1A3A; opacity: .8; margin: 14px 0; border-radius: 2px; }
 .card .means { display: none; }
 .card .en { font-size: clamp(1.25rem, 6vw, 1.6rem); }
 .card .kind { bottom: 52px; left: 50%; right: auto; transform: translateX(-50%); color: var(--frame); background: none; padding: 0; }
-.card .phrase { position: static; margin: 0 0 auto; padding-top: 18px; font-size: 1.2rem; color: #6E6378; }
+.card .phrase { position: static; margin: 0 0 auto; padding: 18px 0 70px; font-size: 1.45rem; line-height: 1.3; color: #6E6378; }
 /* the example sentence sits under the meaning: the space below it, not above it, takes up the slack */
 .card:has(.phrase) .en { margin-bottom: 0; }
 .card:has(.phrase) .lat { margin-top: auto; }
