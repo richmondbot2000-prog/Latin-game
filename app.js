@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '118';
+const APP_VERSION = '119';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1388,7 +1388,7 @@ function renderPlay(u, pane) {
     setTimeout(() => { if (deck.onclick === go) { /* still showing: leave it until tapped */ } }, 4000);
   }
   document.querySelectorAll('.toast').forEach(t => t.remove());
-  const toast = document.createElement('div'); toast.className = 'toast'; document.body.appendChild(toast);
+  const toast = document.createElement('div'); toast.className = 'toast ctoast'; document.body.appendChild(toast);
 
   function pick() {
     const p = getProg(u), now = Date.now();
@@ -1552,7 +1552,12 @@ function renderPlay(u, pane) {
     if (bump === false) el.classList.add('zero');
   }
   function flash(msg) {
-    toast.textContent = msg; toast.classList.add('show');
+    toast.textContent = msg;
+    // under the card and its buttons, so it never covers the next word
+    const bt = $('#yes', pane), r = bt && bt.getBoundingClientRect();
+    if (r && r.bottom > 0) { toast.style.top = Math.min(r.bottom + 18, innerHeight - 70) + 'px'; toast.style.bottom = 'auto'; }
+    else { toast.style.top = 'auto'; toast.style.bottom = 'calc(env(safe-area-inset-bottom) + 24px)'; }
+    toast.classList.add('show');
     clearTimeout(flash.t); flash.t = setTimeout(() => toast.classList.remove('show'), 900);
   }
   $('#yes', pane).onclick = () => button(1);

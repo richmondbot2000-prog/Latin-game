@@ -110,6 +110,8 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .toast { position: fixed; left: 50%; top: 27%; transform: translate(-50%, 0); background: var(--good); color: #fff; padding: 8px 18px; border-radius: 999px;
   font-weight: 700; pointer-events: none; opacity: 0; transition: opacity .2s, transform .5s; z-index: 30; font-family: system-ui, sans-serif; }
 .toast.show { opacity: 1; transform: translate(-50%, -16px); }
+.ctoast { width: max-content; max-width: 90vw; text-align: center; transform: translate(-50%, 16px); }
+.ctoast.show { transform: translate(-50%, 0); }
 .empty { text-align: center; color: var(--muted); padding: 40px 10px; }
 
 /* memory sheet */
