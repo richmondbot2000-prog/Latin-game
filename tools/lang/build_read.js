@@ -72,8 +72,11 @@ ${out.map(e => '  ' + JSON.stringify(e)).join(',\n')}
 `;
 fs.writeFileSync(path.join(dir, 'read.js'), js);
 const PHRASES = {};
-for (const e of out) for (const t of e.la) { if (t[1] && !PHRASES[t[1]]) { const la = e.la.map(x => x === t ? '*' + x[0] + '*' : x[0]).join(' ').replace(/ ([,.;:?!])/g, '$1').replace(/" (.*?) "/g, '"$1"'); PHRASES[t[1]] = { la, en: e.en }; } }
-fs.writeFileSync(path.join(dir, 'phrases.js'), '// Example sentences for the cards (the first sentence of read.js that holds each word). Built by tools/lang/build_read.js.\nconst PHRASES = ' + JSON.stringify(PHRASES, null, 0).replace(/\},"/g, '},\n  "') + ';\n');
+// one sentence per level for each word (the first at that level, levels ascending), so the card can show one whose
+// every word is within the player's setting
+for (const e of out) for (const t of e.la) { if (t[1]) { const list = PHRASES[t[1]] || (PHRASES[t[1]] = []); if (list.some(x => x.lv === e.lv)) continue; const la = e.la.map(x => x === t ? '*' + x[0] + '*' : x[0]).join(' ').replace(/ ([,.;:?!])/g, '$1').replace(/" (.*?) "/g, '"$1"'); list.push({ la, en: e.en, lv: e.lv }); } }
+for (const k in PHRASES) PHRASES[k].sort((a, b) => a.lv - b.lv);
+fs.writeFileSync(path.join(dir, 'phrases.js'), '// Example sentences for the cards: for each word, the first sentence of read.js that holds it at each level (lv ascending). Built by tools/lang/build_read.js.\nconst PHRASES = ' + JSON.stringify(PHRASES, null, 0).replace(/\],"/g, '],\n  "') + ';\n');
 console.log(Object.keys(PHRASES).length + ' words have an example sentence');
 console.log(`${out.length} sentences, ${stories.size} stories; by level: ${[-1, 0, 1, 2, 3, 4].map(l => out.filter(x => x.lv === l).length).join(' / ')} (Beginner first)`);
 

@@ -851,7 +851,3 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
 .bsheet.rare .becol { background: rgba(255,255,255,.14); color: #fff; }
 .bsheet.rare .btn.ghost { color: #fff; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.08); }
 
-/* where the word comes from: a short note at the foot of the card */
-.card .origin { font-size: .92rem; line-height: 1.3; color: #6E6378; text-align: center; padding: 0 6px 58px; margin: auto 0 0; }
-.card .phrase + .origin { margin-top: -52px; }
-.card .en { margin-bottom: 0; }

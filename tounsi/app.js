@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '28';
+const APP_VERSION = '29';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -48,10 +48,14 @@ const tokens = s => new Set(s.toLowerCase().replace(/\(.*?\)/g, ' ').split(/[^a-
 // what the player sees: the plain word, with every form listed (a/ab -> "a, ab") and the grammar notes dropped
 const showWord = w => w.replace(/\s*\(.*\)$/, '');
 const WORDS = VOCAB.map((v, i) => ({ ...v, id: v.word, show: v.pos === 'V' && v.pres ? showWord(v.word) + ' / ' + v.pres : showWord(v.word), kind: KIND(v.pos), toks: tokens(v.english), i }));
-const phraseFor = w => (typeof PHRASES !== 'undefined' && PHRASES[w.word]) || null;
+// the example sentence for a word: the first sentence of read.js that holds it. A language may give one per level
+// (an array of { la, en, lv }); then the card shows the first whose level is within the player's setting, so every
+// other word in the phrase is one the player has — nothing above the level they chose
+const levelNum = u => { const l = levelOf(u); return l === 'top' ? -1 : l === 'beginner' ? 0 : parseInt(l); };
+const phraseFor = (w, u) => { const p = typeof PHRASES !== 'undefined' && PHRASES[w.word]; if (!p) return null; if (!Array.isArray(p)) return p; if (!u) return p[0]; const L = levelNum(u); return p.find(x => x.lv <= L) || null; };
 // Latin phrase with the card's word (marked *like this*) highlighted
 const phraseHTML = la => esc(la).replace(/\*([^*]+)\*/g, '<mark>$1</mark>');
-const originOf = w => (typeof ORIGINS !== 'undefined' && ORIGINS[w.word]) || '';   // where the word comes from (origins.txt of a language), shown on the card and the memo
+const originOf = w => (typeof ORIGINS !== 'undefined' && ORIGINS[w.word]) || '';   // where the word comes from (origins.txt of a language), shown on the memo
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.show} means ${w.english}.` };
 // the word in the language's own script (Arabic for Tounsi: `ar` in vocab.js, the form's `ar` from Forms); nothing for Latin
 const arabOf = (w, form) => (form && form.ar) || (form && form.la !== w.show ? '' : (typeof Forms !== 'undefined' && Forms.show ? Forms.show(w) : (w.ar || '')));
@@ -1401,7 +1405,7 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
         ${originOf(w) ? `<div class="how"><h3>Where it comes from</h3><p>${esc(originOf(w))}</p></div>` : ''}
         <div class="how mine"><h3>✏️ My own way to remember it</h3>${noteOf(w) ? `<p id="noteText">${esc(noteOf(w))}</p><button class="linkbtn small" id="noteEdit">Change it</button>` : `<button class="linkbtn small" id="noteEdit">Make up your own picture — the ones you invent stick best</button>`}<textarea id="noteBox" rows="2" placeholder="e.g. ghodwa: a GOOD WAY to spend tomorrow" hidden>${esc(noteOf(w))}</textarea></div>
-        ${phraseFor(w) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w).la)}</p><p class="tr">${esc(phraseFor(w).en)}</p></div>` : ''}
+        ${phraseFor(w, u) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w, u).la)}</p><p class="tr">${esc(phraseFor(w, u).en)}</p></div>` : ''}
         <div class="meta">${starsHTML(stars)} <span class="small">· ${w.kind} · ${levelName(String(w.level))}</span></div>
       </div>
       <button class="btn" id="memoOk">${btnLabel || (verdict ? 'Got it — next card' : 'Close')}</button>
@@ -1512,8 +1516,7 @@ function renderPlay(u, pane) {
         ${arabHTML(c.w, c.form)}
         <div class="rule"></div>
         <div class="en">${esc(c.shown)}</div>
-        ${phraseFor(c.w) ? `<div class="phrase">${phraseHTML(phraseFor(c.w).la)}</div>` : ''}
-        ${originOf(c.w) ? `<div class="origin">${esc(originOf(c.w))}</div>` : ''}
+        ${phraseFor(c.w, u) ? `<div class="phrase">${phraseHTML(phraseFor(c.w, u).la)}</div>` : ''}
       </div>`;
   function next() {
     const p = getProg(u), now = Date.now();
@@ -1611,7 +1614,7 @@ function renderPlay(u, pane) {
     const { w } = card; card = null;
     const p = getProg(u), pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
     pw.s = 0; delete pw.r; pw.t = Date.now(); p[w.id] = pw; saveProg(u, p);
-    const m = memoFor(w), ph = phraseFor(w);
+    const m = memoFor(w), ph = phraseFor(w, u);
     el.classList.add('flipped');
     el.insertAdjacentHTML('beforeend', `<div class="back">
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
