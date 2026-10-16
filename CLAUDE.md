@@ -445,7 +445,7 @@ Per-player counters live in
   deleting it (an update never leaves a game without its pictures), then warms
   the gaps. Every picture, rig and scene loader (`hammer.js` `img`,
   `rig.js`, `practice.js` sprite tables) retries a failed load a few seconds
-  later, and Jacques Hammer says "Loading the scene…" until the sky is in.
+  later, and Jacques Hammer says "Loading the scene…" and **does not start** (`loaded()` / `S.ready` in `hammer.js`: clock at zero, no signs made) until the scene, the sign, Jacques, the dog and, for the intro, the Decoy are all in — after 12 s it starts anyway (`scratchpad/jhslow.js` tests it with every picture 3 s late).
 
 ## Cloud sync (switched on)
 

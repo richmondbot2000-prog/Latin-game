@@ -62,7 +62,21 @@ const Hammer = (() => {
 
   /* ---------- update ---------- */
   const INTRO = ['Oh Jacque...', 'I have been busy. Some of the signs in this town now say the WRONG thing. Heh heh heh.', 'Smash the wrong ones with that hammer of yours. But hit a right one, or let a wrong one past...', '...and I will be back. With THIS.'];
+  // nothing moves until the scene, Jacques, the dog and the signs are all in: the clock stays at zero and no sign is
+  // made, so a slow connection shows "Loading the scene…" over a still picture instead of a game already running.
+  // After 12 s of waiting it starts anyway (a picture that never arrives keeps retrying on its own).
+  function loaded() {
+    const L = lev(), d = SCENE_DATA && SCENE_DATA[L.key];
+    if (!d || !ok(sceneImg(d.sky)) || (d.ground && !ok(sceneImg(d.ground)))) return false;
+    if (!META || !ok(img('sign' + (S.level - 1) % 6))) return false;
+    if (RIG_SKIN[WEAR.skin]) { if (!jacqueRig(WEAR.skin)) return false; }
+    else if (!Object.keys(IMG).some(n => n.startsWith('j_' + WEAR.skin + '_') && ok(IMG[n]))) return false;
+    if (!dogRig(WEAR.pup) && !Object.keys(IMG).some(n => n.startsWith(WEAR.pup + '_') && ok(IMG[n]))) return false;
+    if (S.level === 1 && S.phase === 'intro' && !Rig.ok(rigOf('decoy'))) return false;
+    return true;
+  }
   function update(dt) {
+    if (!S.ready) { if (loaded()) S.ready = true; else { S.waitT = (S.waitT || 0) + dt; if (S.waitT < 12) { preload(S.level); return; } S.ready = true; } }
     S.t += dt;
     if (S.phase === 'intro') {
       const v = S.vil; v.t += dt; v.typed += dt * 28;
@@ -186,7 +200,7 @@ const Hammer = (() => {
     ...[1, 2, 3, 4, 5, 6, 7].map(n => 'd_enter' + n), ...Object.keys(DOG).map(p => 'g_' + p), ...[0, 1, 2, 4, 5].map(n => 'fx_dust' + n)];
   const SKIP = /^layer /;
   function preload(n) {
-    const L = levelOf(n); preloadScene(L); WEAR = wear(); img('w_' + WEAR.weapon);
+    const L = levelOf(n); preloadScene(L); WEAR = wear(); img('w_' + WEAR.weapon); rigOf('jacque'); rigOf('decoy'); rigOf(WEAR.pup === 'g' ? 'dog' : 'dog_' + WEAR.pup);
     for (const st of [(n - 1) % 6, 6, 7]) { img('sign' + st); img('sign' + st + '_l'); img('sign' + st + '_r'); }
     if (META) for (const p in META.jacque[WEAR.skin]) if (!SKIP.test(p)) img(`j_${WEAR.skin}_${p}`);
     for (const p in DOG) img(WEAR.pup + '_' + p);
@@ -234,7 +248,7 @@ const Hammer = (() => {
     if (!d || !ok(sceneImg(d.sky))) {   // the scene is still on its way: plain sky and ground, and a word to say so
       if (!d) preloadScene(L); else { sceneImg(d.sky); if (d.ground) sceneImg(d.ground); }
       g.fillStyle = '#8FD3FF'; g.fillRect(0, 0, W, H); g.fillStyle = '#9a9a9a'; g.fillRect(0, ground, W, H - ground);
-      g.fillStyle = 'rgba(0,0,0,.35)'; g.font = `600 ${Math.round(W * .04)}px system-ui, sans-serif`; g.textAlign = 'center'; g.fillText('Loading the scene…', W / 2, ground * .5); return;
+      if (S.ready) { g.fillStyle = 'rgba(0,0,0,.35)'; g.font = `600 ${Math.round(W * .04)}px system-ui, sans-serif`; g.textAlign = 'center'; g.fillText('Loading the scene…', W / 2, ground * .5); } return;
     }
     // the sky: stretched over the whole width, its bottom on the ground line; above it the sky's own top colour
     const sky = sceneImg(d.sky), skyH = Math.max(d.skyh * k, ground * .8), skyTop = ground - skyH;   // on a tall phone the sky block is stretched up to fill most of the screen
@@ -478,6 +492,10 @@ const Hammer = (() => {
     ctx.save();
     if (S.shake > 0) ctx.translate(rnd(-4, 4) * S.shake / .22, rnd(-3, 3) * S.shake / .22);
     drawBackground();
+    if (!S.ready) {   // still waiting for the pictures: the scene (or plain sky) with a word, nothing else moving yet
+      const g = ctx, ground = H * GROUND; g.fillStyle = 'rgba(0,0,0,.4)'; g.font = `600 ${Math.round(W * .045)}px system-ui, sans-serif`; g.textAlign = 'center'; g.fillText('Loading the scene…', W / 2, ground * .5);
+      ctx.restore(); return;
+    }
     for (const s of S.signs) drawSign(s);
     const k = jScale() * .8;
     for (const b of S.bits) if (b.kind === 'dust') sprite('fx_dust' + b.i, b.x * W, H * GROUND - 6 * k, k * (.6 + b.t), .7 * (1 - b.t / .6));
