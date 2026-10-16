@@ -1,5 +1,5 @@
 # Records a language's words, forms and sentences with Azure's neural voices and commits the clips to main.
-# Run it from the Actions tab ("Record voices" → Run workflow). Needs two repository secrets:
+# Run it from the Actions tab ("Record voices" → Run workflow): lang tounsi + ar-TN-HediNeural, or lang . + it-IT-IsabellaNeural for Latin. Needs two repository secrets:
 #   AZURE_SPEECH_KEY     a key of the Azure Speech resource
 #   AZURE_SPEECH_REGION  its region, e.g. westeurope
 # The key never appears in the repo or the log. Re-runs only record what is missing.
