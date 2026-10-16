@@ -557,7 +557,15 @@ body.noscroll { overflow: hidden; }
 
 .pedia { flex: 1; }
 .pedia::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255,255,255,.4), transparent 70%), linear-gradient(170deg, #b8d9d0, #7fb8b0 55%, #4f8f8c); }
-.bgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; padding-bottom: 20px; }
+/* the Beastpedia: one pill per monster holding its stages (2–4 discs: not every monster has every stage drawn) */
+.bgrid { display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 20px; justify-content: center; }
+.bmon { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 5px 4px; border-radius: 16px; background: rgba(255,255,255,.28); box-shadow: inset 0 0 0 1px rgba(255,255,255,.35); }
+.bmon.dim { background: rgba(0,0,0,.06); box-shadow: none; }
+.bdiscs { display: flex; gap: 5px; justify-content: center; }
+.bdiscs .bc { width: 50px; }
+.bmname { font: 700 11px/1 system-ui, sans-serif; color: #2b1a3a; letter-spacing: .02em; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bmon.dim .bmname { color: rgba(43,26,58,.45); }
+@media (max-width: 360px) { .bdiscs .bc { width: 52px; } }
 .bc { aspect-ratio: 1; border-radius: 50%; border: 0; padding: 6px; background: radial-gradient(circle, #fbf6ea, #e6d9c0); box-shadow: 0 2px 6px rgba(0,0,0,.25), inset 0 0 0 3px #c9b7ff; display: grid; place-items: center; }
 .bc img { width: 100%; height: 100%; object-fit: contain; }
 .bc.unknown { background: radial-gradient(circle, #c9bba6, #a6957b); box-shadow: 0 2px 6px rgba(0,0,0,.2), inset 0 0 0 3px rgba(255,255,255,.3); }
