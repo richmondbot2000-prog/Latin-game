@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '141';
+const APP_VERSION = '142';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -574,7 +574,7 @@ function renderHome(u) {
     loadInbox(u);
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
-  const readGate = h => () => { if (readLocked(u)) flashHome(`📖 Reading opens at ${LEVELS[1][1]} — choose ${LEVELS[1][1]} above once you know the Top 50.`); else location.hash = h; };
+  const readGate = h => () => { if (readLocked(u)) flashHome(`📖 Reading opens at ${LEVELS[1][1]} — choose ${LEVELS[1][1]} above once you know the ${LEVELS[0][1]} words.`); else location.hash = h; };
   $('#readGo').onclick = readGate('read');
   $('#cardsGo').onclick = () => { location.hash = 'cards'; };
   $('#passGo').onclick = readGate('passages');

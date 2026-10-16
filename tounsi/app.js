@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '16';
+const APP_VERSION = '17';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -100,7 +100,7 @@ const streakKey = u => 'tounsi.streak.' + u.id;
 const levelKey = u => 'tounsi.level.' + u.id;
 
 /* vocabulary settings: each one opens up more words; Level 3 is the full list */
-const LEVELS = [['top', 'Top 50'], ['0', 'Basic'], ['1', 'Top 200'], ['2', 'Top 300'], ['3', 'Top 400'], ['4', 'Top 500']];
+const LEVELS = [['top', 'Beginner'], ['0', 'Basic'], ['1', 'Top 200'], ['2', 'Top 300'], ['3', 'Top 400'], ['4', 'Top 500']];
 const inLevel = (w, l) => l === 'top' ? !!w.top : w.level <= +l;
 // the Top 50 setting is for the cards and the games only: Read opens at the next setting up
 const readLocked = u => levelOf(u) === 'top';
@@ -575,7 +575,7 @@ function renderHome(u) {
     loadInbox(u);
   }
   $('#pracGo').onclick = () => { location.hash = 'practice'; };
-  const readGate = h => () => { if (readLocked(u)) flashHome(`📖 Reading opens at ${LEVELS[1][1]} — choose ${LEVELS[1][1]} above once you know the Top 50.`); else location.hash = h; };
+  const readGate = h => () => { if (readLocked(u)) flashHome(`📖 Reading opens at ${LEVELS[1][1]} — choose ${LEVELS[1][1]} above once you know the ${LEVELS[0][1]} words.`); else location.hash = h; };
   $('#readGo').onclick = readGate('read');
   $('#cardsGo').onclick = () => { location.hash = 'cards'; };
   $('#passGo').onclick = readGate('passages');

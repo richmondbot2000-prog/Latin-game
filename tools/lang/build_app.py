@@ -23,7 +23,7 @@ s = rep(s, "const m = t.match(/latin-v(\\d+)/);", f"const m = t.match(/{code}-v(
 s = rep(s, "fetch('sw.js?v=' + Date.now(), { cache: 'no-store' })", f"fetch('{code}/sw.js?v=' + Date.now(), {{ cache: 'no-store' }})")
 # levels
 levels = json.dumps(L['levels']).replace('"', "'")
-levels = "[['top', 'Top 50'], " + levels[1:]   # the Top 50 setting (words marked top=1 in words.txt) comes first, as in the Latin game
+levels = "[['top', 'Beginner'], " + levels[1:]   # the 50-word setting (words marked top=1 in words.txt) comes first, called Beginner (the Latin game's 'Top 50': there Beginner is the 100-word setting)
 s = rep(s, "const LEVELS = [['top', 'Top 50'], ['beginner', 'Beginner'], ['1', 'Level 1'], ['2', 'Level 2'], ['3', 'Level 3']];", f"const LEVELS = {levels};")
 s = rep(s, "const inLevel = (w, l) => l === 'top' ? !!w.top : l === 'beginner' ? !!w.beginner : w.level <= +l;", "const inLevel = (w, l) => l === 'top' ? !!w.top : w.level <= +l;")
 s = rep(s, "const levelOf = u => { const l = store.get(levelKey(u), 'beginner'); return LEVELS.some(x => x[0] === l) ? l : 'beginner'; };",
