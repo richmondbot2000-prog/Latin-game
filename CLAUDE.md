@@ -180,7 +180,9 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   the helper words fold into the Latin and the gloss keeps them: "were
   walking"); is/are/was/were → est/sunt/erat/erant when not a helper;
   has/have/had as a main verb → habeo. `BLOCK` lists English words never
-  converted (too many meanings: like, well, even, so, there, left, kind…).
+  converted (too many meanings: like, well, even, so, there, left, kind…). A word with an English double meaning
+  is only converted when the sentence fits: "letter" becomes *epistula* only
+  next to write / send / receive / read / post (not "in gold letters").
   **The start screen** (`start()` in `renderSnap`, after Google Translate):
   white, one big "Enter text" box (`#pasted`), round **Pictures** and
   **Camera** buttons along the bottom (a blue **Read** button appears once

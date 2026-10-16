@@ -179,6 +179,9 @@ const Snap = (() => {
       else if (subj || (isWord(i - 1) && /^(to|will|shall|can|could|must|should|would|not|never|always|often|also)$/.test(low[i - 1]))) cands = cands.filter(c => c.kind === 'v').concat(cands.filter(c => c.kind !== 'v'));
       else if (cands.some(c => c.kind === 'v') && cands.some(c => c.kind === 'n') && /^(the|a|an|his|her|my|their|our|your)$/.test(after)) cands = cands.filter(c => c.kind === 'v').concat(cands.filter(c => c.kind !== 'v'));
       const c = cands[0];
+      // a word with an English double meaning only turns Latin when the sentence is about the right one:
+      // epistula is a letter sent in the post, not a letter of the alphabet ("in gold letters")
+      if (c.w.word === 'epistula' && !/\b(writ|wrote|send|sent|receiv|post|deliver|envelope|stamp|messenger|read)/.test(low.join(' '))) { i += found.len; continue; }
       if (c.kind === 'v' && c.feat.f === 'ing' && !(isWord(i - 1) && /^(is|are|am|was|were)$/.test(low[i - 1]))) { i++; continue; }   // "the running boy": leave it
       if (c.kind === 'v' && c.feat.f === 'pp' && isWord(i - 1) && /^(is|are|am|was|were|be|been|being|get|got)$/.test(low[i - 1])) { i++; continue; }   // passive: leave it
       info[i] = { kind: c.kind, w: c.w, feat: c.feat, len: found.len };
