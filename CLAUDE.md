@@ -175,7 +175,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   vocative; adjectives agree with the next noun or, after a copula, the
   subject; verb person from the subject (pronoun or noun, "X and Y" →
   plural), tense from the English form and helpers (`were walking` →
-  imperfect, `will` → future, `did not` → perfect, `can/must/want to` +
+  imperfect, `will` → future, a helper only before a base verb with no comma or quote between, so '"I might not," said Pooh' is *dixit* — after a closing quote the speaker is the word after the verb, `did not` → perfect, `can/must/want to` +
   verb → possum/debeo/volo + infinitive, `do not` → noli + infinitive;
   the helper words fold into the Latin and the gloss keeps them: "were
   walking"); is/are/was/were → est/sunt/erat/erant when not a helper;
@@ -219,7 +219,7 @@ words in `vocab.js`) by recognition, not grammar. Built so far:
   the **three meanings** as full-width buttons (the word's own gloss and
   two from other words of the same kind in the same English shape,
   `Snap.shapeLike`: "were walking" → "were carrying"; `avoid` lists
-  respected; fragments like "-self" skipped). Tap or drag the grip up and
+  respected; fragments like "-self" skipped; never a wrong option that shares a word with any meaning of the target — its senses or its `SYNONYMS`, so no "huge" for *magnus* — and never a name like Troy). Tap or drag the grip up and
   it opens to show Font (Serif / Sans), Size (16 / 18 / 21px) and Page
   (☀ White / ☾ Black: `html.rdark`, also on the start screen), kept in
   `latin.reader` {font, size, dark}. Right → the button goes green, the

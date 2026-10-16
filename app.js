@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '117';
+const APP_VERSION = '118';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1007,11 +1007,17 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
     const kindOf = w => /^N/.test(w.pos) ? 'n' : /^V/.test(w.pos) ? 'v' : /^Adj|^numo/.test(w.pos) ? 'a' : 'o';
     const choices = t => {
       const w = byIdAll[t.id], gloss = t.gloss || t.en, k = w ? kindOf(w) : 'o';
-      const others = pool.filter(x => x.id !== t.id && kindOf(x) === k && (!w || !(w.avoid || []).includes(x.id)));
+      // a wrong option must not also be right: no word shared with any meaning of the word (its dictionary senses and the
+      // spoken alternatives in synonyms.js — 'huge' is right for magnus), and no names (Troy, Rome) as wrong options
+      const STOPW = /^(a|an|the|to|be|of|in|on|at|for|with|by|from|up|out|off|and|or|not|one|some|very|is|am|are|was|were|i|you|he|she|it|we|they|my|your|his|her|its|our|their)$/;
+      const bits = s => s.toLowerCase().split(/[^a-z']+/).filter(x => x && !STOPW.test(x)).map(stemWord);
+      const meansSet = x => new Set([x.english, ...((typeof SYNONYMS !== 'undefined' && SYNONYMS[x.id]) || [])].flatMap(bits));
+      const mine = w ? meansSet(w) : new Set(); bits(gloss).forEach(b => mine.add(b));
+      const others = pool.filter(x => x.id !== t.id && kindOf(x) === k && !/^[A-Z]/.test(x.word) && (!w || !(w.avoid || []).includes(x.id)) && ![...meansSet(x)].some(b => mine.has(b)));
       const pick = [];
       for (let tries = 0; tries < 40 && pick.length < 2 && others.length; tries++) {
         const x = others[Math.floor(Math.random() * others.length)], e = Snap.shapeLike(gloss, x.english.split(/[,;]/)[0].trim(), k);
-        if (!e || /^[-…(]|\.\.\.|…|\?/.test(e) || e.toLowerCase() === gloss.toLowerCase() || pick.includes(e) || (w && w.english.toLowerCase().split(/[,;]/).map(s => s.trim()).includes(e.toLowerCase()))) continue;
+        if (!e || /^[-…(]|\.\.\.|…|\?/.test(e) || e.toLowerCase() === gloss.toLowerCase() || pick.includes(e) || bits(e).some(b => mine.has(b)) || (w && w.english.toLowerCase().split(/[,;]/).map(s => s.trim()).includes(e.toLowerCase()))) continue;
         pick.push(e);
       }
       const all = [gloss, ...pick]; for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }

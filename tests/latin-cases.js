@@ -5,6 +5,8 @@
 // The expectation is the Latin form, or null for "stays English"; a gloss check is { la, gloss }.
 const CASES = [
   // double meanings
+  ['"I might not," said Winnie-the-Pooh.', 'said', 'dixit'],
+  ['He might not come.', 'come', 'venire'],
   ['It means he had the name over the door in gold letters, and lived under it.', 'letters', null],
   ['The king wrote a letter to the queen.', 'letter', 'epistulam'],
   ['He learnt his letters at school.', 'letters', null],

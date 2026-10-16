@@ -268,6 +268,8 @@ const Snap = (() => {
       const fm = f.feat.f;
       let pers = null;
       for (let j = k - 1; j >= 0; j--) {
+        // a closing quote: the subject is not inside the speech ('"I might," said Pooh' → he said), so take the word after the verb
+        if (!isWord(j) && /["“”]/.test(sent[j])) { const nx = sent.slice(k + 1).find(x => /\w/.test(x)); pers = (nx && PRON[nx.toLowerCase()]) || '3s'; break; }
         if (!isWord(j)) { if (/^[,;:]$/.test(sent[j]) && pers) break; continue; }
         if (PRON[low[j]]) { pers = PRON[low[j]]; if (low[j] === 'you' || low[j] === 'they') break; break; }
         if (info[j] && info[j].kind === 'n' && info[j].cs === 'nom') { pers = info[j].pl ? '3p' : '3s'; if (/^(and)$/.test(low[prevWord(j)] || '')) pers = '3p'; break; }
@@ -278,7 +280,10 @@ const Snap = (() => {
       if (!pers) { if (fm === '3s') pers = '3s'; else if (fm === 'base' && !/^(to|will|shall|can|could|must|should|would|do|did|does|not)$/.test(w1) && k > 0 && isWord(k - 1) && !PRON[w1]) pers = '3p'; else pers = lastPers; }
       if (fm === '3s') pers = '3s';
       let tense = 'pr';
-      if (w1 === 'to' || /^(can|could|must|should|would|may|might|ought)$/.test(w1) || (w1 === 'not' && /^(can|could|must|should|would|may|might)$/.test(w2)) || /^(wants?|wanted|able|like|likes|liked)$/.test(w1)) tense = 'inf';
+      // a helper only counts if it stands right before the verb (no comma or quote between) and the verb is in its base form:
+      // '"I might not," said Pooh' is not 'might say'
+      const glued = fm === 'base' && !sent.slice(p1 + 1, k).some(x => /[,;:!?"“”]/.test(x));
+      if (glued && (w1 === 'to' || /^(can|could|must|should|would|may|might|ought)$/.test(w1) || (w1 === 'not' && /^(can|could|must|should|would|may|might)$/.test(w2)) || /^(wants?|wanted|able|like|likes|liked)$/.test(w1))) tense = 'inf';
       else if (w1 === 'will' || w1 === 'shall' || (w1 === 'not' && /^(will|shall)$/.test(w2))) tense = 'fu';
       else if (fm === 'past' || fm === 'pp' || (fm === 'base' && (w1 === 'did' || (w1 === 'not' && w2 === 'did')))) tense = 'pf';
       else if (fm === 'base' && k === 0 && (/[!]/.test(sent[n - 1]) || n <= 4) && !PRON[low[1] || '']) tense = 'imp';
