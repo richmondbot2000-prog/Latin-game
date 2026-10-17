@@ -265,10 +265,21 @@ const Hammer = (() => {
       for (let i = first; i <= last; i++) {
         const p = pieces[Math.floor(hash(i, L.key.length) * pieces.length)], im = sceneImg(p.f); if (!ok(im)) continue;
         const x = i * span + hash(i, 7) * span * .5 - run * speed, w = p.w * k, h = p.h * k;
-        place(im, x, w, h, p);
+        place(im, x, w, h, p, i);
       }
     };
-    row(d.far, .12, 300, (im, x, w, h, p) => g.drawImage(im, x, skyTop + (p.y < 0 ? .5 : Math.min(p.y, .6)) * skyH, w, h));   // hills, clouds, suns, moons: barely move; a piece the artist left above the sky sits on the horizon
+    // hills, clouds, suns, moons: barely move. Each far piece is classed by hand in scenes.json (kind): 'ground' pieces
+    // (hills, mountains, a distant castle) stand on the horizon behind the ground strip; 'sky' pieces (clouds, suns, moons)
+    // float in the upper sky at a height picked by their index, so a tall phone's stretched sky has them high up, not on
+    // the hilltops; 'top' pieces (a cave's stalactites) hang from the top edge; 'skyrot' are clouds the sheet had on
+    // their side, drawn turned upright
+    const horizon = d.ground ? ground - d.gh * k * .45 : ground;
+    row(d.far, .12, 300, (im, x, w, h, p, i) => {
+      if (p.kind === 'ground' || !p.kind) g.drawImage(im, x, horizon - h, w, h);
+      else if (p.kind === 'top') g.drawImage(im, x, 0, w, h);
+      else if (p.kind === 'skyrot') { const fy = skyTop + (.08 + .32 * hash(i, 11)) * skyH; g.save(); g.translate(x + h / 2, fy + w / 2); g.rotate(-Math.PI / 2); g.drawImage(im, -w / 2, -h / 2, w, h); g.restore(); }
+      else { const fy = skyTop + (.06 + .34 * hash(i, 13)) * skyH; g.drawImage(im, x, Math.min(fy, horizon - h - 40 * k), w, h); }
+    });
     row(d.mid, .45, 420, (im, x, w, h) => g.drawImage(im, x, ground + 4 * k - h, w, h));         // trees, pillars, buildings: half speed, standing on the ground
     if (d.ground && ok(sceneImg(d.ground))) {   // the ground strip, at run speed
       const gi = sceneImg(d.ground), gh = d.gh * k, gw = d.gw * k, off = run % gw;

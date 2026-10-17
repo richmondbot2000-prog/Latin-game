@@ -405,8 +405,7 @@ Per-player counters live in
   canyon, temple, snowy peaks, cave, spooky, Arabian night, under the sea,
   future wave), one per level; 10 + 2 per level signs to clear. Once a sign is fully on screen the scroll holds for a second (`S.hold`; Jacques runs on the spot) so it can be read. Each scene is
   drawn in parallax from `art/jh/scenes.json` + `art/jh/scenes/*.png`: a sky
-  block stretched over the screen, `far` props (clouds, hills, suns) at 12 %
-  of run speed, `mid` props (trees, pillars, buildings) at 45 %, the ground
+  block stretched over the screen, `far` props at 12 % of run speed placed by a hand-set `kind` in `scenes.json` (`ground`: hills, mountains, a distant castle stand on the horizon behind the ground strip; `sky`: clouds, suns, moons float in the upper sky at a height from the piece's index; `top`: the cave's stalactites hang from the top edge; `skyrot`: two Snowy clouds the sheet had on their side, drawn turned upright — the cutter's `y` values were unreliable and on a tall phone put mountains in mid-air), `mid` props (trees, pillars, buildings) at 45 %, the ground
   strip and `near` props at run speed, placed by a hash so a level always
   looks the same. The pieces were cut from the artist's `Background Assets`
   sheets by `scratchpad/scenes.py` (session scratchpad; it finds the sky and
