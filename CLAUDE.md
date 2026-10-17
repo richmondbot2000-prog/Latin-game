@@ -24,7 +24,7 @@ A Latin learning game, built by a father for his daughter. Public site at
 A game for learning the ISEB Common Entrance Latin vocabulary (Levels 1–3, 403
 words in `vocab.js`) by recognition, not grammar. Built so far:
 
-- **Organise** — the Word list. **Cards & Beasts** (under Practice on the
+- **Organise** — the Word list (opens on All, least known first: by stars, then least recently answered, then alphabetical; the filter chips last for the visit). **Cards & Beasts** (under Practice on the
   home page, with Squishygeddon and Jacques Hammer; Read holds Sentences
   and Passages; `#cards` → `renderCardsHome`: a face-down deck to swipe or tap to
   play, the Beastpedia banner, the scene of the latest beast; the play

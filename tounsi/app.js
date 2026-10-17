@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '35';
+const APP_VERSION = '36';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1355,7 +1355,7 @@ function renderOrganise(u, tab) {
 function renderList(u, pane) {
   const p = getProg(u);
   const now = Date.now();
-  let filter = store.get('tounsi.listFilter', 'all'), term = '';
+  let filter = 'all', term = '';   // the list opens on every word, least known first; a filter lasts for the visit
   const { c, rest, total } = summary(u);
   if (filter !== 'all' && !(filter === 'rest' ? rest : c[+filter])) filter = 'all';   // a remembered filter with nothing in it any more falls back to everything
   const opts = [['all', 'All ' + total], ['0', 'New ' + c[0]], ...[1, 2, 3, 4, 5].map(s => [String(s), '★'.repeat(s) + ' ' + c[s]]), ['rest', 'Not due ' + rest]];
@@ -1368,7 +1368,9 @@ function renderList(u, pane) {
     </div>
     <ul class="words" id="words"></ul>`;
   const list = $('#words', pane);
-  const sorted = activeWords(u).sort((a, b) => a.word.replace(/^-/, '').localeCompare(b.word.replace(/^-/, ''), 'en', { sensitivity: 'base' }));
+  // least known first: by stars, then the ones answered least recently, then alphabetical
+  const prog = getProg(u), starsOf = w => (prog[w.id] && prog[w.id].s) || 0, seenAt = w => (prog[w.id] && prog[w.id].t) || 0;
+  const sorted = activeWords(u).sort((a, b) => starsOf(a) - starsOf(b) || seenAt(a) - seenAt(b) || a.word.replace(/^-/, '').localeCompare(b.word.replace(/^-/, ''), 'en', { sensitivity: 'base' }));
   const draw = () => {
     const shown = sorted.filter(w => {
       const s = (p[w.id] && p[w.id].s) || 0;
@@ -1383,7 +1385,7 @@ function renderList(u, pane) {
   };
   $('.filters', pane).onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
-    filter = b.dataset.f; store.set('tounsi.listFilter', filter);
+    filter = b.dataset.f;
     pane.querySelectorAll('.filters button').forEach(x => x.setAttribute('aria-pressed', x === b));
     draw();
   };
