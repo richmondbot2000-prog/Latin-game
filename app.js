@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '163';
+const APP_VERSION = '164';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -766,7 +766,7 @@ function renderRead(u) {
     opts = [gloss, ds[0], ds[1] || ds[0]].sort(() => Math.random() - .5);
     $('#ropts').innerHTML = opts.map((o, k) => `<button class="btn ghost" data-k="${k}">${esc(o)}</button>`).join('');
     $('#rmsg').textContent = '';
-    busy = false;
+    busy = false; answered = false; const tb = $('#typed'); if (tb) tb.value = '';
   }
   function finish() {
     $('#ren').textContent = sent.en; $('#ren').classList.add('show');
@@ -779,9 +779,10 @@ function renderRead(u) {
     $('#rnext').onclick = () => { if (more) { story.at++; load(story.list[story.at]); } else load(pick()); show(); };
   }
   // an answer, tapped or spoken: k is the option chosen
+  let answered = false;   // set by choose, so the typing box clears itself after each answer
   function choose(k) {
     const b = $('#ropts').querySelector(`button[data-k="${k}"]`); if (!b || busy) return;
-    busy = true;
+    busy = true; answered = true;
     const cur = wordsIn()[i], w = byId[cur[1]], gloss = cur[2], ok = opts[k] === gloss;
     recordAnswer(u, w, ok);
     if (ok) { b.classList.add('good'); setTimeout(() => { i++; show(); }, 450); }
@@ -811,7 +812,7 @@ function renderRead(u) {
     const k = opts.findIndex(o => o !== gloss && contentWords(o).some(x => sameWord(x, n)));
     if (k >= 0) choose(k);
   }
-  bindTyped(say, () => false);
+  bindTyped(say, () => answered);
   const { stopRec } = micListener(say);
   window.addEventListener('hashchange', stopRec, { once: true });
   load(pick()); show();
