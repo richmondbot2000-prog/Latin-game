@@ -4,13 +4,14 @@ const NS_H = (typeof APP_NS !== 'undefined' ? APP_NS : 'latin');   // storage na
 /* ---------- Jacques Hammer: a runner. Signs show a Latin word with a right or wrong meaning.
    Tap to smash the wrong ones; let the right ones pass. Get it wrong and the evil guy comes out. ---------- */
 const Hammer = (() => {
-  const LIVES = 3;
+  const MISTAKES = 3;   // wrong signs allowed in a level; one more and the level starts again
   // levels alternate between the scenes the artist made; what Jacques wears is up to the player (see the shop)
   // the artist's fifteen scenes (art/jh/scenes, cut from the Background Assets sheets), one per level, round and round
-  const SCENES = [{ scene: 'Town road', key: 'Road' }, { scene: 'Fish pier', key: 'Pier' }, { scene: 'The park', key: 'Default' }, { scene: 'The beach', key: 'Beach' },
-    { scene: 'The forest', key: 'Forest' }, { scene: 'Blossom lane', key: 'Blossom' }, { scene: 'Ancient Greece', key: 'Greek' }, { scene: 'The canyon', key: 'Canyon' },
-    { scene: 'The temple', key: 'Temple' }, { scene: 'Snowy peaks', key: 'SnowyPeaks' }, { scene: 'The cave', key: 'Cave' }, { scene: 'Spooky hollow', key: 'Spooky' },
-    { scene: 'Arabian night', key: 'ArabianNight' }, { scene: 'Under the sea', key: 'UnderWater' }, { scene: 'Future wave', key: 'FutureWave' }];
+  // signs: how many boards the place has — a short stroll through town, a long haul under the sea
+  const SCENES = [{ scene: 'Town road', key: 'Road', signs: 10 }, { scene: 'Fish pier', key: 'Pier', signs: 12 }, { scene: 'The park', key: 'Default', signs: 12 }, { scene: 'The beach', key: 'Beach', signs: 14 },
+    { scene: 'The forest', key: 'Forest', signs: 16 }, { scene: 'Blossom lane', key: 'Blossom', signs: 14 }, { scene: 'Ancient Greece', key: 'Greek', signs: 18 }, { scene: 'The canyon', key: 'Canyon', signs: 20 },
+    { scene: 'The temple', key: 'Temple', signs: 18 }, { scene: 'Snowy peaks', key: 'SnowyPeaks', signs: 22 }, { scene: 'The cave', key: 'Cave', signs: 24 }, { scene: 'Spooky hollow', key: 'Spooky', signs: 24 },
+    { scene: 'Arabian night', key: 'ArabianNight', signs: 20 }, { scene: 'Under the sea', key: 'UnderWater', signs: 26 }, { scene: 'Future wave', key: 'FutureWave', signs: 30 }];
   const levelOf = n => SCENES[(n - 1) % SCENES.length];
   let SCENE_DATA = null, sceneReq = null;   // art/jh/scenes.json: for each scene the sky block, the ground strip and the props by layer
   const sceneImg = f => img('scenes/' + f.replace(/\.png$/, ''));
@@ -20,7 +21,7 @@ const Hammer = (() => {
   }
   // a repeating row of props along the run: piece i sits at a steady spacing with a little wobble, chosen by a hash so each level looks the same every time
   const hash = (a, b) => { let h = (a * 374761393 + b * 668265263 + 1013904223) >>> 0; h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0; return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
-  const quota = n => 10 + 2 * Math.min(10, n - 1);           // signs to get through on level n
+  const quota = n => levelOf(n).signs;                       // signs to get through: set per place, so some backgrounds are tougher
   // the shop: everything the artist drew, bought with coins earned by clearing levels; owned for ever
   const COSTUMES = [['standard', 'Jacques', 0], ['beach', 'Beach', 120], ['coolbeach', 'Cool beach', 120], ['coolbeachyellow', 'Yellow beach', 120], ['farmer', 'Farmer', 120], ['farmerdenim', 'Denim farmer', 120],
     ['lumberjacque', 'Lumberjacque', 140], ['lumberjacquebearded', 'Bearded Jacque', 160], ['biker', 'Biker', 150], ['greek', 'Roman', 150], ['suit', 'Secret agent', 160], ['cowboy', 'Cowboy', 160], ['karate', 'Karate', 160],
@@ -45,7 +46,7 @@ const Hammer = (() => {
   const boardW = () => Math.min(W * .8, H * .9);
 
   function newGame(level = 1, score = 0) {
-    S = { level, made: 0, right0: 0, wrong0: 0, coins: 0, coinsShown: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: LIVES, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
+    S = { level, made: 0, right0: 0, wrong0: 0, coins: 0, coinsShown: 0, t: 0, dist: 0, speed: Math.min(.4, .22 + .015 * (level - 1)), score, lives: 0, signs: [], bits: [], phase: 'ready', nextSign: 2.2, lastWord: null,
       swing: -1, hitDone: false, ouch: -1, vil: null, invuln: 0, right: 0, wrong: 0, flashRed: 0, combo: 0, bestCombo: 0, taps: 0, dustT: 0, dogX: null, dogHop: 0, shake: 0, card: null,
       clouds: makeClouds() };
   }
@@ -100,7 +101,7 @@ const Hammer = (() => {
       if (was < .83 && S.vil.t >= .83) { S.ouch = .9; S.flashRed = .4; S.bits.push({ kind: 'ouch', t: 0 }); }
       if (S.vil.t > 2.05) {
         S.vil = null;
-        const after = () => { if (S.lives <= 0) { S.phase = 'over'; setTimeout(gameOver, 300); } else S.phase = 'play'; };
+        const after = () => { if (S.lives > MISTAKES) { S.phase = 'over'; setTimeout(gameOver, 300); } else S.phase = 'play'; };
         if (S.card && typeof openMemo === 'function') {   // the game waits while the word's memory card is read
           const c = S.card; S.card = null; S.phase = 'card';
           const p = getProg(user)[c.w.id];
@@ -129,7 +130,7 @@ const Hammer = (() => {
         else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.show}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
       }
     }
-    S.signs = S.signs.filter(s => s.x > -.4);
+    S.signs = S.signs.filter(s => s.x > -(bw + .5));   // kept until judged: a board is 80% of a phone's width, so it is well off the left edge before it is wholly behind Jacques
     // hammer swing: impact a moment after the tap
     if (S.swing >= 0) {
       S.swing += dt;
@@ -154,7 +155,7 @@ const Hammer = (() => {
   }
   function hurt(why, w) {
     if (S.invuln > 0 || S.vil) return;
-    S.lives--; S.invuln = 3; S.combo = 0; S.vil = { t: 0 }; S.swing = -1; S.card = { w, why };
+    S.lives++; S.invuln = 3; S.combo = 0; S.vil = { t: 0 }; S.swing = -1; S.card = { w, why };
     ui.why.textContent = why; ui.why.classList.remove('show'); void ui.why.offsetWidth; ui.why.classList.add('show');
   }
   function levelClear() {
@@ -171,7 +172,7 @@ const Hammer = (() => {
     const best = Math.max(sv.best || 0, S.score); const isBest = S.score > (sv.best || 0);
     store.set(saveKey, { ...sv, best, plays: (sv.plays || 0) + 1, coins: (sv.coins || 0) + S.coins });   // the coins picked up on the way are kept
     const lv = S.level;
-    showOverlay('Ouch!', `<b class="hcoin">+${S.coins} coins</b> kept · you have ${(sv.coins || 0) + S.coins}<br>${S.right} right, ${S.wrong} wrong · best combo ×${S.bestCombo}<br><br>Try <b>${levelOf(lv).scene}</b> again`, `${levelOf(lv).scene} again`, () => { newGame(lv); start(); }, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
+    showOverlay('Too many wrong!', `More than ${MISTAKES} signs wrong, so it's back to the start of <b>${levelOf(lv).scene}</b>.<br><b class="hcoin">+${S.coins} coins</b> kept · you have ${(sv.coins || 0) + S.coins}<br>${S.right} right, ${S.wrong} wrong`, `${levelOf(lv).scene} from the start`, () => { newGame(lv); start(); }, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
     ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(() => { newGame(lv); start(); }, levelOf(lv).scene); };
     if (isBest) Celebrate(innerWidth / 2, innerHeight / 3, 2);
   }
@@ -533,7 +534,7 @@ const Hammer = (() => {
     ui.score.textContent = (saved().coins || 0) + S.coinsShown;
     if (ui.lev) ui.lev.textContent = `${S.made}/${quota(S.level)}`;
     const pl = stage && stage.querySelector('#hplace'); if (pl) pl.textContent = levelOf(S.level).scene;   // the place is named in the bar below (the top bar has no room on a phone)
-    ui.lives.textContent = '❤️'.repeat(Math.max(0, S.lives)) + '🖤'.repeat(Math.max(0, LIVES - S.lives));
+    ui.lives.textContent = S.lives ? `✗ ${Math.min(S.lives, MISTAKES)}/${MISTAKES}` : ''; ui.lives.classList.toggle('warn', S.lives >= MISTAKES);
   }
   function showOverlay(title, sub, btn, fn, extra = '') {
     ui.overlay.hidden = false;
