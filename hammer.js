@@ -158,21 +158,27 @@ const Hammer = (() => {
     S.lives++; S.invuln = 3; S.combo = 0; S.vil = { t: 0 }; S.swing = -1; S.card = { w, why };
     ui.why.textContent = why; ui.why.classList.remove('show'); void ui.why.offsetWidth; ui.why.classList.add('show');
   }
+  // the run's coins are banked into the save the moment a level ends, and the counter reads the save: the overlay and
+  // the counter then always agree (before, coins still flying to the counter, or a sync that had changed the save
+  // meanwhile, left the two apart)
+  function bank() { S.won = S.coins; S.coins = 0; S.coinsShown = 0; S.bits = S.bits.filter(b => b.kind !== 'coin'); refreshUI(); }
   function levelClear() {
     const sv = store.get(saveKey, { best: 0 });
     const next = S.level + 1, L = levelOf(next), r = S.right - S.right0, w = S.wrong - S.wrong0, coins = coinsFor(r, w);
     store.set(saveKey, { ...sv, best: Math.max(sv.best || 0, S.score), level: Math.max(sv.level || 1, next), cleared: Math.max(sv.cleared || 0, S.level), coins: (sv.coins || 0) + S.coins + coins, earned: (sv.earned || 0) + S.coins + coins });
+    bank();
     Celebrate(innerWidth / 2, innerHeight / 3, 2);
     const go = () => { const sc = S.score; newGame(next, sc); preload(next); start(); };
-    showOverlay(`⭐ ${levelOf(S.level).scene} cleared!`, `<b class="hcoin">+${S.coins} coins</b> on the way, <b class="hcoin">+${coins}</b> for the level${w === 0 ? ' (perfect!)' : ''} · you have ${(sv.coins || 0) + S.coins + coins}<br>${r} right, ${w} wrong<br><br>Next stop: <b>${L.scene}</b> — dress Jacques for it in Items`, `On to ${L.scene}`, go, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
+    showOverlay(`⭐ ${levelOf(S.level).scene} cleared!`, `<b class="hcoin">+${S.won} coins</b> on the way, <b class="hcoin">+${coins}</b> for the level${w === 0 ? ' (perfect!)' : ''} · you have ${saved().coins || 0}<br>${r} right, ${w} wrong<br><br>Next stop: <b>${L.scene}</b> — dress Jacques for it in Items`, `On to ${L.scene}`, go, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
     ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(go, 'Next: ' + L.scene); };
   }
   function gameOver() {
     const sv = store.get(saveKey, { best: 0 });
     const best = Math.max(sv.best || 0, S.score); const isBest = S.score > (sv.best || 0);
     store.set(saveKey, { ...sv, best, plays: (sv.plays || 0) + 1, coins: (sv.coins || 0) + S.coins });   // the coins picked up on the way are kept
+    bank();
     const lv = S.level;
-    showOverlay('Too many wrong!', `More than ${MISTAKES} signs wrong, so it's back to the start of <b>${levelOf(lv).scene}</b>.<br><b class="hcoin">+${S.coins} coins</b> kept · you have ${(sv.coins || 0) + S.coins}<br>${S.right} right, ${S.wrong} wrong`, `${levelOf(lv).scene} from the start`, () => { newGame(lv); start(); }, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
+    showOverlay('Too many wrong!', `More than ${MISTAKES} signs wrong, so it's back to the start of <b>${levelOf(lv).scene}</b>.<br><b class="hcoin">+${S.won} coins</b> kept · you have ${saved().coins || 0}<br>${S.right} right, ${S.wrong} wrong`, `${levelOf(lv).scene} from the start`, () => { newGame(lv); start(); }, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
     ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(() => { newGame(lv); start(); }, levelOf(lv).scene); };
     if (isBest) Celebrate(innerWidth / 2, innerHeight / 3, 2);
   }

@@ -411,7 +411,7 @@ Per-player counters live in
   sheets by `scratchpad/scenes.py` (session scratchpad; it finds the sky and
   ground bands by row runs, the props by connected components, classes them
   by shape and brightness, with `scene_overrides.json` for the few it gets
-  wrong). **Coins**: 3 for every sign judged right, paid on the spot — a gold coin pops out behind Jacques, turns once and flies to the 🪙 counter at the top right (`earnCoin`, `drawCoin`, bits of kind `coin`; the counter ticks up when it lands), plus 10 at the end of a level and 15 more for a perfect one; the score sits in the bar underneath; the **Items**
+  wrong). **Coins**: 3 for every sign judged right, paid on the spot — a gold coin pops out behind Jacques, turns once and flies to the 🪙 counter at the top right (`earnCoin`, `drawCoin`, bits of kind `coin`; the counter ticks up when it lands), plus 10 at the end of a level and 15 more for a perfect one; when a level ends, `bank()` moves the run's coins into the save, drops coins still flying and refreshes the counter, and the overlay quotes `saved().coins`, so the two always agree; the score sits in the bar underneath; the **Items**
   screen (JACQUE / HAMMER / PUP / SHOP tabs, after the artist's mockup) sells
   26 costumes, 23 'hammers' and 5 pups, owned for ever and worn whenever.
   Art in `art/jh/`. **Characters are the artist's Spine rigs** played by
