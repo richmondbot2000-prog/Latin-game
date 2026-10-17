@@ -400,8 +400,7 @@ Per-player counters live in
   (works either way up). One wide board at a time scrolls in with a Latin word
   and a meaning; tap to smash the wrong ones, let the right ones pass. The bad
   guy (the "Decoy") opens the game saying he has changed the town's signs, and
-  comes back out of the ground to club Jacques on a mistake; three lives, score
-  with a combo bonus. **Levels** cycle through the artist's fifteen scenes
+  comes back out of the ground to club Jacques on a mistake; three lives. **No score is shown, only coins** (`S.score` still counts inside, unused on screen), and **no level numbers**: the top bar shows signs done `n/quota`, the bar below 📍 the place (the scene's name), and the start screen and the level-clear overlay say "Next stop: <scene> — dress Jacques for it" (`openItems(onClose, where)` puts the place in the Items badge where the artist's Lv. was). **Levels** cycle through the artist's fifteen scenes
   (`SCENES` in `hammer.js`: road, pier, park, beach, forest, blossom, Greece,
   canyon, temple, snowy peaks, cave, spooky, Arabian night, under the sea,
   future wave), one per level; 10 + 2 per level signs to clear. Once a sign is fully on screen the scroll holds for a second (`S.hold`; Jacques runs on the spot) so it can be read. Each scene is

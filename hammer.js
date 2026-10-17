@@ -140,7 +140,7 @@ const Hammer = (() => {
         if (target) {
           target.state = 'smashed'; target.smashT = 0;
           const hx = Math.max(target.x, CX + .05); smashSign(target);
-          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); earnCoin(); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '+' + pts }); }
+          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); earnCoin(); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '' }); }
           else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.show}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
         }
       }
@@ -163,16 +163,16 @@ const Hammer = (() => {
     store.set(saveKey, { ...sv, best: Math.max(sv.best || 0, S.score), level: Math.max(sv.level || 1, next), cleared: Math.max(sv.cleared || 0, S.level), coins: (sv.coins || 0) + S.coins + coins, earned: (sv.earned || 0) + S.coins + coins });
     Celebrate(innerWidth / 2, innerHeight / 3, 2);
     const go = () => { const sc = S.score; newGame(next, sc); preload(next); start(); };
-    showOverlay(`⭐ Level ${S.level} clear!`, `<b class="hcoin">+${S.coins} coins</b> on the way, <b class="hcoin">+${coins}</b> for the level${w === 0 ? ' (perfect!)' : ''} · you have ${(sv.coins || 0) + S.coins + coins}<br>${r} right, ${w} wrong<br><br>Next: <b>Level ${next} — ${L.scene}</b>`, `Level ${next}`, go, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
-    ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(go); };
+    showOverlay(`⭐ ${levelOf(S.level).scene} cleared!`, `<b class="hcoin">+${S.coins} coins</b> on the way, <b class="hcoin">+${coins}</b> for the level${w === 0 ? ' (perfect!)' : ''} · you have ${(sv.coins || 0) + S.coins + coins}<br>${r} right, ${w} wrong<br><br>Next stop: <b>${L.scene}</b> — dress Jacques for it in Items`, `On to ${L.scene}`, go, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
+    ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(go, 'Next: ' + L.scene); };
   }
   function gameOver() {
     const sv = store.get(saveKey, { best: 0 });
     const best = Math.max(sv.best || 0, S.score); const isBest = S.score > (sv.best || 0);
     store.set(saveKey, { ...sv, best, plays: (sv.plays || 0) + 1, coins: (sv.coins || 0) + S.coins });   // the coins picked up on the way are kept
     const lv = S.level;
-    showOverlay(`${isBest ? '🏆 New best score!' : 'Ouch!'}`, `Score ${S.score} · best ${best}<br>${S.right} right, ${S.wrong} wrong · best combo ×${S.bestCombo}<br><br>Level ${lv} — ${levelOf(lv).scene}`, `Try level ${lv} again`, () => { newGame(lv); start(); }, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
-    ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(() => { newGame(lv); start(); }); };
+    showOverlay('Ouch!', `<b class="hcoin">+${S.coins} coins</b> kept · you have ${(sv.coins || 0) + S.coins}<br>${S.right} right, ${S.wrong} wrong · best combo ×${S.bestCombo}<br><br>Try <b>${levelOf(lv).scene}</b> again`, `${levelOf(lv).scene} again`, () => { newGame(lv); start(); }, `<button class="btn ghost ovbtn" id="hvShop">🛍️ Items</button>`);
+    ui.overlay.querySelector('#hvShop').onclick = () => { ui.overlay.hidden = true; openItems(() => { newGame(lv); start(); }, levelOf(lv).scene); };
     if (isBest) Celebrate(innerWidth / 2, innerHeight / 3, 2);
   }
   function tap() {
@@ -518,7 +518,7 @@ const Hammer = (() => {
     for (const b of S.bits) {
       if (b.kind === 'half') { ctx.save(); ctx.globalAlpha = Math.min(1, 2 * (1.2 - b.t)); drawBoard(b.name, b.sg, null, b.x, b.y, b.f, b.sh, null, b.rot); ctx.restore(); }
       else if (b.kind === 'plank') { ctx.save(); ctx.translate(b.x * W, b.y * H); ctx.rotate(b.r); ctx.globalAlpha = 1 - b.t / 1.2; ctx.fillStyle = '#E8C27A'; ctx.fillRect(-W * .03, -H * .012, W * .06, H * .024); ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 2; ctx.strokeRect(-W * .03, -H * .012, W * .06, H * .024); ctx.restore(); }
-      else if (b.kind === 'pop') { sprite('fx_star2', b.x * W, H * GROUND - 120 * jScale(), k * (1 + b.t * .6), 1 - b.t, b.t * 2); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#FFD23F'; ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 4; ctx.font = `900 ${jScale() * 44}px system-ui, sans-serif`; ctx.textAlign = 'center'; const py = H * GROUND - 170 * jScale() - b.t * H * .1; ctx.strokeText(b.text, b.x * W, py); ctx.fillText(b.text, b.x * W, py); ctx.globalAlpha = 1; }
+      else if (b.kind === 'pop') { sprite('fx_star2', b.x * W, H * GROUND - 120 * jScale(), k * (1 + b.t * .6), 1 - b.t, b.t * 2); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#FFD23F'; ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 4; ctx.font = `900 ${jScale() * 44}px system-ui, sans-serif`; ctx.textAlign = 'center'; const py = H * GROUND - 170 * jScale() - b.t * H * .1; if (b.text) { ctx.strokeText(b.text, b.x * W, py); ctx.fillText(b.text, b.x * W, py); } ctx.globalAlpha = 1; }
       else if (b.kind === 'tick') { const ty = H * GROUND - 170 * jScale() - b.t * H * .1; sprite('fx_smallstar', b.x * W, ty, k * 1.2, 1 - b.t, b.t * 3); ctx.globalAlpha = 1 - b.t; ctx.fillStyle = '#2E7D4F'; ctx.font = `900 ${jScale() * 40}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.fillText('✓', b.x * W + jScale() * 36, ty); ctx.globalAlpha = 1; }
       else if (b.kind === 'coin') drawCoin(b);
       else if (b.kind === 'ouch') sprite('fx_redstar', W * JX + 10, H * GROUND - jScale() * 70, k * (1.2 + b.t), 1 - b.t / .9, -b.t);
@@ -531,8 +531,8 @@ const Hammer = (() => {
   /* ---------- DOM ---------- */
   function refreshUI() {
     ui.score.textContent = (saved().coins || 0) + S.coinsShown;
-    const pts = stage && stage.querySelector('#hpts'); if (pts) pts.textContent = S.score;
-    if (ui.lev) ui.lev.textContent = `L${S.level} · ${S.made}/${quota(S.level)}`;
+    if (ui.lev) ui.lev.textContent = `${S.made}/${quota(S.level)}`;
+    const pl = stage && stage.querySelector('#hplace'); if (pl) pl.textContent = levelOf(S.level).scene;   // the place is named in the bar below (the top bar has no room on a phone)
     ui.lives.textContent = '❤️'.repeat(Math.max(0, S.lives)) + '🖤'.repeat(Math.max(0, LIVES - S.lives));
   }
   function showOverlay(title, sub, btn, fn, extra = '') {
@@ -542,7 +542,7 @@ const Hammer = (() => {
   }
   /* ---------- items: wear what you own, buy what you don't ---------- */
   let itemsTab = 'costume';
-  function openItems(onClose) {
+  function openItems(onClose, where) {
     const sv = saved(); WEAR = wear();
     img('ui_frame');
     for (const kind in CATALOGUE) for (const [id] of CATALOGUE[kind]) { if (kind === 'hammer') img('w_' + id); else if (kind === 'pup') for (const p in DOG) img(id + '_' + p); else if (META) for (const p in META.jacque[id] || {}) if (!SKIP.test(p)) img(`j_${id}_${p}`); }
@@ -551,7 +551,7 @@ const Hammer = (() => {
       <div class="hihead"><span class="hititle">ITEMS</span><span class="hicoins">🪙 <b id="hiCoins">${sv.coins || 0}</b></span><button class="hiclose" id="hiClose">close</button></div>
       <div class="hiframe"><canvas class="hiframebg"></canvas>
         <div class="hitabs">${['costume', 'hammer', 'pup', 'shop'].map(t => `<button data-t="${t}" class="${t === itemsTab ? 'on' : ''}">${{ costume: 'JACQUE', hammer: 'HAMMER', pup: 'PUP', shop: 'SHOP' }[t]}</button>`).join('')}</div>
-        <div class="hibody"><div class="hiwho"><span class="hilv">Lv.${sv.cleared || 0}</span><canvas id="hiMe"></canvas></div><div class="higrid" id="hiGrid"></div></div>
+        <div class="hibody"><div class="hiwho"><span class="hilv">${esc(where || (S ? levelOf(S.level).scene : ''))}</span><canvas id="hiMe"></canvas></div><div class="higrid" id="hiGrid"></div></div>
         <div class="hibar"><i id="hiBar"></i></div>
       </div>
       <div class="hinote" id="hiNote"></div></div>`;
@@ -634,7 +634,7 @@ const Hammer = (() => {
         <div class="pcash"><span class="lbl">🪙</span><b id="hscore">0</b></div>
       </div>
       <div class="hbox" id="hbox"><canvas id="hcv"></canvas><div class="hwhy" id="hwhy"></div><div class="overlay" id="hover" hidden></div></div>
-      <div class="hbar"><span class="small">Tap to swing. Smash <b>wrong</b> meanings, let <b>right</b> ones past.</span><span class="small">Score <b id="hpts">0</b> · best ${sv.best || 0}</span></div>`;
+      <div class="hbar"><span class="small">Tap to swing. Smash <b>wrong</b> meanings, let <b>right</b> ones past.</span><span class="small">📍 <b id="hplace"></b></span></div>`;
     ui = { box: root.querySelector('#hbox'), overlay: root.querySelector('#hover'), score: root.querySelector('#hscore'), lives: root.querySelector('#hlives'), why: root.querySelector('#hwhy'), lev: root.querySelector('#hlev') };
     cv = root.querySelector('#hcv'); ctx = cv.getContext('2d');
     document.body.classList.add('noscroll');
@@ -650,7 +650,7 @@ const Hammer = (() => {
     ui.overlay.hidden = false;
     const title = () => {
       ui.overlay.hidden = false;
-      ui.overlay.innerHTML = `<div class="htitle"><div class="htsub">Level ${lv} — ${levelOf(lv).scene}<br><span>🪙 ${saved().coins || 0} coins</span></div><button class="btn hiopen" id="hiOpen">🛍️ Items</button></div>`;
+      ui.overlay.innerHTML = `<div class="htitle"><div class="htsub">Next stop: <b>${levelOf(lv).scene}</b> — dress Jacques for it<br><span>🪙 ${saved().coins || 0} coins</span></div><button class="btn hiopen" id="hiOpen">🛍️ Items</button></div>`;
       ui.overlay.querySelector('.htitle').onclick = () => { ui.overlay.hidden = true; start(); };
       ui.overlay.querySelector('#hiOpen').onclick = e => { e.stopPropagation(); ui.overlay.hidden = true; openItems(title); };
     };
