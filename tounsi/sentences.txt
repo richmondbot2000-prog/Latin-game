@@ -56,6 +56,124 @@
 -1 | Leila=- t7eb el-ma w Karim=- y7eb el-khobz. | Leila likes water and Karim likes bread. | b2 | Karim and Leila
 -1 | Elyoum houma fi ed-dar m3a ommi. | Today they are in the house with mum. | b2 | Karim and Leila
 -1 | Ghodwa yemchiw m3a baba. | Tomorrow they go with dad. | b2 | Karim and Leila
+-1 | Hedha rajel. | This is a man.
+-1 | Hedha weld. | This is a boy.
+-1 | Hedhi=hedha|this bent. | This is a girl.
+-1 | Hedhi=hedha|this mra. | This is a woman.
+-1 | Hedhi=hedha|this dar=dar. | This is a house.
+-1 | Hedha ma. | This is water.
+-1 | Hedha khobz. | This is bread.
+-1 | Hedha baba. | This is dad.
+-1 | Hedhi=hedha|this ommi. | This is mum.
+-1 | Hedha nhar behi. | This is a good day.
+-1 | Ena rajel. | I am a man.
+-1 | Ena mra. | I am a woman.
+-1 | Enti weld. | You are a boy.
+-1 | Enti bent. | You are a girl.
+-1 | Houwa baba. | He is dad.
+-1 | Hiya ommi. | She is mum.
+-1 | A7na houni. | We are here.
+-1 | Houma fi ed-dar. | They are in the house.
+-1 | Ena fi ed-dar. | I am in the house.
+-1 | Enti houni? | Are you here?
+-1 | Baba houni. | Dad is here.
+-1 | Ommi fi ed-dar. | Mum is in the house.
+-1 | El-weld houni. | The boy is here.
+-1 | El-bent fi ed-dar. | The girl is in the house.
+-1 | El-ma fi ed-dar. | The water is in the house.
+-1 | El-khobz houni. | The bread is here.
+-1 | Er-rajel kbir. | The man is big.
+-1 | El-mra kbira. | The woman is big.
+-1 | Ed-dar kbira. | The house is big.
+-1 | El-weld behi. | The boy is good.
+-1 | El-bent behya. | The girl is good.
+-1 | El-khobz behi. | The bread is good.
+-1 | El-ma behi. | The water is good.
+-1 | Baba kbir. | Dad is big.
+-1 | Ommi behya. | Mum is good.
+-1 | En-nhar behi. | The day is good.
+-1 | Ena behi. | I am fine.
+-1 | Enti behi? | Are you well?
+-1 | Houwa kbir. | He is big.
+-1 | Hiya kbira. | She is big.
+-1 | Ena nemchi. | I go.
+-1 | Ena nji. | I come.
+-1 | Ena nekel. | I eat.
+-1 | Ena nochrob. | I drink.
+-1 | Ena nchouf. | I see.
+-1 | Ena na3raf. | I know.
+-1 | Ena nefhem. | I understand.
+-1 | Enti temchi? | Are you going?
+-1 | Enti tekel? | Are you eating?
+-1 | Enti tefhem? | Do you understand?
+-1 | Houwa yemchi. | He goes.
+-1 | Houwa yekel. | He eats.
+-1 | Hiya tochrob. | She drinks.
+-1 | Hiya tchouf. | She sees.
+-1 | A7na neklou. | We eat.
+-1 | A7na nochrbou. | We drink.
+-1 | Houma yemchiw. | They go.
+-1 | Houma yjiw. | They come.
+-1 | Baba yekel el-khobz. | Dad eats the bread.
+-1 | Ommi tochrob el-ma. | Mum drinks the water.
+-1 | El-weld ychouf ed-dar. | The boy sees the house.
+-1 | El-bent t7eb el-khobz. | The girl likes the bread.
+-1 | Er-rajel ya3raf baba. | The man knows dad.
+-1 | El-mra ta3raf ommi. | The woman knows mum.
+-1 | Ena n7eb baba. | I love dad.
+-1 | Ena n7eb ommi. | I love mum.
+-1 | Enti t7eb el-khobz? | Do you like bread?
+-1 | Houma y7ebbou el-ma. | They like water.
+-1 | Baba mcha. | Dad went.
+-1 | Ommi jet. | Mum came.
+-1 | El-weld kla. | The boy ate.
+-1 | El-bent chorbet. | The girl drank.
+-1 | Er-rajel chaf el-weld. | The man saw the boy.
+-1 | El-mra chafet el-bent. | The woman saw the girl.
+-1 | Ena mchit elyoum. | I went today.
+-1 | Ena jit elyoum. | I came today.
+-1 | Ena klit el-khobz. | I ate the bread.
+-1 | Ena chrabt el-ma. | I drank the water.
+-1 | Ena choft baba. | I saw dad.
+-1 | Ena fhemt el-weld. | I understood the boy.
+-1 | Enti mchit? | Did you go?
+-1 | Enti choft=chaf|you_saw ommi? | Did you see mum?
+-1 | A7na mchina. | We went.
+-1 | A7na jina elyoum. | We came today.
+-1 | Houma klaw el-khobz. | They ate the bread.
+-1 | Houma chorbou el-ma. | They drank the water.
+-1 | Baba 9al: "Behi." | Dad said: "Good."
+-1 | Ommi 9alet: "3aslema!" | Mum said: "Hello!"
+-1 | El-weld 9al: "Bislema!" | The boy said: "Goodbye!"
+-1 | El-bent 9alet: "3aychek!" | The girl said: "Thank you!"
+-1 | Ena 9olt: "Sam7ni." | I said: "Sorry."
+-1 | Chnowa hedha? Hedha ma. | What is this? This is water.
+-1 | Chkoun hedha? Hedha rajel. | Who is this? This is a man.
+-1 | Win baba? Baba houni. | Where is dad? Dad is here.
+-1 | Win el-weld? El-weld fi ed-dar. | Where is the boy? The boy is in the house.
+-1 | Kifech baba? Baba behi. | How is dad? Dad is fine.
+-1 | 3lech mchit? | Why did you go?
+-1 | Chnowa t7eb? El-ma. | What do you want? Water.
+-1 | Baba w ommi fi ed-dar. | Dad and mum are in the house.
+-1 | El-weld w el-bent houni. | The boy and the girl are here.
+-1 | Khobz w ma. | Bread and water.
+-1 | Ena w enti. | You and I.
+-1 | Wa7ed, zouz. | One, two.
+-1 | Zouz wled=weld|boys. | Two boys.
+-1 | Zouz bnet=bent|girls. | Two girls.
+-1 | Nhar wa7ed. | One day.
+-1 | Elyoum w ghodwa. | Today and tomorrow.
+-1 | Tawa ena nekel. | Now I eat.
+-1 | Ghodwa nemchi. | Tomorrow I go.
+-1 | Elyoum nji. | Today I come.
+-1 | Baba m3a ommi. | Dad is with mum.
+-1 | El-weld m3a el-bent. | The boy is with the girl.
+-1 | Ena m3a baba. | I am with dad.
+-1 | Er-rajel men ed-dar. | The man is from the house.
+-1 | El-ma 3la el-khobz. | The water is on the bread.
+-1 | Ena nekel ama enti tochrob. | I eat but you drink.
+-1 | El-weld kbir ama el-bent behya. | The boy is big but the girl is good.
+-1 | Baba yemchi w ommi tji. | Dad goes and mum comes.
 # ---- Basic (level 0) ----
 0 | El-weld yemchi lel-mdrasa=mdrasa|to_school. | The boy goes to school.
 0 | El-bent tekel el-khobz. | The girl eats the bread.

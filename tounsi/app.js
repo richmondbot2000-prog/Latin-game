@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '40';
+const APP_VERSION = '41';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -725,12 +725,13 @@ function renderRead(u) {
   app.innerHTML = `
   <div class="wrap">
     <div class="bar"><button class="iconbtn" id="back" aria-label="Home">← Home</button><span class="title">Sentences</span>${Speak.button('barspeak')}<span class="lvtag" id="rcount"></span></div>
-    <p class="small" style="text-align:center;margin:0 0 6px">Read the sentence. What does the <b>highlighted word</b> mean?</p>
+    <p class="small" style="text-align:center;margin:0 0 6px">Read the sentence. What does the <b>highlighted word</b> mean? Tap an answer, or say it.</p>
     <div class="rtitle" id="rtitle" hidden></div>
     <div class="rstory" id="rstory" hidden></div>
     <div class="rsent card" id="rsent"></div>
     <div class="ropts" id="ropts"></div>
     <p class="rmsg" id="rmsg"></p>
+    ${micHTML()}
   </div>`;
   $('#back').onclick = () => { location.hash = ''; };
   let sent = null, i = 0, opts = [], busy = false, misses = 0, story = null;   // story = { id, title, list, at }
@@ -780,10 +781,11 @@ function renderRead(u) {
     if (!misses) Celebrate(innerWidth / 2, innerHeight / 3, story && !more ? 2.4 : 1.6);
     $('#rnext').onclick = () => { if (more) { story.at++; load(story.list[story.at]); } else load(pick()); show(); };
   }
-  $('#ropts').onclick = e => {
-    const b = e.target.closest('button[data-k]'); if (!b || busy) return;
+  // an answer, tapped or spoken: k is the option chosen
+  function choose(k) {
+    const b = $('#ropts').querySelector(`button[data-k="${k}"]`); if (!b || busy) return;
     busy = true;
-    const cur = wordsIn()[i], w = byId[cur[1]], gloss = cur[2], ok = opts[+b.dataset.k] === gloss;
+    const cur = wordsIn()[i], w = byId[cur[1]], gloss = cur[2], ok = opts[k] === gloss;
     recordAnswer(u, w, ok);
     if (ok) { b.classList.add('good'); setTimeout(() => { i++; show(); }, 450); }
     else {
@@ -792,7 +794,29 @@ function renderRead(u) {
       $('#rmsg').innerHTML = `<b>${esc(cur[0])}</b> means <b>${esc(gloss)}</b>.`;
       setTimeout(() => { i++; show(); }, 1600);
     }
-  };
+  }
+  $('#ropts').onclick = e => { const b = e.target.closest('button[data-k]'); if (b) choose(+b.dataset.k); };
+  // speak or type the answer (the Passages microphone): a word heard that belongs to the highlighted word's meaning —
+  // its gloss, any of its senses or its spoken alternatives — picks the right option; one that belongs only to a
+  // wrong option picks that; small words (the, a, to, is…) and anything else are ignored
+  const SMALL = new Set(['the', 'a', 'an', 'to', 'of', 'is', 'are', 'am', 'be', 'it', 'he', 'she', 'they', 'we', 'you', 'i', 'and', 'or', 'in', 'on', 'at', 'for', 'with', 'by', 'do', 'does', 'did', 'was', 'were', 'not', 'his', 'her', 'their', 'my', 'your', 'our', 'its', 'this', 'that', 'there', 'who', 'what', 'where', 'why', 'how']);
+  const contentWords = t => String(t).toLowerCase().replace(/\s*\(.*?\)/g, '').split(/[^a-z0-9']+/).map(normWord).filter(x => x && !SMALL.has(x));
+  const allWords = t => String(t).toLowerCase().replace(/\s*\(.*?\)/g, '').split(/[^a-z0-9']+/).map(normWord).filter(Boolean);
+  function say(word) {
+    const n = normWord(word); if (!n || busy || !opts.length) return;
+    const cur = wordsIn()[i]; if (!cur) return;
+    const w = byId[cur[1]], gloss = cur[2];
+    $('#heard').textContent = word;
+    // a small word counts only when it is an option in its own right ("you" against he / I), never as part of one
+    if (SMALL.has(n)) { const k = opts.findIndex(o => allWords(o).length === 1 && allWords(o)[0] === n); if (k >= 0) choose(k); return; }
+    const right = [...contentWords(gloss), ...[...meanings(w)].flatMap(contentWords)];
+    if (right.some(x => sameWord(x, n))) { choose(opts.indexOf(gloss)); return; }
+    const k = opts.findIndex(o => o !== gloss && contentWords(o).some(x => sameWord(x, n)));
+    if (k >= 0) choose(k);
+  }
+  bindTyped(say, () => false);
+  const { stopRec } = micListener(say);
+  window.addEventListener('hashchange', stopRec, { once: true });
   load(pick()); show();
 }
 
