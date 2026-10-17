@@ -72,8 +72,17 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .filters button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .sticky { position: sticky; top: 0; background: var(--paper); z-index: 2; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
 .words { list-style: none; padding: 0; margin: 0; }
-.words li button { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 0 12px; text-align: left; border: 0; background: none;
-  padding: 12px 2px; border-bottom: 1px solid var(--line); }
+.words li { position: relative; overflow: hidden; }
+.words li button { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 0 12px; text-align: left; border: 0; background: var(--paper);
+  padding: 12px 2px; border-bottom: 1px solid var(--line); position: relative; touch-action: pan-y; transition: transform .18s ease; }
+.words li.dragging button { transition: none; }
+/* the labels under a row pulled sideways: green on the left for known, red on the right for not known */
+.words .swipe { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 16px; font-weight: 800; color: #fff; font-size: 15px; opacity: 0; transition: opacity .15s; }
+.words .swipe.known { background: #2e8b57; justify-content: flex-start; }
+.words .swipe.unknown { background: #c0392b; justify-content: flex-end; }
+.words li.dragging:not(.left) .swipe.known, .words li.dragging.left .swipe.unknown { opacity: .55; }
+.words li.dragging.past:not(.left) .swipe.known, .words li.dragging.past.left .swipe.unknown { opacity: 1; }
+.words li.flash-known button { background: #e3f4e8; } .words li.flash-unknown button { background: #fbe3e0; }
 .words .lat { font-weight: 700; overflow-wrap: anywhere; }
 .words .en { color: var(--muted); grid-column: 1; overflow-wrap: anywhere; }
 .words .stars { grid-column: 2; grid-row: 1 / span 2; align-self: center; text-align: right; }

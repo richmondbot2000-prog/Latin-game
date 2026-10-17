@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '161';
+const APP_VERSION = '162';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1376,10 +1376,44 @@ function renderList(u, pane) {
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><span class="swipe known" aria-hidden="true">✓ Known</span><span class="swipe unknown" aria-hidden="true">✗ Not known</span><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
-    $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word to see how to remember it';
+    $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word for its memo · pull right = known, left = not known';
   };
+  // pull a row right to mark the word known (five stars, rested a month) or left to mark it not known (no stars, due
+  // now): the row slides with the finger over a green or red label and snaps back if let go early; a vertical move is
+  // the page scrolling and is left alone
+  const SWIPE = 88; let drag = null;
+  const mark = (w, known) => {
+    const now = Date.now(), pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
+    if (known) { pw.s = 5; pw.r = now + REST[5]; } else { pw.s = 0; delete pw.r; }
+    pw.t = now; p[w.id] = pw; saveProg(u, p);
+    const li = list.querySelector(`button[data-i="${w.i}"]`).closest('li');
+    li.querySelector('.stars').outerHTML = starsHTML(pw.s);
+    const en = li.querySelector('.en'); const r = en.querySelector('.rest'); if (r) r.remove();
+    if (known) en.insertAdjacentHTML('beforeend', `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>`);
+    li.classList.add(known ? 'flash-known' : 'flash-unknown'); setTimeout(() => li.classList.remove('flash-known', 'flash-unknown'), 600);
+  };
+  list.onpointerdown = e => {
+    const b = e.target.closest('button[data-i]'); if (!b || e.target.closest('.speakbtn')) return;
+    drag = { b, li: b.closest('li'), x: e.clientX, y: e.clientY, dx: 0, on: false, dead: false, id: e.pointerId };
+  };
+  list.onpointermove = e => {
+    if (!drag || drag.dead || e.pointerId !== drag.id) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.on) { if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) { drag.dead = true; return; } if (Math.abs(dx) < 10) return; drag.on = true; drag.li.classList.add('dragging'); try { list.setPointerCapture(e.pointerId); } catch (err) {} }
+    drag.dx = Math.max(-160, Math.min(160, dx)); drag.b.style.transform = `translateX(${drag.dx}px)`;
+    drag.li.classList.toggle('past', Math.abs(drag.dx) >= SWIPE); drag.li.classList.toggle('left', drag.dx < 0);
+    e.preventDefault();
+  };
+  const endDrag = e => {
+    if (!drag) return; const d = drag; drag = null;
+    if (!d.on) return;
+    d.li.classList.remove('dragging', 'past', 'left'); d.b.style.transform = '';
+    d.b.dataset.swiped = '1'; setTimeout(() => { delete d.b.dataset.swiped; }, 300);
+    if (Math.abs(d.dx) >= SWIPE) mark(WORDS[+d.b.dataset.i], d.dx > 0);
+  };
+  list.onpointerup = endDrag; list.onpointercancel = endDrag;
   $('.filters', pane).onclick = e => {
     const b = e.target.closest('button'); if (!b) return;
     filter = b.dataset.f;
@@ -1389,7 +1423,7 @@ function renderList(u, pane) {
   $('#q', pane).oninput = e => { term = e.target.value.trim().toLowerCase(); draw(); };
   list.onclick = e => {
     if (e.target.closest('.speakbtn')) return;
-    const b = e.target.closest('button[data-i]'); if (!b) return;
+    const b = e.target.closest('button[data-i]'); if (!b || b.dataset.swiped) return;
     const w = WORDS[+b.dataset.i];
     openMemo(w, (p[w.id] && p[w.id].s) || 0);
   };
