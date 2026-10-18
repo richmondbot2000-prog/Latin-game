@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '166';
+const APP_VERSION = '167';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -81,14 +81,39 @@ function distractors(w, pool = WORDS) {
   return c;
 }
 
-/* ---------- the star rule, shared by Organise and Practice ----------
-   right answer: one more star and a longer rest (spaced repetition); wrong answer: back to zero and straight back in */
-function recordAnswer(u, w, ok) {
-  const p = getProg(u);
-  const pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
-  if (ok) { pw.ok = (pw.ok || 0) + 1; pw.s = Math.min(5, (pw.s || 0) + 1); pw.r = Date.now() + REST[pw.s]; }
-  else { pw.bad = (pw.bad || 0) + 1; pw.s = 0; delete pw.r; pw.w = [...(pw.w || []).filter(t => t > Date.now() - DAY), Date.now()].slice(-5); }   // when it was got wrong, last 24 h
-  pw.t = Date.now();
+/* ---------- the star rule, shared by every game ----------
+   A word is known when it has been answered right, quickly, several times, over a stretch of time. Each word keeps
+     a  recent accuracy (0–1, a running average where the latest answers weigh most; a wrong answer takes 30 % off),
+     q  how many right answers came quickly (within QUICK ms of the word appearing; a wrong answer halves it),
+     g  the longest gap, in hours, the word has survived: the time since the last answer when it was next got right,
+     v  the usual speed of a right answer, in ms,
+   and its stars 0–5 are read off those (bandOf): the top bands need quick answers and a survival of a week or a month,
+   so five quick rights in one sitting cannot make a word "mastered". A right answer rests the word for REST[stars]
+   (spaced repetition); a wrong one makes it due at once. Games where the time taken means little (Squishygeddon,
+   Jacques Hammer) pass no ms: the answer counts for accuracy but not as a quick one. */
+const QUICK = 3000;
+const BANDS = [
+  [0, 0, 0], [.2, 0, 0], [.4, 0, 0],   // new / shaky / learning: accuracy alone
+  [.65, 2, 20], [.85, 4, 144], [.9, 6, 648],   // known / solid / mastered: accuracy, quick rights, hours survived
+];
+const BAND_NAMES = ['New', 'Shaky', 'Learning', 'Known', 'Solid', 'Mastered'];
+const bandOf = pw => { let s = 0; for (let i = 1; i < 6; i++) { const [a, q, g] = BANDS[i]; if ((pw.a || 0) >= a && (pw.q || 0) >= q && (pw.g || 0) >= g) s = i; else break; } return s; };
+// a record from before the rule had these fields: read them off its stars, one band lower than before
+const upgradeProg = pw => { if (pw.a !== undefined) return pw; const s = pw.s || 0; pw.a = Math.min(.95, s * .2); pw.q = s; pw.g = s ? Math.round(REST[s - 1] / 3600000) : 0; return pw; };
+function recordAnswer(u, w, ok, ms) {
+  const p = getProg(u), now = Date.now();
+  const pw = upgradeProg(p[w.id] || { s: 0, ok: 0, bad: 0 });
+  if (ok) {
+    pw.ok = (pw.ok || 0) + 1; pw.a = Math.round((pw.a + (1 - pw.a) * .3) * 100) / 100;
+    if (ms != null) { if (ms <= QUICK) pw.q = (pw.q || 0) + 1; pw.v = Math.round(pw.v ? pw.v * .7 + ms * .3 : ms); }
+    if (pw.t) pw.g = Math.max(pw.g || 0, Math.round((now - pw.t) / 3600000));
+  } else {
+    pw.bad = (pw.bad || 0) + 1; pw.a = Math.round(pw.a * .7 * 100) / 100; pw.q = Math.floor((pw.q || 0) / 2);
+    pw.w = [...(pw.w || []).filter(t => t > now - DAY), now].slice(-5);   // when it was got wrong, last 24 h
+  }
+  pw.s = bandOf(pw);
+  if (ok) pw.r = now + REST[pw.s]; else delete pw.r;
+  pw.t = now;
   p[w.id] = pw; saveProg(u, p);
   // the daily tally behind the leaderboard: one point per word answered, in any game
   const st = store.get('latin.stats.' + u.id, { days: {}, total: 0 }), d = dayKey();
@@ -123,7 +148,7 @@ const activeWords = u => { const l = levelOf(u); return WORDS.filter(w => inLeve
 /* ---------- helpers ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const starsHTML = n => '<span class="stars" aria-label="' + n + ' of 5 stars">' + '★'.repeat(n) + '<span class="off">' + '★'.repeat(5 - n) + '</span></span>';
+const starsHTML = n => '<span class="stars" aria-label="' + n + ' of 5 stars, ' + BAND_NAMES[n || 0] + '">' + '★'.repeat(n) + '<span class="off">' + '★'.repeat(5 - n) + '</span></span>';
 const resting = (p, now = Date.now()) => p && p.r && p.r > now;
 const dayKey = (t = Date.now()) => { const d = new Date(t); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 // words answered today, this week (since Monday) and ever; players from before the tally get their 'ever' from their stars record
@@ -766,7 +791,7 @@ function renderRead(u) {
     opts = [gloss, ds[0], ds[1] || ds[0]].sort(() => Math.random() - .5);
     $('#ropts').innerHTML = opts.map((o, k) => `<button class="btn ghost" data-k="${k}">${esc(o)}</button>`).join('');
     $('#rmsg').textContent = '';
-    busy = false; answered = false; const tb = $('#typed'); if (tb) tb.value = '';
+    busy = false; answered = false; askedAt = Date.now(); const tb = $('#typed'); if (tb) tb.value = '';
   }
   function finish() {
     $('#ren').textContent = sent.en; $('#ren').classList.add('show');
@@ -779,12 +804,12 @@ function renderRead(u) {
     $('#rnext').onclick = () => { if (more) { story.at++; load(story.list[story.at]); } else load(pick()); show(); };
   }
   // an answer, tapped or spoken: k is the option chosen
-  let answered = false;   // set by choose, so the typing box clears itself after each answer
+  let answered = false, askedAt = Date.now();   // set by choose, so the typing box clears itself after each answer
   function choose(k) {
     const b = $('#ropts').querySelector(`button[data-k="${k}"]`); if (!b || busy) return;
     busy = true; answered = true;
     const cur = wordsIn()[i], w = byId[cur[1]], gloss = cur[2], ok = opts[k] === gloss;
-    recordAnswer(u, w, ok);
+    recordAnswer(u, w, ok, Date.now() - askedAt);
     if (ok) { b.classList.add('good'); setTimeout(() => { i++; show(); }, 450); }
     else {
       misses++; b.classList.add('bad');
@@ -1188,7 +1213,7 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
     // headings stay English, so a line with Latin in it is text
     $('#paper').querySelectorAll('p').forEach(p => { const t = p.textContent.trim(); if (p.querySelector('.lw')) return; const ws = t.split(/\s+/); if (t.length < 90 && !/[.,;:!?]["'”’)]?$/.test(t) || /^(CHAPTER|Chapter)\b/.test(t) && t.length < 120 || t.length < 50 && !/["“”]/.test(t) && ws.filter(w => /^[A-Z0-9]/.test(w)).length / ws.length >= .5) p.className = 'rh'; });
     const lw = i => $('#paper').querySelector(`.lw[data-i="${i}"]`);
-    let busy = false;
+    let busy = false, askedAt = Date.now();
     function show() {
       if (gen !== readGen) return;
       $('#rprog').textContent = (opts.label ? opts.label + ' · ' : '') + `${state.filter(Boolean).length} of ${toks.length}`;
@@ -1198,14 +1223,14 @@ function renderSnap(u, mode = 'snap') {   // mode 'books': the Library — Proje
       $('#rword').textContent = t.la; Speak.say(t.la);
       $('#rans').innerHTML = choices(t).map(c => `<button class="rchoice">${esc(c)}</button>`).join('');
       $('#rans').querySelectorAll('.rchoice').forEach(b => { b.onclick = () => answer(b, b.textContent); });
-      busy = false;
+      busy = false; askedAt = Date.now();
       // keep the word in focus in view, clear of the panel
       const el = lw(focus); if (el) { const r = el.getBoundingClientRect(), bottom = innerHeight - sheet.offsetHeight - 24; if (r.top < 56 || r.bottom > bottom) scrollBy({ top: r.top - (56 + (bottom - 56) * .35), behavior: 'smooth' }); }
     }
     function answer(btn, picked) {
       if (busy) return; busy = true;
       const t = toks[focus], ok = picked === (t.gloss || t.en), w = byIdAll[t.id];
-      if (w) recordAnswer(u, w, ok);
+      if (w) recordAnswer(u, w, ok, Date.now() - askedAt);
       if (ok) { right++; state[focus] = 1; btn.classList.add('isright'); const r = btn.getBoundingClientRect(); Celebrate(r.left + r.width / 2, r.top, .9); setTimeout(next, 250); }
       else { state[focus] = -1; btn.classList.add('wrong'); $('#rans').querySelectorAll('.rchoice').forEach(b => { if (b.textContent === (t.gloss || t.en)) b.classList.add('isright'); }); setTimeout(next, 1000); }
     }
@@ -1387,6 +1412,7 @@ function renderList(u, pane) {
       <input type="search" id="q" placeholder="Search Latin or English…" autocomplete="off">
       <div class="filters">${opts.map(([k, l]) => `<button data-f="${k}" aria-pressed="${k === filter}">${l}</button>`).join('')}</div>
       <div class="count" id="count"></div>
+      <div class="count legend">★ come from right answers given quickly, and from the weeks a word stays known</div>
     </div>
     <ul class="words" id="words"></ul>`;
   const list = $('#words', pane);
@@ -1411,7 +1437,7 @@ function renderList(u, pane) {
   const SWIPE = 88; let drag = null;
   const mark = (w, known) => {
     const now = Date.now(), pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
-    if (known) { pw.s = 5; pw.r = now + REST[5]; } else { pw.s = 0; delete pw.r; }
+    if (known) { pw.s = 5; pw.a = .95; pw.q = 6; pw.g = 648; pw.r = now + REST[5]; } else { pw.s = 0; pw.a = 0; pw.q = 0; delete pw.r; }
     pw.t = now; p[w.id] = pw; saveProg(u, p);
     const li = list.querySelector(`button[data-i="${w.i}"]`).closest('li');
     li.querySelector('.stars').outerHTML = starsHTML(pw.s);
@@ -1470,7 +1496,7 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
         ${originOf(w) ? `<div class="how"><h3>Where it comes from</h3><p>${esc(originOf(w))}</p></div>` : ''}
         <div class="how mine"><h3>✏️ My own way to remember it</h3>${noteOf(w) ? `<p id="noteText">${esc(noteOf(w))}</p><button class="linkbtn small" id="noteEdit">Change it</button>` : `<button class="linkbtn small" id="noteEdit">Make up your own picture — the ones you invent stick best</button>`}<textarea id="noteBox" rows="2" placeholder="e.g. ghodwa: a GOOD WAY to spend tomorrow" hidden>${esc(noteOf(w))}</textarea></div>
         ${phraseFor(w, u) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w, u).la)}</p><p class="tr">${esc(phraseFor(w, u).en)}</p></div>` : ''}
-        <div class="meta">${starsHTML(stars)} <span class="small">· ${w.kind} · Level ${w.level}</span></div>
+        <div class="meta">${starsHTML(stars)} <span class="small">${BAND_NAMES[stars || 0]} · ${w.kind} · Level ${w.level}</span></div>
       </div>
       <button class="btn" id="memoOk">${btnLabel || (verdict ? 'Got it — next card' : 'Close')}</button>
     </div>`;
@@ -1488,7 +1514,7 @@ function closeSheet() { sheet.hidden = true; sheet.innerHTML = ''; sheet.onclick
 /* swipe game */
 function renderPlay(u, pane) {
   const recent = [], GAP = 25;
-  let card = null, busy = false, right = 0, seen = 0;
+  let card = null, busy = false, right = 0, seen = 0, shownAt = Date.now();
   const st = store.get(streakKey(u), { cur: 0, best: 0 });
   pane.innerHTML = `
     <div class="streakbar"><div class="streak" id="streak"><span class="fire">🔥</span><span class="n" id="sn">0</span><span class="lbl">in a row</span></div><div class="best" id="best"></div>${Speak.button('cardspeak')}</div>
@@ -1596,6 +1622,7 @@ function renderPlay(u, pane) {
     // a long word shrinks to fit the card on one line instead of breaking in two
     deck.querySelectorAll('.card .lat, .card .en').forEach(el => { el.style.fontSize = ''; let f = parseFloat(getComputedStyle(el).fontSize); while (el.scrollWidth > el.clientWidth + 1 && f > 14) { f -= 1; el.style.fontSize = f + 'px'; } });
     attachSwipe($('#top', deck));
+    shownAt = Date.now();
     buddy();
     Speak.say(card.form ? card.form.la : sayForm(card.w));
     if (!warmed) { warmed = true; Speak.warm(activeWords(u).map(w => w.show)); }   // the level's clips download in the background on the first card
@@ -1609,7 +1636,7 @@ function renderPlay(u, pane) {
     const ok = saysMatch === match;
     seen++;
     const hadStars = (getProg(u)[w.id] || {}).s || 0;
-    const pw = recordAnswer(u, w, ok);
+    const pw = recordAnswer(u, w, ok, Date.now() - shownAt);
     let ev = null;
     if (ok) {
       st.cur++; st.best = Math.max(st.best, st.cur);
@@ -1618,7 +1645,7 @@ function renderPlay(u, pane) {
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
       right++; combo(st.cur);
       ev = Beasts.onCard(u, true, st.cur);
-      if (pw.s === 5) flash(`🏆 ${w.show} mastered!`); else if (pw.s >= 2) flash(`⭐ ${pw.s} stars`);
+      if (pw.s === 5) flash(`🏆 ${w.show} mastered!`); else if (pw.s > hadStars && pw.s >= 2) flash(`⭐ ${BAND_NAMES[pw.s]} — ${pw.s} stars`);
     } else { st.cur = 0; ev = Beasts.onCard(u, false, 0); }   // the 20th card drops a beast even when it is wrong
     store.set(streakKey(u), st);
     showStreak(ok);
@@ -1627,7 +1654,7 @@ function renderPlay(u, pane) {
     else {
       const v = (match
         ? `Oops — “${esc(la)}” really does mean “${esc(shown)}”.`
-        : `Not quite — “${esc(la)}” doesn’t mean “${esc(shown)}”.`) + (hadStars ? ' Back to zero stars for this one.' : '');
+        : `Not quite — “${esc(la)}” doesn’t mean “${esc(shown)}”.`) + (hadStars > pw.s ? (pw.s ? ` Down to ${pw.s} star${pw.s > 1 ? 's' : ''} for this one.` : ' Back to zero stars for this one.') : '');
       setTimeout(() => openMemo(w, pw.s, v, ev ? () => showBeast(ev, next) : next), 120);
     }
   }
@@ -1677,7 +1704,7 @@ function renderPlay(u, pane) {
     busy = true;
     const { w } = card; card = null;
     const p = getProg(u), pw = p[w.id] || { s: 0, ok: 0, bad: 0 };
-    pw.s = 0; delete pw.r; pw.t = Date.now(); p[w.id] = pw; saveProg(u, p);
+    pw.s = 0; pw.a = 0; pw.q = 0; delete pw.r; pw.t = Date.now(); p[w.id] = pw; saveProg(u, p);
     const m = memoFor(w), ph = phraseFor(w, u);
     el.classList.add('flipped');
     el.insertAdjacentHTML('beforeend', `<div class="back">

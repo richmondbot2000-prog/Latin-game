@@ -62,7 +62,7 @@ const Hammer = (() => {
     const correct = Math.random() < .5;
     const ds = distractors(w, words);
     const shown = correct ? w.english : ds[Math.floor(Math.random() * ds.length)].english;
-    S.signs.push({ w, shown, correct, x: 1.05, state: 'up', wob: 0, seen: false }); S.made++;
+    S.signs.push({ w, shown, correct, x: 1.05, state: 'up', wob: 0, seen: false, at: Date.now() }); S.made++;
   }
 
   /* ---------- update ---------- */
@@ -141,7 +141,7 @@ const Hammer = (() => {
         if (target) {
           target.state = 'smashed'; target.smashT = 0;
           const hx = Math.max(target.x, CX + .05); smashSign(target);
-          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); earnCoin(); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '' }); }
+          if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); earnCoin(); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true, Date.now() - target.at); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '' }); }
           else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.show}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
         }
       }

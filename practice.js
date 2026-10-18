@@ -1101,7 +1101,7 @@ const Practice = (() => {
     recentQ.push(w.id); if (recentQ.length > 20) recentQ.shift();
     const ds = distractors(w, words).slice().sort(() => Math.random() - .5);
     const opts = [w.english, ds[0].english, ds[1] ? ds[1].english : ds[0].english].sort(() => Math.random() - .5);
-    quiz = { w, opts, frozen: 0 };
+    quiz = { w, opts, frozen: 0, at: Date.now() };
     ui.qword.textContent = w.show;
     if (typeof Speak !== 'undefined') Speak.say(w.show);
     ui.qopts.innerHTML = opts.map((o, i) => `<button data-i="${i}">${esc(o)}</button>`).join('');
@@ -1109,7 +1109,7 @@ const Practice = (() => {
   function answer(i) {
     if (!quiz || quiz.frozen > 0 || S.phase !== 'play') return;
     const ok = quiz.opts[i] === quiz.w.english;
-    recordAnswer(user, quiz.w, ok);   // the same star rule as Organise
+    recordAnswer(user, quiz.w, ok, Date.now() - quiz.at);   // the same star rule as Organise; the time since the word appeared
     const btns = ui.qopts.querySelectorAll('button');
     S.asked++; tally('asked', 1);
     if (ok) {
