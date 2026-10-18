@@ -585,8 +585,9 @@ The 100 most common Russian words (a frequency list without the particles that c
 (`python3 tools/lang/build.py russian`; bump `russian/VERSION`). The word is the Cyrillic (`words.txt`);
 `arabic.txt` (the historical name) holds the **sound-it-out guide** with the stressed syllable in capitals
 (pri-VYET), shown in the own-script line under the word (`LANG.ownScript` = ltr, `ru-Latn`, so the engine no
-longer marks that line as Arabic; `theme.css` sets it in italics, smaller). Settings: Beginner (25, `top=1`),
-Top 50, Top 100. `memory.txt`: sound-alike or shared-root hooks, written for a child. No Read section
+longer marks that line as Arabic; `theme.css` sets it in italics, smaller). Settings: Top 10 (the first words a child says:
+privet, poka, da, net, spasibo, pozhaluysta, mama, papa, ya, ty), Top 25, Top 50, Top 75, Top 100 — `level` 0–4 in
+`words.txt`, cumulative; no `top=1` words, so `build_app.py` adds no Beginner setting. `memory.txt`: sound-alike or shared-root hooks, written for a child. No Read section
 (`noread`). Voice: `tools/lang/synth_azure.py russian ru-RU-SvetlanaNeural` (`tts.script` `plain`: the
 Cyrillic is read as written; 100 clips in `russian/audio/`).
 

@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '1';
+const APP_VERSION = '2';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -167,7 +167,7 @@ const streakKey = u => 'russian.streak.' + u.id;
 const levelKey = u => 'russian.level.' + u.id;
 
 /* vocabulary settings: each one opens up more words; Level 3 is the full list */
-const LEVELS = [['top', 'Beginner'], ['0', 'Top 50'], ['1', 'Top 100']];
+const LEVELS = [['0', 'Top 10'], ['1', 'Top 25'], ['2', 'Top 50'], ['3', 'Top 75'], ['4', 'Top 100']];
 const inLevel = (w, l) => l === 'top' ? !!w.top : /p$/.test(l) ? (w.level <= parseInt(l) || w.level === 10) : w.level <= +l;
 // the Top 50 setting is for the cards and the games: Read opens at the next setting up — except Sentences, which opens
 // when the language has sentences written for the 50 words (lv -1 in read.js)

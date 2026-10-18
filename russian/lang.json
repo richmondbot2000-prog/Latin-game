@@ -7,12 +7,33 @@
   "greeting": "Привет,",
   "tagline": "Learn the 100 most common Russian words, one card at a time.",
   "levels": [
-    ["0", "Top 50"],
-    ["1", "Top 100"]
+    [
+      "0",
+      "Top 10"
+    ],
+    [
+      "1",
+      "Top 25"
+    ],
+    [
+      "2",
+      "Top 50"
+    ],
+    [
+      "3",
+      "Top 75"
+    ],
+    [
+      "4",
+      "Top 100"
+    ]
   ],
   "theme": "#2F5DA8",
   "noread": true,
-  "ownScript": { "dir": "ltr", "lang": "ru-Latn" },
+  "ownScript": {
+    "dir": "ltr",
+    "lang": "ru-Latn"
+  },
   "tts": {
     "lang": "ru-RU",
     "fallback": "ru",

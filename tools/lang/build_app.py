@@ -23,7 +23,8 @@ s = rep(s, "const m = t.match(/latin-v(\\d+)/);", f"const m = t.match(/{code}-v(
 s = rep(s, "fetch('sw.js?v=' + Date.now(), { cache: 'no-store' })", f"fetch('{code}/sw.js?v=' + Date.now(), {{ cache: 'no-store' }})")
 # levels
 levels = json.dumps(L['levels']).replace('"', "'")
-levels = "[['top', 'Beginner'], " + levels[1:]   # the 50-word setting (words marked top=1 in words.txt) comes first, called Beginner (the Latin game's 'Top 50': there Beginner is the 100-word setting)
+has_top = 'top=1' in (lang / 'words.txt').read_text()   # a language without top=1 words (Russian: Top 10 … Top 100) has no Beginner setting
+if has_top: levels = "[['top', 'Beginner'], " + levels[1:]   # the 50-word setting (words marked top=1 in words.txt) comes first, called Beginner (the Latin game's 'Top 50': there Beginner is the 100-word setting)
 s = rep(s, "const LEVELS = [['top', 'Top 50'], ['beginner', 'Beginner'], ['1', 'Level 1'], ['2', 'Level 2'], ['3', 'Level 3']];", f"const LEVELS = {levels};")
 s = rep(s, "const inLevel = (w, l) => l === 'top' ? !!w.top : l === 'beginner' ? !!w.beginner : w.level <= +l;", "const inLevel = (w, l) => l === 'top' ? !!w.top : /p$/.test(l) ? (w.level <= parseInt(l) || w.level === 10) : w.level <= +l;")   # '4p' / '9p': the words up to that level plus the phrases (level 10)
 s = rep(s, "const levelName = l => LEVELS.find(x => x[0] === l)[1];", "const levelName = l => { const x = LEVELS.find(x => x[0] === l); return x ? x[1] : l === '10' ? 'Phrases' : 'Top 1000'; };")   # words of levels 5-9 belong to the 1000 + Phrases setting
