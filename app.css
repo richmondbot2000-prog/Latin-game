@@ -73,6 +73,7 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .stars .off { color: var(--line); }
 
 /* word list */
+.filters[hidden] { display: none; }
 .filters { display: flex; gap: 6px; overflow-x: auto; padding: 8px 0; scrollbar-width: none; }
 .filters::-webkit-scrollbar { display: none; }
 .filters button { flex: none; border: 1px solid var(--line); background: var(--chip); border-radius: 999px; padding: 6px 12px; font-size: 15px; min-height: 36px; }

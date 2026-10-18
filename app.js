@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '172';
+const APP_VERSION = '173';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -1458,9 +1458,8 @@ function renderList(u, pane) {
     <div class="sticky">
       ${meterHTML(c, total, avg)}
       <input type="search" id="q" placeholder="Search Latin or English…" autocomplete="off">
-      <div class="filters">${opts.map(([k, l]) => `<button data-f="${k}" aria-pressed="${k === filter}">${l}</button>`).join('')}</div>
-      <div class="count" id="count"></div>
-      <div class="count legend">strength ${avg} / 100 · the bar grows with right answers given quickly, and with the weeks a word stays known</div>
+      <div class="filters" hidden>${opts.map(([k, l]) => `<button data-f="${k}" aria-pressed="${k === filter}">${l}</button>`).join('')}</div>
+      <div class="count" id="count" hidden></div>
     </div>
     <ul class="words" id="words"></ul>`;
   const list = $('#words', pane);
