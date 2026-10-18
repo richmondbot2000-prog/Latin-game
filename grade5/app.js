@@ -1,5 +1,5 @@
 // Grade 5 theory: home page, practice rounds, results. Progress lives in localStorage only.
-const APP_VERSION = 'g5-v2';
+const APP_VERSION = 'g5-v3';
 const KEY = 'grade5.progress';
 const ROUND = 10;
 const $ = s => document.querySelector(s);

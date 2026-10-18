@@ -39,7 +39,7 @@
     }
     if (notes.length) {
       // a lone note or chord sits in the middle: ghost notes either side
-      const gd = ((spec.notes && spec.notes[0].dur) || 'w').replace(/[rd]/g, '');
+      const gd = ((spec.notes && spec.notes[0] && spec.notes[0].dur) || 'w').replace(/[rd]/g, '');
       const ticks = notes.length === 1 ? [new VF.GhostNote(gd), notes[0], new VF.GhostNote(gd)] : notes;
       const voice = new VF.Voice({ num_beats: 4, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT).addTickables(ticks);
       const room = st.getNoteEndX() - st.getNoteStartX() - (small ? 12 : 20);

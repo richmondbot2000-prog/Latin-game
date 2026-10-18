@@ -1,5 +1,5 @@
 // Offline copy of the game. Bump CACHE (and APP_VERSION in app.js) on every publish.
-const CACHE = 'g5-v2';
+const CACHE = 'g5-v3';
 const CORE = ['./', 'index.html', 'app.css', 'app.js', 'theory.js', 'terms.js', 'stave.js', 'sound.js', 'lib/vexflow.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/favicon-32.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => Promise.all(CORE.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => { })))).then(() => self.skipWaiting()));
