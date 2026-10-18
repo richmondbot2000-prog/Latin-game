@@ -33,12 +33,14 @@
       notes = spec.notes.map(n => {
         const sn = new VF.StaveNote({ clef: spec.clef, keys: n.keys, duration: n.dur || 'w', auto_stem: true });
         (n.acc || []).forEach((a, i) => { if (a) sn.addModifier(new VF.Accidental(a), i); });
+        if (/^\d*[whq]?\d*d/.test(n.dur || '')) VF.Dot.buildAndAttach([sn], { all: true });
         return sn;
       });
     }
     if (notes.length) {
       // a lone note or chord sits in the middle: ghost notes either side
-      const ticks = notes.length === 1 ? [new VF.GhostNote('w'), notes[0], new VF.GhostNote('w')] : notes;
+      const gd = ((spec.notes && spec.notes[0].dur) || 'w').replace(/[rd]/g, '');
+      const ticks = notes.length === 1 ? [new VF.GhostNote(gd), notes[0], new VF.GhostNote(gd)] : notes;
       const voice = new VF.Voice({ num_beats: 4, beat_value: 4 }).setMode(VF.Voice.Mode.SOFT).addTickables(ticks);
       const room = st.getNoteEndX() - st.getNoteStartX() - (small ? 12 : 20);
       new VF.Formatter().joinVoices([voice]).format([voice], Math.max(40, room));

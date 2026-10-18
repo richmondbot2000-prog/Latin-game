@@ -202,3 +202,18 @@ window.FACTS = [
   { q: 'Which instruments make up a string quartet?', a: 'two violins, viola, cello', w: ['violin, viola, cello, double bass', 'four violins', 'violin, cello, piano, harp'] },
   { q: 'What does “arco” tell a string player?', a: 'play with the bow', w: ['pluck the strings', 'use the mute', 'play near the bridge'] },
 ];
+
+// The grade each term first appears in (ABRSM); the rest of the Italian and the
+// French terms are Grade 4, German and the string players' words Grade 5.
+(function () {
+  const GR = {
+    1: ['adagio', 'allegro', 'andante', 'moderato', 'lento', 'allegretto', 'a tempo', 'accelerando', 'cantabile', 'crescendo', 'da capo', 'dal segno', 'decrescendo', 'diminuendo', 'dolce', 'fine', 'forte', 'fortissimo', 'legato', 'mezzo', 'piano', 'pianissimo', 'rallentando', 'ritardando', 'staccato', 'tempo', 'poco'],
+    2: ['andantino', 'con', 'senza', 'molto', 'più', 'meno', 'poco a poco', 'sempre', 'ma', 'e, ed', 'non troppo', 'grazioso', 'largo', 'vivace', 'presto', 'prestissimo', 'sostenuto', 'tenuto', 'ritenuto', 'simile', 'prima volta', 'seconda volta', 'sforzando', 'mosso', 'con moto'],
+    3: ['giocoso', 'leggiero', 'maestoso', 'tranquillo', 'espressivo', 'marcato', 'energico', 'agitato', 'animato', 'con brio', 'larghetto', 'grave', 'vivo', 'subito', 'assai', 'alla marcia', 'deciso', 'mesto', 'pesante', 'scherzando', 'semplice', 'sotto voce', 'spiritoso', 'tempo primo', 'giusto', 'rubato'],
+    5: ['pizzicato', 'arco', 'con sordino'],
+  };
+  for (const [g, words] of Object.entries(GR)) for (const w of words) { const x = TERMS.find(t => t.t === w); if (x) x.gr = +g; }
+  TERMS.forEach(t => { t.gr = t.gr || (t.l === 'de' ? 5 : 4); });
+  // instruments: families, reeds and voices from Grade 4; transposing and clefs Grade 5
+  FACTS.forEach(f => { f.gr = /sounds|clef|transposing/.test(f.q) ? 5 : 4; });
+})();

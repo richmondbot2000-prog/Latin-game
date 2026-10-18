@@ -504,13 +504,26 @@ famma, "once upon a time" left alone. 227 sentences and 10 stories (two a
 level). Known gaps: the banners still show Latin words; Gutenberg books
 convert live, so quality follows the converter.
 
-## Grade 5 Theory (`grade5/`, own game)
+## Music Theory, Grades 1–5 (`grade5/`, own game)
 
-A separate game for ABRSM Grade 5 music theory, live at
+A separate game for ABRSM Grades 1–5 music theory, live at
 **https://grade5.musicalmagic.uk** (same rules: public, nothing personal, no
 accounts, no tracking). It shares nothing with the Latin engine: no profiles,
-no sync; progress is `localStorage['grade5.progress']` { topics: {id: {n, r, a}},
-items: {key: {r, w, last, t}}, days, sound }. Files: `theory.js` (pitches
+no sync; progress is `localStorage['grade5.progress']` { grade, topics:
+{'<grade>.<id>': {n, r, a}}, items: {key: {r, w, last, t}}, days, sound }.
+**The grade selector** (Grade 1 2 3 4 5 across the top of the home page, a
+★ on a grade with stars earned) sets `prog.grade`; `Theory.make(topic, prog,
+grade)` sets `G` and each grade asks only its own syllabus, cumulatively:
+G1 treble/bass up to one ledger line, C G D F major, tone/semitone, note and
+rest values, 2/4 3/4 4/4, interval numbers above the tonic, tonic triads,
+degree numbers, 27 terms; G2 two ledger lines, up to 3 sharps/flats major and
+A E D minor, scales, 2/2 3/2 4/2 3/8, dotted quaver; G3 4 sharps/flats, interval
+qualities above the tonic, compound time (simple/compound/duple…), treble ↔
+bass same pitch; G4 5 sharps/flats, alto clef, enharmonics, any interval with
+augmented/diminished, technical names, chords I IV V, /4 and /16 compound,
+French terms, instruments; G5 as below (`keyOk`, `TS_G`, `TERMS[].gr`,
+`FACTS[].gr`, the grade range in each `TOPICS[].make` entry, `topicsFor(g)`
+for the topics a grade shows and their names). Files: `theory.js` (pitches
 `{ l, a, o }`, keys up to six sharps/flats, `interval`, `transpose`, chords,
 and one question maker per kind: note names in four clefs, same pitch in
 another clef, enharmonics, key signatures both ways, scales, degrees,
@@ -531,7 +544,7 @@ publishes it; redeploy the worker only if `grade5-site/` changes
 (`CLOUDFLARE_API_TOKEN=x npx wrangler deploy` there, the proxy supplies the
 token). The owner may later move it to its own repository (GitHub would
 not let a session create one). Checks: `scratchpad/g5check.js` (thousands
-of questions in node) and `scratchpad/g5browser.js` (every kind drawn at
+of questions per grade in node), `scratchpad/g5grades.js` (what each grade asks) and `scratchpad/g5browser.js` (every kind drawn at
 390px, screenshots).
 
 ## Read aloud (`speak.js`)

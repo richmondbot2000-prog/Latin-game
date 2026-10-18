@@ -1,5 +1,5 @@
 // Grade 5 theory: home page, practice rounds, results. Progress lives in localStorage only.
-const APP_VERSION = 'g5-v1';
+const APP_VERSION = 'g5-v2';
 const KEY = 'grade5.progress';
 const ROUND = 10;
 const $ = s => document.querySelector(s);
@@ -10,6 +10,9 @@ function load() {
   p = p || {};
   p.topics = p.topics || {}; p.items = p.items || {}; p.days = p.days || {};
   if (p.sound === undefined) p.sound = true;
+  // progress from before the grades were added was Grade 5
+  for (const k of Object.keys(p.topics)) if (!k.includes('.')) { p.topics['5.' + k] = p.topics[k]; delete p.topics[k]; p.grade = p.grade || 5; }
+  p.grade = p.grade || 1;
   return p;
 }
 function save(p) { try { localStorage.setItem(KEY, JSON.stringify(p)); } catch (e) { } }
@@ -23,13 +26,14 @@ function streak() {
   while (prog.days[d.toISOString().slice(0, 10)]) { n++; d.setDate(d.getDate() - 1); }
   return n;
 }
-function tstat(id) { return prog.topics[id] || { n: 0, r: 0, a: 0 }; }
+const topics = () => Theory.topicsFor(prog.grade);
+function tstat(id, g = prog.grade) { return prog.topics[g + '.' + id] || { n: 0, r: 0, a: 0 }; }
 function stars(s) { return s.n < 10 ? 0 : s.a >= .9 ? 3 : s.a >= .75 ? 2 : s.a >= .5 ? 1 : 0; }
 function record(q, ok) {
   const s = tstat(q.topic);
   s.n++; if (ok) s.r++;
   s.a = s.a * .85 + (ok ? .15 : 0);
-  prog.topics[q.topic] = s;
+  prog.topics[prog.grade + '.' + q.topic] = s;
   if (q.item) {
     const it = prog.items[q.item] || { r: 0, w: 0 };
     ok ? it.r++ : (it.w++, it.r = Math.max(0, it.r - 2));
@@ -41,7 +45,7 @@ function record(q, ok) {
 }
 // mixed practice: weaker and newer topics come up more
 function mixTopic() {
-  const list = Theory.TOPICS.map(t => { const s = tstat(t.id); return [t.id, s.n < 5 ? 1.5 : Math.max(.25, 1.2 - s.a)]; });
+  const list = topics().map(t => { const s = tstat(t.id); return [t.id, s.n < 5 ? 1.5 : Math.max(.25, 1.2 - s.a)]; });
   let tot = list.reduce((a, b) => a + b[1], 0), r = Math.random() * tot;
   for (const [id, w] of list) if ((r -= w) < 0) return id;
   return list[0][0];
@@ -52,10 +56,15 @@ function home() {
   document.body.className = 'home';
   const st = streak();
   const total = Object.values(prog.topics).reduce((a, s) => a + s.n, 0);
+  const gstars = g => Theory.topicsFor(g).reduce((a, t) => a + stars(tstat(t.id, g)), 0);
   $('#app').innerHTML = `
+    <div class="grades" role="tablist" aria-label="Choose your grade">
+      <span>Grade</span>
+      ${[1, 2, 3, 4, 5].map(g => `<button role="tab" class="gr${g === prog.grade ? ' on' : ''}" data-g="${g}" aria-selected="${g === prog.grade}">${g}${gstars(g) ? '<i>★</i>' : ''}</button>`).join('')}
+    </div>
     <header class="hero">
       <div class="clef">𝄞</div>
-      <h1>Grade 5 Theory</h1>
+      <h1>Grade ${prog.grade} Theory</h1>
       <p>ABRSM music theory, one question at a time</p>
     </header>
     <div class="stats">
@@ -66,7 +75,7 @@ function home() {
     <a class="big" href="#play/mix"><span>▶</span> Mixed practice<small>${ROUND} questions from everything</small></a>
     <h2>Topics</h2>
     <div class="topics">
-      ${Theory.TOPICS.map(t => {
+      ${topics().map(t => {
         const s = tstat(t.id), k = stars(s);
         return `<a class="topic" href="#play/${t.id}">
           <span class="ti">${t.icon}</span>
@@ -81,6 +90,7 @@ function home() {
       <p>No sign-in. Your progress stays on this phone.</p>
       <p class="ver">${APP_VERSION}</p>
     </footer>`;
+  document.querySelectorAll('.gr').forEach(b => b.onclick = () => { prog.grade = +b.dataset.g; save(prog); home(); });
   $('#snd').onclick = () => { prog.sound = Sound.on = !prog.sound; save(prog); if (Sound.on) Sound.play([[72], [76], [79]], .12); home(); };
 }
 
@@ -93,9 +103,9 @@ function play(topic) {
 function next() {
   if (round.i >= ROUND) return results();
   const tid = round.topic === 'mix' ? mixTopic() : round.topic;
-  const q = Theory.make(tid, prog);
+  const q = Theory.make(tid, prog, prog.grade);
   round.q = q; round.done = false;
-  const t = Theory.TOPICS.find(x => x.id === q.topic);
+  const t = topics().find(x => x.id === q.topic);
   document.body.className = 'playing';
   $('#app').innerHTML = `
     <div class="top">
@@ -104,7 +114,7 @@ function next() {
       <div class="run">${round.run >= 2 ? '🔥' + round.run : ''}</div>
     </div>
     <div class="qcard">
-      <div class="tag">${t.icon} ${esc(t.name)}</div>
+      <div class="tag">Grade ${prog.grade} · ${t.icon} ${esc(t.name)}</div>
       <h3>${esc(q.prompt)}</h3>
       ${q.stave ? '<div class="stave" id="qs"></div>' : ''}
       ${q.play || q.say ? '<button class="hear" id="hear">🔊 Hear it</button>' : ''}
@@ -145,11 +155,11 @@ function answer(i) {
 function results() {
   const r = round.right;
   const k = r >= 10 ? 3 : r >= 8 ? 2 : r >= 6 ? 1 : 0;
-  const t = round.topic === 'mix' ? { name: 'Mixed practice', icon: '▶' } : Theory.TOPICS.find(x => x.id === round.topic);
+  const t = round.topic === 'mix' ? { name: 'Mixed practice', icon: '▶' } : topics().find(x => x.id === round.topic);
   document.body.className = 'playing';
   $('#app').innerHTML = `
     <div class="result">
-      <div class="tag">${t.icon} ${esc(t.name)}</div>
+      <div class="tag">Grade ${prog.grade} · ${t.icon} ${esc(t.name)}</div>
       <div class="score">${r}<small>/ ${ROUND}</small></div>
       <div class="rstars">${'★'.repeat(k)}<em>${'★'.repeat(3 - k)}</em></div>
       <p>${r === 10 ? 'Perfect round!' : r >= 8 ? 'Excellent work.' : r >= 6 ? 'Good — keep going.' : 'Every round makes it stick. Try another!'}</p>
@@ -163,7 +173,7 @@ function results() {
 
 function route() {
   const h = location.hash.slice(1);
-  if (h.startsWith('play/')) { const t = h.slice(5); if (t === 'mix' || Theory.TOPICS.some(x => x.id === t)) return play(t); }
+  if (h.startsWith('play/')) { const t = h.slice(5); if (t === 'mix' || topics().some(x => x.id === t)) return play(t); }
   home();
 }
 window.addEventListener('hashchange', route);

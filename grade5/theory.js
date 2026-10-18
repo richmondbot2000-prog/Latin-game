@@ -31,8 +31,11 @@
     alto: { mid: 28, label: 'alto', ref: 'the middle line is middle C' },
     tenor: { mid: 26, label: 'tenor', ref: 'the second line from the top is middle C' },
   };
-  const anyClef = () => wpick([['treble', 3], ['bass', 3], ['alto', 2], ['tenor', 1.5]]);
+  // The grade being practised: each ABRSM grade adds to the ones below it
+  let G = 5;
+  const anyClef = () => wpick([['treble', 3], ['bass', 3], ['alto', G >= 4 ? 2 : 0], ['tenor', G >= 5 ? 1.5 : 0]]);
   const mainClef = () => wpick([['treble', 3], ['bass', 2]]);
+  const RANGE = () => G === 1 ? 6 : 8;   // steps from the middle line: one or two ledger lines
 
   // Keys, up to six sharps or flats (the Grade 5 range)
   const MAJ = [['C', 0], ['G', 1], ['D', 2], ['A', 3], ['E', 4], ['B', 5], ['F#', 6], ['F', -1], ['Bb', -2], ['Eb', -3], ['Ab', -4], ['Db', -5], ['Gb', -6]];
@@ -46,6 +49,9 @@
     if (f < 0) FLATS.slice(0, -f).forEach(l => a[l] = -1);
     return a;
   }
+  // Grade 1: C G D F major; 2: up to 3 sharps/flats major, A E D minor; then 4, 5, 6 both
+  const keyOk = k => G === 1 ? !k.minor && k.f >= -1 && k.f <= 2 : G === 2 ? Math.abs(k.f) <= (k.minor ? 1 : 3) : Math.abs(k.f) <= G + 1;
+  const gKeys = () => KEYS.filter(keyOk);
   const keyName = k => name({ ...k.t, o: 0 }) + (k.minor ? ' minor' : ' major');
   const accWord = f => f === 0 ? 'no sharps or flats' : Math.abs(f) + (f > 0 ? ' sharp' : ' flat') + (Math.abs(f) > 1 ? 's' : '');
   // the scale of a key as pitch classes, degree 0..6 (minor = harmonic minor)
@@ -122,7 +128,8 @@
   // 1. Name the note
   function qNoteName() {
     const clef = anyClef(), c = CLEF[clef];
-    const p = fromDia(c.mid + rnd(17) - 8, randAcc());
+    const R = RANGE();
+    const p = fromDia(c.mid + rnd(2 * R + 1) - R, randAcc());
     const wrong = [];
     const asTreble = fromDia(dia(p) - c.mid + (clef === 'treble' ? CLEF.bass.mid : CLEF.treble.mid), p.a);
     wrong.push(name(asTreble));
@@ -188,11 +195,59 @@
     };
   }
 
+  // Grades 1-2: tone or semitone
+  function qToneSemitone() {
+    const clef = mainClef();
+    for (let t = 0; t < 30; t++) {
+      const lo = fromDia(CLEF[clef].mid - 4 + rnd(7), randAcc());
+      const s = 1 + rnd(2);
+      const hi = fromDia(dia(lo) + 1);
+      hi.a = semi(lo) + s - (hi.o * 12 + NAT[hi.l]);
+      if (Math.abs(hi.a) > 1) continue;
+      const w = s === 1 ? 'semitone' : 'tone';
+      return {
+        topic: 'notes', kind: 'tone',
+        prompt: 'Is this a tone or a semitone?',
+        stave: stave(clef, W([note(lo), note(hi)])),
+        ...opts(w, ['tone', 'semitone'], 2),
+        explain: `From ${name(lo)} to ${name(hi)} is ${s === 1 ? 'one semitone: the very next key on the piano' : 'a tone: two semitones, with one key in between on the piano'}.` + (s === 1 && !lo.a && !hi.a ? ' E–F and B–C are the natural semitones.' : ''),
+        play: [[midi(lo)], [midi(hi)]],
+      };
+    }
+    return qNoteName();
+  }
+  // Grades 1-3: note and rest values
+  const VALS = [['w', 'semibreve', 4, 1], ['h', 'minim', 2, 1], ['q', 'crotchet', 1, 1], ['8', 'quaver', .5, 1], ['16', 'semiquaver', .25, 1], ['hd', 'dotted minim', 3, 1], ['qd', 'dotted crotchet', 1.5, 1], ['8d', 'dotted quaver', .75, 2]];
+  const beatsWord = n => ({ 4: '4', 3: '3', 2: '2', 1.5: '1½', 1: '1', .75: '¾', .5: '½', .25: '¼' }[n]);
+  function qNoteValue() {
+    const vals = VALS.filter(v => v[3] <= G);
+    const v = pick(vals);
+    const rest = !v[0].includes('d') && chance(.3);
+    const nm = v[1] + (rest ? ' rest' : '');
+    const st = stave('treble', [{ keys: ['b/4'], acc: [], dur: v[0] + (rest ? 'r' : '') }]);
+    if (chance(.5)) {
+      return {
+        topic: 'time', kind: 'value',
+        prompt: `What is this ${rest ? 'rest' : 'note'} called?`,
+        stave: st,
+        ...opts(nm, shuffle(vals.filter(x => x !== v)).sort((a, b) => Math.abs(a[2] - v[2]) - Math.abs(b[2] - v[2])).map(x => x[1] + (rest ? ' rest' : ''))),
+        explain: `It is a ${nm}, worth ${beatsWord(v[2])} crotchet beat${v[2] === 1 ? '' : 's'}.` + (v[0].includes('d') ? ' A dot adds half the value again.' : ''),
+      };
+    }
+    return {
+      topic: 'time', kind: 'beats',
+      prompt: `How many crotchet beats is this ${rest ? 'rest' : 'note'} worth?`,
+      stave: st,
+      ...opts(beatsWord(v[2]), shuffle(vals.filter(x => x[2] !== v[2])).sort((a, b) => Math.abs(a[2] - v[2]) - Math.abs(b[2] - v[2])).map(x => beatsWord(x[2]))),
+      explain: `A ${nm} lasts ${beatsWord(v[2])} crotchet beat${v[2] === 1 ? '' : 's'}.` + (v[0].includes('d') ? ' A dot adds half the value again.' : ''),
+    };
+  }
+
   // 4. Key signatures
   function qKeySig() {
     const clef = anyClef();
-    const k = pick(KEYS);
-    const same = KEYS.filter(x => x.minor === k.minor && x.f !== k.f);
+    const k = pick(gKeys());
+    const same = gKeys().filter(x => x.minor === k.minor && x.f !== k.f);
     const wrong = shuffle(same).sort((x, y) => Math.abs(Math.abs(x.f) - Math.abs(k.f)) - Math.abs(Math.abs(y.f) - Math.abs(k.f))).slice(0, 5);
     const rel = KEYS.find(x => x.f === k.f && x.minor !== k.minor);
     return {
@@ -206,8 +261,9 @@
   }
   function qKeySigReverse() {
     const clef = mainClef();
-    const k = pick(KEYS.filter(x => x.f !== 0));
-    const others = shuffle(KEYS.filter(x => x.minor === k.minor && x.f !== k.f && (Math.abs(x.f) === Math.abs(k.f) || Math.abs(x.f - k.f) === 1)));
+    const k = pick(gKeys().filter(x => x.f !== 0));
+    let others = shuffle(gKeys().filter(x => x.minor === k.minor && x.f !== k.f && (Math.abs(x.f) === Math.abs(k.f) || Math.abs(x.f - k.f) === 1)));
+    if (others.length < 3) others = others.concat(shuffle(gKeys().filter(x => x.minor === k.minor && x.f !== k.f && !others.includes(x))));
     return {
       topic: 'keys', kind: 'sigrev',
       prompt: `Which is the key signature of ${keyName(k)}?`,
@@ -222,7 +278,7 @@
   const DEG = ['tonic', 'supertonic', 'mediant', 'subdominant', 'dominant', 'submediant', 'leading note'];
   function qScale() {
     const clef = mainClef();
-    const k = pick(KEYS.filter(x => Math.abs(x.f) <= 5));
+    const k = pick(gKeys().filter(x => Math.abs(x.f) <= 5));
     const type = k.minor ? pick(['harmonic', 'melodic']) : 'major';
     const pcs = scalePcs(k, type);
     const start = near(pcs[0], CLEF[clef].mid - 3);
@@ -251,25 +307,58 @@
   }
   function qDegree() {
     const clef = mainClef();
-    const k = pick(KEYS.filter(x => Math.abs(x.f) <= 5));
+    const k = pick(gKeys().filter(x => Math.abs(x.f) <= 5));
     const pcs = scalePcs(k, 'harmonic');
     const i = rnd(7);
     const p = near(pcs[i], CLEF[clef].mid + rnd(7) - 3);
+    const L = G >= 4 ? DEG : ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th'];
     return {
       topic: 'scales', kind: 'degree',
-      prompt: `In ${keyName(k)}, what is the technical name of this note?`,
+      prompt: G >= 4 ? `In ${keyName(k)}, what is the technical name of this note?` : `In ${keyName(k)}, which degree of the scale is this note?`,
       stave: stave(clef, W([note(p, k.f)]), { key: k.spec }),
-      ...opts(DEG[i], shuffle(DEG.filter((_, j) => j !== i)).sort((a, b) => Math.abs(DEG.indexOf(a) - i) - Math.abs(DEG.indexOf(b) - i))),
-      explain: `In ${keyName(k)}, ${name(p)} is note ${i + 1} of the scale: the ${DEG[i]}.`,
+      ...opts(L[i], shuffle(L.filter((_, j) => j !== i)).sort((a, b) => Math.abs(L.indexOf(a) - i) - Math.abs(L.indexOf(b) - i))),
+      explain: `Count up the scale of ${keyName(k)} from ${name(pcs[0])}: ${name(p)} is note ${i + 1}` + (G >= 4 ? `, the ${DEG[i]}.` : '.'),
       play: [chordMidis(k, 0), [midi(p)]],
     };
   }
 
   // 6. Intervals
+  // Grades 1-3: the lower note is the tonic of a key (number only up to Grade 2)
+  function qIntervalTonic() {
+    const clef = mainClef();
+    const k = pick(gKeys());
+    const pcs = scalePcs(k, k.minor ? pick(['harmonic', 'melodic']) : 'major');
+    const i = 1 + rnd(7);
+    const lo = near(pcs[0], CLEF[clef].mid - 5 + rnd(3));
+    const hi = { ...pcs[i % 7], o: Math.floor((dia(lo) + i) / 7) };
+    const iv = interval(lo, hi);
+    const num = i === 7 ? 'octave' : ORDN(i + 1);
+    const letters = [];
+    for (let d = dia(lo); d <= dia(hi); d++) letters.push(LET[mod(d, 7)]);
+    let right, wrong;
+    if (G < 3) {
+      right = num;
+      wrong = ['2nd', '3rd', '4th', '5th', '6th', '7th', 'octave'].filter(x => x !== num).sort((a, b) => Math.abs(ORD.indexOf(a) - i - 1) - Math.abs(ORD.indexOf(b) - i - 1) + Math.random() - .5);
+    } else {
+      right = iv.name;
+      const all = [];
+      for (let n = 2; n <= 8; n++) (n === 8 ? ['perfect octave'] : [4, 5].includes(n) ? ['perfect ' + ORDN(n)] : ['major ' + ORDN(n), 'minor ' + ORDN(n)]).forEach(x => all.push([x, n]));
+      wrong = shuffle(all).sort((a, b) => Math.abs(a[1] - i - 1) - Math.abs(b[1] - i - 1)).map(x => x[0]);
+    }
+    return {
+      topic: 'intervals', kind: 'ivtonic',
+      prompt: G < 3 ? `What is the number of this interval? (${keyName(k)})` : `Name this interval (${keyName(k)})`,
+      stave: stave(clef, W([note(lo, k.f), note(hi, k.f)]), { key: k.spec }),
+      ...opts(right, wrong),
+      explain: `Count the letter names ${letters.join(' ')}: ${letters.length === 8 ? 'an octave' : 'a ' + num}` + (G < 3 ? '.' : `. ${name(hi)} is ${iv.semis} semitones above ${name(lo)}, so it is a ${iv.name}.`),
+      play: [[midi(lo)], [midi(hi)], [midi(lo), midi(hi)]],
+    };
+  }
   function qInterval() {
+    if (G <= 3) return qIntervalTonic();
     const clef = mainClef(), c = CLEF[clef];
     for (let tries = 0; tries < 50; tries++) {
-      const compound = chance(.2);
+      const compound = G >= 5 && chance(.2);
       const num = compound ? 9 + rnd(4) : 2 + rnd(7);
       const sn = (num - 1) % 7 + 1;
       const perfect = [1, 4, 5, 8].includes(sn);
@@ -330,7 +419,38 @@
     if (inv) s += '/' + name([r, t, f][inv]);
     return s;
   }
-  const CHORD_KEYS = () => KEYS.filter(x => Math.abs(x.f) <= 4);
+  const CHORD_KEYS = () => gKeys().filter(x => Math.abs(x.f) <= 4);
+  // Grades 1-3: whose tonic triad is this?
+  function qTonicTriad() {
+    const clef = mainClef();
+    const k = pick(gKeys());
+    const ps = voiceChord(k, 0, 0, CLEF[clef].mid - 4 + rnd(3));
+    const others = shuffle(gKeys().filter(x => x !== k)).sort((a, b) => (b.minor === k.minor) - (a.minor === k.minor));
+    return {
+      topic: 'chords', kind: 'triad',
+      prompt: 'This is a tonic triad. Which key is it in?',
+      stave: stave(clef, [{ keys: ps.map(vfKey), acc: ps.map(p => shownAcc(p, 0)), dur: 'w' }]),
+      ...opts(keyName(k), others.map(keyName)),
+      explain: `${ps.map(name).join('–')} are the 1st, 3rd and 5th notes of ${keyName(k)}: its tonic triad.`,
+      play: [ps.map(midi)],
+    };
+  }
+  // Grade 4: chords I, IV and V in root position
+  function qPrimary() {
+    const clef = mainClef();
+    const k = pick(gKeys());
+    const deg = pick([0, 3, 4]);
+    const ps = voiceChord(k, deg, 0, CLEF[clef].mid - 4 + rnd(3));
+    const tones = ps.map(name).join('–');
+    return {
+      topic: 'chords', kind: 'primary',
+      prompt: `This chord is in ${keyName(k)}. Which chord is it?`,
+      stave: stave(clef, [{ keys: ps.map(vfKey), acc: ps.map(p => shownAcc(p, k.f)), dur: 'w' }], { key: k.spec }),
+      ...opts(ROMAN[deg], ['I', 'IV', 'V'], 3),
+      explain: `${tones} is built on ${name(ps[0])}, note ${deg + 1} of ${keyName(k)}: chord ${ROMAN[deg]} (${['tonic', '', '', 'subdominant', 'dominant'][deg]}).`,
+      play: [ps.map(midi)],
+    };
+  }
   function qChord() {
     const clef = mainClef();
     const k = pick(CHORD_KEYS());
@@ -399,12 +519,15 @@
     ['6/8', 'compound duple'], ['9/8', 'compound triple'], ['12/8', 'compound quadruple'], ['6/4', 'compound duple'], ['9/4', 'compound triple'], ['6/16', 'compound duple'], ['12/16', 'compound quadruple'],
     ['5/4', 'irregular (5 beats)'], ['7/8', 'irregular (7 beats)'], ['5/8', 'irregular (5 beats)'], ['7/4', 'irregular (7 beats)'],
   ];
+  const TS_G = { '2/4': 1, '3/4': 1, '4/4': 1, '2/2': 2, '3/2': 2, '4/2': 2, '3/8': 2, '6/8': 3, '9/8': 3, '12/8': 3, '6/4': 4, '9/4': 4, '6/16': 4, '12/16': 4, '5/4': 5, '7/8': 5, '5/8': 5, '7/4': 5 };
+  const tsOk = t => TS_G[t] <= G;
   const BEATNAME = { 2: 'minim', 4: 'crotchet', 8: 'quaver', 16: 'semiquaver' };
   const DOTNAME = { 4: 'dotted minim', 8: 'dotted crotchet', 16: 'dotted quaver' };
   function qTimeKind() {
-    const [ts, kind] = pick(TS);
+    if (G < 3) return qTimeMeaning();
+    const [ts, kind] = pick(TS.filter(t => tsOk(t[0])));
     const [top, bot] = ts.split('/').map(Number);
-    const all = [...new Set(TS.map(t => t[1]))];
+    const all = [...new Set(TS.filter(t => tsOk(t[0])).map(t => t[1]))];
     const wrong = shuffle(all.filter(x => x !== kind)).sort((a, b) => (b.split(' ')[1] === kind.split(' ')[1] ? 1 : 0) - (a.split(' ')[1] === kind.split(' ')[1] ? 1 : 0) + (Math.random() - .5));
     let ex;
     if (kind.startsWith('irregular')) ex = `${top} beats can't be split evenly into twos or threes, so ${ts} is irregular (often grouped ${top === 5 ? '3+2 or 2+3' : '2+2+3 or 3+2+2'}).`;
@@ -418,6 +541,22 @@
       explain: ex,
     };
   }
+  // Grades 1-2: what a time signature means
+  function qTimeMeaning() {
+    const list = TS.filter(t => tsOk(t[0])).map(t => t[0]);
+    const ts = pick(list);
+    const [top, bot] = ts.split('/').map(Number);
+    const mean = (a, b) => `${a} ${BEATNAME[b]} beats in a bar`;
+    const wrong = shuffle(list.filter(x => x !== ts).map(x => mean(...x.split('/').map(Number))));
+    wrong.unshift(mean(top, bot === 4 ? 2 : 4), mean(bot === 4 ? top + 1 : top, bot));
+    return {
+      topic: 'time', kind: 'tsmean',
+      prompt: `What does the time signature ${ts} mean?`,
+      stave: stave('treble', [], { time: ts }),
+      ...opts(mean(top, bot), shuffle(wrong.slice(0, 4))),
+      explain: `The top number says how many beats (${top}); the bottom number says what kind: ${bot} = ${BEATNAME[bot]}s.`,
+    };
+  }
   // a bar of rhythm, in semiquaver units
   const SIMPLE_BEAT = [[['q'], 3], [['8', '8'], 3], [['8d', '16'], 1.5], [['16', '16', '8'], 1], [['8', '16', '16'], 1], [['16', '16', '16', '16'], 1], [['qr'], 1]];
   const COMP_BEAT = [[['qd'], 3], [['q', '8'], 3], [['8', '8', '8'], 3], [['8d', '16', '8'], 1], [['16', '16', '8', '8'], 1], [['qdr'], 1]];
@@ -427,7 +566,7 @@
   const LEN = { '16': 1, '8': 2, '8d': 3, 'q': 4, 'qd': 6, 'h': 8, 'hd': 12, 'w': 16 };
   const lenOf = d => LEN[d.replace('r', '')];
   function qTimeBar() {
-    const ts = pick(Object.keys(RHY));
+    const ts = pick(Object.keys(RHY).filter(tsOk));
     const [pat, beats] = RHY[ts];
     const groups = [];
     if (ts === '7/8') {
@@ -442,7 +581,7 @@
     }
     const total = groups.flat().reduce((t, d) => t + lenOf(d), 0);
     const totalOf = t => { const [a, b] = t.split('/').map(Number); return a * 16 / b; };
-    const others = TS.map(t => t[0]).filter(t => totalOf(t) !== total);
+    const others = TS.map(t => t[0]).filter(t => tsOk(t) && totalOf(t) !== total);
     const close = shuffle(others).sort((a, b) => Math.abs(totalOf(a) - total) - Math.abs(totalOf(b) - total)).slice(0, 5);
     const [top, bot] = ts.split('/').map(Number);
     const compound = [6, 9, 12].includes(top) && bot === 8;
@@ -493,10 +632,11 @@
   // 10 & 11. Terms and instruments (fixed items, tracked one by one)
   function qTerm(prog) {
     const T = window.TERMS;
-    const t = weightedItem(T, x => 'term:' + x.t, prog);
+    const TG = T.filter(x => x.gr <= G);
+    const t = weightedItem(TG, x => 'term:' + x.t, prog);
     const lang = { it: 'Italian', fr: 'French', de: 'German' }[t.l];
     const reverse = chance(.3);
-    const pool = T.filter(x => x.g !== t.g && x.m !== t.m);
+    const pool = TG.filter(x => x.g !== t.g && x.m !== t.m);
     const sameLang = shuffle(pool.filter(x => x.l === t.l));
     const wrong = sameLang.concat(shuffle(pool)).slice(0, 6);
     if (reverse) {
@@ -516,7 +656,7 @@
   }
   function qFact(prog) {
     const F = window.FACTS;
-    const f = weightedItem(F, x => 'fact:' + x.q + x.a, prog);
+    const f = weightedItem(F.filter(x => x.gr <= G), x => 'fact:' + x.q + x.a, prog);
     return {
       topic: 'instruments', kind: 'fact', item: 'fact:' + f.q + f.a,
       prompt: f.q,
@@ -537,24 +677,32 @@
     }));
   }
 
+  // make: [question maker, weight, first grade, last grade]
   const TOPICS = [
-    { id: 'notes', name: 'Notes & clefs', icon: '𝄞', make: [[qNoteName, 4], [qSamePitch, 2], [qEnharmonic, 1.5]] },
+    { id: 'notes', name: 'Notes & clefs', icon: '𝄞', make: [[qNoteName, 4], [qToneSemitone, 2, 1, 2], [qSamePitch, 2, 3], [qEnharmonic, 1.5, 4]] },
     { id: 'keys', name: 'Key signatures', icon: '♯', make: [[qKeySig, 3], [qKeySigReverse, 2]] },
-    { id: 'scales', name: 'Scales & degrees', icon: '🎼', make: [[qScale, 2], [qDegree, 2]] },
+    { id: 'scales', name: g => g < 2 ? 'Scales' : 'Scales & degrees', icon: '🎼', make: [[qScale, 2, 2], [qDegree, 2]] },
     { id: 'intervals', name: 'Intervals', icon: '↕', make: [[qInterval, 1]] },
-    { id: 'chords', name: 'Chords & cadences', icon: '🎹', make: [[qChord, 2.5], [qChordSymbol, 1.5], [qCadence, 1.5]] },
-    { id: 'time', name: 'Time & rhythm', icon: '⏱', make: [[qTimeKind, 1.5], [qTimeBar, 2]] },
-    { id: 'transpose', name: 'Transposing', icon: '🎺', make: [[qTranspose, 1]] },
+    { id: 'chords', name: g => g < 4 ? 'Tonic triads' : g < 5 ? 'Chords' : 'Chords & cadences', icon: '🎹', make: [[qTonicTriad, 1, 1, 3], [qPrimary, 1, 4, 4], [qChord, 2.5, 5], [qChordSymbol, 1.5, 5], [qCadence, 1.5, 5]] },
+    { id: 'time', name: 'Time & rhythm', icon: '⏱', make: [[qNoteValue, 2, 1, 3], [qTimeKind, 1.5], [qTimeBar, 2]] },
+    { id: 'transpose', name: 'Transposing', icon: '🎺', make: [[qTranspose, 1, 5]] },
     { id: 'terms', name: 'Terms & signs', icon: '📖', make: [[qTerm, 1]] },
-    { id: 'instruments', name: 'Instruments', icon: '🎻', make: [[qFact, 1]] },
+    { id: 'instruments', name: 'Instruments', icon: '🎻', make: [[qFact, 1, 4]] },
   ];
-  function make(topicId, prog) {
+  const makers = (t, g) => t.make.filter(([, , lo = 1, hi = 5]) => g >= lo && g <= hi);
+  // the topics of a grade, with that grade's names
+  function topicsFor(g) {
+    return TOPICS.filter(t => makers(t, g).length).map(t => ({ ...t, name: typeof t.name === 'function' ? t.name(g) : t.name }));
+  }
+  function make(topicId, prog, g) {
+    G = g || 5;
     const t = TOPICS.find(x => x.id === topicId);
+    const list = makers(t, G).map(([f, w]) => [f, w]);
     for (let i = 0; i < 5; i++) {
-      try { const q = wpick(t.make)(prog); if (q && q.options && q.options.length >= 2) return q; } catch (e) { console.error(e); }
+      try { const q = wpick(list)(prog); if (q && q.options && q.options.length >= 2) return q; } catch (e) { console.error(e); }
     }
     return qNoteName();
   }
 
-  window.Theory = { TOPICS, make, interval, transpose, keyAccs, scalePcs, chordSymbol, KEYS, name, midi, dia, semi, fromDia, vfKey, chordPcs };
+  window.Theory = { TOPICS, topicsFor, make, interval, transpose, keyAccs, scalePcs, chordSymbol, KEYS, name, midi, dia, semi, fromDia, vfKey, chordPcs };
 })();
