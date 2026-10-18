@@ -532,8 +532,9 @@ writes stub read/phrases/synonyms/snap.js and the home page shows `LANG.links`
 instead — the **Theory questions** banner, `music/theory.jpg` → `grade5/`).
 Engine hooks it added (all inert for Latin and Tounsi): `wordHTML(w, text)` in
 `app.js` shows `w.pic` on the card, word list, memo and flipped card (the text
-stays in a hidden `.vh` span for 🔊); `hammer.js` draws the picture on a pale
-card on the sign (`wordPic`) and words its messages "That note is C, not F";
+stays in a hidden `.vh` span for 🔊); `hammer.js` draws the picture (3:2, the
+staves are cropped to 150 × 100) almost as tall as the sign's face on a pale card on its left,
+the letter big beside it (`wordPic`) and words its messages "That note is C, not F";
 `practice.js` puts it in the question box and never offers the same wrong
 answer twice (two notes can both be C); `speak.js` takes `LANG.tts.toggle`
 labels; `KIND` maps pos `note`. Test: `scratchpad/regress.js` tours Latin,

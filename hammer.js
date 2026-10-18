@@ -475,11 +475,15 @@ const Hammer = (() => {
     const faceTop = top + SIGN_TOP * f, faceH = sh - (SIGN_TOP + 15) * f;
     g.save(); g.translate(x, 0);
     g.fillStyle = st === 7 ? '#5a1010' : st === 6 ? '#143d14' : '#2B1A3A'; g.textAlign = 'center'; g.textBaseline = 'middle';
-    if (s.w.pic) {   // a word that is a picture (a note on a stave) is drawn on a pale card on the sign
-      const im = wordPic(s.w), pw = Math.min(sw * .8, faceH * .62 * 4 / 3), ph = pw * .75, px = (sw - pw) / 2, py = faceTop + faceH * .02;
-      g.fillStyle = 'rgba(255,252,240,.95)'; g.beginPath(); if (g.roundRect) g.roundRect(px, py, pw, ph, 6); else g.rect(px, py, pw, ph); g.fill();
-      if (im.complete && im.naturalWidth) g.drawImage(im, px, py, pw, ph);
+    if (s.w.pic) {   // a word that is a picture (a note on a stave, 3:2): as tall as the sign's face on a pale card, the meaning big beside it
+      const im = wordPic(s.w), ph = faceH * .96, pw = Math.min(sw * .66, ph * 1.5), ph2 = pw / 1.5, px = sw * .04, py = faceTop + (faceH - ph2) / 2;
+      g.fillStyle = 'rgba(255,252,240,.97)'; g.beginPath(); if (g.roundRect) g.roundRect(px, py, pw, ph2, 8); else g.rect(px, py, pw, ph2); g.fill();
+      if (im.complete && im.naturalWidth) g.drawImage(im, px, py, pw, ph2);
       g.fillStyle = st === 7 ? '#5a1010' : st === 6 ? '#143d14' : '#2B1A3A';
+      const rest = sw - px - pw; let f3 = Math.round(faceH * .7); g.font = `800 ${f3}px system-ui, sans-serif`;
+      while (g.measureText(s.shown).width > rest * .8 && f3 > 10) { f3--; g.font = `800 ${f3}px system-ui, sans-serif`; }
+      g.fillText(s.shown, px + pw + rest / 2, faceTop + faceH * .52);
+      g.restore(); return;
     } else {
     let fs = Math.round(faceH * .42); g.font = `700 ${fs}px Georgia, serif`;
     while (g.measureText(s.w.show).width > sw * .84 && fs > 10) { fs--; g.font = `700 ${fs}px Georgia, serif`; }

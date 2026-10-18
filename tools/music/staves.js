@@ -1,5 +1,5 @@
 // Draws music/staves/<slug>.svg for every note in music/notes.json with VexFlow (grade5/lib) in headless Chromium:
-// a clef and one whole note, the same size for every picture. Run from the repo root: node tools/music/staves.js
+// a clef and one whole note, the same size for every picture (150 × 100, 3:2). Run from the repo root: node tools/music/staves.js
 // (needs the playwright package: NODE_PATH=/opt/node22/lib/node_modules in the cloud container)
 const { chromium } = require('playwright');
 const fs = require('fs'), path = require('path');
@@ -11,10 +11,10 @@ const notes = JSON.parse(fs.readFileSync(path.join(root, 'music', 'notes.json'),
   await pg.setContent('<div id="d"></div>');
   await pg.addScriptTag({ path: path.join(root, 'grade5', 'lib', 'vexflow.js') });
   const out = await pg.evaluate(notes => {
-    const VF = Vex.Flow, res = {};
+    const VF = Vex.Flow, res = {}, CROP = [32, 100];   // y from 32 to 132: two ledger lines above and below the stave, and the clefs
     for (const n of notes) {
       const d = document.getElementById('d'); d.innerHTML = '';
-      const W = 200, H = 150;
+      const W = 150, H = 150;   // drawn on a 150 × 150 canvas, then cropped to the band the clefs and ledger lines use
       const r = new VF.Renderer(d, VF.Renderer.Backends.SVG); r.resize(W, H);
       const ctx = r.getContext();
       const st = new VF.Stave(6, 25, W - 12).addClef(n.clef);
@@ -26,7 +26,7 @@ const notes = JSON.parse(fs.readFileSync(path.join(root, 'music', 'notes.json'),
       new VF.Formatter().joinVoices([v]).format([v], st.getNoteEndX() - st.getNoteStartX() - 10);
       v.draw(ctx, st);
       const svg = d.querySelector('svg');
-      svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('width', W * 2); svg.setAttribute('height', H * 2);
+      svg.setAttribute('viewBox', `0 ${CROP[0]} ${W} ${CROP[1]}`); svg.setAttribute('width', W * 3); svg.setAttribute('height', CROP[1] * 3);
       svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
       svg.removeAttribute('style');
       res[n.slug] = svg.outerHTML;
