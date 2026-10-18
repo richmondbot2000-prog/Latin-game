@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '47';
+const APP_VERSION = '48';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -104,7 +104,7 @@ const bandOf = pw => { let s = 0; for (let i = 1; i < 6; i++) { const [a, q, g] 
 const upgradeProg = pw => { if (pw.a !== undefined) return pw; const s = pw.s || 0; pw.a = Math.min(.95, s * .2); pw.q = s; pw.g = s ? Math.round(REST[s - 1] / 3600000) : 0; return pw; };
 function recordAnswer(u, w, ok, ms) {
   const p = getProg(u), now = Date.now();
-  const pw = upgradeProg(p[w.id] || { s: 0, ok: 0, bad: 0 });
+  const pw = upgradeProg(p[w.id] || { s: 0, ok: 0, bad: 0, m: RATING });
   if (ok) {
     pw.ok = (pw.ok || 0) + 1; pw.a = Math.round((pw.a + (1 - pw.a) * .3) * 100) / 100;
     if (ms != null) { if (ms <= QUICK) pw.q = (pw.q || 0) + 1; pw.v = Math.round(pw.v ? pw.v * .7 + ms * .3 : ms); }
@@ -130,8 +130,36 @@ const users = () => store.get('latin.users', []);
 const keyOf = (name, emojis) => name.trim().toLowerCase() + '|' + [...emojis].sort().join('');
 const current = () => users().find(u => u.id === store.get('latin.current', null)) || null;
 const progressKey = u => 'tounsi.progress.' + u.id;
-const getProg = u => store.get(progressKey(u), {});
+const getProg = u => { const p = store.get(progressKey(u), {}); if (!RATED.has(u.id)) { RATED.add(u.id); if (rateAll(p)) store.set(progressKey(u), p); } return p; };
 const saveProg = (u, p) => store.set(progressKey(u), p);
+/* ---------- a best guess of how well each word is known, from the history kept before answers were timed ----------
+   Records from the old star rule hold the stars (a streak: wiped by a wrong answer), the right and wrong counts, the
+   last answer time and the wrong answers of the last day. The guess (RATING = 2, kept in `m` so a record is rated
+   once): accuracy = (right + 1) / (answered + 2); a word whose last answer was wrong is Shaky, or Learning when it has
+   been right six times and four in five; a word on a streak is Learning, Known with four rights at three in four and
+   a streak of two, Solid with seven rights at .85 and a streak of four, Mastered with ten rights at .92, a five
+   streak and at most one wrong ever. Accuracy, quick rights and survival are set to match, so play carries on from
+   there. A record already timed by the new rule (`v`) keeps its accuracy and only gains quick rights or survival. */
+const RATED = new Set(), RATING = 2;
+function rateProg(pw) {
+  if (pw.m === RATING) return false;
+  const ok = pw.ok || 0, bad = pw.bad || 0, n = ok + bad, s = pw.s || 0;
+  if (n) {
+    const acc = (ok + 1) / (n + 2), lastWrong = s === 0 || (pw.w || []).length > 0;
+    let band = 0;
+    if (lastWrong) band = ok >= 6 && acc >= .8 ? 2 : 1;
+    else if (ok >= 10 && acc >= .92 && s >= 5 && bad <= 1) band = 5;
+    else if (ok >= 7 && acc >= .85 && s >= 4) band = 4;
+    else if (ok >= 4 && acc >= .75 && s >= 2) band = 3;
+    else if (ok >= 2) band = 2;
+    else band = 1;
+    if (pw.v == null) pw.a = Math.round(Math.min(.95, acc) * 100) / 100;
+    pw.q = Math.max(pw.q || 0, BANDS[band][1]); pw.g = Math.max(pw.g || 0, BANDS[band][2]);
+    pw.s = Math.max(band, bandOf(pw));
+  }
+  pw.m = RATING; return true;
+}
+const rateAll = p => { let changed = false; for (const k in p) if (rateProg(p[k])) changed = true; return changed; };
 const streakKey = u => 'tounsi.streak.' + u.id;
 const levelKey = u => 'tounsi.level.' + u.id;
 
