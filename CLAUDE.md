@@ -582,10 +582,11 @@ of questions per grade in node), `scratchpad/g5grades.js` (what each grade asks)
 The 100 most common Russian words (a frequency list without the particles that cannot go on a card — же, бы,
 ли, себя — and with the everyday words a beginner needs: привет, пока, да, нет, спасибо, пожалуйста, мама,
 папа, друг, школа, вода), live at **latin.musicalmagic.uk/russian/**, built like Tounsi
-(`python3 tools/lang/build.py russian`; bump `russian/VERSION`). The word is the Cyrillic (`words.txt`);
-`arabic.txt` (the historical name) holds the **sound-it-out guide** with the stressed syllable in capitals
-(pri-VYET), shown in the own-script line under the word (`LANG.ownScript` = ltr, `ru-Latn`, so the engine no
-longer marks that line as Arabic; `theme.css` sets it in italics, smaller). Settings: Top 10 (the first words a child says:
+(`python3 tools/lang/build.py russian`; bump `russian/VERSION`). As in Tounsi, the word is in the **English
+alphabet** (standard transliteration: privet, spasibo, khorosho — `words.txt`) and `arabic.txt` (the historical
+name) holds the **Cyrillic**, shown small underneath (`LANG.ownScript` = ltr, `ru`, so the engine does not mark
+that line as Arabic; `theme.css` sizes it). The voice reads the Cyrillic (`synth_azure.py` `plain` mode speaks
+the form's `ar`); `audio/index.json` maps both spellings to each clip. Settings: Top 10 (the first words a child says:
 privet, poka, da, net, spasibo, pozhaluysta, mama, papa, ya, ty), Top 25, Top 50, Top 75, Top 100 — `level` 0–4 in
 `words.txt`, cumulative; no `top=1` words, so `build_app.py` adds no Beginner setting. `memory.txt`: sound-alike or shared-root hooks, written for a child. No Read section
 (`noread`). Voice: `tools/lang/synth_azure.py russian ru-RU-SvetlanaNeural` (`tts.script` `plain`: the

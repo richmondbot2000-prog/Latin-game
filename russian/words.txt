@@ -1,109 +1,111 @@
 # Russian: the 100 most common words, for beginners. One word per line: level | word | english | pos | options
+# The word is written in the English alphabet (standard transliteration, as Russians write in Latin letters);
+# the Cyrillic is in arabic.txt and shows in small type underneath.
 # The settings are cumulative: level 0 = Top 10, 1 = Top 25, 2 = Top 50, 3 = Top 75, 4 = Top 100 (lang.json levels).
 # The first ten are the words a child says first; then by usefulness. pos as in tounsi/words.txt.
 # sense=group,group marks near-synonyms never offered as each other's wrong answer.
 # ---- level 0: Top 10 ----
-0|привет|hello, hi|phrase|
-0|пока|bye|phrase|
-0|да|yes|part|
-0|нет|no|part|
-0|спасибо|thank you, thanks|phrase|
-0|пожалуйста|please, you're welcome|phrase|sense=please
-0|мама|mum, mom|N|
-0|папа|dad|N|
-0|я|I, me|pro|
-0|ты|you|pro|sense=you
+0|privet|hello, hi|phrase|
+0|poka|bye|phrase|
+0|da|yes|part|
+0|net|no|part|
+0|spasibo|thank you, thanks|phrase|
+0|pozhaluysta|please, you're welcome|phrase|sense=please
+0|mama|mum, mom|N|
+0|papa|dad|N|
+0|ya|I, me|pro|
+0|ty|you|pro|sense=you
 # ---- level 1: Top 25 (11-25) ----
-1|он|he, him|pro|
-1|она|she, her|pro|
-1|мы|we, us|pro|
-1|это|this, it|pro|
-1|что|what|qu|
-1|где|where|qu|
-1|как|how|qu|
-1|и|and|conj|
-1|не|not|part|
-1|в|in, into|prep|
-1|на|on, onto|prep|
-1|хорошо|good, well, OK|adv|sense=good
-1|один|one|num|
-1|два|two|num|
-1|друг|friend|N|
+1|on|he, him|pro|
+1|ona|she, her|pro|
+1|my|we, us|pro|
+1|eto|this, it|pro|
+1|chto|what|qu|
+1|gde|where|qu|
+1|kak|how|qu|
+1|i|and|conj|
+1|ne|not|part|
+1|v|in, into|prep|
+1|na|on, onto|prep|
+1|khorosho|good, well, OK|adv|sense=good
+1|odin|one|num|
+1|dva|two|num|
+1|drug|friend|N|
 # ---- level 2: Top 50 (26-50) ----
-2|дом|house, home|N|
-2|человек|person, man|N|
-2|вы|you (polite, plural)|pro|sense=you
-2|они|they, them|pro|
-2|а|and, but|conj|
-2|но|but|conj|
-2|или|or|conj|
-2|кто|who|qu|
-2|когда|when|qu|
-2|почему|why|qu|
-2|с|with|prep|
-2|очень|very|adv|
-2|вот|here is|adv|sense=here
-2|тут|here|adv|sense=here
-2|там|there|adv|
-2|сейчас|now, right now|adv|sense=now
-2|тоже|also, too|adv|
-2|только|only|adv|
-2|уже|already|adv|
-2|ещё|still, more, again|adv|
-2|три|three|num|
-2|мой|my, mine|pro|
-2|твой|your, yours|pro|
-2|день|day|N|
-2|быть|to be|V|
+2|dom|house, home|N|
+2|chelovek|person, man|N|
+2|vy|you (polite, plural)|pro|sense=you
+2|oni|they, them|pro|
+2|a|and, but|conj|
+2|no|but|conj|
+2|ili|or|conj|
+2|kto|who|qu|
+2|kogda|when|qu|
+2|pochemu|why|qu|
+2|s|with|prep|
+2|ochen|very|adv|
+2|vot|here is|adv|sense=here
+2|tut|here|adv|sense=here
+2|tam|there|adv|
+2|seychas|now, right now|adv|sense=now
+2|tozhe|also, too|adv|
+2|tolko|only|adv|
+2|uzhe|already|adv|
+2|yeshchyo|still, more, again|adv|
+2|tri|three|num|
+2|moy|my, mine|pro|
+2|tvoy|your, yours|pro|
+2|den|day|N|
+2|byt|to be|V|
 # ---- level 3: Top 75 (51-75) ----
-3|знать|to know|V|
-3|хотеть|to want|V|
-3|мочь|can, to be able|V|
-3|говорить|to speak, to talk|V|sense=talk
-3|сказать|to say, to tell|V|sense=talk
-3|идти|to go, to walk|V|
-3|видеть|to see|V|sense=see
-3|делать|to do, to make|V|
-3|любить|to love, to like|V|
-3|есть|to eat|V|
-3|время|time|N|
-3|год|year|N|
-3|вода|water|N|
-3|школа|school|N|
-3|рука|hand, arm|N|
-3|голова|head|N|
-3|глаз|eye|N|
-3|большой|big, large|Adj|
-3|маленький|small, little|Adj|
-3|новый|new|Adj|
-3|хороший|good|Adj|sense=good
-3|всё|everything|pro|
-3|наш|our, ours|pro|
-3|из|from, out of|prep|sense=from
-3|для|for|prep|
+3|znat|to know|V|
+3|khotet|to want|V|
+3|moch|can, to be able|V|
+3|govorit|to speak, to talk|V|sense=talk
+3|skazat|to say, to tell|V|sense=talk
+3|idti|to go, to walk|V|
+3|videt|to see|V|sense=see
+3|delat|to do, to make|V|
+3|lyubit|to love, to like|V|
+3|yest|to eat|V|
+3|vremya|time|N|
+3|god|year|N|
+3|voda|water|N|
+3|shkola|school|N|
+3|ruka|hand, arm|N|
+3|golova|head|N|
+3|glaz|eye|N|
+3|bolshoy|big, large|Adj|
+3|malenkiy|small, little|Adj|
+3|novyy|new|Adj|
+3|khoroshiy|good|Adj|sense=good
+3|vsyo|everything|pro|
+3|nash|our, ours|pro|
+3|iz|from, out of|prep|sense=from
+3|dlya|for|prep|
 # ---- level 4: Top 100 (76-100) ----
-4|жить|to live|V|
-4|думать|to think|V|
-4|смотреть|to look, to watch|V|sense=see
-4|жизнь|life|N|
-4|слово|word|N|
-4|место|place|N|
-4|работа|work, job|N|
-4|мир|world, peace|N|
-4|первый|first|Adj|
-4|другой|other, another|Adj|
-4|какой|what kind, which|qu|
-4|так|so, like this|adv|
-4|его|his, him|pro|
-4|её|her, hers|pro|
-4|о|about|prep|
-4|без|without|prep|
-4|после|after|prep|
-4|под|under|prep|
-4|если|if|conj|
-4|потому что|because|conj|
-4|надо|must, need to|adv|
-4|можно|may, it's allowed|adv|
-4|теперь|now (from now on)|adv|sense=now
-4|потом|then, later|adv|
-4|много|many, a lot|adv|
+4|zhit|to live|V|
+4|dumat|to think|V|
+4|smotret|to look, to watch|V|sense=see
+4|zhizn|life|N|
+4|slovo|word|N|
+4|mesto|place|N|
+4|rabota|work, job|N|
+4|mir|world, peace|N|
+4|pervyy|first|Adj|
+4|drugoy|other, another|Adj|
+4|kakoy|what kind, which|qu|
+4|tak|so, like this|adv|
+4|yego|his, him|pro|
+4|yeyo|her, hers|pro|
+4|o|about|prep|
+4|bez|without|prep|
+4|posle|after|prep|
+4|pod|under|prep|
+4|yesli|if|conj|
+4|potomu chto|because|conj|
+4|nado|must, need to|adv|
+4|mozhno|may, it's allowed|adv|
+4|teper|now (from now on)|adv|sense=now
+4|potom|then, later|adv|
+4|mnogo|many, a lot|adv|

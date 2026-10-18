@@ -1,101 +1,101 @@
 # "How do we remember this?" — id | picture | hook: a sound-alike picture, or an English word that shares the root.
-привет|👋😊|Sounds like "PRIVATE" — you say a private hello to a friend: privet!
-пока|👋🚪|"POKE-a" your friend on the arm as you leave: poka, bye!
-да|👍|DA sounds like "DAd says YES" — da means yes.
-нет|🙅|NYET — like "NOT YET!" — means no.
-спасибо|🙏|"SPA SEE BAth" — say thank you for a trip to the spa: spasibo.
-пожалуйста|🙏🎁|"PA's JAL-opy STAr" — please may I ride in Pa's car? Pozhaluysta also means "you're welcome".
-я|🙋|YA! — "Yeah, it's ME!" Я is a backwards R that means I.
-ты|👉|"TEA for YOU" — ty is the friendly you, for one friend.
-он|👦|"He is ON the bus" — on means he.
-она|👧|"ANNA" — she is called Anna: ona means she.
-мы|👨‍👩‍👧|"ME and YOU" make we: my means we (not my!).
-вы|👥|"VY" — "all of YOU": vy is you for several people, or a polite you for a grown-up.
-они|👥👥|"ON-KNEE" — they are all on their knees: oni means they.
-и|➕|Just "EE" — the Russian И means and.
-а|↔️|"AH, but…" — a means and / but when two things are different.
-но|✋|"NO, BUT…" — no means but.
-или|🔀|"EELY, OR a fish?" — ili means or.
-не|🚫|"NAY" — like saying nay: ne means not.
-это|👇|"EAT-a this!" — eto means this / it.
-что|❓|"SHOW what?" — chto (said SHTO) means what.
-кто|🕵️|"K-TO, who goes there?" — kto means who.
-где|🗺️|"G'DAY, where are you?" — gde means where.
-как|🤔|"KAK-tus — how do you hug a cactus?" — kak means how.
-когда|⏰|"CAKE? DA! When?" — kogda means when.
-почему|🐮❓|"Pa, the COW goes MOO — why?" — pochemu means why.
-в|📦|Just "V" — think of a V-shaped box you put things IN.
-на|⬆️|"NA-p ON the sofa" — na means on.
-с|🤝|"S" for "Side by Side" — s means with.
-очень|💯|"OH CHIN — very big chin!" — ochen means very.
-хорошо|👌|"HORROR SHOW? No — GOOD show!" — khorosho means good, well.
-вот|👉📦|"WHAT? Here it is!" — vot means here is (when you point at it).
-тут|📍|"TOOT TOOT, I'm here!" — tut means here.
-там|👉🏝️|"TAM-bourine over THERE" — tam means there.
-сейчас|⏱️|"SAY CHAS — now!" — seychas means right now.
-тоже|➕🙋|"TOE-JAY likes it TOO" — tozhe means also, too.
-только|1️⃣|"TOLL CAR — only one car through" — tolko means only.
-уже|✅|"OOH JEH, done ALREADY!" — uzhe means already.
-ещё|🔁|"YES, SHOW more!" — yeshchyo means more, still, again.
-один|1️⃣|"A DIN — ONE big noise" — odin means one.
-два|2️⃣|"DUO" — dva means two (like a duo).
-три|3️⃣🌳|"TREE" — tri means three (like tricycle, three wheels).
-мой|🙋‍♂️|"MOI!" — like Miss Piggy saying moi: moy means my.
-твой|👉🎁|"TOY is YOURS" — tvoy means your.
-человек|🧍|"CHILL-A-VEK — a chilled person" — chelovek means person.
-мама|👩|Mama — just like English: mum.
-папа|👨|Papa — just like English: dad.
-друг|🤗|"DROOG" sounds like "TRUE GOOD" — a true good friend: drug means friend.
-дом|🏠|"DOME" — a house with a dome on top: dom means house, home (like domestic).
-день|☀️|"DEN" — a lion comes out of its den in the DAY: den means day.
-быть|🌟|"BEAT it, or BE it?" — byt means to be.
-знать|🧠|"Z-NAT — the gnat KNOWS everything" — znat means to know (like know, gnosis).
-хотеть|🙋‍♀️🍦|"HOT-YET? I WANT it hot!" — khotet means to want.
-мочь|💪|"MOCH-a coffee — now I CAN do anything" — moch means can, be able.
-говорить|🗣️|"GAVE A RIDE and TALKED all the way" — govorit means to speak.
-сказать|💬|"SKA-ZAT? Say that again!" — skazat means to say, to tell (skazka = a fairy tale).
-идти|🚶|"EAT TEA, then GO" — idti means to go on foot.
-видеть|👀|"VIDEO" — you SEE a video: videt means to see.
-делать|🛠️|"DELL-AT work — DO it!" — delat means to do, to make.
-жить|🏡|"JEWEL-T life" — zhit means to live.
-любить|❤️|"LOVE BEET-root!" — lyubit means to love.
-думать|💭|"DOOM? AT least THINK first" — dumat means to think.
-смотреть|📺|"SMART-RET — watch smart TV" — smotret means to look, to watch.
-есть|🍽️|"YES, EAT it!" — yest means to eat.
-время|⌛|"VERY MEAN time" — vremya means time.
-год|📅|"GOT a year older" — god means year.
-жизнь|🌱|"JEEZ-N — what a life!" — zhizn means life.
-рука|✋|"ROOK-A — a chess rook picked up by HAND" — ruka means hand, arm.
-голова|🙂|"GOAL OVA my HEAD!" — golova means head.
-глаз|👁️|"GLASS eye" — glaz means eye (glasses for your eyes).
-слово|🔤|"SLOW-va — say each WORD slowly" — slovo means word.
-место|📍|"MESS-TO — what a messy place!" — mesto means place.
-работа|🤖|"ROBOT" — a robot does the WORK: rabota means work (the word robot comes from it!).
-вода|💧|"VODA" — sounds like WATER said with a V: voda means water.
-школа|🏫|"SCHOOL-a" — shkola means school.
-мир|🌍🕊️|"MIR — the space station circling the WORLD in PEACE" — mir means world and peace.
-большой|🐘|"BALL SHOW — a BIG ball show" — bolshoy means big (the Bolshoi Theatre is the Big Theatre).
-маленький|🐭|"MALE IN KEY — a SMALL man in a keyhole" — malenkiy means small.
-новый|✨|"NOVEL" — something NEW: novyy means new (like nova, novice).
-хороший|👍|Like khorosho (well) — khoroshiy means good: a good dog.
-первый|🥇|"PIER-VEE" — the FIRST boat at the pier: pervyy means first.
-другой|🔄|"DRUG-OY — the OTHER friend" — drugoy means other.
-какой|🧐|Like kak (how) — kakoy means what kind, which.
-так|🤌|"TICK-TAK — do it like THIS" — tak means so, like this.
-всё|🌐|"FS-YO — YO, EVERYTHING!" — vsyo means everything.
-наш|👨‍👩‍👦🏠|"NASH-ional — OUR nation" — nash means our.
-его|👦🎒|"EVO-lution — HIS evolution" — yego (said yi-VO) means his, him.
-её|👧🎒|"YO-YO — HER yo-yo" — yeyo means her.
-из|📤|"EASE it OUT OF the box" — iz means from, out of.
-для|🎁|"DE-LIA — a present FOR Delia" — dlya means for.
-о|💡|Just "O" — a speech bubble ABOUT something: o means about.
-без|🚫🍬|"BUZZ" — the bee flew off WITHOUT its friends: bez means without.
-после|⏭️|"POST-LATER — AFTER" — posle means after (like post- in English).
-под|⬇️🪴|"POD — the pea is UNDER the leaf" — pod means under.
-если|🤷|"YES, LEE — IF you want" — yesli means if.
-потому что|💡|"POTATO MOO — BECAUSE the cow ate potatoes" — potomu chto means because.
-надо|❗|"NADA? No — you MUST!" — nado means must, need to.
-можно|🙆|"MOJO — you MAY" — mozhno means may, it's allowed.
-теперь|⏩|"TEA PAIR — NOW we have tea" — teper means now (from now on).
-потом|🔜|"POT, OM-elette LATER" — potom means then, later.
-много|🔢|"MANY GOATS" — mnogo means many, a lot.
+privet|👋😊|Sounds like "PRIVATE" — you say a private hello to a friend: privet!
+poka|👋🚪|"POKE-a" your friend on the arm as you leave: poka, bye!
+da|👍|DA sounds like "DAd says YES" — da means yes.
+net|🙅|NYET — like "NOT YET!" — means no.
+spasibo|🙏|"SPA SEE BAth" — say thank you for a trip to the spa: spasibo.
+pozhaluysta|🙏🎁|"PA's JAL-opy STAr" — please may I ride in Pa's car? Pozhaluysta also means "you're welcome".
+ya|🙋|YA! — "Yeah, it's ME!" Я is a backwards R that means I.
+ty|👉|"TEA for YOU" — ty is the friendly you, for one friend.
+on|👦|"He is ON the bus" — on means he.
+ona|👧|"ANNA" — she is called Anna: ona means she.
+my|👨‍👩‍👧|"ME and YOU" make we: my means we (not my!).
+vy|👥|"VY" — "all of YOU": vy is you for several people, or a polite you for a grown-up.
+oni|👥👥|"ON-KNEE" — they are all on their knees: oni means they.
+i|➕|Just "EE" — the Russian И means and.
+a|↔️|"AH, but…" — a means and / but when two things are different.
+no|✋|"NO, BUT…" — no means but.
+ili|🔀|"EELY, OR a fish?" — ili means or.
+ne|🚫|"NAY" — like saying nay: ne means not.
+eto|👇|"EAT-a this!" — eto means this / it.
+chto|❓|"SHOW what?" — chto (said SHTO) means what.
+kto|🕵️|"K-TO, who goes there?" — kto means who.
+gde|🗺️|"G'DAY, where are you?" — gde means where.
+kak|🤔|"KAK-tus — how do you hug a cactus?" — kak means how.
+kogda|⏰|"CAKE? DA! When?" — kogda means when.
+pochemu|🐮❓|"Pa, the COW goes MOO — why?" — pochemu means why.
+v|📦|Just "V" — think of a V-shaped box you put things IN.
+na|⬆️|"NA-p ON the sofa" — na means on.
+s|🤝|"S" for "Side by Side" — s means with.
+ochen|💯|"OH CHIN — very big chin!" — ochen means very.
+khorosho|👌|"HORROR SHOW? No — GOOD show!" — khorosho means good, well.
+vot|👉📦|"WHAT? Here it is!" — vot means here is (when you point at it).
+tut|📍|"TOOT TOOT, I'm here!" — tut means here.
+tam|👉🏝️|"TAM-bourine over THERE" — tam means there.
+seychas|⏱️|"SAY CHAS — now!" — seychas means right now.
+tozhe|➕🙋|"TOE-JAY likes it TOO" — tozhe means also, too.
+tolko|1️⃣|"TOLL CAR — only one car through" — tolko means only.
+uzhe|✅|"OOH JEH, done ALREADY!" — uzhe means already.
+yeshchyo|🔁|"YES, SHOW more!" — yeshchyo means more, still, again.
+odin|1️⃣|"A DIN — ONE big noise" — odin means one.
+dva|2️⃣|"DUO" — dva means two (like a duo).
+tri|3️⃣🌳|"TREE" — tri means three (like tricycle, three wheels).
+moy|🙋‍♂️|"MOI!" — like Miss Piggy saying moi: moy means my.
+tvoy|👉🎁|"TOY is YOURS" — tvoy means your.
+chelovek|🧍|"CHILL-A-VEK — a chilled person" — chelovek means person.
+mama|👩|Mama — just like English: mum.
+papa|👨|Papa — just like English: dad.
+drug|🤗|"DROOG" sounds like "TRUE GOOD" — a true good friend: drug means friend.
+dom|🏠|"DOME" — a house with a dome on top: dom means house, home (like domestic).
+den|☀️|"DEN" — a lion comes out of its den in the DAY: den means day.
+byt|🌟|"BEAT it, or BE it?" — byt means to be.
+znat|🧠|"Z-NAT — the gnat KNOWS everything" — znat means to know (like know, gnosis).
+khotet|🙋‍♀️🍦|"HOT-YET? I WANT it hot!" — khotet means to want.
+moch|💪|"MOCH-a coffee — now I CAN do anything" — moch means can, be able.
+govorit|🗣️|"GAVE A RIDE and TALKED all the way" — govorit means to speak.
+skazat|💬|"SKA-ZAT? Say that again!" — skazat means to say, to tell (skazka = a fairy tale).
+idti|🚶|"EAT TEA, then GO" — idti means to go on foot.
+videt|👀|"VIDEO" — you SEE a video: videt means to see.
+delat|🛠️|"DELL-AT work — DO it!" — delat means to do, to make.
+zhit|🏡|"JEWEL-T life" — zhit means to live.
+lyubit|❤️|"LOVE BEET-root!" — lyubit means to love.
+dumat|💭|"DOOM? AT least THINK first" — dumat means to think.
+smotret|📺|"SMART-RET — watch smart TV" — smotret means to look, to watch.
+yest|🍽️|"YES, EAT it!" — yest means to eat.
+vremya|⌛|"VERY MEAN time" — vremya means time.
+god|📅|"GOT a year older" — god means year.
+zhizn|🌱|"JEEZ-N — what a life!" — zhizn means life.
+ruka|✋|"ROOK-A — a chess rook picked up by HAND" — ruka means hand, arm.
+golova|🙂|"GOAL OVA my HEAD!" — golova means head.
+glaz|👁️|"GLASS eye" — glaz means eye (glasses for your eyes).
+slovo|🔤|"SLOW-va — say each WORD slowly" — slovo means word.
+mesto|📍|"MESS-TO — what a messy place!" — mesto means place.
+rabota|🤖|"ROBOT" — a robot does the WORK: rabota means work (the word robot comes from it!).
+voda|💧|"VODA" — sounds like WATER said with a V: voda means water.
+shkola|🏫|"SCHOOL-a" — shkola means school.
+mir|🌍🕊️|"MIR — the space station circling the WORLD in PEACE" — mir means world and peace.
+bolshoy|🐘|"BALL SHOW — a BIG ball show" — bolshoy means big (the Bolshoi Theatre is the Big Theatre).
+malenkiy|🐭|"MALE IN KEY — a SMALL man in a keyhole" — malenkiy means small.
+novyy|✨|"NOVEL" — something NEW: novyy means new (like nova, novice).
+khoroshiy|👍|Like khorosho (well) — khoroshiy means good: a good dog.
+pervyy|🥇|"PIER-VEE" — the FIRST boat at the pier: pervyy means first.
+drugoy|🔄|"DRUG-OY — the OTHER friend" — drugoy means other.
+kakoy|🧐|Like kak (how) — kakoy means what kind, which.
+tak|🤌|"TICK-TAK — do it like THIS" — tak means so, like this.
+vsyo|🌐|"FS-YO — YO, EVERYTHING!" — vsyo means everything.
+nash|👨‍👩‍👦🏠|"NASH-ional — OUR nation" — nash means our.
+yego|👦🎒|"EVO-lution — HIS evolution" — yego (said yi-VO) means his, him.
+yeyo|👧🎒|"YO-YO — HER yo-yo" — yeyo means her.
+iz|📤|"EASE it OUT OF the box" — iz means from, out of.
+dlya|🎁|"DE-LIA — a present FOR Delia" — dlya means for.
+o|💡|Just "O" — a speech bubble ABOUT something: o means about.
+bez|🚫🍬|"BUZZ" — the bee flew off WITHOUT its friends: bez means without.
+posle|⏭️|"POST-LATER — AFTER" — posle means after (like post- in English).
+pod|⬇️🪴|"POD — the pea is UNDER the leaf" — pod means under.
+yesli|🤷|"YES, LEE — IF you want" — yesli means if.
+potomu chto|💡|"POTATO MOO — BECAUSE the cow ate potatoes" — potomu chto means because.
+nado|❗|"NADA? No — you MUST!" — nado means must, need to.
+mozhno|🙆|"MOJO — you MAY" — mozhno means may, it's allowed.
+teper|⏩|"TEA PAIR — NOW we have tea" — teper means now (from now on).
+potom|🔜|"POT, OM-elette LATER" — potom means then, later.
+mnogo|🔢|"MANY GOATS" — mnogo means many, a lot.
