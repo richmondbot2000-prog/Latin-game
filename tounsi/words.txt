@@ -88,7 +88,7 @@
 0|khdem|work|V|pres=yekhdem
 0|9ra|read, study|V|pres=ya9ra
 0|chaf|see, look, watch|V|pres=ychouf;p1=choft;top=1
-0|9al|say, tell|V|pres=y9oul;p1=9olt;top=1
+0|9al|say, tell|V|pres=y9oul;p1=9olt;sense=say;top=1
 0|3mal|do, make|V|pres=ya3mel;ps=3aml
 0|3ta|give, hand|V|pres=ya3ti
 0|chra|buy|V|pres=yechri
@@ -188,7 +188,7 @@
 1|kteb|write|V|pres=yekteb
 1|t3allem|learn|V|pres=yet3allem
 1|sma3|hear, listen|V|pres=yesma3
-1|7ka|talk, tell, speak, chat|V|pres=ya7ki
+1|7ka|talk, tell, speak, chat|V|pres=ya7ki;sense=say
 1|khdha|take|V|pres=yekhou;pp=yekhdhou
 1|najjem|be able to, can, manage|V|pres=ynajjem
 1|lezem|must, have to, need to|phrase|
@@ -511,10 +511,10 @@
 4|zhar|luck, good luck|N|g=m;sense=luck
 # ---- level 5 (Top 600) ----
 5|khammem|think, wonder, think over|V|pres=ykhammem;ps=khamm
-5|3ayyet|call, call out, shout|V|pres=y3ayyet
+5|3ayyet|call, call out, shout|V|pres=y3ayyet;sense=say,call
 5|7aseb|count, calculate, add up|V|pres=y7aseb
 5|tfarrej|watch (TV, a match)|V|pres=ytfarrej
-5|3awwed|repeat, do again, tell again|V|pres=y3awwed
+5|3awwed|repeat, do again, tell again|V|pres=y3awwed;sense=say
 5|rma|throw, throw away|V|pres=yermi
 5|hezz|carry, lift, take away|V|pres=yhezz;p1=hezzit;ps=hezz;pp=yhezzou
 5|mla|fill, fill up|V|pres=yemla
@@ -928,7 +928,7 @@
 9|hdem|knock down, demolish|V|pres=yehdem
 9|nadhdhem|organise, arrange|V|pres=ynadhdhem
 9|sharek|take part, share|V|pres=ysharek
-9|tsel|phone, call, get in touch|V|pres=yettasel
+9|tsel|phone, call, get in touch|V|pres=yettasel;sense=call
 9|sta3mel|use|V|pres=yesta3mel
 9|7adhdhar|prepare, get ready|V|pres=y7adhdhar
 9|zayyen|decorate, make pretty|V|pres=yzayyen
