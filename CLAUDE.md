@@ -474,7 +474,8 @@ NS_B / NS_S` (= `APP_NS` or `latin`): a language's progress lives under
 `<code>.*`, its sync blob under the hash of `<code>:` + code, its gift names
 in their own namespace, while the player list (`latin.users`,
 `latin.current`) and the read-aloud setting are shared — one profile plays
-every game. `tools/lang/README.md` is the recipe; tests:
+every game. **Wrong answers that are too close** (`sense=` groups in `words.txt`, `"sense"` in the Latin `vocab.js`; 149 Tounsi entries are in a group — thanks, have, let's go, before / after, girl / boy, singular / plural pairs…): `python3 tools/near_sweep.py [folder]` lists every same-kind pair whose meanings WordNet or a shared word form puts together and the game does not yet block; check the list by hand and add groups — never apply it blindly (it also pairs "dates" the fruit with "date"). Needs `pip install nltk` and the WordNet corpus unzipped into `~/nltk_data/corpora`.
+`tools/lang/README.md` is the recipe; tests:
 `LANG_DIR=<folder> node tools/lang/tests/cases.js` (Tunisian cases, add one
 per mistake) and `tools/lang/tests/run.js "…"` prints a conversion;
 browser tour `scratchpad/tounsi2.js`.

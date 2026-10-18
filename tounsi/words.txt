@@ -7,7 +7,7 @@
 # ---- level 0 ----
 0|3aslema|hello, hi|phrase|top=1
 0|bislema|goodbye, bye|phrase|top=1
-0|3aychek|thank you, please, thanks|phrase|top=1
+0|3aychek|thank you, please, thanks|phrase|top=1;sense=thanks
 0|sam7ni|sorry, excuse me, forgive me|phrase|top=1
 0|chnowa|what|qu|top=1
 0|chkoun|who|qu|top=1
@@ -23,9 +23,9 @@
 0|houma|they, them|pro|top=1
 0|hedha|this, this one|pro|pl=hedhouma;f=hedhi;top=1
 0|hedheka|that, that one|pro|pl=hedhoukom;f=hedhika
-0|3andi|I have|phrase|top=1
-0|3andek|you have|phrase|
-0|3andou|he has, it has|phrase|
+0|3andi|I have|phrase|top=1;sense=have
+0|3andek|you have|phrase|sense=have
+0|3andou|he has, it has|phrase|sense=have
 0|w|and|conj|top=1
 0|wala|or, nor|conj|
 0|ama|but, though|conj|sense=but;top=1
@@ -41,7 +41,7 @@
 0|elyoum|today|adv|top=1
 0|ghodwa|tomorrow|adv|top=1
 0|elbere7|yesterday|adv|
-0|dima|always, all the time|adv|
+0|dima|always, all the time|adv|sense=always
 0|wa7ed|one|num|top=1
 0|zouz|two, a pair|num|top=1
 0|thletha|three|num|
@@ -60,8 +60,8 @@
 0|ommi|mum, mother, mummy|N|g=f;stem=omm;top=1
 0|khouya|my brother, brother|N|g=m;pl=khouti;stem=khou
 0|okht|sister|N|g=f;pl=khwat;stem=okht
-0|weld|son, boy, lad|N|g=m;pl=wled;top=1
-0|bent|daughter, girl|N|g=f;pl=bnet;top=1
+0|weld|son, boy, lad|N|g=m;pl=wled;top=1;sense=boy
+0|bent|daughter, girl|N|g=f;pl=bnet;top=1;sense=girl
 0|ras|head|N|g=m;pl=rous
 0|3in|eye|N|g=f;pl=3inin
 0|yed|hand, arm|N|g=f;pl=yeddin
@@ -76,9 +76,9 @@
 0|mekla|food, meal|N|g=f;pl=meklat
 0|khobz|bread, loaf|N|g=m;top=1
 0|7lib|milk|N|g=m
-0|blad|country, town, land|N|g=f;pl=bolden;sense=town
-0|souk|market, bazaar|N|g=m;pl=swa9
-0|7anout|shop, store|N|g=m;pl=7wanet
+0|blad|country, town, land|N|g=f;pl=bolden;sense=town,country
+0|souk|market, bazaar|N|g=m;pl=swa9;sense=shop
+0|7anout|shop, store|N|g=m;pl=7wanet;sense=shop
 0|mdrasa|school|N|g=f;pl=mdares
 0|mcha|go, walk, leave|V|pres=yemchi;top=1
 0|ja|come, arrive|V|pres=yji;top=1
@@ -86,16 +86,16 @@
 0|chrab|drink|V|pres=yochrob;ps=chorb;top=1
 0|r9ad|sleep, lie down|V|pres=yor9od;ps=ro9d
 0|khdem|work|V|pres=yekhdem
-0|9ra|read, study|V|pres=ya9ra
+0|9ra|read, study|V|pres=ya9ra;sense=learn
 0|chaf|see, look, watch|V|pres=ychouf;p1=choft;top=1
 0|9al|say, tell|V|pres=y9oul;p1=9olt;sense=say;top=1
 0|3mal|do, make|V|pres=ya3mel;ps=3aml
-0|3ta|give, hand|V|pres=ya3ti
+0|3ta|give, hand|V|pres=ya3ti;sense=give
 0|chra|buy|V|pres=yechri
-0|jeb|bring, fetch|V|pres=yjib
+0|jeb|bring, fetch|V|pres=yjib;sense=bring
 0|7ab|like, love, want|V|pres=y7eb;p1=7abbit;ps=7abb;pp=y7ebbou;top=1
-0|3raf|know, recognise|V|pres=ya3raf;ps=3arf;top=1
-0|fhem|understand|V|pres=yefhem;top=1
+0|3raf|know, recognise|V|pres=ya3raf;ps=3arf;top=1;sense=know
+0|fhem|understand|V|pres=yefhem;top=1;sense=know
 0|l3ab|play|V|pres=yel3ab
 0|behi|good, nice, OK, fine|Adj|pl=behyin;f=behya;sense=good;top=1
 0|khayeb|bad, ugly, nasty|Adj|pl=khaybin;f=khayba
@@ -103,7 +103,7 @@
 0|sghir|small, young, little|Adj|pl=sghar;f=sghira
 0|jdid|new, fresh|Adj|pl=jdod;f=jdida
 0|far7an|happy, glad, pleased|Adj|pl=far7anin;f=far7ana
-0|ta3ban|tired, exhausted|Adj|pl=ta3banin;f=ta3bana
+0|ta3ban|tired, exhausted|Adj|pl=ta3banin;f=ta3bana;sense=tired
 0|mridh|ill, sick, unwell|Adj|pl=mradh;f=mridha
 # ---- level 1 ----
 1|ahla|hi, welcome|phrase|
@@ -111,22 +111,22 @@
 1|msa el khir|good evening|phrase|
 1|tesba7 3la khir|good night|phrase|
 1|inshallah|hopefully, God willing|phrase|
-1|labes|fine, OK, well, all right|phrase|
+1|labes|fine, OK, well, all right|phrase|sense=ok
 1|9adech|how much, how many|qu|
 1|entouma|you (plural), you all|pro|
 1|lekin|but, however|conj|sense=but
 1|bech|in order to, will, going to|conj|
 1|ken|if, whether|conj|
-1|kif|when, as, like|conj|sense=when
+1|kif|when, as, like|conj|sense=when,as
 1|bla|without|prep|
-1|9bal|before, earlier|prep|
-1|ba3d|after, in a while|prep|
-1|mba3d|afterwards, later, then|adv|
+1|9bal|before, earlier|prep|sense=before
+1|ba3d|after, in a while|prep|sense=after
+1|mba3d|afterwards, later, then|adv|sense=after
 1|fou9|above, on top, upstairs|prep|
 1|ta7t|under, below, downstairs|prep|
 1|9oddem|in front of, ahead, opposite|prep|
 1|barcha|a lot, very, many, much|adv|sense=alot
-1|chwaya|a little, a bit|adv|
+1|chwaya|a little, a bit|adv|sense=few
 1|bark|only, just|adv|
 1|zeda|also, too, as well|adv|
 1|ey|yes, yeah|adv|
@@ -135,9 +135,9 @@
 1|famma|there is, there are|phrase|
 1|mafammech|there isn't, there aren't|phrase|
 1|kol|all, every, each, whole|adv|
-1|7aja|thing, something, anything|N|g=f;pl=7ajat
+1|7aja|thing, something, anything|N|g=f;pl=7ajat;sense=thing
 1|yezzi|enough, stop it, that will do|phrase|
-1|heya|come on, let's go|phrase|
+1|heya|come on, let's go|phrase|sense=letsgo
 1|3achra|ten|num|
 1|ethnin|Monday|N|g=m
 1|jem3a|Friday, week|N|g=f;pl=jme3
@@ -145,8 +145,8 @@
 1|a7ad|Sunday|N|g=m
 1|sa3a|hour, watch, clock|N|g=f;pl=sa3at
 1|chta|rain, winter|N|g=f
-1|tfol|boy, child, kid|N|g=m;pl=sghar
-1|tofla|girl|N|g=f;pl=tofal
+1|tfol|boy, child, kid|N|g=m;pl=sghar;sense=boy
+1|tofla|girl|N|g=f;pl=tofal;sense=girl
 1|sa7eb|friend, mate, owner|N|g=m;pl=s7ab;sense=friend
 1|wjeh|face|N|g=m;pl=wjouh
 1|wdhen|ear|N|g=f;pl=wdhnin
@@ -172,24 +172,24 @@
 1|tfe7|apple, apples|N|g=m
 1|9ahwa|coffee, cafe|N|g=f;pl=9hawi
 1|tey|tea|N|g=m
-1|7lou|sweet, pretty, cute, lovely|Adj|pl=7lowin;f=7lowa
+1|7lou|sweet, pretty, cute, lovely|Adj|pl=7lowin;f=7lowa;sense=sweet
 1|ji3an|hungry, starving|Adj|pl=ji3anin;f=ji3ana
 1|3atchan|thirsty|Adj|pl=3atchanin;f=3atchana
-1|7wayej|clothes, things|N|g=m
+1|7wayej|clothes, things|N|g=m;sense=thing
 1|mdina|city, old town|N|g=f;pl=mdon;sense=town
-1|chera3|street|N|g=m;pl=chwere3
+1|chera3|street|N|g=m;pl=chwere3;sense=road
 1|thniya|road, path|N|g=f;pl=thnaya;sense=road
 1|blasa|place, seat|N|g=f;pl=blayes
 1|karhba|car|N|g=f;pl=krahab
 1|rja3|come back, return, go back|V|pres=yerja3
-1|rawwa7|go home, head home|V|pres=yrawwa7
+1|rawwa7|go home, head home|V|pres=yrawwa7;sense=goaway
 1|9am|get up, stand up, rise|V|pres=y9oum;p1=9omt
-1|9a3ad|sit, stay, remain|V|pres=yo93od
+1|9a3ad|sit, stay, remain|V|pres=yo93od;sense=stay
 1|kteb|write|V|pres=yekteb
-1|t3allem|learn|V|pres=yet3allem
+1|t3allem|learn|V|pres=yet3allem;sense=learn
 1|sma3|hear, listen|V|pres=yesma3
 1|7ka|talk, tell, speak, chat|V|pres=ya7ki;sense=say
-1|khdha|take|V|pres=yekhou;pp=yekhdhou
+1|khdha|take|V|pres=yekhou;pp=yekhdhou;sense=bring
 1|najjem|be able to, can, manage|V|pres=ynajjem
 1|lezem|must, have to, need to|phrase|
 1|twil|tall, long|Adj|pl=twal;f=twila
@@ -201,19 +201,19 @@
 1|s3ib|difficult, hard|Adj|pl=s3ab;f=s3iba
 1|sehel|easy, simple|Adj|pl=sehlin;f=sehla
 1|ghali|expensive, precious|Adj|pl=ghalyin;f=ghalya
-1|rkhis|cheap|Adj|pl=rkhas;f=rkhisa
+1|rkhis|cheap|Adj|pl=rkhas;f=rkhisa;sense=cheap
 1|kelma|word|N|g=f;pl=klem
 1|3arbi|Arabic, Arab|N|g=m
 1|englizi|English, Englishman|N|g=m
 1|mochkla|problem, trouble|N|g=f;pl=machekel
 # ---- level 2 ----
-2|y3aychek|thank you, bless you|phrase|
+2|y3aychek|thank you, bless you|phrase|sense=thanks
 2|3afwen|you're welcome, sorry, pardon|phrase|
 2|min fadhlek|please|phrase|
-2|el7amdoullah|thank God|phrase|
+2|el7amdoullah|thank God|phrase|sense=thanks
 2|marhba|welcome|phrase|
 2|chnia a7welek|how are you?|phrase|
-2|ya3tik sa7a|well done, thank you|phrase|
+2|ya3tik sa7a|well done, thank you|phrase|sense=thanks
 2|mabrouk|congratulations|phrase|
 2|enehou|which, which one|qu|f=enehi
 2|enehi|which (feminine)|qu|
@@ -224,23 +224,23 @@
 2|mte3ek|yours, your|pro|
 2|mte3ou|his|pro|
 2|mte3ha|hers|pro|
-2|3andha|she has|phrase|
-2|3andna|we have|phrase|
-2|wra|behind, after|prep|
+2|3andha|she has|phrase|sense=have
+2|3andna|we have|phrase|sense=have
+2|wra|behind, after|prep|sense=after
 2|jenb|next to, beside, near|prep|
 2|bin|between, among|prep|
 2|dakhel|inside, indoors|adv|
 2|barra|outside, outdoors|adv|
-2|9bila|a little while ago, just now, earlier|adv|
+2|9bila|a little while ago, just now, earlier|adv|sense=before
 2|abadan|never|adv|
-2|sa3at|sometimes, at times|adv|
+2|sa3at|sometimes, at times|adv|sense=sometimes
 2|yesser|too much, a lot, very|adv|sense=alot
 2|ma ... ch|not (around a verb)|adv|
 2|chay|thing (7atta chay = nothing)|N|g=m;sense=thing
 2|7ad|someone, anyone, anybody|pro|
 2|akher|other, last, another|Adj|pl=okhrin;f=okhra
 2|nafs|same, self|adv|
-2|bara|go, go away, get out|phrase|
+2|bara|go, go away, get out|phrase|sense=goaway
 2|ya|oh (before a name)|phrase|
 2|mela|so, then, therefore|adv|
 2|3echrin|twenty|num|
@@ -286,8 +286,8 @@
 2|tren|train|N|g=m;pl=trenet
 2|dfa3|pay, push|V|pres=yedfa3
 2|nsa|forget|V|pres=yensa
-2|dh7ak|laugh|V|pres=yodh7ak
-2|bka|cry, weep|V|pres=yebki
+2|dh7ak|laugh|V|pres=yodh7ak;sense=smile
+2|bka|cry, weep|V|pres=yebki;sense=cry
 2|jra|run, hurry|V|pres=yejri
 2|dkhal|go in, enter, come in|V|pres=yodkhol
 2|khraj|go out, come out, leave|V|pres=yokhroj
@@ -296,19 +296,19 @@
 2|7all (verb)|open, solve|V|pres=y7ell;p1=7allit
 2|sakkar|close, shut, lock|V|pres=ysakkar
 2|bda|start, begin|V|pres=yebda
-2|kammal|finish, complete, end|V|pres=ykammal
-2|stanna|wait, wait for|V|pres=yestanna
+2|kammal|finish, complete, end|V|pres=ykammal;sense=stop
+2|stanna|wait, wait for|V|pres=yestanna;sense=stay
 2|3awen|help, assist|V|pres=y3awen
 2|9rib|near, close, nearby|Adj|pl=9rab;f=9riba
 2|b3id|far, far away, distant|Adj|pl=b3ad;f=b3ida
-2|7azin|sad, unhappy|Adj|pl=7azinin;f=7azina
-2|ghadhban|angry, furious|Adj|pl=ghadhbanin;f=ghadhbana
+2|7azin|sad, unhappy|Adj|pl=7azinin;f=7azina;sense=upset
+2|ghadhban|angry, furious|Adj|pl=ghadhbanin;f=ghadhbana;sense=upset
 2|loun|colour|N|g=m;pl=alwan
 2|ak7al|black, dark|Adj|pl=kou7l;f=ka7la
 2|abyadh|white|Adj|pl=boudh;f=bidha
 2|khedma|work, job|N|g=f;pl=khedmat
 # ---- level 3 ----
-3|barak allahou fik|thank you very much|phrase|
+3|barak allahou fik|thank you very much|phrase|sense=thanks
 3|bellehi|please, really?|phrase|
 3|rabbi|God, Lord|N|g=m
 3|hedhouma|these|pro|
@@ -322,28 +322,28 @@
 3|ethletha|Tuesday|N|g=f
 3|larb3a|Wednesday|N|g=m
 3|lekhmis|Thursday|N|g=m
-3|wled|children, boys, kids|N|g=m
-3|bnet|girls, daughters|N|g=f
+3|wled|children, boys, kids|N|g=m;sense=boy
+3|bnet|girls, daughters|N|g=f;sense=girl
 3|tbib|doctor|N|g=m;pl=tobba
 3|tounsi|Tunisian|N|g=m;pl=twensa
 3|senna|tooth|N|g=f;pl=snen
 3|ch3ar|hair|N|g=m
 3|9alb|heart|N|g=m;pl=9loub
-3|bit el banyou|bathroom|N|g=m
+3|bit el banyou|bathroom|N|g=m;sense=toilet
 3|7it|wall|N|g=m;pl=7youta
 3|lardh|floor, ground|N|g=f
 3|ghta|blanket, cover, lid|N|g=m;pl=ghtayat
 3|dhaw|light, electricity|N|g=m
 3|thallaja|fridge|N|g=f;pl=thallajat
 3|sa7n|plate, dish|N|g=m;pl=s7oun
-3|kes|glass, cup, mug|N|g=m;pl=kisen
+3|kes|glass, cup, mug|N|g=m;pl=kisen;sense=glass
 3|mo3al9a|spoon|N|g=f;pl=m3ale9
 3|sekkina|knife|N|g=f;pl=skaken
 3|lo3ba|game, toy|N|g=f;pl=l3ab
 3|koura|ball, football|N|g=f;pl=kourat
-3|njoum|stars|N|g=m
+3|njoum|stars|N|g=m;sense=star
 3|ardh|earth, land, ground|N|g=f
-3|chatt|beach, shore|N|g=m;pl=chtout
+3|chatt|beach, shore|N|g=m;pl=chtout;sense=beach
 3|hwa|air, wind|N|g=m
 3|thelj|snow, ice|N|g=m
 3|7ayawan|animal, beast|N|g=m;pl=7ayawanet
@@ -372,7 +372,7 @@
 3|7as|feel, sense, notice|V|pres=y7es;p1=7assit;ps=7ass;pp=y7essou
 3|khaf|be afraid, fear, be scared|V|pres=ykhaf;p1=khoft
 3|tla3|go up, climb, rise|V|pres=yotla3;ps=tal3
-3|w9af|stop, stand|V|pres=you9ef
+3|w9af|stop, stand|V|pres=you9ef;sense=stop
 3|ta7|fall, fall down|V|pres=ytih;p1=to7t
 3|n9ez|jump, leap, hop|V|pres=yon9ez
 3|3am (verb)|swim|V|pres=y3oum;p1=3omt
@@ -393,15 +393,15 @@
 3|azra9|blue|Adj|pl=zor9;f=zar9a
 3|akhdhar|green|Adj|pl=khodhr;f=khadhra
 3|asfar|yellow|Adj|pl=sofr;f=safra
-3|klam|talk, words, speech|N|g=m
-3|loghha|language|N|g=f;pl=loghat
+3|klam|talk, words, speech|N|g=m;sense=language
+3|loghha|language|N|g=f;pl=loghat;sense=language
 3|fransawi|French, Frenchman|N|g=m
 3|souel|question|N|g=m;pl=as2ila
-3|jweb|answer, reply|N|g=m;pl=ajwiba
-3|7all (solution)|solution|N|g=m;pl=7loul
+3|jweb|answer, reply|N|g=m;pl=ajwiba;sense=answer
+3|7all (solution)|solution|N|g=m;pl=7loul;sense=answer
 3|fekra|idea, thought|N|g=f;pl=afkar
 3|7kaya|story, tale|N|g=f;pl=7kayet
-3|film|film, movie|N|g=m;pl=aflem
+3|film|film, movie|N|g=m;pl=aflem;sense=film
 3|mousi9a|music|N|g=f
 3|ghnaya|song|N|g=f;pl=ghnayet
 3|3ers|wedding|N|g=m;pl=3ras
@@ -414,7 +414,7 @@
 4|mte3na|ours, our|pro|
 4|mte3hom|theirs, their|pro|
 4|wa7dou|alone, by himself, on his own|adv|
-4|kol youm|every day, daily|adv|
+4|kol youm|every day, daily|adv|sense=always
 4|okhra|other (feminine), another|Adj|pl=okhrin;f=okhra
 4|mazel|still, not yet, yet|adv|
 4|ya3ni|I mean, that is|adv|
@@ -446,7 +446,7 @@
 4|3asir|juice|N|g=m
 4|7ar|spicy, hot|Adj|pl=7arrin;f=7arra
 4|chab3an|full (after eating), full up|Adj|pl=chab3anin;f=chab3ana
-4|nwadher|glasses, spectacles|N|g=m
+4|nwadher|glasses, spectacles|N|g=m;sense=glass
 4|taxi|taxi, cab|N|g=m;pl=taxiyet
 4|bisklet|bicycle, bike|N|g=f;pl=bisklet
 4|dhayya3|lose (something), mislay, waste|V|pres=ydhayya3
@@ -511,12 +511,12 @@
 4|zhar|luck, good luck|N|g=m;sense=luck
 # ---- level 5 (Top 600) ----
 5|khammem|think, wonder, think over|V|pres=ykhammem;ps=khamm
-5|3ayyet|call, call out, shout|V|pres=y3ayyet;sense=say,call
+5|3ayyet|call, call out, shout|V|pres=y3ayyet;sense=say,call,cry
 5|7aseb|count, calculate, add up|V|pres=y7aseb
 5|tfarrej|watch (TV, a match)|V|pres=ytfarrej
 5|3awwed|repeat, do again, tell again|V|pres=y3awwed;sense=say
 5|rma|throw, throw away|V|pres=yermi
-5|hezz|carry, lift, take away|V|pres=yhezz;p1=hezzit;ps=hezz;pp=yhezzou
+5|hezz|carry, lift, take away|V|pres=yhezz;p1=hezzit;ps=hezz;pp=yhezzou;sense=lift,bring
 5|mla|fill, fill up|V|pres=yemla
 5|wsel|arrive, reach, get there|V|pres=youssel
 5|khtar|choose, pick|V|pres=yekhtar;ps=khtar
@@ -527,9 +527,9 @@
 5|dar (verb)|turn, go round, turn round|V|pres=ydour;p1=dort
 5|fet|pass, go by|V|pres=yfout;p1=fott
 5|sar|happen|V|pres=ysir;p1=sert
-5|7fadh|memorise, learn by heart, keep|V|pres=ya7fadh;ps=7afdh
+5|7fadh|memorise, learn by heart, keep|V|pres=ya7fadh;ps=7afdh;sense=learn
 5|salla7|repair, fix, mend|V|pres=ysalla7
-5|sken|live (in a place), stay|V|pres=yoskon
+5|sken|live (in a place), stay|V|pres=yoskon;sense=stay
 5|youm|day|N|g=m;pl=ayyem;sense=day
 5|d9i9a|minute|N|g=f;pl=d9aye9
 5|rob3|quarter|N|g=m
@@ -538,8 +538,8 @@
 5|mektab|office, desk|N|g=m;pl=mkateb
 5|chirka|company, firm|N|g=f;pl=chirkat
 5|moudir|manager, boss, headteacher|N|g=m;pl=moudirin
-5|talib|student|N|g=m;pl=tolba
-5|tilmidh|pupil, schoolchild|N|g=m;pl=tlamdha
+5|talib|student|N|g=m;pl=tolba;sense=student
+5|tilmidh|pupil, schoolchild|N|g=m;pl=tlamdha;sense=student
 5|9ism|class, classroom|N|g=m;pl=a9sam
 5|nou9ta|mark, point, dot|N|g=f;pl=n9at
 5|9lam|pencil|N|g=m;pl=9lomma
@@ -558,8 +558,8 @@
 5|rokba|knee|N|g=f;pl=rkeb
 5|dam|blood|N|g=m
 5|9mijja|shirt|N|g=f;pl=9mayej
-5|kabbout|coat|N|g=m;pl=kbabet
-5|fista|jacket|N|g=f;pl=fistat
+5|kabbout|coat|N|g=m;pl=kbabet;sense=coat
+5|fista|jacket|N|g=f;pl=fistat;sense=coat
 5|rouba|dress|N|g=f;pl=roubat
 5|7zam|belt|N|g=m;pl=7zouma
 5|khatem|ring|N|g=m;pl=khwatem
@@ -593,10 +593,10 @@
 5|ri7|wind|N|g=f;pl=ryah;sense=wind
 5|bard|cold (weather)|N|g=m;sense=cold
 5|elli|who, which, that (joining)|pro|
-5|kima|like, as, such as|conj|
+5|kima|like, as, such as|conj|sense=as
 5|wa9tella|when (joining)|conj|
 5|3ad|then, so, again|adv|
-5|bekri|early|adv|
+5|bekri|early|adv|sense=before
 5|akid|certainly, for sure|adv|
 5|tab3an|of course|adv|
 5|hakka|like this, this way|adv|
@@ -605,15 +605,15 @@
 5|b3adh|some, a few|adv|
 5|walou|nothing, nothing at all|adv|
 5|kthir|many, much, a lot|adv|sense=alot
-5|9lil|few, little, not much|adv|
+5|9lil|few, little, not much|adv|sense=few
 5|akther|more|adv|
-5|a9all|less, fewer|adv|
+5|a9all|less, fewer|adv|sense=few
 5|jmil|beautiful, handsome, lovely|Adj|pl=jmal;f=jmila;sense=good
 5|9bi7|ugly, nasty|Adj|pl=9ba7;f=9bi7a;sense=bad
 # ---- level 6 (Top 700) ----
 6|kreh|hate, dislike|V|pres=yekrah
 6|9arrar|decide|V|pres=y9arrar;ps=9arr
-6|tbassem|smile|V|pres=yetbassem;ps=tbass
+6|tbassem|smile|V|pres=yetbassem;ps=tbass;sense=smile
 6|hrab|run away, escape, flee|V|pres=yohrob;ps=harb
 6|habbat|go down, bring down, lower|V|pres=yhabbat
 6|3adda|pass, cross, spend (time)|V|pres=y3addi
@@ -623,7 +623,7 @@
 6|7ra9|burn|V|pres=ya7ra9;ps=7ar9
 6|9alla|fry|V|pres=y9alli
 6|sabb|pour|V|pres=ysobb;p1=sabbit;ps=sabb;pp=ysobbou
-6|9addem|offer, serve, present|V|pres=y9addem
+6|9addem|offer, serve, present|V|pres=y9addem;sense=give
 6|sallef|lend, borrow|V|pres=ysallef
 6|khalles|pay, settle up|V|pres=ykhalles
 6|ghlat|make a mistake, get it wrong|V|pres=yeghlat;ps=ghalt
@@ -652,13 +652,13 @@
 6|fannan|artist|N|g=m;pl=fannanin
 6|la3eb|player|N|g=m;pl=la3ba
 6|mat7af|museum|N|g=m;pl=mata7ef
-6|sinema|cinema|N|g=f
+6|sinema|cinema|N|g=f;sense=film
 6|stad|stadium|N|g=m
 6|maktba|library, bookshop|N|g=f;pl=maktbat
 6|jemi3a|university|N|g=f;pl=jemi3at
 6|outel|hotel|N|g=m;pl=outelet
 6|bosta|post office|N|g=f
-6|twalet|toilet|N|g=m
+6|twalet|toilet|N|g=m;sense=toilet
 6|garaj|garage|N|g=m;pl=garajet
 6|ma7atta|station, stop|N|g=f;pl=ma7attat
 6|mtar|airport|N|g=m;pl=mtarat
@@ -699,7 +699,7 @@
 6|9anoun|law, rule|N|g=m;pl=9awanin
 6|7koma|government|N|g=f
 6|rais|president, boss, chief|N|g=m;pl=rouasa
-6|cha3b|people, nation|N|g=m;pl=chou3oub
+6|cha3b|people, nation|N|g=m;pl=chou3oub;sense=country
 6|3alam|world|N|g=m;sense=world
 6|tarikh|history, date|N|g=m
 6|3ilm|science, knowledge|N|g=m;pl=3loum
@@ -728,9 +728,9 @@
 7|safer|travel, go abroad|V|pres=ysafer
 7|bna|build|V|pres=yebni
 7|fsed|go off, break down, spoil|V|pres=yefsed
-7|7bes|stop, hold back, keep in|V|pres=ya7bes
+7|7bes|stop, hold back, keep in|V|pres=ya7bes;sense=stop
 7|lamm|gather, collect, pick up|V|pres=ylemm;p1=lammit;ps=lamm;pp=ylemmou
-7|farra9|hand out, share out, give out|V|pres=yfarra9
+7|farra9|hand out, share out, give out|V|pres=yfarra9;sense=give
 7|9sem|divide, share, split|V|pres=ye9sem
 7|7dach|eleven|num|
 7|thnach|twelve|num|
@@ -786,8 +786,8 @@
 7|3ounwan|address, title|N|g=m;pl=3anawin
 7|nimrou|number|N|g=m;pl=nimrouwet
 7|7ajz|booking, reservation|N|g=m
-7|sa7el|coast, seaside|N|g=m
-7|3asima|capital city|N|g=f;pl=3awasem
+7|sa7el|coast, seaside|N|g=m;sense=beach
+7|3asima|capital city|N|g=f;pl=3awasem;sense=country
 7|9arya|village|N|g=f;pl=9ora
 7|rif|countryside|N|g=m
 7|markez|centre|N|g=m;pl=marakez
@@ -809,8 +809,8 @@
 7|a7san|better, best|Adj|
 7|akbar|bigger, biggest, older|Adj|
 7|asghar|smaller, smallest, younger|Adj|
-7|a7la|sweeter, nicer, prettier|Adj|
-7|arkhas|cheaper, cheapest|Adj|
+7|a7la|sweeter, nicer, prettier|Adj|sense=sweet,good
+7|arkhas|cheaper, cheapest|Adj|sense=cheap
 7|aghla|more expensive, dearer|Adj|
 # ---- level 8 (Top 900) ----
 8|ghatta|cover, cover up|V|pres=yghatti
@@ -821,12 +821,12 @@
 8|tla9a|meet, come across|V|pres=yetla9a
 8|kharrej|take out, put out, bring out|V|pres=ykharrej
 8|dakhkhal|put in, bring in|V|pres=ydakhkhal
-8|wa99af|stop (something), park|V|pres=ywa99af
+8|wa99af|stop (something), park|V|pres=ywa99af;sense=stop
 8|chaghghal|switch on, start (a machine)|V|pres=ychaghghal
 8|taffa|switch off, put out|V|pres=ytaffi
 8|rakkeb|put on, fix on, install|V|pres=yrakkeb
 8|3ayyech|feed, keep alive|V|pres=y3ayyech
-8|rabba|bring up, raise|V|pres=yrabbi
+8|rabba|bring up, raise|V|pres=yrabbi;sense=lift
 8|tzawwej|get married|V|pres=yetzawwej
 8|7lem (noun)|dream (noun)|N|g=m;pl=a7lam
 8|ra2y|opinion, view|N|g=m;pl=ara2
@@ -886,7 +886,7 @@
 8|9aws 9za7|rainbow|N|g=m
 8|fadha|space, outer space|N|g=m
 8|kawkab|planet|N|g=m;pl=kawakeb
-8|najm|star (one)|N|g=m;pl=njoum
+8|najm|star (one)|N|g=m;pl=njoum;sense=star
 8|wled (verb)|give birth, have a baby|V|pres=youled
 8|mardh|illness, disease|N|g=m;pl=amradh
 8|dwa|medicine|N|g=m;pl=adwiya
@@ -902,16 +902,16 @@
 8|jou3|hunger|N|g=m
 8|3atch|thirst|N|g=m
 8|mri7|comfortable, relaxed|Adj|pl=mri7in;f=mri7a
-8|9al9an|worried, annoyed, fed up|Adj|pl=9al9anin;f=9al9ana
+8|9al9an|worried, annoyed, fed up|Adj|pl=9al9anin;f=9al9ana;sense=upset
 8|khayef|afraid, scared|Adj|pl=khayfin;f=khayfa
 8|mabsout|pleased, happy, content|Adj|pl=mabsoutin;f=mabsouta;sense=happy
 8|mestanni|waiting|Adj|pl=mestanniyin;f=mestanniya
-8|ne3es|sleepy, drowsy|Adj|pl=ne3sin;f=ne3sa
+8|ne3es|sleepy, drowsy|Adj|pl=ne3sin;f=ne3sa;sense=tired
 8|mdhayya3|lost|Adj|pl=mdhayy3in;f=mdhayy3a
 8|wa7id|lonely, alone, single|Adj|pl=wa7idin;f=wa7ida
 8|sa7i|awake, alert|Adj|pl=sa7yin;f=sa7ya
 8|chfa|lip|N|g=f;pl=chfayef
-8|lsan|tongue|N|g=m;pl=lsen
+8|lsan|tongue|N|g=m;pl=lsen;sense=language
 # ---- level 9 (Top 1000) ----
 9|7adher (verb)|attend, be present at|V|pres=ya7dhar;ps=7adhr
 9|ghab|be away, be absent, disappear|V|pres=yghib;p1=ghebt
@@ -936,7 +936,7 @@
 9|3abba|fill up, load|V|pres=y3abbi
 9|farragh|empty out, unload|V|pres=yfarragh
 9|rakkez|concentrate, focus|V|pres=yrakkez
-9|9ayyem|tidy away, put away, lift|V|pres=y9ayyem
+9|9ayyem|tidy away, put away, lift|V|pres=y9ayyem;sense=lift
 9|3awwel|rely, count on|V|pres=y3awwel
 9|t7ammel|bear, put up with|V|pres=yet7ammel
 9|t3awed|get used to, be used to|V|pres=yet3awed
@@ -950,8 +950,8 @@
 9|3al a9all|at least|adv|
 9|3al akther|at most|adv|
 9|3la tol|straight away, straight on|adv|
-9|men ba3d|afterwards, later on|adv|
-9|men 9bal|before, earlier, beforehand|adv|
+9|men ba3d|afterwards, later on|adv|sense=after
+9|men 9bal|before, earlier, beforehand|adv|sense=before
 9|fil akhir|in the end, finally|adv|
 9|fil lowel|at first, in the beginning|adv|
 9|ba3d ghodwa|the day after tomorrow|adv|
@@ -966,9 +966,9 @@
 9|ghir|only, just, except|adv|
 9|akahaw|that's all, only that, just|adv|
 9|3la khater|because|conj|
-9|9bal ma|before (doing)|conj|
-9|ba3d ma|after (doing)|conj|
-9|kif ma|as, however, the way that|conj|
+9|9bal ma|before (doing)|conj|sense=before
+9|ba3d ma|after (doing)|conj|sense=after
+9|kif ma|as, however, the way that|conj|sense=as
 9|wa9t ma|whenever, when|conj|
 9|7atta ken|even if|conj|
 9|ken ma|if not, unless|conj|
@@ -991,19 +991,19 @@
 9|kol chay|everything|pro|
 9|7atta wa7ed|nobody, no one|pro|
 9|7atta chay|nothing|pro|
-9|9adhya|matter, case, issue|N|g=f;pl=9adhaya
-9|mawdhou3|subject, topic|N|g=m;pl=mawadhi3
+9|9adhya|matter, case, issue|N|g=f;pl=9adhaya;sense=topic
+9|mawdhou3|subject, topic|N|g=m;pl=mawadhi3;sense=topic
 9|sabab|reason, cause|N|g=m;pl=asbab
-9|natija|result, outcome|N|g=f;pl=nata2ej
+9|natija|result, outcome|N|g=f;pl=nata2ej;sense=answer
 9|fer9|difference|N|g=m;pl=frou9
 9|chart|condition, rule|N|g=m;pl=chrout
-9|fourssa|chance, opportunity|N|g=f;pl=foras
+9|fourssa|chance, opportunity|N|g=f;pl=foras;sense=luck
 9|khatar|danger|N|g=m;pl=akhtar
 9|aman|safety, security|N|g=m
 9|mosa3da|help, assistance|N|g=f
 9|3ala9a|relationship, connection|N|g=f;pl=3ala9at
 9|3adou|enemy|N|g=m;pl=a3da2
-9|dawla|state, nation|N|g=f;pl=dowal
+9|dawla|state, nation|N|g=f;pl=dowal;sense=country
 9|jaych|army|N|g=m;pl=jyouch
 9|mawt|death|N|g=m
 9|mas2oul|responsible, in charge|Adj|pl=mas2oulin;f=mas2oula
@@ -1013,25 +1013,25 @@
 9|wadhe7|clear, obvious|Adj|pl=wadh7in;f=wadh7a
 9|3azouz|elderly man, old fellow|N|g=m;pl=3zayez
 9|chab|young man, youth|N|g=m;pl=chbeb
-9|chabba|young woman, girl|N|g=f;pl=chabbat
+9|chabba|young woman, girl|N|g=f;pl=chabbat;sense=girl
 # ---- level 10: Phrases — 100 sayings whose meaning is not the sum of their words ----
 10|chbik|what's wrong with you, what's up|phrase|
 10|3andek el 7a9|you're right|phrase|
 10|ma 3andich khbar|I have no idea|phrase|
 10|rabbi ysahhel|good luck|phrase|
 10|rabbi m3ak|God be with you, good luck|phrase|
-10|sa7it|thanks, cheers|phrase|
+10|sa7it|thanks, cheers|phrase|sense=thanks
 10|3la kifek|as you like, up to you|phrase|
 10|kif kif|same thing, all the same|phrase|
 10|nharek zin|have a nice day|phrase|
-10|t3ich|thanks, bless you|phrase|
+10|t3ich|thanks, bless you|phrase|sense=thanks
 10|allah ybarek|wow, bless, well done|phrase|
 10|machallah|wow, how lovely|phrase|
 10|ma3lich|never mind, it's fine|phrase|
 10|mouch mouchkla|no problem|phrase|
 10|3la rasi|with pleasure|phrase|
 10|3la 3ini|gladly, with pleasure|phrase|
-10|rabbi y7afdhek|thank you, bless you|phrase|
+10|rabbi y7afdhek|thank you, bless you|phrase|sense=thanks
 10|taw taw|right away, just now|phrase|
 10|ya 7asra|what a pity, those were the days|phrase|
 10|ya khsara|what a shame|phrase|
@@ -1045,8 +1045,8 @@
 10|chadd rou7ek|hold on, take care|phrase|
 10|bechwaya bechwaya|step by step, take it easy|phrase|
 10|chwaya chwaya|little by little|phrase|
-10|marra marra|now and then, occasionally|phrase|
-10|lebes 3lik|are you alright, it suits you|phrase|
+10|marra marra|now and then, occasionally|phrase|sense=sometimes
+10|lebes 3lik|are you alright, it suits you|phrase|sense=ok
 10|walla|really, I swear|phrase|
 10|wallahi|I swear, honestly|phrase|
 10|ya sidi|my dear sir, come on then|phrase|
@@ -1061,11 +1061,11 @@
 10|fi 3ilmek|for your information, just so you know|phrase|
 10|ma t9la9ch|don't worry|phrase|
 10|ma tkhafch|don't be scared, don't worry|phrase|
-10|haya bina|let's go|phrase|
-10|yalla|come on, let's go|phrase|
+10|haya bina|let's go|phrase|sense=letsgo
+10|yalla|come on, let's go|phrase|sense=letsgo
 10|chnia el 7kaya|what's going on, what's the story|phrase|
 10|chnowa sar|what happened|phrase|
-10|3la ma yram|fine, all good|phrase|
+10|3la ma yram|fine, all good|phrase|sense=ok
 10|tfadhal|here you are, go ahead, come in|phrase|
 10|ras el 3am|New Year|phrase|
 10|fi aman allah|goodbye, safe journey|phrase|
@@ -1075,10 +1075,10 @@
 10|w enti men ahlou|and you too|phrase|
 10|ahla w sahla|welcome|phrase|
 10|marhba bik|welcome to you|phrase|
-10|merci|thank you|phrase|
-10|rabbi ybarek fik|bless you, thank you|phrase|
+10|merci|thank you|phrase|sense=thanks
+10|rabbi ybarek fik|bless you, thank you|phrase|sense=thanks
 10|allah yr7mou|rest in peace|phrase|
-10|bismillah|let's start, here goes|phrase|
+10|bismillah|let's start, here goes|phrase|sense=letsgo
 10|la 7awla|oh dear, nothing to be done|phrase|
 10|fi l akhir|in the end, finally|phrase|
 10|fi l lowel|at first|phrase|
@@ -1095,8 +1095,8 @@
 10|mouch lezem|no need|phrase|
 10|3andi 7a9|I'm right|phrase|
 10|ma 3andekch 7a9|you're wrong|phrase|
-10|rou7 rawwa7|go home|phrase|
-10|bara barra|go away, get out|phrase|
+10|rou7 rawwa7|go home|phrase|sense=goaway
+10|bara barra|go away, get out|phrase|sense=goaway
 10|a3tini|give me|phrase|
 10|9olli|tell me|phrase|
 10|chouf|look, see here|phrase|
