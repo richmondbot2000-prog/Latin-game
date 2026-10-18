@@ -504,6 +504,36 @@ famma, "once upon a time" left alone. 227 sentences and 10 stories (two a
 level). Known gaps: the banners still show Latin words; Gutenberg books
 convert live, so quality follows the converter.
 
+## Grade 5 Theory (`grade5/`, own game)
+
+A separate game for ABRSM Grade 5 music theory, live at
+**https://grade5.musicalmagic.uk** (same rules: public, nothing personal, no
+accounts, no tracking). It shares nothing with the Latin engine: no profiles,
+no sync; progress is `localStorage['grade5.progress']` { topics: {id: {n, r, a}},
+items: {key: {r, w, last, t}}, days, sound }. Files: `theory.js` (pitches
+`{ l, a, o }`, keys up to six sharps/flats, `interval`, `transpose`, chords,
+and one question maker per kind: note names in four clefs, same pitch in
+another clef, enharmonics, key signatures both ways, scales, degrees,
+intervals incl. compound, chords Ia–Vc, chord symbols, cadences, time
+signatures by kind and from a bar of rhythm, transposing instruments, terms,
+instruments; `TOPICS` weights them), `terms.js` (`TERMS` Italian / French /
+German with `g` groups never offered against each other, `FACTS`),
+`stave.js` (VexFlow 4.2.5 with Bravura in `lib/`, MIT, drawn to SVG scaled
+to the width; a lone note is centred between ghost notes), `sound.js` (a Web
+Audio piano made in the page; terms read with the phone's Italian / French /
+German voice), `app.js` (home, rounds of 10, explanation after every
+answer, mixed practice favours weak topics). Bump `CACHE` in `grade5/sw.js`
+and `APP_VERSION` in `grade5/app.js` together on every publish.
+It is served by the Cloudflare worker `grade5-site` (`grade5-site/`,
+custom domain grade5.musicalmagic.uk), which passes requests through to
+`latin.musicalmagic.uk/grade5/` (GitHub Pages) — so a push to `main`
+publishes it; redeploy the worker only if `grade5-site/` changes
+(`CLOUDFLARE_API_TOKEN=x npx wrangler deploy` there, the proxy supplies the
+token). The owner may later move it to its own repository (GitHub would
+not let a session create one). Checks: `scratchpad/g5check.js` (thousands
+of questions in node) and `scratchpad/g5browser.js` (every kind drawn at
+390px, screenshots).
+
 ## Read aloud (`speak.js`)
 
 Words are read with the phone's own voices (Web Speech API; nothing is

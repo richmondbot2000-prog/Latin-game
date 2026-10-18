@@ -1,0 +1,5 @@
+# Deploy from the grade5-site/ folder:  npx wrangler deploy
+name = "grade5-site"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+routes = [{ pattern = "grade5.musicalmagic.uk", custom_domain = true }]
