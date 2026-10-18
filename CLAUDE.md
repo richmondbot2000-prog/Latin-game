@@ -449,7 +449,7 @@ Per-player counters live in
 
 Every language game is a folder at the site root built on the Latin engine;
 **Tounsi** (Tunisian Arabic, Derja) is live at
-**https://latin.musicalmagic.uk/tounsi/** (and **Music**, Learn the notes, at `/music/`, see below) — same rules as the Latin game
+**https://latin.musicalmagic.uk/tounsi/** (and **Music**, Learn the notes, at `/music/`, and **Russian** at `/russian/`, see below) — same rules as the Latin game
 (public repo, nothing personal, no accounts). `languages.json` lists the
 games; every home page links to the others from it (`otherGames()`).
 A language folder holds the hand-written `lang.json` (code, name, flag,
@@ -576,6 +576,19 @@ A push to `main` publishes it. The owner may later move the music games to
 their own repository (GitHub would not let a session create one). Checks: `scratchpad/g5check.js` (thousands
 of questions per grade in node), `scratchpad/g5grades.js` (what each grade asks) and `scratchpad/g5browser.js` (every kind drawn at
 390px, screenshots).
+
+## Russian (`russian/`)
+
+The 100 most common Russian words (a frequency list without the particles that cannot go on a card — же, бы,
+ли, себя — and with the everyday words a beginner needs: привет, пока, да, нет, спасибо, пожалуйста, мама,
+папа, друг, школа, вода), live at **latin.musicalmagic.uk/russian/**, built like Tounsi
+(`python3 tools/lang/build.py russian`; bump `russian/VERSION`). The word is the Cyrillic (`words.txt`);
+`arabic.txt` (the historical name) holds the **sound-it-out guide** with the stressed syllable in capitals
+(pri-VYET), shown in the own-script line under the word (`LANG.ownScript` = ltr, `ru-Latn`, so the engine no
+longer marks that line as Arabic; `theme.css` sets it in italics, smaller). Settings: Beginner (25, `top=1`),
+Top 50, Top 100. `memory.txt`: sound-alike or shared-root hooks, written for a child. No Read section
+(`noread`). Voice: `tools/lang/synth_azure.py russian ru-RU-SvetlanaNeural` (`tts.script` `plain`: the
+Cyrillic is read as written; 100 clips in `russian/audio/`).
 
 ## Read aloud (`speak.js`)
 

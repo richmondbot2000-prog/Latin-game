@@ -1,0 +1,6 @@
+/* Russian: a blue accent; the line under each word is a sound-it-out guide in Latin letters (the stress in capitals) */
+:root { --accent: #2F5DA8; }
+.hello .who::after { content: ' 👋'; }
+.arab { font-family: system-ui, -apple-system, sans-serif; font-style: italic; letter-spacing: .02em; }
+.card .arab { font-size: clamp(1.2rem, 6vw, 1.6rem); }
+.memo .arab { font-size: 1.2rem; }

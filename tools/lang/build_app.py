@@ -92,6 +92,6 @@ m = m.replace('"src": "icons/', '"src": "icons/' if own_icons else '"src": "../i
 # ---------- index.html ----------
 t = (root / 'tools' / 'lang' / 'index.template.html').read_text()
 t = t.replace('href="icons/', f'href="{code}/icons/') if own_icons else t
-t = t.replace('{{CODE}}', code).replace('{{NAME}}', name).replace('{{DESCRIPTION}}', L['description']).replace('{{LANG_JSON}}', json.dumps({ 'code': code, 'name': name, 'tts': L.get('tts', {}), **{k: L[k] for k in ('noread', 'links', 'linksTitle') if k in L} }, ensure_ascii=False))
+t = t.replace('{{CODE}}', code).replace('{{NAME}}', name).replace('{{DESCRIPTION}}', L['description']).replace('{{LANG_JSON}}', json.dumps({ 'code': code, 'name': name, 'tts': L.get('tts', {}), **{k: L[k] for k in ('noread', 'links', 'linksTitle', 'ownScript') if k in L} }, ensure_ascii=False))
 (lang / 'index.html').write_text(t)
 print(f'built index.html, app.js, sw.js, manifest for {code} v{VERSION}')

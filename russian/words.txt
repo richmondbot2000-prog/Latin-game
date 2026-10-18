@@ -1,0 +1,105 @@
+# Russian: the 100 most common words, for beginners. One word per line: level | word | english | pos | options
+# Level 0 = the first 50 (top=1: the 25 of the Beginner setting), level 1 = the next 50. pos as in tounsi/words.txt.
+# sense=group,group marks near-synonyms never offered as each other's wrong answer.
+# ---- level 0 ----
+0|привет|hello, hi|phrase|top=1
+0|пока|bye|phrase|
+0|да|yes|part|top=1
+0|нет|no|part|top=1
+0|спасибо|thank you, thanks|phrase|top=1
+0|пожалуйста|please, you're welcome|phrase|top=1;sense=please
+0|я|I, me|pro|top=1
+0|ты|you|pro|top=1;sense=you
+0|он|he, him|pro|top=1
+0|она|she, her|pro|top=1
+0|мы|we, us|pro|top=1
+0|вы|you (polite, plural)|pro|sense=you
+0|они|they, them|pro|
+0|и|and|conj|top=1
+0|а|and, but|conj|
+0|но|but|conj|
+0|или|or|conj|
+0|не|not|part|top=1
+0|это|this, it|pro|top=1
+0|что|what|qu|top=1
+0|кто|who|qu|
+0|где|where|qu|top=1
+0|как|how|qu|top=1
+0|когда|when|qu|
+0|почему|why|qu|
+0|в|in, into|prep|top=1
+0|на|on, onto|prep|top=1
+0|с|with|prep|
+0|очень|very|adv|
+0|хорошо|good, well, OK|adv|top=1;sense=good
+0|вот|here is|adv|sense=here
+0|тут|here|adv|sense=here
+0|там|there|adv|
+0|сейчас|now, right now|adv|sense=now
+0|тоже|also, too|adv|
+0|только|only|adv|
+0|уже|already|adv|
+0|ещё|still, more, again|adv|
+0|один|one|num|top=1
+0|два|two|num|top=1
+0|три|three|num|
+0|мой|my, mine|pro|
+0|твой|your, yours|pro|
+0|человек|person, man|N|top=1
+0|мама|mum, mom|N|top=1
+0|папа|dad|N|
+0|друг|friend|N|top=1
+0|дом|house, home|N|top=1
+0|день|day|N|
+0|быть|to be|V|
+# ---- level 1 ----
+1|знать|to know|V|
+1|хотеть|to want|V|
+1|мочь|can, to be able|V|
+1|говорить|to speak, to talk|V|sense=talk
+1|сказать|to say, to tell|V|sense=talk
+1|идти|to go, to walk|V|
+1|видеть|to see|V|sense=see
+1|делать|to do, to make|V|
+1|жить|to live|V|
+1|любить|to love, to like|V|
+1|думать|to think|V|
+1|смотреть|to look, to watch|V|sense=see
+1|есть|to eat|V|
+1|время|time|N|
+1|год|year|N|
+1|жизнь|life|N|
+1|рука|hand, arm|N|
+1|голова|head|N|
+1|глаз|eye|N|
+1|слово|word|N|
+1|место|place|N|
+1|работа|work, job|N|
+1|вода|water|N|
+1|школа|school|N|
+1|мир|world, peace|N|
+1|большой|big, large|Adj|
+1|маленький|small, little|Adj|
+1|новый|new|Adj|
+1|хороший|good|Adj|sense=good
+1|первый|first|Adj|
+1|другой|other, another|Adj|
+1|какой|what kind, which|qu|
+1|так|so, like this|adv|
+1|всё|everything|pro|
+1|наш|our, ours|pro|
+1|его|his, him|pro|
+1|её|her, hers|pro|
+1|из|from, out of|prep|sense=from
+1|для|for|prep|
+1|о|about|prep|
+1|без|without|prep|
+1|после|after|prep|
+1|под|under|prep|
+1|если|if|conj|
+1|потому что|because|conj|
+1|надо|must, need to|adv|
+1|можно|may, it's allowed|adv|
+1|теперь|now (from now on)|adv|sense=now
+1|потом|then, later|adv|
+1|много|many, a lot|adv|

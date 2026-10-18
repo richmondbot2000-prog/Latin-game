@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '170';
+const APP_VERSION = '171';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -59,7 +59,9 @@ const originOf = w => (typeof ORIGINS !== 'undefined' && ORIGINS[w.word]) || '';
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.show} means ${w.english}.` };
 // the word in the language's own script (Arabic for Tounsi: `ar` in vocab.js, the form's `ar` from Forms); nothing for Latin
 const arabOf = (w, form) => (form && form.ar) || (form && form.la !== w.show ? '' : (typeof Forms !== 'undefined' && Forms.show ? Forms.show(w) : (w.ar || '')));
-const arabHTML = (w, form, cls = '') => { const a = arabOf(w, form); return a ? `<div class="arab ${cls}" dir="rtl" lang="ar">${esc(a)}</div>` : ''; };
+// the line under a word in the language's own script: Arabic for Tounsi; a game can name its own (LANG.ownScript, Russian: a Latin-letter guide)
+const OWN_SCRIPT = typeof LANG !== 'undefined' && LANG.ownScript ? `dir="${LANG.ownScript.dir}" lang="${LANG.ownScript.lang}"` : 'dir="rtl" lang="ar"';
+const arabHTML = (w, form, cls = '') => { const a = arabOf(w, form); return a ? `<div class="arab ${cls}" ${OWN_SCRIPT}>${esc(a)}</div>` : ''; };
 // the player's own way to remember a word, kept on this device only
 const NOTES = 'latin.notes';
 const noteOf = w => { const u = current(); const n = u ? store.get(NOTES + '.' + u.id, {}) : {}; return n[w.id] || ''; };
@@ -624,7 +626,7 @@ function renderHome(u) {
       <button class="gamebanner" id="pracGo" style="background-image:url('art/banners/squishygeddon.jpg')"><span class="gname squishy">Squishygeddon</span></button>
       <button class="gamebanner" id="hamGo" style="background-image:url('art/banners/hammer.jpg')"><span class="gname hammer">Jacques Hammer</span></button>
     </div>
-    ${NO_READ ? linksTile() : ''}
+    ${NO_READ && (LANG.links || []).length ? linksTile() : ''}
     <div class="tile prac2" id="readtile"${NO_READ ? ' style="display:none"' : ''}>
       <h2>Read</h2>
       <button class="gamebanner${sentencesLocked(u) ? ' locked' : ''}" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span>${sentencesLocked(u) ? `<span class="corner">${LEVELS[1][1]}</span>` : ''}</button>
@@ -1466,7 +1468,7 @@ function renderList(u, pane) {
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><span class="swipe known" aria-hidden="true">✓ Known</span><span class="swipe unknown" aria-hidden="true">✗ Not known</span><button data-i="${w.i}"><span class="lat">${wordHTML(w, w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><span class="swipe known" aria-hidden="true">✓ Known</span><span class="swipe unknown" aria-hidden="true">✗ Not known</span><button data-i="${w.i}"><span class="lat">${wordHTML(w, w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" ${OWN_SCRIPT}>${esc(arabOf(w))}</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
     $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word for its memo · pull right = known, left = not known';
   };
