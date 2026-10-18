@@ -21,7 +21,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '48';
+const APP_VERSION = '49';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -179,6 +179,13 @@ const activeWords = u => { const l = levelOf(u); return WORDS.filter(w => inLeve
 const $ = (sel, el = document) => el.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const starsHTML = n => '<span class="stars" aria-label="' + n + ' of 5 stars, ' + BAND_NAMES[n || 0] + '">' + '★'.repeat(n) + '<span class="off">' + '★'.repeat(5 - n) + '</span></span>';
+/* strength 0–100: what the three measures say together — 40 accuracy, 30 quick rights (six is full), 30 survival (a
+   month is full, on a log scale so the first day counts for a lot). It moves a little on every answer, where the band
+   only steps; the bar is coloured by the band and drawn in the word list, on the memo card and along the top of a card. */
+const strengthOf = pw => { if (!pw || !((pw.ok || 0) + (pw.bad || 0)) && !pw.s) return 0; return Math.round(40 * (pw.a || 0) + 30 * Math.min(6, pw.q || 0) / 6 + 30 * Math.min(1, Math.log1p(pw.g || 0) / Math.log1p(720))); };
+const barHTML = (pw, cls = '') => { const s = (pw && pw.s) || 0, n = strengthOf(pw); return `<span class="sbar b${s} ${cls}" role="img" aria-label="${BAND_NAMES[s]}, strength ${n} of 100"><i style="--w:${n}%"></i><b>${BAND_NAMES[s]}</b></span>`; };
+// why a word stands where it does, for the memo: "right 9 of 10 · 4 quick · known for 6 days"
+const whyHTML = pw => { if (!pw || !((pw.ok || 0) + (pw.bad || 0))) return 'not answered yet'; const g = pw.g || 0, parts = [`right ${pw.ok || 0} of ${(pw.ok || 0) + (pw.bad || 0)}`, `${pw.q || 0} quick`]; if (g >= 48) parts.push(`known for ${Math.round(g / 24)} days`); else if (g >= 20) parts.push('known for a day'); return parts.join(' · '); };
 const resting = (p, now = Date.now()) => p && p.r && p.r > now;
 const dayKey = (t = Date.now()) => { const d = new Date(t); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 // words answered today, this week (since Monday) and ever; players from before the tally get their 'ever' from their stars record
@@ -560,12 +567,12 @@ function summary(u) {
   const p = getProg(u), now = Date.now();
   const c = [0, 0, 0, 0, 0, 0]; let rest = 0;
   const words = activeWords(u);
-  for (const w of words) { const s = (p[w.id] && p[w.id].s) || 0; c[s]++; if (resting(p[w.id], now)) rest++; }
-  return { c, rest, total: words.length };
+  let sum = 0;
+  for (const w of words) { const s = (p[w.id] && p[w.id].s) || 0; c[s]++; sum += strengthOf(p[w.id]); if (resting(p[w.id], now)) rest++; }
+  return { c, rest, total: words.length, avg: words.length ? Math.round(sum / words.length) : 0 };
 }
-function meterHTML(c, total) {
-  const col = ['var(--line)', '#E9C46A', '#E9A23B', '#D97B3A', '#B85C8E', 'var(--good)'];
-  return '<div class="meter">' + [5, 4, 3, 2, 1, 0].map(s => `<span style="width:${100 * c[s] / total}%;background:${col[s]}"></span>`).join('') + '</div>';
+function meterHTML(c, total, avg = 0) {
+  return `<div class="meter" role="img" aria-label="strength ${avg} of 100"><span style="width:${avg}%"></span></div>`;
 }
 // throw away every saved copy of the app and fetch it fresh
 async function freshen() {
@@ -593,7 +600,7 @@ async function otherGames() {
   } catch (e) {}
 }
 function renderHome(u) {
-  const { c, total } = summary(u);
+  const { c, total, avg } = summary(u);
   app.innerHTML = `
   <div class="wrap">
     <div class="bar"><span class="title"></span><span class="userbox"><button class="linkbtn" id="who">Log out</button><button class="avatarbtn" id="avatarBtn" title="${u.avatar ? 'Change your photo' : 'Add a photo'}">${avatarHTML(u)}</button></span></div>
@@ -603,8 +610,8 @@ function renderHome(u) {
     <div class="levels top" id="levels" role="radiogroup" aria-label="Which words">
       ${LEVELS.map(([k, n]) => `<button role="radio" data-l="${k}" aria-checked="${k === levelOf(u)}"><b>${n}</b><span>${WORDS.filter(w => inLevel(w, k)).length} words</span></button>`).join('')}
     </div>
-    ${meterHTML(c, total)}
-    <div class="small meterline">${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
+    ${meterHTML(c, total, avg)}
+    <div class="small meterline">strength ${avg} / 100 · ${c[5]} mastered · ${total - c[0]} started · ${c[0]} new</div>
     ${Speak.toggleHTML()}
     <div class="tile prac2" id="org">
       <h2>Organise</h2>
@@ -1434,21 +1441,21 @@ function renderList(u, pane) {
   const p = getProg(u);
   const now = Date.now();
   let filter = 'all', term = '';   // the list opens on every word, least known first; a filter lasts for the visit
-  const { c, rest, total } = summary(u);
+  const { c, rest, total, avg } = summary(u);
   if (filter !== 'all' && !(filter === 'rest' ? rest : c[+filter])) filter = 'all';   // a remembered filter with nothing in it any more falls back to everything
-  const opts = [['all', 'All ' + total], ['0', 'New ' + c[0]], ...[1, 2, 3, 4, 5].map(s => [String(s), '★'.repeat(s) + ' ' + c[s]]), ['rest', 'Not due ' + rest]];
+  const opts = [['all', 'All ' + total], ...[0, 1, 2, 3, 4, 5].map(s => [String(s), BAND_NAMES[s] + ' ' + c[s]]), ['rest', 'Not due ' + rest]];
   pane.innerHTML = `
     <div class="sticky">
-      ${meterHTML(c, total)}
+      ${meterHTML(c, total, avg)}
       <input type="search" id="q" placeholder="Search Tunisian Arabic (Derja) or English…" autocomplete="off">
       <div class="filters">${opts.map(([k, l]) => `<button data-f="${k}" aria-pressed="${k === filter}">${l}</button>`).join('')}</div>
       <div class="count" id="count"></div>
-      <div class="count legend">★ come from right answers given quickly, and from the weeks a word stays known</div>
+      <div class="count legend">strength ${avg} / 100 · the bar grows with right answers given quickly, and with the weeks a word stays known</div>
     </div>
     <ul class="words" id="words"></ul>`;
   const list = $('#words', pane);
   // least known first: by stars, then the ones answered least recently, then alphabetical
-  const prog = getProg(u), starsOf = w => (prog[w.id] && prog[w.id].s) || 0, seenAt = w => (prog[w.id] && prog[w.id].t) || 0;
+  const prog = getProg(u), starsOf = w => strengthOf(prog[w.id]), seenAt = w => (prog[w.id] && prog[w.id].t) || 0;
   const sorted = activeWords(u).sort((a, b) => starsOf(a) - starsOf(b) || seenAt(a) - seenAt(b) || a.word.replace(/^-/, '').localeCompare(b.word.replace(/^-/, ''), 'en', { sensitivity: 'base' }));
   const draw = () => {
     const shown = sorted.filter(w => {
@@ -1458,7 +1465,7 @@ function renderList(u, pane) {
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><span class="swipe known" aria-hidden="true">✓ Known</span><span class="swipe unknown" aria-hidden="true">✗ Not known</span><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${starsHTML(s)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><span class="swipe known" aria-hidden="true">✓ Known</span><span class="swipe unknown" aria-hidden="true">✗ Not known</span><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${barHTML(pw)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
     $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word for its memo · pull right = known, left = not known';
   };
@@ -1471,7 +1478,7 @@ function renderList(u, pane) {
     if (known) { pw.s = 5; pw.a = .95; pw.q = 6; pw.g = 648; pw.r = now + REST[5]; } else { pw.s = 0; pw.a = 0; pw.q = 0; delete pw.r; }
     pw.t = now; p[w.id] = pw; saveProg(u, p);
     const li = list.querySelector(`button[data-i="${w.i}"]`).closest('li');
-    li.querySelector('.stars').outerHTML = starsHTML(pw.s);
+    li.querySelector('.sbar').outerHTML = barHTML(pw);
     const en = li.querySelector('.en'); const r = en.querySelector('.rest'); if (r) r.remove();
     if (known) en.insertAdjacentHTML('beforeend', `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>`);
     li.classList.add(known ? 'flash-known' : 'flash-unknown'); setTimeout(() => li.classList.remove('flash-known', 'flash-unknown'), 600);
@@ -1527,7 +1534,7 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
         ${originOf(w) ? `<div class="how"><h3>Where it comes from</h3><p>${esc(originOf(w))}</p></div>` : ''}
         <div class="how mine"><h3>✏️ My own way to remember it</h3>${noteOf(w) ? `<p id="noteText">${esc(noteOf(w))}</p><button class="linkbtn small" id="noteEdit">Change it</button>` : `<button class="linkbtn small" id="noteEdit">Make up your own picture — the ones you invent stick best</button>`}<textarea id="noteBox" rows="2" placeholder="e.g. ghodwa: a GOOD WAY to spend tomorrow" hidden>${esc(noteOf(w))}</textarea></div>
         ${phraseFor(w, u) ? `<div class="how said"><h3>In a sentence</h3><p class="la">${phraseHTML(phraseFor(w, u).la)}</p><p class="tr">${esc(phraseFor(w, u).en)}</p></div>` : ''}
-        <div class="meta">${starsHTML(stars)} <span class="small">${BAND_NAMES[stars || 0]} · ${w.kind} · ${levelName(String(w.level))}</span></div>
+        <div class="meta">${barHTML((u && getProg(u)[w.id]) || { s: stars })}<div class="small">${whyHTML(u && getProg(u)[w.id])} · ${w.kind} · ${levelName(String(w.level))}</div></div>
       </div>
       <button class="btn" id="memoOk">${btnLabel || (verdict ? 'Got it — next card' : 'Close')}</button>
     </div>`;
@@ -1630,7 +1637,7 @@ function renderPlay(u, pane) {
       <div class="card${top ? '' : ' under'}" ${top ? 'id="top"' : 'aria-hidden="true"'} data-kind="${c.w.kind}">
         <div class="orn top"><span class="num">${seen + (top ? 1 : 2)}</span></div>
         <div class="orn bottom"></div>
-        <div class="cstars">${starsHTML((p[c.w.id] && p[c.w.id].s) || 0)}</div>
+        <div class="cstars">${barHTML(p[c.w.id], 'thin')}</div>
         <div class="kind">${c.w.kind}</div>
         ${top ? '<span class="stamp yes">✓</span><span class="stamp no">✗</span>' : ''}
         <div class="lat">${esc(c.form ? c.form.la : c.w.show)}</div>
@@ -1676,7 +1683,7 @@ function renderPlay(u, pane) {
       Celebrate(r.left + r.width / 2, r.top + 8, big);   // glitter sprays up from the top of the card
       right++; combo(st.cur);
       ev = Beasts.onCard(u, true, st.cur);
-      if (pw.s === 5) flash(`🏆 ${w.show} mastered!`); else if (pw.s > hadStars && pw.s >= 2) flash(`⭐ ${BAND_NAMES[pw.s]} — ${pw.s} stars`);
+      if (pw.s === 5 && hadStars < 5) flash(`🏆 ${w.show} mastered!`); else if (pw.s > hadStars && pw.s >= 2) flash(`⭐ ${w.show}: ${BAND_NAMES[pw.s]}`);
     } else { st.cur = 0; ev = Beasts.onCard(u, false, 0); }   // the 20th card drops a beast even when it is wrong
     store.set(streakKey(u), st);
     showStreak(ok);
@@ -1685,7 +1692,7 @@ function renderPlay(u, pane) {
     else {
       const v = (match
         ? `Oops — “${esc(la)}” really does mean “${esc(shown)}”.`
-        : `Not quite — “${esc(la)}” doesn’t mean “${esc(shown)}”.`) + (hadStars > pw.s ? (pw.s ? ` Down to ${pw.s} star${pw.s > 1 ? 's' : ''} for this one.` : ' Back to zero stars for this one.') : '');
+        : `Not quite — “${esc(la)}” doesn’t mean “${esc(shown)}”.`) + (hadStars > pw.s ? ` Down to ${BAND_NAMES[pw.s]} for this one.` : '');
       setTimeout(() => openMemo(w, pw.s, v, ev ? () => showBeast(ev, next) : next), 120);
     }
   }

@@ -55,7 +55,7 @@ s = rep(s, "`My Latin game sync code is ${code}. Keep it safe: it brings my star
 s = rep(s, "Join the Latin game to open it: https://latin.musicalmagic.uk/#gift/${code}", f"Join the {name} game to open it: https://latin.musicalmagic.uk/{code}/#gift/${{code}}")
 s = rep(s, "Every word from your Latin list turns into Latin.", f"Every word from your {langname} list turns into {langname}.")
 s = rep(s, 'placeholder="Search Latin or English…"', f'placeholder="Search {langname} or English…"')
-s = rep(s, "<span class=\"small\">${BAND_NAMES[stars || 0]} · ${w.kind} · Level ${w.level}</span>", "<span class=\"small\">${BAND_NAMES[stars || 0]} · ${w.kind} · ${levelName(String(w.level))}</span>")
+s = rep(s, "${whyHTML(u && getProg(u)[w.id])} · ${w.kind} · Level ${w.level}</div>", "${whyHTML(u && getProg(u)[w.id])} · ${w.kind} · ${levelName(String(w.level))}</div>")
 s = f"// {name}: the {langname} game. DERIVED FILE — built from ../app.js by tools/lang/build_app.py; edit the Latin app.js (or build_app.py), not this.\n" + s
 (lang / 'app.js').write_text(s)
 

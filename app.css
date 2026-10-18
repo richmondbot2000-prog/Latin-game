@@ -58,7 +58,14 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .tile p { margin: 0; color: var(--muted); }
 .tile.locked { box-shadow: none; opacity: .55; cursor: default; }
 .meter { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--chip); margin: 12px 0 6px; }
-.meter span { display: block; height: 100%; }
+.meter span { display: block; height: 100%; border-radius: 5px; background: linear-gradient(90deg, #D9534F, #E9A23B 40%, #3A9D5D 75%, #D4A017); }
+/* a word's strength: a bar coloured by its band with the band's name under it */
+.sbar { display: inline-flex; flex-direction: column; gap: 3px; width: 72px; vertical-align: middle; --bc: var(--line); }
+.sbar i { display: block; height: 8px; border-radius: 4px; background: var(--chip); position: relative; overflow: hidden; width: 100% !important; }
+.sbar i::after { content: ''; position: absolute; inset: 0; width: var(--w, 0%); background: var(--bc); border-radius: 4px; }
+.sbar b { font-size: 11px; font-weight: 600; color: var(--bc); line-height: 1; white-space: nowrap; }
+.sbar.b0 { --bc: var(--muted); } .sbar.b1 { --bc: #D9534F; } .sbar.b2 { --bc: #E9A23B; } .sbar.b3 { --bc: #8FB339; } .sbar.b4 { --bc: #3A9D5D; } .sbar.b5 { --bc: #D4A017; }
+.sbar.thin { width: 56%; margin: 0 auto; } .sbar.thin i { height: 5px; } .sbar.thin b { font-size: 10px; text-align: center; }
 .small { font-size: 14px; color: var(--muted); }
 
 /* stars */
@@ -85,7 +92,8 @@ input[type=text], input[type=search] { width: 100%; font: inherit; font-size: 18
 .words li.flash-known button { background: #e3f4e8; } .words li.flash-unknown button { background: #fbe3e0; }
 .words .lat { font-weight: 700; overflow-wrap: anywhere; }
 .words .en { color: var(--muted); grid-column: 1; overflow-wrap: anywhere; }
-.words .stars { grid-column: 2; grid-row: 1 / span 2; align-self: center; text-align: right; }
+.words .stars, .words .sbar { grid-column: 2; grid-row: 1 / span 2; align-self: center; text-align: right; }
+.words .sbar b { text-align: right; }
 .words .rest { font-size: 12px; color: var(--muted); display: block; }
 .count { font-size: 14px; color: var(--muted); }
 
