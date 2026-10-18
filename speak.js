@@ -153,7 +153,8 @@ const Speak = (() => {
   const button = (cls = '') => can() ? `<button class="speakbtn ${cls}" type="button" aria-label="Hear it" title="Hear it">🔊</button>` : '';
   const wire = (root, getText) => { if (!root) return; root.querySelectorAll('.speakbtn').forEach(b => { b.onclick = e => { e.stopPropagation(); say(getText(), true); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }; }); };
   // the on / off line for a settings area
-  const toggleHTML = () => can() ? `<button class="linkbtn speakline" id="speakToggle">${on() ? '🔊 Reading words aloud — tap to turn off' : '🔇 Words are not read aloud — tap to turn on'}</button>` : '';
+  const LABELS = cfg.toggle || ['🔊 Reading words aloud — tap to turn off', '🔇 Words are not read aloud — tap to turn on'];   // a game's own wording (Learn the notes: playing each note)
+  const toggleHTML = () => can() ? `<button class="linkbtn speakline" id="speakToggle">${on() ? LABELS[0] : LABELS[1]}</button>` : '';
   const wireToggle = (root, after) => { const b = (root || document).querySelector('#speakToggle'); if (!b) return; b.onclick = () => { toggle(); b.outerHTML = toggleHTML(); wireToggle(root, after); if (after) after(on()); }; };
   return { say, stop, on, toggle, can, button, wire, toggleHTML, wireToggle, chatToArabic, prime, warm, warmAll };
 })();

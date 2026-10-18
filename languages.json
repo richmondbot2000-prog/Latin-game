@@ -1,4 +1,5 @@
 [
-  { "code": "latin", "name": "Latin", "flag": "🏛️", "path": "./", "language": "Latin" },
-  { "code": "tounsi", "name": "Tounsi", "flag": "🇹🇳", "path": "tounsi/", "language": "Tunisian Arabic" }
+  {"code": "latin", "name": "Latin", "flag": "🏛️", "path": "./", "language": "Latin"},
+  {"code": "tounsi", "name": "Tounsi", "flag": "🇹🇳", "path": "tounsi/", "language": "Tunisian Arabic"},
+  {"code": "music", "name": "Music", "flag": "🎵", "path": "music/", "language": "learn-the-notes"}
 ]

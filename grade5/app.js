@@ -1,5 +1,5 @@
 // Grade 5 theory: home page, practice rounds, results. Progress lives in localStorage only.
-const APP_VERSION = 'g5-v3';
+const APP_VERSION = 'g5-v4';
 const KEY = 'grade5.progress';
 const ROUND = 10;
 const $ = s => document.querySelector(s);
@@ -72,6 +72,7 @@ function home() {
       <div><b>${prog.days[today()] || 0}</b><span>today</span></div>
       <div><b>${total}</b><span>answered</span></div>
     </div>
+    <a class="notes" href="../music/"><span>🎵</span> Learn the notes<small>cards, beasts, Jacques Hammer and Squishygeddon</small></a>
     <a class="big" href="#play/mix"><span>▶</span> Mixed practice<small>${ROUND} questions from everything</small></a>
     <h2>Topics</h2>
     <div class="topics">

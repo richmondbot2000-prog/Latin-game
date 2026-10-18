@@ -1,17 +1,20 @@
-// grade5.musicalmagic.uk: serves the Grade 5 Theory game from the grade5/ folder
-// of this repository (GitHub Pages at latin.musicalmagic.uk/grade5/).
+// grade5.musicalmagic.uk: the address of the music games. They live in this repository at
+// latin.musicalmagic.uk/music/ (Learn the notes, on the Latin engine) and /grade5/ (the theory questions),
+// so every visit is sent there. /sw.js answers with a worker that removes itself: the first version of the
+// theory game ran on this host and its offline worker would otherwise linger on phones.
 // Deploy from this folder: npx wrangler deploy
-const ORIGIN = 'https://latin.musicalmagic.uk/grade5';
+const SITE = 'https://latin.musicalmagic.uk';
+const KILL = `self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil((async () => {
+  for (const k of await caches.keys()) await caches.delete(k);
+  await self.registration.unregister();
+  for (const c of await self.clients.matchAll({ type: 'window' })) c.navigate(c.url);
+})()));`;
 export default {
   async fetch(req) {
     const u = new URL(req.url);
-    if (req.method !== 'GET' && req.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
-    let path = u.pathname;
-    if (path.endsWith('/')) path += 'index.html';
-    const r = await fetch(ORIGIN + path, { method: req.method, cf: { cacheTtl: 60, cacheEverything: true } });
-    const h = new Headers(r.headers);
-    h.delete('set-cookie');
-    h.set('cache-control', path.endsWith('sw.js') || path.endsWith('.html') ? 'no-cache' : 'public, max-age=300');
-    return new Response(r.body, { status: r.status, headers: h });
+    if (u.pathname === '/sw.js') return new Response(KILL, { headers: { 'content-type': 'application/javascript', 'cache-control': 'no-cache' } });
+    const to = u.pathname.startsWith('/grade5/') || u.pathname.startsWith('/music/') ? u.pathname : '/music/';
+    return Response.redirect(SITE + to + u.search + u.hash, 302);
   },
 };

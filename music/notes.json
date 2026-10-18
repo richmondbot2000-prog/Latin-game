@@ -1,0 +1,562 @@
+[
+{
+"id": "treble C4",
+"slug": "treble-c4",
+"clef": "treble",
+"key": "c/4",
+"acc": "",
+"midi": 60
+},
+{
+"id": "treble D4",
+"slug": "treble-d4",
+"clef": "treble",
+"key": "d/4",
+"acc": "",
+"midi": 62
+},
+{
+"id": "treble E4",
+"slug": "treble-e4",
+"clef": "treble",
+"key": "e/4",
+"acc": "",
+"midi": 64
+},
+{
+"id": "treble F4",
+"slug": "treble-f4",
+"clef": "treble",
+"key": "f/4",
+"acc": "",
+"midi": 65
+},
+{
+"id": "treble G4",
+"slug": "treble-g4",
+"clef": "treble",
+"key": "g/4",
+"acc": "",
+"midi": 67
+},
+{
+"id": "treble A4",
+"slug": "treble-a4",
+"clef": "treble",
+"key": "a/4",
+"acc": "",
+"midi": 69
+},
+{
+"id": "treble B4",
+"slug": "treble-b4",
+"clef": "treble",
+"key": "b/4",
+"acc": "",
+"midi": 71
+},
+{
+"id": "treble C5",
+"slug": "treble-c5",
+"clef": "treble",
+"key": "c/5",
+"acc": "",
+"midi": 72
+},
+{
+"id": "treble D5",
+"slug": "treble-d5",
+"clef": "treble",
+"key": "d/5",
+"acc": "",
+"midi": 74
+},
+{
+"id": "treble E5",
+"slug": "treble-e5",
+"clef": "treble",
+"key": "e/5",
+"acc": "",
+"midi": 76
+},
+{
+"id": "treble F5",
+"slug": "treble-f5",
+"clef": "treble",
+"key": "f/5",
+"acc": "",
+"midi": 77
+},
+{
+"id": "treble G5",
+"slug": "treble-g5",
+"clef": "treble",
+"key": "g/5",
+"acc": "",
+"midi": 79
+},
+{
+"id": "bass F2",
+"slug": "bass-f2",
+"clef": "bass",
+"key": "f/2",
+"acc": "",
+"midi": 41
+},
+{
+"id": "bass G2",
+"slug": "bass-g2",
+"clef": "bass",
+"key": "g/2",
+"acc": "",
+"midi": 43
+},
+{
+"id": "bass A2",
+"slug": "bass-a2",
+"clef": "bass",
+"key": "a/2",
+"acc": "",
+"midi": 45
+},
+{
+"id": "bass B2",
+"slug": "bass-b2",
+"clef": "bass",
+"key": "b/2",
+"acc": "",
+"midi": 47
+},
+{
+"id": "bass C3",
+"slug": "bass-c3",
+"clef": "bass",
+"key": "c/3",
+"acc": "",
+"midi": 48
+},
+{
+"id": "bass D3",
+"slug": "bass-d3",
+"clef": "bass",
+"key": "d/3",
+"acc": "",
+"midi": 50
+},
+{
+"id": "bass E3",
+"slug": "bass-e3",
+"clef": "bass",
+"key": "e/3",
+"acc": "",
+"midi": 52
+},
+{
+"id": "bass F3",
+"slug": "bass-f3",
+"clef": "bass",
+"key": "f/3",
+"acc": "",
+"midi": 53
+},
+{
+"id": "bass G3",
+"slug": "bass-g3",
+"clef": "bass",
+"key": "g/3",
+"acc": "",
+"midi": 55
+},
+{
+"id": "bass A3",
+"slug": "bass-a3",
+"clef": "bass",
+"key": "a/3",
+"acc": "",
+"midi": 57
+},
+{
+"id": "bass B3",
+"slug": "bass-b3",
+"clef": "bass",
+"key": "b/3",
+"acc": "",
+"midi": 59
+},
+{
+"id": "bass C4",
+"slug": "bass-c4",
+"clef": "bass",
+"key": "c/4",
+"acc": "",
+"midi": 60
+},
+{
+"id": "treble A3",
+"slug": "treble-a3",
+"clef": "treble",
+"key": "a/3",
+"acc": "",
+"midi": 57
+},
+{
+"id": "treble B3",
+"slug": "treble-b3",
+"clef": "treble",
+"key": "b/3",
+"acc": "",
+"midi": 59
+},
+{
+"id": "treble A5",
+"slug": "treble-a5",
+"clef": "treble",
+"key": "a/5",
+"acc": "",
+"midi": 81
+},
+{
+"id": "treble B5",
+"slug": "treble-b5",
+"clef": "treble",
+"key": "b/5",
+"acc": "",
+"midi": 83
+},
+{
+"id": "treble C6",
+"slug": "treble-c6",
+"clef": "treble",
+"key": "c/6",
+"acc": "",
+"midi": 84
+},
+{
+"id": "bass C2",
+"slug": "bass-c2",
+"clef": "bass",
+"key": "c/2",
+"acc": "",
+"midi": 36
+},
+{
+"id": "bass D2",
+"slug": "bass-d2",
+"clef": "bass",
+"key": "d/2",
+"acc": "",
+"midi": 38
+},
+{
+"id": "bass E2",
+"slug": "bass-e2",
+"clef": "bass",
+"key": "e/2",
+"acc": "",
+"midi": 40
+},
+{
+"id": "bass D4",
+"slug": "bass-d4",
+"clef": "bass",
+"key": "d/4",
+"acc": "",
+"midi": 62
+},
+{
+"id": "bass E4",
+"slug": "bass-e4",
+"clef": "bass",
+"key": "e/4",
+"acc": "",
+"midi": 64
+},
+{
+"id": "treble F♯5",
+"slug": "treble-fs5",
+"clef": "treble",
+"key": "f#/5",
+"acc": "#",
+"midi": 78
+},
+{
+"id": "treble C♯5",
+"slug": "treble-cs5",
+"clef": "treble",
+"key": "c#/5",
+"acc": "#",
+"midi": 73
+},
+{
+"id": "treble G♯4",
+"slug": "treble-gs4",
+"clef": "treble",
+"key": "g#/4",
+"acc": "#",
+"midi": 68
+},
+{
+"id": "treble B♭4",
+"slug": "treble-bb4",
+"clef": "treble",
+"key": "bb/4",
+"acc": "b",
+"midi": 70
+},
+{
+"id": "treble E♭5",
+"slug": "treble-eb5",
+"clef": "treble",
+"key": "eb/5",
+"acc": "b",
+"midi": 75
+},
+{
+"id": "treble A♭4",
+"slug": "treble-ab4",
+"clef": "treble",
+"key": "ab/4",
+"acc": "b",
+"midi": 68
+},
+{
+"id": "treble F♯4",
+"slug": "treble-fs4",
+"clef": "treble",
+"key": "f#/4",
+"acc": "#",
+"midi": 66
+},
+{
+"id": "treble D♭5",
+"slug": "treble-db5",
+"clef": "treble",
+"key": "db/5",
+"acc": "b",
+"midi": 73
+},
+{
+"id": "bass F♯3",
+"slug": "bass-fs3",
+"clef": "bass",
+"key": "f#/3",
+"acc": "#",
+"midi": 54
+},
+{
+"id": "bass B♭2",
+"slug": "bass-bb2",
+"clef": "bass",
+"key": "bb/2",
+"acc": "b",
+"midi": 46
+},
+{
+"id": "bass E♭3",
+"slug": "bass-eb3",
+"clef": "bass",
+"key": "eb/3",
+"acc": "b",
+"midi": 51
+},
+{
+"id": "bass C♯3",
+"slug": "bass-cs3",
+"clef": "bass",
+"key": "c#/3",
+"acc": "#",
+"midi": 49
+},
+{
+"id": "bass G♯2",
+"slug": "bass-gs2",
+"clef": "bass",
+"key": "g#/2",
+"acc": "#",
+"midi": 44
+},
+{
+"id": "bass A♭3",
+"slug": "bass-ab3",
+"clef": "bass",
+"key": "ab/3",
+"acc": "b",
+"midi": 56
+},
+{
+"id": "alto E3",
+"slug": "alto-e3",
+"clef": "alto",
+"key": "e/3",
+"acc": "",
+"midi": 52
+},
+{
+"id": "alto F3",
+"slug": "alto-f3",
+"clef": "alto",
+"key": "f/3",
+"acc": "",
+"midi": 53
+},
+{
+"id": "alto G3",
+"slug": "alto-g3",
+"clef": "alto",
+"key": "g/3",
+"acc": "",
+"midi": 55
+},
+{
+"id": "alto A3",
+"slug": "alto-a3",
+"clef": "alto",
+"key": "a/3",
+"acc": "",
+"midi": 57
+},
+{
+"id": "alto B3",
+"slug": "alto-b3",
+"clef": "alto",
+"key": "b/3",
+"acc": "",
+"midi": 59
+},
+{
+"id": "alto C4",
+"slug": "alto-c4",
+"clef": "alto",
+"key": "c/4",
+"acc": "",
+"midi": 60
+},
+{
+"id": "alto D4",
+"slug": "alto-d4",
+"clef": "alto",
+"key": "d/4",
+"acc": "",
+"midi": 62
+},
+{
+"id": "alto E4",
+"slug": "alto-e4",
+"clef": "alto",
+"key": "e/4",
+"acc": "",
+"midi": 64
+},
+{
+"id": "alto F4",
+"slug": "alto-f4",
+"clef": "alto",
+"key": "f/4",
+"acc": "",
+"midi": 65
+},
+{
+"id": "alto G4",
+"slug": "alto-g4",
+"clef": "alto",
+"key": "g/4",
+"acc": "",
+"midi": 67
+},
+{
+"id": "alto A4",
+"slug": "alto-a4",
+"clef": "alto",
+"key": "a/4",
+"acc": "",
+"midi": 69
+},
+{
+"id": "tenor C3",
+"slug": "tenor-c3",
+"clef": "tenor",
+"key": "c/3",
+"acc": "",
+"midi": 48
+},
+{
+"id": "tenor D3",
+"slug": "tenor-d3",
+"clef": "tenor",
+"key": "d/3",
+"acc": "",
+"midi": 50
+},
+{
+"id": "tenor E3",
+"slug": "tenor-e3",
+"clef": "tenor",
+"key": "e/3",
+"acc": "",
+"midi": 52
+},
+{
+"id": "tenor F3",
+"slug": "tenor-f3",
+"clef": "tenor",
+"key": "f/3",
+"acc": "",
+"midi": 53
+},
+{
+"id": "tenor G3",
+"slug": "tenor-g3",
+"clef": "tenor",
+"key": "g/3",
+"acc": "",
+"midi": 55
+},
+{
+"id": "tenor A3",
+"slug": "tenor-a3",
+"clef": "tenor",
+"key": "a/3",
+"acc": "",
+"midi": 57
+},
+{
+"id": "tenor B3",
+"slug": "tenor-b3",
+"clef": "tenor",
+"key": "b/3",
+"acc": "",
+"midi": 59
+},
+{
+"id": "tenor C4",
+"slug": "tenor-c4",
+"clef": "tenor",
+"key": "c/4",
+"acc": "",
+"midi": 60
+},
+{
+"id": "tenor D4",
+"slug": "tenor-d4",
+"clef": "tenor",
+"key": "d/4",
+"acc": "",
+"midi": 62
+},
+{
+"id": "tenor E4",
+"slug": "tenor-e4",
+"clef": "tenor",
+"key": "e/4",
+"acc": "",
+"midi": 64
+},
+{
+"id": "tenor F4",
+"slug": "tenor-f4",
+"clef": "tenor",
+"key": "f/4",
+"acc": "",
+"midi": 65
+}
+]

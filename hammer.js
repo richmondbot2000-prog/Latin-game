@@ -127,7 +127,7 @@ const Hammer = (() => {
         // it got past Jacques
         s.state = 'passed';
         if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; earnCoin(); recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: Math.max(.2, s.x + bw / 2), t: 0 }); }
-        else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.show}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
+        else { S.wrong++; recordAnswer(user, s.w, false); hurt(s.w.pic ? `That note is ${s.w.english}, not ${s.shown} — you let it past!` : `“${s.w.show}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
       }
     }
     S.signs = S.signs.filter(s => s.x > -(bw + .5));   // kept until judged: a board is 80% of a phone's width, so it is well off the left edge before it is wholly behind Jacques
@@ -142,7 +142,7 @@ const Hammer = (() => {
           target.state = 'smashed'; target.smashT = 0;
           const hx = Math.max(target.x, CX + .05); smashSign(target);
           if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); earnCoin(); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true, Date.now() - target.at); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '' }); }
-          else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.show}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
+          else { S.wrong++; recordAnswer(user, target.w, false); hurt(target.w.pic ? `That note really is ${target.shown} — don’t smash the right ones!` : `“${target.w.show}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
         }
       }
       if (S.swing > .55) S.swing = -1;
@@ -461,6 +461,8 @@ const Hammer = (() => {
     if (ground != null && posts) { g.fillStyle = sg.post; for (const p of posts) g.fillRect(x + p[0] * f, by + bh - 1, (p[1] - p[0]) * f, ground - by - bh + 1); }
     g.restore(); return true;
   }
+  const PICS = {};
+  const wordPic = w => { let i = PICS[w.pic]; if (!i) { i = PICS[w.pic] = new Image(); i.src = w.pic; } return i; };
   function drawSign(s) {
     if (s.state === 'smashed') return;
     const g = ctx, x = s.x * W, ground = H * GROUND, { sw, sh, top } = signGeom();
@@ -473,9 +475,16 @@ const Hammer = (() => {
     const faceTop = top + SIGN_TOP * f, faceH = sh - (SIGN_TOP + 15) * f;
     g.save(); g.translate(x, 0);
     g.fillStyle = st === 7 ? '#5a1010' : st === 6 ? '#143d14' : '#2B1A3A'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    if (s.w.pic) {   // a word that is a picture (a note on a stave) is drawn on a pale card on the sign
+      const im = wordPic(s.w), pw = Math.min(sw * .8, faceH * .62 * 4 / 3), ph = pw * .75, px = (sw - pw) / 2, py = faceTop + faceH * .02;
+      g.fillStyle = 'rgba(255,252,240,.95)'; g.beginPath(); if (g.roundRect) g.roundRect(px, py, pw, ph, 6); else g.rect(px, py, pw, ph); g.fill();
+      if (im.complete && im.naturalWidth) g.drawImage(im, px, py, pw, ph);
+      g.fillStyle = st === 7 ? '#5a1010' : st === 6 ? '#143d14' : '#2B1A3A';
+    } else {
     let fs = Math.round(faceH * .42); g.font = `700 ${fs}px Georgia, serif`;
     while (g.measureText(s.w.show).width > sw * .84 && fs > 10) { fs--; g.font = `700 ${fs}px Georgia, serif`; }
     g.fillText(s.w.show, sw / 2, faceTop + faceH * .3);
+    }
     let f2 = Math.round(faceH * .3); g.font = `700 ${f2}px system-ui, sans-serif`;
     while (g.measureText(s.shown).width > sw * .86 && f2 > 9) { f2--; g.font = `700 ${f2}px system-ui, sans-serif`; }
     g.fillText(s.shown, sw / 2, faceTop + faceH * .74);

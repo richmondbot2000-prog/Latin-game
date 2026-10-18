@@ -28,6 +28,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .big { display: block; background: linear-gradient(135deg, var(--brand), var(--brand2)); color: #fff; border-radius: 18px; padding: 16px 18px; font-size: 21px; font-weight: 700; text-align: center; box-shadow: 0 6px 18px rgba(59, 42, 122, .25); }
 .big span { margin-right: 6px; }
 .big small { display: block; font-size: 14px; font-weight: 400; opacity: .85; }
+.notes { display: block; margin-bottom: 12px; background: var(--card); border: 2px solid var(--brand2); color: var(--brand2); border-radius: 18px; padding: 12px 18px; font-size: 19px; font-weight: 700; text-align: center; }
+.notes small { display: block; font-size: 13px; font-weight: 400; color: var(--soft); }
 h2 { font-size: 15px; text-transform: uppercase; letter-spacing: 1px; color: var(--soft); margin: 24px 0 10px; }
 .topics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .topic { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-height: 112px; }
