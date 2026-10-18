@@ -1,0 +1,53 @@
+{
+  "code": "music",
+  "name": "Music",
+  "flag": "🎵",
+  "language": "Music notes",
+  "description": "Learn to read music: every note on the stave, one card at a time.",
+  "greeting": "Hello,",
+  "tagline": "Learn to read every note on the stave, one card at a time.",
+  "levels": [
+    [
+      "0",
+      "Treble clef"
+    ],
+    [
+      "1",
+      "+ Bass clef"
+    ],
+    [
+      "2",
+      "+ Ledger lines"
+    ],
+    [
+      "3",
+      "+ Sharps & flats"
+    ],
+    [
+      "4",
+      "+ Alto clef"
+    ],
+    [
+      "5",
+      "+ Tenor clef"
+    ]
+  ],
+  "theme": "#5B3FC4",
+  "noread": true,
+  "tts": {
+    "audio": "music/audio",
+    "auto": true,
+    "toggle": [
+      "🔊 Playing each note — tap to turn off",
+      "🔇 Notes are not played — tap to turn on"
+    ]
+  },
+  "linksTitle": "Theory",
+  "links": [
+    {
+      "href": "grade5/",
+      "title": "Theory questions",
+      "banner": "music/theory.jpg"
+    }
+  ]
+}

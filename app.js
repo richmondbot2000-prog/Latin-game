@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '169';
+const APP_VERSION = '172';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -38,6 +38,7 @@ const KIND = pos => {
   if (pos === 'conj') return 'joining word';
   if (pos === 'pro') return 'pronoun';
   if (pos === 'qu') return 'question word';
+  if (pos === 'note') return 'note';
   if (/^num/.test(pos)) return 'number';
   return 'word';
 };
@@ -58,7 +59,9 @@ const originOf = w => (typeof ORIGINS !== 'undefined' && ORIGINS[w.word]) || '';
 const memoFor = w => (typeof MEMORY !== 'undefined' && MEMORY[w.word]) || { pic: '📜', hook: `${w.show} means ${w.english}.` };
 // the word in the language's own script (Arabic for Tounsi: `ar` in vocab.js, the form's `ar` from Forms); nothing for Latin
 const arabOf = (w, form) => (form && form.ar) || (form && form.la !== w.show ? '' : (typeof Forms !== 'undefined' && Forms.show ? Forms.show(w) : (w.ar || '')));
-const arabHTML = (w, form, cls = '') => { const a = arabOf(w, form); return a ? `<div class="arab ${cls}" dir="rtl" lang="ar">${esc(a)}</div>` : ''; };
+// the line under a word in the language's own script: Arabic for Tounsi; a game can name its own (LANG.ownScript, Russian: a Latin-letter guide)
+const OWN_SCRIPT = typeof LANG !== 'undefined' && LANG.ownScript ? `dir="${LANG.ownScript.dir}" lang="${LANG.ownScript.lang}"` : 'dir="rtl" lang="ar"';
+const arabHTML = (w, form, cls = '') => { const a = arabOf(w, form); return a ? `<div class="arab ${cls}" ${OWN_SCRIPT}>${esc(a)}</div>` : ''; };
 // the player's own way to remember a word, kept on this device only
 const NOTES = 'latin.notes';
 const noteOf = w => { const u = current(); const n = u ? store.get(NOTES + '.' + u.id, {}) : {}; return n[w.id] || ''; };
@@ -176,6 +179,12 @@ const activeWords = u => { const l = levelOf(u); return WORDS.filter(w => inLeve
 /* ---------- helpers ---------- */
 const $ = (sel, el = document) => el.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// a word that is a picture (Learn the notes: a note on a stave, vocab.js pic) shows the picture; its text stays, hidden,
+// for the 🔊 buttons and screen readers
+const wordHTML = (w, text) => w.pic ? `<img class="wpic" src="${esc(w.pic)}" alt=""><span class="vh">${esc(text)}</span>` : esc(text);
+// a game with no reading (lang.json noread: Learn the notes) shows its own links instead of the Read banners
+const NO_READ = typeof LANG !== 'undefined' && !!LANG.noread;
+if (WORDS.some(w => w.pic)) setTimeout(() => WORDS.forEach(w => { if (w.pic) new Image().src = w.pic; }), 2500);   // the pictures load ahead of the games
 const starsHTML = n => '<span class="stars" aria-label="' + n + ' of 5 stars, ' + BAND_NAMES[n || 0] + '">' + '★'.repeat(n) + '<span class="off">' + '★'.repeat(5 - n) + '</span></span>';
 /* strength 0–100: what the three measures say together — 40 accuracy, 30 quick rights (six is full), 30 survival (a
    month is full, on a log scale so the first day counts for a lot). It moves a little on every answer, where the band
@@ -259,6 +268,7 @@ function route() {
   if (h === 'trophies') return renderTrophies(u);
   if (h === 'hammer') return renderHammer(u);
   if (h === 'hammer-items') return renderHammer(u, true);
+  if (NO_READ && ['read', 'passages', 'snap', 'library', 'book'].includes(h)) return renderHome(u);
   if (h === 'read') return renderRead(u);
   if (h === 'beasts') return renderBeasts(u);
   if (h === 'cards') return renderCardsHome(u);
@@ -597,6 +607,8 @@ async function otherGames() {
     el.innerHTML = list.filter(l => l.code !== me).map(l => `<a class="linkbtn otherline" href="${esc(l.path)}">${esc(l.flag)} ${esc(l.name)} — the ${esc(l.language)} game</a>`).join('');
   } catch (e) {}
 }
+// LANG.links (lang.json): banners to the game's other sections, e.g. Learn the notes → the theory questions
+const linksTile = () => `<div class="tile prac2" id="linkstile"><h2>${esc(LANG.linksTitle || 'More')}</h2>${(LANG.links || []).map(l => `<a class="gamebanner" href="${esc(l.href)}" style="background-image:url('${esc(l.banner)}')"><span class="gname">${esc(l.title)}</span></a>`).join('')}</div>`;
 function renderHome(u) {
   const { c, total, avg } = summary(u);
   app.innerHTML = `
@@ -621,7 +633,8 @@ function renderHome(u) {
       <button class="gamebanner" id="pracGo" style="background-image:url('art/banners/squishygeddon.jpg')"><span class="gname squishy">Squishygeddon</span></button>
       <button class="gamebanner" id="hamGo" style="background-image:url('art/banners/hammer.jpg')"><span class="gname hammer">Jacques Hammer</span></button>
     </div>
-    <div class="tile prac2" id="readtile">
+    ${NO_READ && (LANG.links || []).length ? linksTile() : ''}
+    <div class="tile prac2" id="readtile"${NO_READ ? ' style="display:none"' : ''}>
       <h2>Read</h2>
       <button class="gamebanner${sentencesLocked(u) ? ' locked' : ''}" id="readGo" style="background-image:url('art/banners/sentences.jpg')"><span class="gname read">Sentences</span>${sentencesLocked(u) ? `<span class="corner">${LEVELS[1][1]}</span>` : ''}</button>
       <button class="gamebanner${readLocked(u) ? ' locked' : ''}" id="passGo" style="background-image:url('art/banners/passages.jpg')"><span class="gname pass">Passages</span>${readLocked(u) ? `<span class="corner">${LEVELS[1][1]}</span>` : ''}</button>
@@ -1462,7 +1475,7 @@ function renderList(u, pane) {
     });
     list.innerHTML = shown.map(w => {
       const pw = p[w.id] || {}, s = pw.s || 0;
-      return `<li><span class="swipe known" aria-hidden="true">✓ Known</span><span class="swipe unknown" aria-hidden="true">✗ Not known</span><button data-i="${w.i}"><span class="lat">${esc(w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" dir="rtl" lang="ar">${esc(arabOf(w))}</span>` : ''}</span>${barHTML(pw)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
+      return `<li><span class="swipe known" aria-hidden="true">✓ Known</span><span class="swipe unknown" aria-hidden="true">✗ Not known</span><button data-i="${w.i}"><span class="lat">${wordHTML(w, w.show)}${Speak.can() ? `<span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}${arabOf(w) ? `<span class="arab" ${OWN_SCRIPT}>${esc(arabOf(w))}</span>` : ''}</span>${barHTML(pw)}<span class="en">${esc(w.english)}${resting(pw, now) ? `<span class="rest">✓ due again ${fmtDate(pw.r)}</span>` : ''}</span></button></li>`;
     }).join('') || '<li class="empty">No words here yet.</li>';
     $('#count', pane).textContent = shown.length + (shown.length === 1 ? ' word' : ' words') + ' · tap a word for its memo · pull right = known, left = not known';
   };
@@ -1524,7 +1537,7 @@ function openMemo(w, stars, verdict, onClose, btnLabel) {
       ${verdict ? `<div class="verdict bad">${verdict}</div>` : ''}
       <div class="memo">
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
-        <div class="lat">${esc(w.show)}${Speak.can() ? ` <span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}</div>
+        <div class="lat">${wordHTML(w, w.show)}${Speak.can() ? ` <span class="speakbtn small" role="button" aria-label="Hear it" data-say="${esc(sayForm(w))}">🔊</span>` : ''}</div>
         ${arabHTML(w)}
         <div class="en">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
@@ -1637,7 +1650,7 @@ function renderPlay(u, pane) {
         <div class="cstars">${barHTML(p[c.w.id], 'thin')}</div>
         <div class="kind">${c.w.kind}</div>
         ${top ? '<span class="stamp yes">✓</span><span class="stamp no">✗</span>' : ''}
-        <div class="lat">${esc(c.form ? c.form.la : c.w.show)}</div>
+        <div class="lat">${wordHTML(c.w, c.form ? c.form.la : c.w.show)}</div>
         ${arabHTML(c.w, c.form)}
         <div class="rule"></div>
         <div class="en">${esc(c.shown)}</div>
@@ -1744,7 +1757,7 @@ function renderPlay(u, pane) {
     el.classList.add('flipped');
     el.insertAdjacentHTML('beforeend', `<div class="back">
         <div class="pic" aria-hidden="true">${esc(m.pic)}</div>
-        <div class="blat">${esc(w.show)}</div>${arabHTML(w, null, 'small')}<div class="ben">${esc(w.english)}</div>
+        <div class="blat">${wordHTML(w, w.show)}</div>${arabHTML(w, null, 'small')}<div class="ben">${esc(w.english)}</div>
         <div class="how"><h3>How do we remember this?</h3><p>${esc(m.hook)}</p></div>
         ${originOf(w) ? `<div class="how"><h3>Where it comes from</h3><p>${esc(originOf(w))}</p></div>` : ''}
         ${ph ? `<div class="how said"><p class="la">${phraseHTML(ph.la)}</p><p class="tr">${esc(ph.en)}</p></div>` : ''}

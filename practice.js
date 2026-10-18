@@ -1100,9 +1100,10 @@ const Practice = (() => {
     if (words.length > 1 && recentQ.slice(-Math.min(20, words.length - 2)).includes(w.id)) return askWord();   // a long gap before a word repeats
     recentQ.push(w.id); if (recentQ.length > 20) recentQ.shift();
     const ds = distractors(w, words).slice().sort(() => Math.random() - .5);
-    const opts = [w.english, ds[0].english, ds[1] ? ds[1].english : ds[0].english].sort(() => Math.random() - .5);
+    const wrong = [...new Set(ds.map(d => d.english))].slice(0, 2);   // two different wrong answers (two notes can both be C)
+    const opts = [w.english, wrong[0], wrong[1] || wrong[0]].sort(() => Math.random() - .5);
     quiz = { w, opts, frozen: 0, at: Date.now() };
-    ui.qword.textContent = w.show;
+    if (w.pic) ui.qword.innerHTML = `<img class="wpic" src="${esc(w.pic)}" alt="">`; else ui.qword.textContent = w.show;   // a note is a picture
     if (typeof Speak !== 'undefined') Speak.say(w.show);
     ui.qopts.innerHTML = opts.map((o, i) => `<button data-i="${i}">${esc(o)}</button>`).join('');
   }

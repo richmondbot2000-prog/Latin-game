@@ -449,7 +449,7 @@ Per-player counters live in
 
 Every language game is a folder at the site root built on the Latin engine;
 **Tounsi** (Tunisian Arabic, Derja) is live at
-**https://latin.musicalmagic.uk/tounsi/** — same rules as the Latin game
+**https://latin.musicalmagic.uk/tounsi/** (and **Music**, Learn the notes, at `/music/`, and **Russian** at `/russian/`, see below) — same rules as the Latin game
 (public repo, nothing personal, no accounts). `languages.json` lists the
 games; every home page links to the others from it (`otherGames()`).
 A language folder holds the hand-written `lang.json` (code, name, flag,
@@ -503,6 +503,94 @@ is/are dropped, was/were → kan/kanet/kanou, has/have → 3and-, there is →
 famma, "once upon a time" left alone. 227 sentences and 10 stories (two a
 level). Known gaps: the banners still show Latin words; Gutenberg books
 convert live, so quality follows the converter.
+
+## Music: Learn the notes (`music/`) and the theory questions (`grade5/`)
+
+**https://grade5.musicalmagic.uk** is the address of the music games: the
+Cloudflare worker `grade5-site` (`grade5-site/worker.js`) redirects every
+visit to **latin.musicalmagic.uk/music/** (and `/grade5/…` paths to the theory
+questions), and answers `/sw.js` with a worker that unregisters itself (the
+first theory version ran on that host). Redeploy it only if `grade5-site/`
+changes (`CLOUDFLARE_API_TOKEN=x npx wrangler deploy` there).
+
+**Learn the notes (`music/`)** is a language game on the Latin engine, built
+like Tounsi (`python3 tools/lang/build.py music`; bump `music/VERSION`), where
+each **note on a clef is a word** (`treble E4`, english `E`, pos `note`) and its
+picture is the word: `vocab.js` `pic` = `music/staves/<slug>.svg`. 70 notes:
+`tools/music/make_notes.py` writes `words.txt`, `memory.txt` (where the note sits
+and the rhyme: Every Good Boy Deserves Football, FACE, Good Boys Deserve Fun
+Always, All Cows Eat Grass; middle C; ledger lines; sharps/flats) and
+`notes.json`; `node tools/music/staves.js` draws the SVGs with VexFlow (needs
+playwright), `python3 tools/music/clips.py` synthesises a piano note per pitch
+(`music/audio/*.mp3`, 41 clips, `index.json` maps each note id → clip), so
+`Speak.say(note)` plays the note (no voice: `LANG.tts` has no `lang`). Levels:
+Beginner (the 9 treble stave notes, `top=1`), Treble clef, + Bass clef, + Ledger
+lines, + Sharps & flats, + Alto clef (Grade 4), + Tenor clef (Grade 5). It has
+the word list, Cards & Beasts, Squishygeddon, Jacques Hammer, the leaderboard
+(game `music`) and sync; no Read section (`lang.json` `noread`: `build.py`
+writes stub read/phrases/synonyms/snap.js and the home page shows `LANG.links`
+instead — the **Theory questions** banner, `music/theory.jpg` → `grade5/`).
+Engine hooks it added (all inert for Latin and Tounsi): `wordHTML(w, text)` in
+`app.js` shows `w.pic` on the card, word list, memo and flipped card (the text
+stays in a hidden `.vh` span for 🔊); `hammer.js` draws the picture (3:2, the
+staves are cropped to 150 × 100) almost as tall as the sign's face on a pale card on its left,
+the letter big beside it (`wordPic`) and words its messages "That note is C, not F";
+`practice.js` puts it in the question box and never offers the same wrong
+answer twice (two notes can both be C); `speak.js` takes `LANG.tts.toggle`
+labels; `KIND` maps pos `note`. Test: `scratchpad/regress.js` tours Latin,
+Tounsi and Music (home, list, card, beasts, Hammer, Squishygeddon) at 390px.
+
+**The theory questions (`grade5/`)**: a separate game for ABRSM Grades 1–5
+music theory at latin.musicalmagic.uk/grade5/, linked both ways with Learn the
+notes (same rules: public, nothing personal, no
+accounts, no tracking). It shares nothing with the Latin engine: no profiles,
+no sync; progress is `localStorage['grade5.progress']` { grade, topics:
+{'<grade>.<id>': {n, r, a}}, items: {key: {r, w, last, t}}, days, sound }.
+**The grade selector** (Grade 1 2 3 4 5 across the top of the home page, a
+★ on a grade with stars earned) sets `prog.grade`; `Theory.make(topic, prog,
+grade)` sets `G` and each grade asks only its own syllabus, cumulatively:
+G1 treble/bass up to one ledger line, C G D F major, tone/semitone, note and
+rest values, 2/4 3/4 4/4, interval numbers above the tonic, tonic triads,
+degree numbers, 27 terms; G2 two ledger lines, up to 3 sharps/flats major and
+A E D minor, scales, 2/2 3/2 4/2 3/8, dotted quaver; G3 4 sharps/flats, interval
+qualities above the tonic, compound time (simple/compound/duple…), treble ↔
+bass same pitch; G4 5 sharps/flats, alto clef, enharmonics, any interval with
+augmented/diminished, technical names, chords I IV V, /4 and /16 compound,
+French terms, instruments; G5 as below (`keyOk`, `TS_G`, `TERMS[].gr`,
+`FACTS[].gr`, the grade range in each `TOPICS[].make` entry, `topicsFor(g)`
+for the topics a grade shows and their names). Files: `theory.js` (pitches
+`{ l, a, o }`, keys up to six sharps/flats, `interval`, `transpose`, chords,
+and one question maker per kind: note names in four clefs, same pitch in
+another clef, enharmonics, key signatures both ways, scales, degrees,
+intervals incl. compound, chords Ia–Vc, chord symbols, cadences, time
+signatures by kind and from a bar of rhythm, transposing instruments, terms,
+instruments; `TOPICS` weights them), `terms.js` (`TERMS` Italian / French /
+German with `g` groups never offered against each other, `FACTS`),
+`stave.js` (VexFlow 4.2.5 with Bravura in `lib/`, MIT, drawn to SVG scaled
+to the width; a lone note is centred between ghost notes), `sound.js` (a Web
+Audio piano made in the page; terms read with the phone's Italian / French /
+German voice), `app.js` (home, rounds of 10, explanation after every
+answer, mixed practice favours weak topics). Bump `CACHE` in `grade5/sw.js`
+and `APP_VERSION` in `grade5/app.js` together on every publish.
+A push to `main` publishes it. The owner may later move the music games to
+their own repository (GitHub would not let a session create one). Checks: `scratchpad/g5check.js` (thousands
+of questions per grade in node), `scratchpad/g5grades.js` (what each grade asks) and `scratchpad/g5browser.js` (every kind drawn at
+390px, screenshots).
+
+## Russian (`russian/`)
+
+The 100 most common Russian words (a frequency list without the particles that cannot go on a card — же, бы,
+ли, себя — and with the everyday words a beginner needs: привет, пока, да, нет, спасибо, пожалуйста, мама,
+папа, друг, школа, вода), live at **latin.musicalmagic.uk/russian/**, built like Tounsi
+(`python3 tools/lang/build.py russian`; bump `russian/VERSION`). As in Tounsi, the word is in the **English
+alphabet** (standard transliteration: privet, spasibo, khorosho — `words.txt`) and `arabic.txt` (the historical
+name) holds the **Cyrillic**, shown small underneath (`LANG.ownScript` = ltr, `ru`, so the engine does not mark
+that line as Arabic; `theme.css` sizes it). The voice reads the Cyrillic (`synth_azure.py` `plain` mode speaks
+the form's `ar`); `audio/index.json` maps both spellings to each clip. Settings: Top 10 (the first words a child says:
+privet, poka, da, net, spasibo, pozhaluysta, mama, papa, ya, ty), Top 25, Top 50, Top 75, Top 100 — `level` 0–4 in
+`words.txt`, cumulative; no `top=1` words, so `build_app.py` adds no Beginner setting. `memory.txt`: sound-alike or shared-root hooks, written for a child. No Read section
+(`noread`). Voice: `tools/lang/synth_azure.py russian ru-RU-SvetlanaNeural` (`tts.script` `plain`: the
+Cyrillic is read as written; 100 clips in `russian/audio/`).
 
 ## Read aloud (`speak.js`)
 

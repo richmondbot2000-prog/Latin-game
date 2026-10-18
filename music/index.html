@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FBF7F0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1A1020" media="(prefers-color-scheme: dark)">
+<title>Music</title>
+<meta name="description" content="Learn to read music: every note on the stave, one card at a time.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Music">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- DERIVED FILE (tools/lang/build_app.py from index.template.html). The game lives at /music/ and shares the Latin game's art and engine files from the site root -->
+<base href="../">
+<link rel="manifest" href="music/manifest.webmanifest">
+<link rel="apple-touch-icon" href="music/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="music/icons/favicon-32.png">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="music/theme.css">
+</head>
+<body>
+<div id="app"></div>
+<div id="sheet" class="sheet" hidden></div>
+<script>const APP_NS = 'music'; const LANG = {"code": "music", "name": "Music", "tts": {"audio": "music/audio", "auto": true, "toggle": ["🔊 Playing each note — tap to turn off", "🔇 Notes are not played — tap to turn on"]}, "noread": true, "links": [{"href": "grade5/", "title": "Theory questions", "banner": "music/theory.jpg"}], "linksTitle": "Theory"};</script>
+<script src="music/vocab.js"></script>
+<script src="music/memory.js"></script>
+<script src="effects.js"></script>
+<script src="rig.js"></script>
+<script src="speak.js"></script>
+<script src="practice.js"></script>
+<script src="music/forms.js"></script>
+<script src="music/read.js"></script>
+<script src="music/phrases.js"></script>
+<script src="music/synonyms.js"></script>
+<script src="music/snap.js"></script>
+<script src="hammer.js"></script>
+<script src="beasts.js"></script>
+<script src="sync.js"></script>
+<script src="music/app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('music/sw.js', { scope: 'music/' });
+      const check = () => reg.update().catch(() => {});
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+      let had = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        let done = false; try { done = sessionStorage.getItem('music.swr') === '1'; sessionStorage.setItem('music.swr', '1'); } catch (e) {}
+        if (had && !done) location.reload(); had = true;
+      });
+      try { sessionStorage.removeItem('music.swr'); } catch (e) {}
+    } catch (e) {}
+  });
+</script>
+</body>
+</html>

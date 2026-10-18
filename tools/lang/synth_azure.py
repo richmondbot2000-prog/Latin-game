@@ -6,6 +6,7 @@
 #   Latin:   python3 tools/lang/synth_azure.py . it-IT-IsabellaNeural
 #            — Azure has no Latin voice, so an Italian voice reads a CLASSICAL respelling (classical() below): c and g always
 #            hard (Cicero → "kikero"), v as w ("uinum"), ae → "ai", oe → "oi", gn → "ghn", ph → f; the word on screen is unchanged
+#   Russian: python3 tools/lang/synth_azure.py russian ru-RU-SvetlanaNeural   (lang.json tts.script "plain": the Cyrillic is read; the word on screen is in the English alphabet)
 # Needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION in the environment (never in the repo). Re-runs only record what is missing.
 # Then point LANG.tts.audio at the folder (tounsi/lang.json → "audio": "tounsi/audio"; the Latin index.html → "audio").
 import sys, os, re, json, pathlib, subprocess, time, urllib.request, html
@@ -13,8 +14,9 @@ root = pathlib.Path(__file__).resolve().parents[2]
 folder = sys.argv[1].strip('/') or '.'; lang = root / folder
 cfg = json.loads((lang / 'lang.json').read_text()).get('tts', {}) if (lang / 'lang.json').exists() else {}
 arabic_mode = cfg.get('script') == 'chat-arabic'
+plain_mode = cfg.get('script') == 'plain'   # Russian: the voice reads the word's own script (the Cyrillic) as it stands
 voice = sys.argv[2] if len(sys.argv) > 2 else ('ar-TN-HediNeural' if arabic_mode else 'it-IT-IsabellaNeural')
-xml_lang = cfg.get('lang', 'it-IT') if arabic_mode else 'it-IT'
+xml_lang = cfg.get('lang', 'it-IT') if arabic_mode or plain_mode else 'it-IT'
 
 
 def classical(text):
@@ -60,6 +62,7 @@ console.log(JSON.stringify(out));""")
         return node("const FILES=['speak.js'];" + LOAD + "console.log(JSON.stringify(c.Speak.chatToArabic(process.argv[1])));", text)
 
     def spoken_for(text, ar):
+        if plain_mode: return ar or text   # Russian: the Cyrillic (forms.js ar), whatever alphabet the word is shown in
         if not arabic_mode: return classical(text)
         if ' ' not in text: return ar or chat_to_arabic(text)
         out = []   # a sentence: each word by its own spelling (the hand-written one where there is one)

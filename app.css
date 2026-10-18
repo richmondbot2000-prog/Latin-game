@@ -872,3 +872,13 @@ html.rdark .rhead .iconbtn, html.rdark .rpos { color: #999; } html.rdark .sround
 .bsheet.rare .becol { background: rgba(255,255,255,.14); color: #fff; }
 .bsheet.rare .btn.ghost { color: #fff; border-color: rgba(255,255,255,.55); background: rgba(255,255,255,.08); }
 
+
+/* a word that is a picture (Learn the notes: a note on a stave) — a pale card, sized for each place */
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wpic { display: block; background: #fffdf6; border-radius: 10px; height: auto; }
+.card .lat .wpic { width: min(82%, 280px); margin: 0 auto; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
+.memo .lat .wpic { width: min(70%, 240px); margin: 0 auto 4px; }
+.blat .wpic { width: 150px; margin: 0 auto; }
+#list .lat .wpic, .lat .wpic { width: 104px; }
+.pquiz .qword .wpic { height: 58px; width: auto; margin: 0 auto; }
+@media (min-width: 700px) { .pquiz .qword .wpic { height: 66px; } }

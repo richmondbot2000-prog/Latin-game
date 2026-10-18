@@ -1,0 +1,7 @@
+/* Russian: a blue accent; the word is in the English alphabet, the Cyrillic small underneath (as Tounsi's Arabic) */
+:root { --accent: #2F5DA8; }
+.hello .who::after { content: ' 👋'; }
+.arab { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; letter-spacing: .02em; }
+.card .arab { font-size: clamp(1.05rem, 5vw, 1.3rem); margin-top: 4px; }
+.card:has(.arab) .lat { padding-top: 0; }
+.memo .arab { font-size: 1.1rem; }

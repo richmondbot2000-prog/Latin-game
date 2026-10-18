@@ -127,7 +127,7 @@ const Hammer = (() => {
         // it got past Jacques
         s.state = 'passed';
         if (s.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); S.score += 10; S.right++; earnCoin(); recordAnswer(user, s.w, true); S.bits.push({ kind: 'tick', x: Math.max(.2, s.x + bw / 2), t: 0 }); }
-        else { S.wrong++; recordAnswer(user, s.w, false); hurt(`“${s.w.show}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
+        else { S.wrong++; recordAnswer(user, s.w, false); hurt(s.w.pic ? `That note is ${s.w.english}, not ${s.shown} — you let it past!` : `“${s.w.show}” doesn’t mean “${s.shown}” — you let it past!`, s.w); }
       }
     }
     S.signs = S.signs.filter(s => s.x > -(bw + .5));   // kept until judged: a board is 80% of a phone's width, so it is well off the left edge before it is wholly behind Jacques
@@ -142,7 +142,7 @@ const Hammer = (() => {
           target.state = 'smashed'; target.smashT = 0;
           const hx = Math.max(target.x, CX + .05); smashSign(target);
           if (!target.correct) { S.combo++; S.bestCombo = Math.max(S.bestCombo, S.combo); earnCoin(); const pts = 25 + 5 * Math.min(10, S.combo - 1); S.score += pts; S.right++; recordAnswer(user, target.w, true, Date.now() - target.at); S.bits.push({ kind: 'pop', x: hx, t: 0, text: '' }); }
-          else { S.wrong++; recordAnswer(user, target.w, false); hurt(`“${target.w.show}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
+          else { S.wrong++; recordAnswer(user, target.w, false); hurt(target.w.pic ? `That note really is ${target.shown} — don’t smash the right ones!` : `“${target.w.show}” really does mean “${target.shown}” — don’t smash the right ones!`, target.w); }
         }
       }
       if (S.swing > .55) S.swing = -1;
@@ -461,6 +461,8 @@ const Hammer = (() => {
     if (ground != null && posts) { g.fillStyle = sg.post; for (const p of posts) g.fillRect(x + p[0] * f, by + bh - 1, (p[1] - p[0]) * f, ground - by - bh + 1); }
     g.restore(); return true;
   }
+  const PICS = {};
+  const wordPic = w => { let i = PICS[w.pic]; if (!i) { i = PICS[w.pic] = new Image(); i.src = w.pic; } return i; };
   function drawSign(s) {
     if (s.state === 'smashed') return;
     const g = ctx, x = s.x * W, ground = H * GROUND, { sw, sh, top } = signGeom();
@@ -473,9 +475,20 @@ const Hammer = (() => {
     const faceTop = top + SIGN_TOP * f, faceH = sh - (SIGN_TOP + 15) * f;
     g.save(); g.translate(x, 0);
     g.fillStyle = st === 7 ? '#5a1010' : st === 6 ? '#143d14' : '#2B1A3A'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    if (s.w.pic) {   // a word that is a picture (a note on a stave, 3:2): as tall as the sign's face on a pale card, the meaning big beside it
+      const im = wordPic(s.w), ph = faceH * .96, pw = Math.min(sw * .66, ph * 1.5), ph2 = pw / 1.5, px = sw * .04, py = faceTop + (faceH - ph2) / 2;
+      g.fillStyle = 'rgba(255,252,240,.97)'; g.beginPath(); if (g.roundRect) g.roundRect(px, py, pw, ph2, 8); else g.rect(px, py, pw, ph2); g.fill();
+      if (im.complete && im.naturalWidth) g.drawImage(im, px, py, pw, ph2);
+      g.fillStyle = st === 7 ? '#5a1010' : st === 6 ? '#143d14' : '#2B1A3A';
+      const rest = sw - px - pw; let f3 = Math.round(faceH * .7); g.font = `800 ${f3}px system-ui, sans-serif`;
+      while (g.measureText(s.shown).width > rest * .8 && f3 > 10) { f3--; g.font = `800 ${f3}px system-ui, sans-serif`; }
+      g.fillText(s.shown, px + pw + rest / 2, faceTop + faceH * .52);
+      g.restore(); return;
+    } else {
     let fs = Math.round(faceH * .42); g.font = `700 ${fs}px Georgia, serif`;
     while (g.measureText(s.w.show).width > sw * .84 && fs > 10) { fs--; g.font = `700 ${fs}px Georgia, serif`; }
     g.fillText(s.w.show, sw / 2, faceTop + faceH * .3);
+    }
     let f2 = Math.round(faceH * .3); g.font = `700 ${f2}px system-ui, sans-serif`;
     while (g.measureText(s.shown).width > sw * .86 && f2 > 9) { f2--; g.font = `700 ${f2}px system-ui, sans-serif`; }
     g.fillText(s.shown, sw / 2, faceTop + faceH * .74);

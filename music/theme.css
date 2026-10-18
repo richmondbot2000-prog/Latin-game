@@ -1,0 +1,3 @@
+/* Music: the Learn-the-notes game's own look on top of the shared app.css — a violet accent */
+:root { --accent: #5B3FC4; }
+.hello .who::after { content: ' 🎵'; }
