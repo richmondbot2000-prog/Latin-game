@@ -15,12 +15,12 @@
 0|waqtech|when, what time|qu|
 0|kifech|how, how come|qu|top=1
 0|3lech|why, what for|qu|top=1
-0|ena|I, me|pro|top=1
-0|enti|you|pro|top=1
-0|houwa|he, him|pro|top=1
-0|hiya|she, her|pro|top=1
-0|a7na|we, us|pro|top=1
-0|houma|they, them|pro|top=1
+0|ena|I, me|pro|top=1;sense=person
+0|enti|you|pro|top=1;sense=person
+0|houwa|he, him|pro|top=1;sense=person
+0|hiya|she, her|pro|top=1;sense=person
+0|a7na|we, us|pro|top=1;sense=person
+0|houma|they, them|pro|top=1;sense=person
 0|hedha|this, this one|pro|pl=hedhouma;f=hedhi;top=1;sense=this
 0|hedheka|that, that one|pro|pl=hedhoukom;f=hedhika;sense=this
 0|3andi|I have|phrase|top=1;sense=have
@@ -113,7 +113,7 @@
 1|inshallah|hopefully, God willing|phrase|
 1|labes|fine, OK, well, all right|phrase|sense=ok
 1|9adech|how much, how many|qu|
-1|entouma|you (plural), you all|pro|
+1|entouma|you (plural), you all|pro|sense=person
 1|lekin|but, however|conj|sense=but
 1|bech|in order to, will, going to|conj|
 1|ken|if, whether|conj|
@@ -220,10 +220,10 @@
 2|hedhi|this (feminine)|pro|sense=this
 2|hedhika|that (feminine)|pro|sense=this
 2|hedhoukom|those|pro|sense=this
-2|mte3i|mine, my|pro|
-2|mte3ek|yours, your|pro|
-2|mte3ou|his|pro|
-2|mte3ha|hers|pro|
+2|mte3i|mine, my|pro|sense=mine
+2|mte3ek|yours, your|pro|sense=mine
+2|mte3ou|his|pro|sense=mine
+2|mte3ha|hers|pro|sense=mine
 2|3andha|she has|phrase|sense=have
 2|3andna|we have|phrase|sense=have
 2|wra|behind, after|prep|sense=after
@@ -237,7 +237,7 @@
 2|yesser|too much, a lot, very|adv|sense=alot
 2|ma ... ch|not (around a verb)|adv|
 2|chay|thing (7atta chay = nothing)|N|g=m;sense=thing
-2|7ad|someone, anyone, anybody|pro|
+2|7ad|someone, anyone, anybody|pro|sense=someone
 2|akher|other, last, another|Adj|pl=okhrin;f=okhra
 2|nafs|same, self|adv|
 2|bara|go, go away, get out|phrase|sense=goaway
@@ -411,8 +411,8 @@
 # ---- level 4 ----
 4|bes7a|enjoy (to someone eating or wearing something new)|phrase|
 4|sa7a|health, cheers|N|g=f
-4|mte3na|ours, our|pro|
-4|mte3hom|theirs, their|pro|
+4|mte3na|ours, our|pro|sense=mine
+4|mte3hom|theirs, their|pro|sense=mine
 4|wa7dou|alone, by himself, on his own|adv|
 4|kol youm|every day, daily|adv|sense=always
 4|okhra|other (feminine), another|Adj|pl=okhrin;f=okhra
@@ -980,17 +980,17 @@
 9|b|with, by, in|prep|
 9|3and|at, at the house of, with|prep|
 9|mte3|of, belonging to|prep|
-9|rou7i|myself|pro|
-9|rou7ek|yourself|pro|
-9|rou7ou|himself, itself|pro|
-9|rou7ha|herself|pro|
-9|rou7na|ourselves|pro|
-9|rwa7hom|themselves|pro|
-9|b3adhna|each other, one another|pro|
-9|kol wa7ed|everyone, each one|pro|
-9|kol chay|everything|pro|
-9|7atta wa7ed|nobody, no one|pro|
-9|7atta chay|nothing|pro|
+9|rou7i|myself|pro|sense=self
+9|rou7ek|yourself|pro|sense=self
+9|rou7ou|himself, itself|pro|sense=self
+9|rou7ha|herself|pro|sense=self
+9|rou7na|ourselves|pro|sense=self
+9|rwa7hom|themselves|pro|sense=self
+9|b3adhna|each other, one another|pro|sense=self
+9|kol wa7ed|everyone, each one|pro|sense=someone
+9|kol chay|everything|pro|sense=anything
+9|7atta wa7ed|nobody, no one|pro|sense=someone
+9|7atta chay|nothing|pro|sense=anything
 9|9adhya|matter, case, issue|N|g=f;pl=9adhaya;sense=topic
 9|mawdhou3|subject, topic|N|g=m;pl=mawadhi3;sense=topic
 9|sabab|reason, cause|N|g=m;pl=asbab
