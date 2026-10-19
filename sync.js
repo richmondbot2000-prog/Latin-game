@@ -118,7 +118,7 @@ const Sync = (() => {
     const total = typeof statsOf === 'function' ? statsOf(u).ever : (st.total || 0);
     if (!total) return;   // nothing answered yet: no row (and no rows from headless test runs on localhost)
     if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && !store.get('latin.syncUrl', '')) return;
-    fetch(url() + '/lb/' + NS_S + '/' + key, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ emo: (u.emojis || []).join(''), days, total }) }).catch(() => {});
+    fetch(url() + '/lb/' + NS_S + '/' + key, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ emo: (u.emojis || []).join(''), who: String(u.name || '').slice(0, 20), days, total }) }).catch(() => {});
   }
   const board = async () => (await api('GET', '/lb/' + NS_S)) || [];
   const myId = async u => (await keyFor(codeOf(u))).slice(0, 12);

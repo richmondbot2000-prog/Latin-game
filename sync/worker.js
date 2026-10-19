@@ -219,6 +219,7 @@ export default {
       if (req.method === 'PUT' && m[2]) {
         const b = await body(); if (!b) return text('bad', 400);
         const emo = typeof b.emo === 'string' ? [...b.emo].slice(0, 4).join('') : '';
+        const who = typeof b.who === 'string' ? b.who.replace(/[<>&"'\s]+/g, ' ').trim().slice(0, 20) : '';   // the profile name, shown on the board (the owner's choice: the board is public)
         const days = {};
         if (b.days && typeof b.days === 'object') for (const k of Object.keys(b.days).filter(k => /^\d{4}-\d\d-\d\d$/.test(k)).sort().slice(-10)) days[k] = Math.max(0, Math.min(1e6, Math.floor(+b.days[k] || 0)));
         const total = Math.max(0, Math.min(1e8, Math.floor(+b.total || 0)));
@@ -226,7 +227,7 @@ export default {
         // one document per game holds every row (a key listing lags by up to a minute; a document reads straight back);
         // the newest 300 players are kept, so a player not seen for a year or so drops off
         const all = (await getJ('lbi:' + ns)) || {};
-        all[m[2].slice(0, 12)] = { name, emo, days, total, t: Date.now() };
+        all[m[2].slice(0, 12)] = { name, who, emo, days, total, t: Date.now() };
         const keep = Object.entries(all).sort((a, b) => b[1].t - a[1].t).slice(0, 300);
         await kv.put('lbi:' + ns, JSON.stringify(Object.fromEntries(keep)));
         return new Response(null, { status: 204, headers: cors });

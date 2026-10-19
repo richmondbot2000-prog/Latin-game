@@ -20,7 +20,7 @@ const EMOJIS = ['🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼','🐨','
   '🌞','🌙','⭐','🌈','☁️','⚡','❄️','🔥','💧','🌊',
   '🌸','🌻','🌵','🌲','🍀','💎','👑','🎁','🎈','🔔'];
 
-const APP_VERSION = '173';
+const APP_VERSION = '174';
 const DAY = 86400000;
 // spaced repetition: each right answer earns a star and a longer rest before the word comes round again
 // (10 minutes, then a day, 3 days, a week, a month); a wrong answer drops it to zero stars and brings it straight back
@@ -225,10 +225,10 @@ async function loadBoard(u) {
     const now = new Date(), dow = (now.getDay() + 6) % 7, monday = dayKey(new Date(now.getFullYear(), now.getMonth(), now.getDate() - dow).getTime());
     const rows = cloud.map(r => { const local = ids[r.id]; let today = (r.days || {})[dayKey()] || 0, week = 0; for (const k in r.days || {}) if (k >= monday) week += r.days[k];
       return local ? { me: current() && local.id === current().id, who: avatarHTML(local, 'tiny') + esc(local.name), ...statsOf(local), local } :
-        { me: false, who: `<span class="emo">${esc(r.emo || '')}</span>${r.name ? esc(r.name.toUpperCase()) : '<span class="small">a player</span>'}`, today, week, ever: Math.max(today, week, r.total || 0) }; });
+        { me: false, who: `<span class="emo">${esc(r.emo || '')}</span>${r.name ? esc(r.name.toUpperCase()) : r.who ? esc(r.who) : '<span class="small">a player</span>'}`, today, week, ever: Math.max(today, week, r.total || 0) }; });
     for (const x of users()) if (!rows.some(r => r.local && r.local.id === x.id)) rows.push({ me: current() && x.id === current().id, who: avatarHTML(x, 'tiny') + esc(x.name), ...statsOf(x) });
     const el = $('#board'); if (!el) return;
-    $('#boardNote').textContent = `Everyone playing · words answered, in any game.${u && !u.player ? ' Choose a player name below to show it here.' : ''}`;
+    $('#boardNote').textContent = 'Everyone playing · words answered, in any game.';
     $('table', el).outerHTML = boardTable(sortRows(rows));
   } catch (e) { const n = $('#boardNote'); if (n) n.textContent = 'Words answered, in any game. (Everyone’s board needs a connection.)'; }
 }
