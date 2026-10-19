@@ -21,8 +21,8 @@
 0|hiya|she, her|pro|top=1
 0|a7na|we, us|pro|top=1
 0|houma|they, them|pro|top=1
-0|hedha|this, this one|pro|pl=hedhouma;f=hedhi;top=1
-0|hedheka|that, that one|pro|pl=hedhoukom;f=hedhika
+0|hedha|this, this one|pro|pl=hedhouma;f=hedhi;top=1;sense=this
+0|hedheka|that, that one|pro|pl=hedhoukom;f=hedhika;sense=this
 0|3andi|I have|phrase|top=1;sense=have
 0|3andek|you have|phrase|sense=have
 0|3andou|he has, it has|phrase|sense=have
@@ -217,9 +217,9 @@
 2|mabrouk|congratulations|phrase|
 2|enehou|which, which one|qu|f=enehi
 2|enehi|which (feminine)|qu|
-2|hedhi|this (feminine)|pro|
-2|hedhika|that (feminine)|pro|
-2|hedhoukom|those|pro|
+2|hedhi|this (feminine)|pro|sense=this
+2|hedhika|that (feminine)|pro|sense=this
+2|hedhoukom|those|pro|sense=this
 2|mte3i|mine, my|pro|
 2|mte3ek|yours, your|pro|
 2|mte3ou|his|pro|
@@ -311,7 +311,7 @@
 3|barak allahou fik|thank you very much|phrase|sense=thanks
 3|bellehi|please, really?|phrase|
 3|rabbi|God, Lord|N|g=m
-3|hedhouma|these|pro|
+3|hedhouma|these|pro|sense=this
 3|wast|middle, centre, inside|N|g=m
 3|yemin|right (side), right hand|N|g=m
 3|ysar|left (side), left hand|N|g=m
@@ -599,8 +599,8 @@
 5|bekri|early|adv|sense=before
 5|akid|certainly, for sure|adv|
 5|tab3an|of course|adv|
-5|hakka|like this, this way|adv|
-5|hakkeka|like that, that way|adv|
+5|hakka|like this, this way|adv|sense=thisway
+5|hakkeka|like that, that way|adv|sense=thisway
 5|ay|any|adv|
 5|b3adh|some, a few|adv|
 5|walou|nothing, nothing at all|adv|
@@ -942,7 +942,7 @@
 9|t3awed|get used to, be used to|V|pres=yet3awed
 9|3adel|be fair, straighten|V|pres=y3adel
 9|mashi|walking, on foot|adv|
-9|lhih|over there, that way|adv|
+9|lhih|over there, that way|adv|sense=thisway
 9|9rib (adv)|soon, nearly|adv|
 9|bessif|by force, unwillingly, reluctantly|adv|
 9|bel3ani|on purpose, deliberately|adv|
