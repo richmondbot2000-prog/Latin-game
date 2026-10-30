@@ -4,7 +4,7 @@
    REPO: the game asks for them once and keeps them in localStorage['dance.names'] on the device; a level is
    "<stage> <name>". Save in localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '2';
+const APP_VERSION = '3';
 const ART = 'art/';
 let NAMES = ['Dancer 1', 'Dancer 2', 'Dancer 3'], SPEC = null;
 const SCALE = 1.75;   // sprite pixels → screen pixels on the field
@@ -49,6 +49,8 @@ async function buildChain() {
   WORLDS.forEach((w, i) => { const lv = CHAIN.map((c, k) => c.world === i ? k : -1).filter(k => k >= 0); w.start = lv[0]; w.end = lv[lv.length - 1]; });
   CHAIN.forEach((c, i) => { WORLD_OF[i] = c.world; });
 }
+// the level number above a dancer's head, in the 5 × 7 pixel font of art/digits.png
+const lvHTML = (n, c) => `<span class="lv" style="top:${Math.round((c.top || 0) * SCALE) - 20}px">${String(n).split('').map(d => `<i style="background-position:-${d * 12}px 0"></i>`).join('')}</span>`;
 const nameOf = c => `${c.stageName} ${NAMES[c.sister] || ''}`.trim();
 // a dancer: a div showing one frame of her sprite sheet, the loop stepped by CSS
 function spriteHTML(c, scale = SCALE, cls = 'spr') {
@@ -87,7 +89,7 @@ const rnd = (a, b) => a + Math.random() * (b - a);
 function spot() { return { x: rnd(14, 86), y: rnd(60, 92) }; }
 function place(b, pop = false) {
   const el = document.createElement('div'); el.className = 'beast' + (pop ? ' pop' : '') + (Math.random() < .5 ? ' flip' : '');
-  el.innerHTML = `${spriteHTML(CHAIN[b.lv])}<span class="lv">${b.lv + 1}</span>`;
+  el.innerHTML = `${spriteHTML(CHAIN[b.lv])}${lvHTML(b.lv + 1, CHAIN[b.lv])}`;
   el.style.left = b.x + '%'; el.style.top = b.y + '%';
   el.dataset.id = b.id; els[b.id] = el; field.appendChild(el);
   bindBeast(el, b);

@@ -117,3 +117,7 @@ img { image-rendering: pixelated; image-rendering: crisp-edges; }
 @keyframes spin { to { background-position: -132px 0; } }
 i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/coin1.png') 0 0 / 16px 16px no-repeat; image-rendering: pixelated; vertical-align: -2px; margin-right: 2px; }
 .coin { display: flex; align-items: center; }
+
+/* level badge above the head: pixel digits on a dark plate */
+.beast .lv { top: -16px; bottom: auto; left: 50%; transform: translateX(-50%); display: inline-flex; gap: 2px; padding: 3px 4px; border-radius: 0; background: #2a1830; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2a1830; font-size: 0; line-height: 0; }
+.beast .lv i { display: block; width: 10px; height: 14px; background: url('art/digits.png') 0 0 / 120px 14px no-repeat; image-rendering: pixelated; }
