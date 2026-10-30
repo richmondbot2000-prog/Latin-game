@@ -24,7 +24,17 @@
 "stageName": "Baby",
 "sheet": "art/s01_1.png",
 "frames": 40,
-"top": 24
+"top": 21,
+"crawl": [
+[
+0,
+14
+],
+[
+34,
+39
+]
+]
 },
 {
 "stage": 0,
@@ -32,7 +42,13 @@
 "stageName": "Baby",
 "sheet": "art/s01_2.png",
 "frames": 40,
-"top": 25
+"top": 25,
+"crawl": [
+[
+27,
+36
+]
+]
 },
 {
 "stage": 0,
@@ -40,7 +56,17 @@
 "stageName": "Baby",
 "sheet": "art/s01_3.png",
 "frames": 40,
-"top": 25
+"top": 21,
+"crawl": [
+[
+0,
+8
+],
+[
+29,
+39
+]
+]
 },
 {
 "stage": 1,
@@ -48,7 +74,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_1.png",
 "frames": 32,
-"top": 22
+"top": 25
 },
 {
 "stage": 1,
@@ -56,7 +82,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_2.png",
 "frames": 32,
-"top": 22
+"top": 25
 },
 {
 "stage": 1,
@@ -64,7 +90,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_3.png",
 "frames": 32,
-"top": 22
+"top": 25
 },
 {
 "stage": 2,
@@ -80,7 +106,7 @@
 "stageName": "Nursery",
 "sheet": "art/s03_2.png",
 "frames": 32,
-"top": 16
+"top": 19
 },
 {
 "stage": 2,
@@ -88,7 +114,7 @@
 "stageName": "Nursery",
 "sheet": "art/s03_3.png",
 "frames": 32,
-"top": 21
+"top": 22
 },
 {
 "stage": 3,
@@ -96,7 +122,7 @@
 "stageName": "Leotard",
 "sheet": "art/s04_1.png",
 "frames": 32,
-"top": 13
+"top": 17
 },
 {
 "stage": 3,
@@ -104,7 +130,7 @@
 "stageName": "Leotard",
 "sheet": "art/s04_2.png",
 "frames": 32,
-"top": 13
+"top": 14
 },
 {
 "stage": 3,
@@ -112,7 +138,7 @@
 "stageName": "Leotard",
 "sheet": "art/s04_3.png",
 "frames": 32,
-"top": 13
+"top": 19
 },
 {
 "stage": 4,
@@ -120,7 +146,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_1.png",
 "frames": 32,
-"top": 18
+"top": 15
 },
 {
 "stage": 4,
@@ -128,7 +154,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_2.png",
 "frames": 32,
-"top": 18
+"top": 17
 },
 {
 "stage": 4,
@@ -136,7 +162,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_3.png",
 "frames": 32,
-"top": 18
+"top": 16
 },
 {
 "stage": 5,
@@ -144,7 +170,7 @@
 "stageName": "First tutu",
 "sheet": "art/s06_1.png",
 "frames": 32,
-"top": 17
+"top": 15
 },
 {
 "stage": 5,
@@ -152,7 +178,7 @@
 "stageName": "First tutu",
 "sheet": "art/s06_2.png",
 "frames": 32,
-"top": 18
+"top": 19
 },
 {
 "stage": 5,
@@ -208,7 +234,7 @@
 "stageName": "En pointe",
 "sheet": "art/s08_3.png",
 "frames": 32,
-"top": 7
+"top": 10
 },
 {
 "stage": 8,
@@ -216,7 +242,7 @@
 "stageName": "Swan",
 "sheet": "art/s09_1.png",
 "frames": 32,
-"top": 9
+"top": 5
 },
 {
 "stage": 8,
@@ -239,23 +265,23 @@
 "sister": 0,
 "stageName": "Prima",
 "sheet": "art/s10_1.png",
-"frames": 32,
-"top": 5
+"frames": 40,
+"top": 0
 },
 {
 "stage": 9,
 "sister": 1,
 "stageName": "Prima",
 "sheet": "art/s10_2.png",
-"frames": 32,
-"top": 5
+"frames": 40,
+"top": 6
 },
 {
 "stage": 9,
 "sister": 2,
 "stageName": "Prima",
 "sheet": "art/s10_3.png",
-"frames": 32,
+"frames": 40,
 "top": 5
 },
 {
@@ -264,7 +290,7 @@
 "stageName": "Street",
 "sheet": "art/s11_1.png",
 "frames": 32,
-"top": 11
+"top": 9
 },
 {
 "stage": 10,
@@ -288,7 +314,7 @@
 "stageName": "Stage star",
 "sheet": "art/s12_1.png",
 "frames": 32,
-"top": 2
+"top": 0
 },
 {
 "stage": 11,
@@ -304,7 +330,7 @@
 "stageName": "Stage star",
 "sheet": "art/s12_3.png",
 "frames": 32,
-"top": 2
+"top": 5
 },
 {
 "stage": 12,
@@ -312,7 +338,7 @@
 "stageName": "World tour",
 "sheet": "art/s13_1.png",
 "frames": 32,
-"top": 5
+"top": 3
 },
 {
 "stage": 12,
@@ -335,7 +361,7 @@
 "sister": 0,
 "stageName": "Legend",
 "sheet": "art/s14_1.png",
-"frames": 32,
+"frames": 40,
 "top": 0
 },
 {
@@ -343,16 +369,16 @@
 "sister": 1,
 "stageName": "Legend",
 "sheet": "art/s14_2.png",
-"frames": 32,
-"top": 0
+"frames": 40,
+"top": 1
 },
 {
 "stage": 13,
 "sister": 2,
 "stageName": "Legend",
 "sheet": "art/s14_3.png",
-"frames": 32,
-"top": 0
+"frames": 40,
+"top": 1
 }
 ]
 }

@@ -133,4 +133,4 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 .beast.hold .pt i::after, .beast.drag .pt i::after, .beast.last .pt i::after { content: ''; display: block; width: 10px; height: 14px; background: inherit; transform: translateX(1px); }
 .beast.last { z-index: 3; }
 .up .ic.sp { width: 48px; display: flex; justify-content: center; }
-.beast.crawl { transition: left .6s linear, top .6s linear; }
+.beast.crawl { transition-timing-function: linear, linear; }

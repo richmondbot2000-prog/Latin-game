@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '19';
+const APP_VERSION = '20';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -105,9 +105,13 @@ function place(b, pop = false) {
 }
 function wander() {
   if (field.querySelector('.beast.drag')) return;   // nobody moves while a beast is being carried
-  // a baby only moves across the floor while her loop is crawling (the first 17 of 40 frames), and gets there before she sits up
-  const crawling = frameNo % 40 < 5;
-  for (const b of save.fields[save.world]) { if (CHAIN[b.lv].stage === 0 && !crawling) continue; if (Math.random() < (CHAIN[b.lv].stage === 0 ? .6 : .25) && !(els[b.id] && els[b.id].classList.contains('drag'))) { const s = spot(); const el = els[b.id]; if (el) { el.classList.toggle('flip', s.x < b.x); } b.x = s.x; b.y = s.y; if (el) { el.style.left = s.x + '%'; el.style.top = s.y + '%'; } } }
+  // a baby only moves across the floor while her loop is crawling (`crawl` in dancers.json lists the runs of frames on all fours),
+  // starting as a run begins and arriving before it ends
+  for (const b of save.fields[save.world]) {
+    const c = CHAIN[b.lv]; let run = null;
+    if (c.crawl) { const k = frameNo % c.frames; run = c.crawl.find(r => k >= r[0] && k < r[0] + 5 && r[1] - r[0] > 8); if (!run) continue; }
+    if (Math.random() < (run ? .7 : .25) && !(els[b.id] && els[b.id].classList.contains('drag'))) {
+      if (run && els[b.id]) els[b.id].style.transitionDuration = ((run[1] - run[0]) * 40 - 100) + 'ms'; const s = spot(); const el = els[b.id]; if (el) { el.classList.toggle('flip', s.x < b.x); } b.x = s.x; b.y = s.y; if (el) { el.style.left = s.x + '%'; el.style.top = s.y + '%'; } } }
 }
 let nextId = () => (save.nid = (save.nid || 0) + 1);
 function addBeast(lv, at, pop = true) {
