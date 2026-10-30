@@ -1,12 +1,13 @@
 /* Dance Evolution — tap, drag to merge, evolve.
    The Merge Beasts engine with dancers: 14 stages × 3 sisters = 42 levels (dancers.json + art/*.png sprite sheets drawn
-   by scratchpad/dancers/sisters.py), each level a 6–8 frame dance loop. The three sisters' NAMES ARE NEVER IN THIS
-   REPO: the game asks for them once and keeps them in localStorage['dance.names'] on the device; a level is
-   "<stage> <name>". Save in localStorage['dance.save']; nothing is sent anywhere. */
+   by scratchpad/dancers/sisters.py), each level a 6–8 frame dance loop. The three sisters are named below (the owner's
+   decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
+   localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '11';
+const APP_VERSION = '12';
 const ART = 'art/';
-let NAMES = ['Dancer 1', 'Dancer 2', 'Dancer 3'], SPEC = null;
+const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
+let SPEC = null;
 const SCALE = 1.75;   // sprite pixels → screen pixels on the field
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -44,7 +45,6 @@ const store = { get: (k, d) => { try { const v = localStorage.getItem(k); return
 /* ---------- the chain: 14 stages × 3 sisters, from dancers.json ---------- */
 async function buildChain() {
   SPEC = await (await fetch('dancers.json')).json(); FONT = await (await fetch('art/font.json')).json();
-  NAMES = store.get('dance.names', null) || NAMES;
   CHAIN = SPEC.levels.map((l, i) => ({ ...l, world: WORLDS.findIndex(w => l.stage >= w.stages[0] && l.stage <= w.stages[1]), last: l.sister === 2, pic: l.sheet, desc: DESC[l.stage] }));
   WORLDS.forEach((w, i) => { const lv = CHAIN.map((c, k) => c.world === i ? k : -1).filter(k => k >= 0); w.start = lv[0]; w.end = lv[lv.length - 1]; });
   CHAIN.forEach((c, i) => { WORLD_OF[i] = c.world; });
@@ -216,8 +216,8 @@ function shop() {
   const w = save.world, lv = save.crate[w], canUp = lv < WORLDS[w].end - 1 && lv < CHAIN.length - 2;
   const rows = [`<div class="up ${canUp ? '' : 'max'}"><span class="ic"><img src="art/bag.png" alt=""></span><div class="t"><b>Better dance bags</b><span>${canUp ? `Bags in the ${WORLDS[w].name} bring ${esc(nameOf(CHAIN[lv + 1]))} (level ${lv + 2})` : 'Bags here are as good as they get'}</span></div><button data-k="cratelv" ${save.coins < crateUpCost(w) ? 'disabled' : ''}><i class="cn"></i>${fmt(crateUpCost(w))}</button></div>`,
     ...Object.entries(UPS).map(([k, u]) => { const n = save.up[k], max = n >= u.max; return `<div class="up ${max ? 'max' : ''}"><span class="ic">${u.ic}</span><div class="t"><b>${u.name}${n ? ` · ${n}` : ''}</b><span>${max ? 'Maxed out' : u.desc(n + 1)}</span></div><button data-k="${k}" ${save.coins < u.cost(n) ? 'disabled' : ''}><i class="cn"></i>${fmt(u.cost(n))}</button></div>`; })];
-  sheet(`<h2>Upgrades</h2><div class="small" style="color:var(--muted);margin-bottom:6px">You have <i class="cn"></i>${fmt(save.coins)}</div>${rows.join('')}<button class="linkbtn" id="renameBtn">✏️ Change the dancers' names</button><button class="linkbtn" id="moveBtn">📲 Move my game to another app or phone</button>`);
-  $('#renameBtn').onclick = () => askNames(true); $('#moveBtn').onclick = moveSheet;
+  sheet(`<h2>Upgrades</h2><div class="small" style="color:var(--muted);margin-bottom:6px">You have <i class="cn"></i>${fmt(save.coins)}</div>${rows.join('')}<button class="linkbtn" id="moveBtn">📲 Move my game to another app or phone</button>`);
+  $('#moveBtn').onclick = moveSheet;
   $('#sheet').querySelectorAll('button[data-k]').forEach(b => { b.onclick = () => {
     const k = b.dataset.k;
     if (k === 'cratelv') { const c = crateUpCost(w); if (save.coins < c) return; save.coins -= c; save.crate[w]++; }
@@ -245,21 +245,11 @@ function sparks(x, y) { const r = field.getBoundingClientRect(); for (let i = 0;
 let toastT = 0;
 function toast(msg) { const t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 2200); }
 
-/* ---------- the dancers' names: asked once, kept on this device only ---------- */
-function askNames(again = false) {
-  const cur = store.get('dance.names', null) || ['', '', ''];
-  sheet(`<h2>${again ? 'The dancers' : 'Who are the dancers?'}</h2><p class="small" style="color:var(--muted)">Three dancers grow up through the game, youngest first. Their names stay on this phone and are never sent anywhere.</p>
-    ${[0, 1, 2].map(i => `<input class="nm" id="nm${i}" maxlength="14" placeholder="Dancer ${i + 1}" value="${esc(cur[i] || '')}" autocomplete="off">`).join('')}
-    <button class="btn" id="namesOk">Let's dance</button>`);
-  $('#sheet .close').hidden = !again;
-  $('#namesOk').onclick = () => { NAMES = [0, 1, 2].map(i => ($('#nm' + i).value.trim() || `Dancer ${i + 1}`).slice(0, 14)); store.set('dance.names', NAMES); closeSheet(); mount(); };
-}
-
 /* ---------- move the game: a save code (the save and the names, as text) to copy from one app or phone into another ---------- */
-function saveCode() { return btoa(unescape(encodeURIComponent(JSON.stringify({ s: save, n: NAMES })))); }
+function saveCode() { return btoa(unescape(encodeURIComponent(JSON.stringify({ s: save })))); }
 function moveSheet() {
   const code = saveCode();
-  sheet(`<h2>Move my game</h2><p class="small" style="color:var(--muted)">On an iPhone the home-screen app and Safari keep separate games. Copy this code here and paste it into the other one (or another phone) to carry everything across: dancers, coins, upgrades and names.</p>
+  sheet(`<h2>Move my game</h2><p class="small" style="color:var(--muted)">On an iPhone the home-screen app and Safari keep separate games. Copy this code here and paste it into the other one (or another phone) to carry everything across: dancers, coins and upgrades.</p>
     <textarea class="nm" id="mvCode" rows="4" readonly style="font-size:12px;word-break:break-all">${code}</textarea>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="mvCopy">Copy</button>${navigator.share ? '<button class="btn" id="mvShare">Share</button>' : ''}</div>
     <h2 style="margin-top:18px">Paste a code</h2><textarea class="nm" id="mvIn" rows="3" placeholder="Paste a code from the other app…" style="font-size:12px"></textarea>
@@ -268,7 +258,7 @@ function moveSheet() {
   const sh = $('#mvShare'); if (sh) sh.onclick = () => navigator.share({ text: code }).catch(() => {});
   $('#mvLoad').onclick = () => {
     try { const o = JSON.parse(decodeURIComponent(escape(atob($('#mvIn').value.trim())))); if (!o.s || !o.s.fields) throw 0;
-      save = o.s; store.set('dance.save', save); if (o.n) { NAMES = o.n; store.set('dance.names', NAMES); } for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
+      save = o.s; store.set('dance.save', save); for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
       closeSheet(); mount(); toast('Game loaded'); } catch (e) { toast('That code did not work'); }
   };
 }
@@ -280,7 +270,7 @@ async function main() {
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
   $('#buyBtn').onclick = () => { const w = save.world, lv = save.crate[w], price = 25 * Math.pow(GROW, lv); if (save.fields[w].length >= capOf(save.up.cap)) { toast('Field full — merge some beasts first'); return; } if (save.coins < price) return; save.coins -= price; addBeast(lv); };
   // Safari zooms on a quick double tap; taps on the stage are game moves, never zooms
-  mount(); if (!store.get('dance.names', null)) askNames(); else away();
+  mount(); away();
   field.addEventListener('touchend', e => { if (e.cancelable) e.preventDefault(); }, { passive: false });
   document.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
   document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
