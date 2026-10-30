@@ -4,7 +4,7 @@
    REPO: the game asks for them once and keeps them in localStorage['dance.names'] on the device; a level is
    "<stage> <name>". Save in localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '7';
+const APP_VERSION = '8';
 const ART = 'art/';
 let NAMES = ['Dancer 1', 'Dancer 2', 'Dancer 3'], SPEC = null;
 const SCALE = 1.75;   // sprite pixels → screen pixels on the field
@@ -261,6 +261,10 @@ async function main() {
   $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia;
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
   $('#buyBtn').onclick = () => { const w = save.world, lv = save.crate[w], price = 25 * Math.pow(GROW, lv); if (save.fields[w].length >= capOf(save.up.cap)) { toast('Field full — merge some beasts first'); return; } if (save.coins < price) return; save.coins -= price; addBeast(lv); };
+  // Safari zooms on a quick double tap; taps on the stage are game moves, never zooms
+  field.addEventListener('touchend', e => { if (e.cancelable) e.preventDefault(); }, { passive: false });
+  document.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
+  document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
   mount(); if (!store.get('dance.names', null)) askNames(); else away();
   setInterval(tick, 250);
   document.addEventListener('visibilitychange', () => { if (document.hidden) { save.t = Date.now(); store.set('dance.save', save); } else { lastTick = Date.now(); away(); } });
