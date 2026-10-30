@@ -4,7 +4,7 @@
    REPO: the game asks for them once and keeps them in localStorage['dance.names'] on the device; a level is
    "<stage> <name>". Save in localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '3';
+const APP_VERSION = '4';
 const ART = 'art/';
 let NAMES = ['Dancer 1', 'Dancer 2', 'Dancer 3'], SPEC = null;
 const SCALE = 1.75;   // sprite pixels → screen pixels on the field
@@ -163,7 +163,8 @@ function crateReady() { return Date.now() >= crateAt; }
 function dropCrate() {
   const w = save.world; const s = spot();
   const el = document.createElement('div'); el.className = 'crate'; el.innerHTML = '<img src="art/bag.png" alt="Dance bag" draggable="false">'; el.style.left = s.x + '%'; el.style.top = s.y + '%';
-  el.onpointerdown = e => { e.preventDefault(); el.remove(); if (save.fields[save.world].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); crateAt = 0; refresh(); return; } addBeast(save.crate[w], s); };
+  if (!save.bagsOpened) { const t = document.createElement('span'); t.className = 'tag'; t.textContent = 'A new dancer is inside — tap it!'; el.appendChild(t); }
+  el.onpointerdown = e => { e.preventDefault(); el.remove(); save.bagsOpened = (save.bagsOpened || 0) + 1; if (save.fields[save.world].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); crateAt = 0; refresh(); return; } addBeast(save.crate[w], s); };
   field.appendChild(el);
 }
 function refresh() {
@@ -183,7 +184,7 @@ function tick() {
   const now = Date.now(), dt = Math.min(5, (now - lastTick) / 1000); lastTick = now;
   // every beast drops coins: paid as a steady trickle, with a little 💩 animation now and then
   const inc = income() * dt; if (inc > 0) { save.coins += inc; save.total = (save.total || 0) + inc; }
-  if (Math.random() < dt * 0.6) { const f = save.fields[save.world]; if (f.length) { const b = f[Math.floor(Math.random() * f.length)]; const d = document.createElement('span'); d.className = 'drop'; d.innerHTML = `<img src="art/${['coin1', 'clap', 'rose'][Math.floor(Math.random() * 3)]}.png" alt="">`; d.style.left = (b.x + rnd(-6, 6)) + '%'; d.style.top = (b.y + 4) + '%'; field.appendChild(d); setTimeout(() => d.remove(), 900); } }
+  if (Math.random() < dt * 0.6) { const f = save.fields[save.world]; if (f.length) { const b = f[Math.floor(Math.random() * f.length)]; const d = document.createElement('span'); d.className = 'drop'; d.innerHTML = `<img src="art/coin1.png" alt="">`; d.style.left = (b.x + rnd(-6, 6)) + '%'; d.style.top = (b.y + 4) + '%'; field.appendChild(d); setTimeout(() => d.remove(), 900); } }
   if (crateReady() && !field.querySelector('.crate') && save.fields[save.world].length < capOf(save.up.cap)) { dropCrate(); crateAt = now + crateEvery(save.up.crate) * 1000; }
   refresh();
   if (Math.random() < dt * 0.5) wander();
