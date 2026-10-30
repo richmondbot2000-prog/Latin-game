@@ -616,6 +616,27 @@ stage name, ecology and the earning rate. Big numbers print as K M B T Qa… (`f
 `manifest.webmanifest`; listed in `languages.json` so every home page links to it. Test: `scratchpad/merge.js` (crate,
 tap, drag-merge, upgrades, Beastpedia, away sheet at 390px). Not built yet: the alternate universe at the end, sound.
 
+## Dance Evolution (`dance/`)
+
+The Merge Beasts engine with **dancers**, at **latin.musicalmagic.uk/dance/** (`dance/app.js` is `merge/app.js` with the chain,
+wording and sprites swapped; same save shape in `localStorage['dance.save']`). **The chain is 14 stages × 3 sisters = 42
+levels** (`dance/dancers.json`: stage, sister, stageName, sheet, frames; worlds by stage: Nursery 0–2, Dance school 3–6,
+Ballet theatre 7–9, City stage 10–11, World tour 12–13; stages: Baby, Tot, Nursery, Leotard, Dance school, First tutu,
+Jazz, En pointe, Swan, Prima, Street, Stage star, World tour, Legend; `DESC` one line each). Two of one sister make the
+next sister; two of the third make the first sister of the next stage. **The sisters' names are NEVER in the repo**: the
+game asks "Who are the dancers?" once (`askNames`, three boxes, youngest first) and keeps them in
+`localStorage['dance.names']` on that device only; a level is `nameOf(c)` = "<stage> <name>" ("Baby …", "Tot …", … "Legend
+…"); "Change the dancers' names" is in the Upgrades sheet. The owner sent a photo of the three girls to set the looks —
+it is not in the repo and must never be; the looks are generic: long dark curls with a headband, wavy shoulder-length
+hair with a side parting, long straight dark hair. **Art**: 16-bit-style pixel sprites, 48 × 64, one dark outline, an
+automatic shade / highlight pass, drawn by the session scratchpad generator `scratchpad/dancers/fig2.py` (a parametric
+figure: size baby / tot / child / teen / adult, hair, costume, skirt kinds tutu / tutu_big / short / dress / long / gown /
+ruffle / fringe / nappy, leg and arm poses, props) and `sisters.py` (the 14 stages' costumes per sister and a 6–8 pose
+loop each → `dance/art/sNN_G.png` horizontal sprite sheets + `dancers.json`); `spriteHTML(c, scale)` shows a sheet as a
+div stepped by the CSS `dance` keyframes (`steps(frames)`, 0.16 s a frame, `image-rendering: pixelated`), on the field at
+`SCALE` 1.75, in the Dancepedia at 1 (still), in the fanfare and detail at 3. Crates are 🎒 dance bags, Buy is Invite,
+the tractor is the Manager, coin drops are 🪙 👏 🌹. Test: `scratchpad/dance.js`. Listed in `languages.json`.
+
 ## Read aloud (`speak.js`)
 
 Words are read with the phone's own voices (Web Speech API; nothing is
