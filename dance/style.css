@@ -87,13 +87,11 @@ a.ib { text-decoration: none; }
 
 /* dancers: one frame of a sprite sheet, stepped by CSS; pixels stay crisp */
 .spr { image-rendering: pixelated; image-rendering: crisp-edges; background-repeat: no-repeat; filter: drop-shadow(0 4px 3px rgba(0,0,0,.35)); }
-.spr.still { animation: none !important; }
 .beast .spr { pointer-events: none; }
 .beast.flip .spr { transform: scaleX(-1); }
 .beast.drag .spr { transform: scale(1.1); }
 .beast.flip.drag .spr { transform: scaleX(-1) scale(1.1); }
 .beast.target .spr { filter: drop-shadow(0 0 10px #fff) drop-shadow(0 4px 3px rgba(0,0,0,.35)); }
-@keyframes dance { to { background-position: calc(-1 * var(--w)) 0; } }
 .beast .lv { bottom: 0; }
 .pedia .cell { aspect-ratio: 3 / 4; }
 .pedia .cell .spr { width: 48px; height: 64px; transform: scale(.9); }

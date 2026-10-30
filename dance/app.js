@@ -4,7 +4,7 @@
    REPO: the game asks for them once and keeps them in localStorage['dance.names'] on the device; a level is
    "<stage> <name>". Save in localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '4';
+const APP_VERSION = '5';
 const ART = 'art/';
 let NAMES = ['Dancer 1', 'Dancer 2', 'Dancer 3'], SPEC = null;
 const SCALE = 1.75;   // sprite pixels → screen pixels on the field
@@ -55,8 +55,13 @@ const nameOf = c => `${c.stageName} ${NAMES[c.sister] || ''}`.trim();
 // a dancer: a div showing one frame of her sprite sheet, the loop stepped by CSS
 function spriteHTML(c, scale = SCALE, cls = 'spr') {
   const w = SPEC.w * scale, h = SPEC.h * scale;
-  return `<div class="${cls}" style="width:${w}px;height:${h}px;background-image:url('${c.sheet}');background-size:${w * c.frames}px ${h}px;animation:dance ${(c.frames * .16).toFixed(2)}s steps(${c.frames}) infinite;--w:${w * c.frames}px"></div>`;
+  return `<div class="${cls}" data-frames="${c.frames}" data-fw="${w}" style="width:${w}px;height:${h}px;background-image:url('${c.sheet}');background-size:${w * c.frames}px ${h}px"></div>`;
 }
+// the loops are stepped here, not by CSS: every 160 ms each sprite shows its next frame (a still sprite keeps frame 0)
+let frameNo = 0;
+setInterval(() => { frameNo++; document.querySelectorAll('.spr:not(.still)').forEach(el => { const n = +el.dataset.frames || 1; el.style.backgroundPositionX = -((frameNo % n) * +el.dataset.fw) + 'px'; }); }, 160);
+// every sheet is fetched once at the start, so a merge never waits for the network
+function preloadSheets() { SPEC.levels.forEach(l => { const i = new Image(); i.src = l.sheet; }); }
 
 /* ---------- the save ---------- */
 function load() {
@@ -249,7 +254,7 @@ function askNames(again = false) {
 
 /* ---------- start ---------- */
 async function main() {
-  await buildChain(); load();
+  await buildChain(); load(); preloadSheets();
   $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia;
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
   $('#buyBtn').onclick = () => { const w = save.world, lv = save.crate[w], price = 25 * Math.pow(GROW, lv); if (save.fields[w].length >= capOf(save.up.cap)) { toast('Field full — merge some beasts first'); return; } if (save.coins < price) return; save.coins -= price; addBeast(lv); };
