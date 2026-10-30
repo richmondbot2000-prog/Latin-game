@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#2b1d3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Merge Beasts</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../icons/favicon-32.png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="coins"><span class="ic">🪙</span><b id="coins">0</b><span class="rate" id="rate">+0/s</span></div>
+    <div class="topbtns"><a class="ib" href="../" aria-label="All games">🏠</a><button id="pediaBtn" class="ib" aria-label="Beastpedia">📖</button><button id="shopBtn" class="ib" aria-label="Upgrades">⬆️</button></div>
+  </header>
+  <nav class="worlds" id="worlds"></nav>
+  <main class="field" id="field"><div class="ground"></div><div class="hint" id="hint"></div></main>
+  <footer class="bar">
+    <button id="crateBtn" class="big"><span class="ic">📦</span><span id="crateLbl">Crate</span></button>
+    <button id="buyBtn" class="big"><span class="ic">🥚</span><span id="buyLbl">Buy</span></button>
+  </footer>
+</div>
+<div id="sheet" class="sheet" hidden></div>
+<div id="toast" class="toast" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>

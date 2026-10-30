@@ -2,5 +2,6 @@
   {"code": "latin", "name": "Latin", "flag": "🏛️", "path": "./", "language": "Latin"},
   {"code": "tounsi", "name": "Tounsi", "flag": "🇹🇳", "path": "tounsi/", "language": "Tunisian Arabic"},
   {"code": "music", "name": "Music", "flag": "🎵", "path": "music/", "language": "learn-the-notes"},
-  {"code": "russian", "name": "Russian", "flag": "🇷🇺", "path": "russian/", "language": "Russian"}
+  {"code": "russian", "name": "Russian", "flag": "🇷🇺", "path": "russian/", "language": "Russian"},
+  {"code": "merge", "name": "Merge Beasts", "flag": "🥚", "path": "merge/", "language": "tap-and-merge"}
 ]
