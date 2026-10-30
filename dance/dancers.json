@@ -146,7 +146,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_1.png",
 "frames": 32,
-"top": 15
+"top": 11
 },
 {
 "stage": 4,
@@ -154,7 +154,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_2.png",
 "frames": 32,
-"top": 17
+"top": 13
 },
 {
 "stage": 4,
@@ -162,7 +162,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_3.png",
 "frames": 32,
-"top": 16
+"top": 13
 },
 {
 "stage": 5,
@@ -178,7 +178,7 @@
 "stageName": "First tutu",
 "sheet": "art/s06_2.png",
 "frames": 32,
-"top": 19
+"top": 17
 },
 {
 "stage": 5,
@@ -218,7 +218,7 @@
 "stageName": "En pointe",
 "sheet": "art/s08_1.png",
 "frames": 32,
-"top": 7
+"top": 6
 },
 {
 "stage": 7,
@@ -234,7 +234,7 @@
 "stageName": "En pointe",
 "sheet": "art/s08_3.png",
 "frames": 32,
-"top": 10
+"top": 6
 },
 {
 "stage": 8,
