@@ -4,7 +4,7 @@
    REPO: the game asks for them once and keeps them in localStorage['dance.names'] on the device; a level is
    "<stage> <name>". Save in localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '6';
+const APP_VERSION = '7';
 const ART = 'art/';
 let NAMES = ['Dancer 1', 'Dancer 2', 'Dancer 3'], SPEC = null;
 const SCALE = 1.75;   // sprite pixels → screen pixels on the field
@@ -43,14 +43,17 @@ const store = { get: (k, d) => { try { const v = localStorage.getItem(k); return
 
 /* ---------- the chain: 14 stages × 3 sisters, from dancers.json ---------- */
 async function buildChain() {
-  SPEC = await (await fetch('dancers.json')).json();
+  SPEC = await (await fetch('dancers.json')).json(); FONT = await (await fetch('art/font.json')).json();
   NAMES = store.get('dance.names', null) || NAMES;
   CHAIN = SPEC.levels.map((l, i) => ({ ...l, world: WORLDS.findIndex(w => l.stage >= w.stages[0] && l.stage <= w.stages[1]), last: l.sister === 2, pic: l.sheet, desc: DESC[l.stage] }));
   WORLDS.forEach((w, i) => { const lv = CHAIN.map((c, k) => c.world === i ? k : -1).filter(k => k >= 0); w.start = lv[0]; w.end = lv[lv.length - 1]; });
   CHAIN.forEach((c, i) => { WORLD_OF[i] = c.world; });
 }
-// the level number above a dancer's head, in the 5 × 7 pixel font of art/digits.png
-const lvHTML = (n, c) => `<span class="lv" style="top:${Math.round((c.top || 0) * SCALE) - 20}px">${String(n).split('').map(d => `<i style="background-position:-${d * 12}px 0"></i>`).join('')}</span>`;
+// the name above a dancer's head, two lines ("Baby" / "<name>") in the 5 × 7 pixel font of art/font.png (FONT lists its glyphs;
+// accents are stripped and an unknown character is skipped)
+let FONT = '';
+const pixText = t => `<span class="pt">${[...t.normalize('NFD').replace(/[\u0300-\u036f]/g, '')].map(ch => { const i = FONT.indexOf(ch); return i < 0 ? '' : `<i style="background-position:-${i * 12}px 0"></i>`; }).join('')}</span>`;
+const lvHTML = (n, c) => `<span class="lv" style="top:${Math.round((c.top || 0) * SCALE) - 36}px">${pixText(c.stageName)}${pixText(NAMES[c.sister] || '')}</span>`;
 const nameOf = c => `${c.stageName} ${NAMES[c.sister] || ''}`.trim();
 // a dancer: a div showing one frame of her sprite sheet, the loop stepped by CSS
 function spriteHTML(c, scale = SCALE, cls = 'spr') {
