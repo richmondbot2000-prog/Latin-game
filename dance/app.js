@@ -4,7 +4,7 @@
    REPO: the game asks for them once and keeps them in localStorage['dance.names'] on the device; a level is
    "<stage> <name>". Save in localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '5';
+const APP_VERSION = '6';
 const ART = 'art/';
 let NAMES = ['Dancer 1', 'Dancer 2', 'Dancer 3'], SPEC = null;
 const SCALE = 1.75;   // sprite pixels → screen pixels on the field
