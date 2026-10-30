@@ -4,7 +4,7 @@
    burst; drag one onto an identical one and they merge into the next level; crates drop in and open into beasts; coins
    buy beasts and upgrades. Everything lives in localStorage['merge.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '4';
+const APP_VERSION = '5';
 const ART = '../art/beasts/';
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
