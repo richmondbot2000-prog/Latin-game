@@ -1,6 +1,6 @@
 // Dance Evolution service worker: the app shell is cached on install; the beast pictures and anything else under ../art
 // are cached as they are first fetched (cache first after that). Bump CACHE together with APP_VERSION in app.js.
-const CACHE = 'dance-v22';
+const CACHE = 'dance-v23';
 const SHELL = ['./', 'index.html', 'app.js', 'style.css', 'manifest.webmanifest', 'dancers.json', 'art/font.json', 'art/font.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {})))).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('dance-') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
