@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '16';
+const APP_VERSION = '17';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -185,6 +185,20 @@ function refresh() {
   $('#buyLbl').innerHTML = `Invite ${esc(nameOf(CHAIN[lv]))}<br><small><i class="cn"></i>${fmt(price)}</small>`;
   const sb = $('#shopBtn'); sb.classList.toggle('pulse', (canUp && save.coins >= up) || Object.keys(UPS).some(k => save.up[k] < UPS[k].max && save.coins >= UPS[k].cost(save.up[k])));
 }
+// a dancer below the bag level would be stranded for ever (nothing could ever bring her a twin), so Invite can
+// bring in any level from the lowest dancer on the stage up to the bag level
+const lowest = w => save.fields[w].reduce((m, b) => Math.min(m, b.lv), save.crate[w]);
+const priceOf = lv => 25 * Math.pow(GROW, lv);
+function invite(lv) { const w = save.world; if (save.fields[w].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); return false; } if (save.coins < priceOf(lv)) { toast('Not enough coins yet'); return false; } save.coins -= priceOf(lv); addBeast(lv); return true; }
+function inviteSheet() {
+  const w = save.world, on = {}; save.fields[w].forEach(b => { on[b.lv] = (on[b.lv] || 0) + 1; });
+  const rows = []; for (let lv = lowest(w); lv <= save.crate[w]; lv++) {
+    const alone = on[lv] === 1, note = alone ? 'One on stage, waiting for a twin' : on[lv] ? `${on[lv]} on stage` : lv === save.crate[w] ? 'What the dance bags bring' : 'None on stage';
+    rows.push(`<div class="up"><span class="ic sp">${spriteHTML(CHAIN[lv], 1)}</span><div class="t"><b>${esc(nameOf(CHAIN[lv]))}</b><span>${note}</span></div><button data-lv="${lv}" ${save.coins < priceOf(lv) ? 'disabled' : ''}><i class="cn"></i>${fmt(priceOf(lv))}</button></div>`);
+  }
+  sheet(`<h2>Who shall we invite?</h2>${rows.join('')}`);
+  document.querySelectorAll('.sheet button[data-lv]').forEach(b => { b.onclick = () => { if (invite(+b.dataset.lv)) closeSheet(); }; });
+}
 function crateUpCost(w) { return 40 * Math.pow(GROW, save.crate[w] + 1); }
 
 /* ---------- the loop ---------- */
@@ -268,7 +282,7 @@ async function main() {
   await buildChain(); load(); preloadSheets();
   $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia;
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
-  $('#buyBtn').onclick = () => { const w = save.world, lv = save.crate[w], price = 25 * Math.pow(GROW, lv); if (save.fields[w].length >= capOf(save.up.cap)) { toast('Field full — merge some beasts first'); return; } if (save.coins < price) return; save.coins -= price; addBeast(lv); };
+  $('#buyBtn').onclick = () => { const w = save.world; if (save.fields[w].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); return; } if (lowest(w) < save.crate[w]) inviteSheet(); else invite(save.crate[w]); };
   // Safari zooms on a quick double tap; taps on the stage are game moves, never zooms
   mount(); away();
   field.addEventListener('touchend', e => { if (e.cancelable) e.preventDefault(); }, { passive: false });

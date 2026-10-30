@@ -130,3 +130,4 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 /* names are light grey until the dancer is touched */
 .beast .lv { opacity: .38; }
 .beast.hold .lv, .beast.drag .lv { opacity: 1; }
+.up .ic.sp { width: 48px; display: flex; justify-content: center; }
