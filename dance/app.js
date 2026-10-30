@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '14';
+const APP_VERSION = '15';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -118,7 +118,7 @@ function removeBeast(b) { const f = save.fields[save.world]; const i = f.indexOf
 /* ---------- touch: tap for a coin, drag onto a twin to merge ---------- */
 function bindBeast(el, b) {
   let start = null, moved = false, target = null;
-  el.onpointerdown = e => { start = { x: e.clientX, y: e.clientY }; moved = false; el.setPointerCapture(e.pointerId); };
+  el.onpointerdown = e => { start = { x: e.clientX, y: e.clientY }; moved = false; el.classList.add('hold'); el.setPointerCapture(e.pointerId); };
   el.onpointermove = e => {
     if (!start) return;
     if (!moved && Math.hypot(e.clientX - start.x, e.clientY - start.y) < 6) return;
@@ -130,7 +130,7 @@ function bindBeast(el, b) {
   };
   el.onpointerup = el.onpointercancel = e => {
     if (!start) return; start = null;
-    el.classList.remove('drag');
+    el.classList.remove('drag', 'hold');
     if (target && els[target.id]) els[target.id].classList.remove('target');
     if (!moved) { tap(b, e); return; }
     if (target) merge(b, target); else persist();

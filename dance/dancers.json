@@ -24,7 +24,7 @@
 "stageName": "Baby",
 "sheet": "art/s01_1.png",
 "frames": 6,
-"top": 27
+"top": 26
 },
 {
 "stage": 0,
@@ -32,7 +32,7 @@
 "stageName": "Baby",
 "sheet": "art/s01_2.png",
 "frames": 6,
-"top": 26
+"top": 27
 },
 {
 "stage": 0,

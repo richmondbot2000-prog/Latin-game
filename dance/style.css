@@ -126,3 +126,7 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 .field .hint:empty { display: none; }
 
 .sheet textarea.nm { font-family: inherit; resize: none; }
+
+/* names are light grey until the dancer is touched */
+.beast .lv { opacity: .38; }
+.beast.hold .lv, .beast.drag .lv { opacity: 1; }
