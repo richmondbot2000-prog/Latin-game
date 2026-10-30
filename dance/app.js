@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '18';
+const APP_VERSION = '19';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -60,9 +60,9 @@ function spriteHTML(c, scale = SCALE, cls = 'spr') {
   const w = SPEC.w * scale, h = SPEC.h * scale;
   return `<div class="${cls}" data-frames="${c.frames}" data-fw="${w}" style="width:${w}px;height:${h}px;background-image:url('${c.sheet}');background-size:${w * c.frames}px ${h}px"></div>`;
 }
-// the loops are stepped here, not by CSS: every 160 ms each sprite shows its next frame (a still sprite keeps frame 0)
+// the loops are stepped here, not by CSS: every 40 ms each sprite shows its next frame (a still sprite keeps frame 0)
 let frameNo = 0;
-setInterval(() => { frameNo++; document.querySelectorAll('.spr:not(.still)').forEach(el => { const n = +el.dataset.frames || 1; el.style.backgroundPositionX = -((frameNo % n) * +el.dataset.fw) + 'px'; }); }, 160);
+setInterval(() => { frameNo++; document.querySelectorAll('.spr:not(.still)').forEach(el => { const n = +el.dataset.frames || 1; el.style.backgroundPositionX = -((frameNo % n) * +el.dataset.fw) + 'px'; }); }, 40);
 // every sheet is fetched once at the start, so a merge never waits for the network
 function preloadSheets() { SPEC.levels.forEach(l => { const i = new Image(); i.src = l.sheet; }); }
 
@@ -97,7 +97,7 @@ function hint() {
 const rnd = (a, b) => a + Math.random() * (b - a);
 function spot() { return { x: rnd(14, 86), y: rnd(60, 92) }; }
 function place(b, pop = false) {
-  const el = document.createElement('div'); el.className = 'beast' + (pop ? ' pop' : '') + (Math.random() < .5 ? ' flip' : '');
+  const el = document.createElement('div'); el.className = 'beast' + (pop ? ' pop' : '') + (Math.random() < .5 ? ' flip' : '') + (CHAIN[b.lv].stage === 0 ? ' crawl' : '');
   el.innerHTML = `${spriteHTML(CHAIN[b.lv])}${lvHTML(b.lv + 1, CHAIN[b.lv])}`;
   el.style.left = b.x + '%'; el.style.top = b.y + '%';
   el.dataset.id = b.id; els[b.id] = el; field.appendChild(el);
@@ -105,7 +105,9 @@ function place(b, pop = false) {
 }
 function wander() {
   if (field.querySelector('.beast.drag')) return;   // nobody moves while a beast is being carried
-  for (const b of save.fields[save.world]) { if (Math.random() < .25 && !(els[b.id] && els[b.id].classList.contains('drag'))) { const s = spot(); const el = els[b.id]; if (el) { el.classList.toggle('flip', s.x < b.x); } b.x = s.x; b.y = s.y; if (el) { el.style.left = s.x + '%'; el.style.top = s.y + '%'; } } }
+  // a baby only moves across the floor while her loop is crawling (the first 17 of 40 frames), and gets there before she sits up
+  const crawling = frameNo % 40 < 5;
+  for (const b of save.fields[save.world]) { if (CHAIN[b.lv].stage === 0 && !crawling) continue; if (Math.random() < (CHAIN[b.lv].stage === 0 ? .6 : .25) && !(els[b.id] && els[b.id].classList.contains('drag'))) { const s = spot(); const el = els[b.id]; if (el) { el.classList.toggle('flip', s.x < b.x); } b.x = s.x; b.y = s.y; if (el) { el.style.left = s.x + '%'; el.style.top = s.y + '%'; } } }
 }
 let nextId = () => (save.nid = (save.nid || 0) + 1);
 function addBeast(lv, at, pop = true) {

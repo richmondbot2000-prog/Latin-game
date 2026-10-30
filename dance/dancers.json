@@ -23,151 +23,151 @@
 "sister": 0,
 "stageName": "Baby",
 "sheet": "art/s01_1.png",
-"frames": 6,
-"top": 26
+"frames": 40,
+"top": 24
 },
 {
 "stage": 0,
 "sister": 1,
 "stageName": "Baby",
 "sheet": "art/s01_2.png",
-"frames": 6,
-"top": 27
+"frames": 40,
+"top": 25
 },
 {
 "stage": 0,
 "sister": 2,
 "stageName": "Baby",
 "sheet": "art/s01_3.png",
-"frames": 6,
-"top": 27
+"frames": 40,
+"top": 25
 },
 {
 "stage": 1,
 "sister": 0,
 "stageName": "Tot",
 "sheet": "art/s02_1.png",
-"frames": 6,
-"top": 25
+"frames": 32,
+"top": 22
 },
 {
 "stage": 1,
 "sister": 1,
 "stageName": "Tot",
 "sheet": "art/s02_2.png",
-"frames": 6,
-"top": 25
+"frames": 32,
+"top": 22
 },
 {
 "stage": 1,
 "sister": 2,
 "stageName": "Tot",
 "sheet": "art/s02_3.png",
-"frames": 6,
-"top": 25
+"frames": 32,
+"top": 22
 },
 {
 "stage": 2,
 "sister": 0,
 "stageName": "Nursery",
 "sheet": "art/s03_1.png",
-"frames": 6,
-"top": 24
+"frames": 32,
+"top": 20
 },
 {
 "stage": 2,
 "sister": 1,
 "stageName": "Nursery",
 "sheet": "art/s03_2.png",
-"frames": 6,
-"top": 20
+"frames": 32,
+"top": 16
 },
 {
 "stage": 2,
 "sister": 2,
 "stageName": "Nursery",
 "sheet": "art/s03_3.png",
-"frames": 6,
-"top": 25
+"frames": 32,
+"top": 21
 },
 {
 "stage": 3,
 "sister": 0,
 "stageName": "Leotard",
 "sheet": "art/s04_1.png",
-"frames": 6,
-"top": 19
+"frames": 32,
+"top": 13
 },
 {
 "stage": 3,
 "sister": 1,
 "stageName": "Leotard",
 "sheet": "art/s04_2.png",
-"frames": 6,
-"top": 19
+"frames": 32,
+"top": 13
 },
 {
 "stage": 3,
 "sister": 2,
 "stageName": "Leotard",
 "sheet": "art/s04_3.png",
-"frames": 6,
-"top": 19
+"frames": 32,
+"top": 13
 },
 {
 "stage": 4,
 "sister": 0,
 "stageName": "Dance school",
 "sheet": "art/s05_1.png",
-"frames": 7,
-"top": 19
+"frames": 32,
+"top": 18
 },
 {
 "stage": 4,
 "sister": 1,
 "stageName": "Dance school",
 "sheet": "art/s05_2.png",
-"frames": 7,
-"top": 19
+"frames": 32,
+"top": 18
 },
 {
 "stage": 4,
 "sister": 2,
 "stageName": "Dance school",
 "sheet": "art/s05_3.png",
-"frames": 7,
-"top": 19
+"frames": 32,
+"top": 18
 },
 {
 "stage": 5,
 "sister": 0,
 "stageName": "First tutu",
 "sheet": "art/s06_1.png",
-"frames": 8,
-"top": 15
+"frames": 32,
+"top": 17
 },
 {
 "stage": 5,
 "sister": 1,
 "stageName": "First tutu",
 "sheet": "art/s06_2.png",
-"frames": 8,
-"top": 15
+"frames": 32,
+"top": 18
 },
 {
 "stage": 5,
 "sister": 2,
 "stageName": "First tutu",
 "sheet": "art/s06_3.png",
-"frames": 8,
-"top": 15
+"frames": 32,
+"top": 18
 },
 {
 "stage": 6,
 "sister": 0,
 "stageName": "Jazz",
 "sheet": "art/s07_1.png",
-"frames": 6,
+"frames": 32,
 "top": 6
 },
 {
@@ -175,7 +175,7 @@
 "sister": 1,
 "stageName": "Jazz",
 "sheet": "art/s07_2.png",
-"frames": 6,
+"frames": 32,
 "top": 6
 },
 {
@@ -183,7 +183,7 @@
 "sister": 2,
 "stageName": "Jazz",
 "sheet": "art/s07_3.png",
-"frames": 6,
+"frames": 32,
 "top": 6
 },
 {
@@ -191,31 +191,31 @@
 "sister": 0,
 "stageName": "En pointe",
 "sheet": "art/s08_1.png",
-"frames": 8,
-"top": 11
+"frames": 32,
+"top": 7
 },
 {
 "stage": 7,
 "sister": 1,
 "stageName": "En pointe",
 "sheet": "art/s08_2.png",
-"frames": 8,
-"top": 11
+"frames": 32,
+"top": 7
 },
 {
 "stage": 7,
 "sister": 2,
 "stageName": "En pointe",
 "sheet": "art/s08_3.png",
-"frames": 8,
-"top": 11
+"frames": 32,
+"top": 7
 },
 {
 "stage": 8,
 "sister": 0,
 "stageName": "Swan",
 "sheet": "art/s09_1.png",
-"frames": 8,
+"frames": 32,
 "top": 9
 },
 {
@@ -223,7 +223,7 @@
 "sister": 1,
 "stageName": "Swan",
 "sheet": "art/s09_2.png",
-"frames": 8,
+"frames": 32,
 "top": 9
 },
 {
@@ -231,7 +231,7 @@
 "sister": 2,
 "stageName": "Swan",
 "sheet": "art/s09_3.png",
-"frames": 8,
+"frames": 32,
 "top": 9
 },
 {
@@ -239,31 +239,31 @@
 "sister": 0,
 "stageName": "Prima",
 "sheet": "art/s10_1.png",
-"frames": 8,
-"top": 6
+"frames": 32,
+"top": 5
 },
 {
 "stage": 9,
 "sister": 1,
 "stageName": "Prima",
 "sheet": "art/s10_2.png",
-"frames": 8,
-"top": 6
+"frames": 32,
+"top": 5
 },
 {
 "stage": 9,
 "sister": 2,
 "stageName": "Prima",
 "sheet": "art/s10_3.png",
-"frames": 8,
-"top": 6
+"frames": 32,
+"top": 5
 },
 {
 "stage": 10,
 "sister": 0,
 "stageName": "Street",
 "sheet": "art/s11_1.png",
-"frames": 7,
+"frames": 32,
 "top": 11
 },
 {
@@ -271,7 +271,7 @@
 "sister": 1,
 "stageName": "Street",
 "sheet": "art/s11_2.png",
-"frames": 7,
+"frames": 32,
 "top": 11
 },
 {
@@ -279,7 +279,7 @@
 "sister": 2,
 "stageName": "Street",
 "sheet": "art/s11_3.png",
-"frames": 7,
+"frames": 32,
 "top": 11
 },
 {
@@ -287,15 +287,15 @@
 "sister": 0,
 "stageName": "Stage star",
 "sheet": "art/s12_1.png",
-"frames": 7,
-"top": 6
+"frames": 32,
+"top": 2
 },
 {
 "stage": 11,
 "sister": 1,
 "stageName": "Stage star",
 "sheet": "art/s12_2.png",
-"frames": 7,
+"frames": 32,
 "top": 0
 },
 {
@@ -303,23 +303,23 @@
 "sister": 2,
 "stageName": "Stage star",
 "sheet": "art/s12_3.png",
-"frames": 7,
-"top": 6
+"frames": 32,
+"top": 2
 },
 {
 "stage": 12,
 "sister": 0,
 "stageName": "World tour",
 "sheet": "art/s13_1.png",
-"frames": 8,
-"top": 6
+"frames": 32,
+"top": 5
 },
 {
 "stage": 12,
 "sister": 1,
 "stageName": "World tour",
 "sheet": "art/s13_2.png",
-"frames": 8,
+"frames": 32,
 "top": 6
 },
 {
@@ -327,32 +327,32 @@
 "sister": 2,
 "stageName": "World tour",
 "sheet": "art/s13_3.png",
-"frames": 8,
-"top": 6
+"frames": 32,
+"top": 1
 },
 {
 "stage": 13,
 "sister": 0,
 "stageName": "Legend",
 "sheet": "art/s14_1.png",
-"frames": 8,
-"top": 2
+"frames": 32,
+"top": 0
 },
 {
 "stage": 13,
 "sister": 1,
 "stageName": "Legend",
 "sheet": "art/s14_2.png",
-"frames": 8,
-"top": 2
+"frames": 32,
+"top": 0
 },
 {
 "stage": 13,
 "sister": 2,
 "stageName": "Legend",
 "sheet": "art/s14_3.png",
-"frames": 8,
-"top": 2
+"frames": 32,
+"top": 0
 }
 ]
 }
