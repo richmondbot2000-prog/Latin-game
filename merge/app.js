@@ -4,7 +4,7 @@
    burst; drag one onto an identical one and they merge into the next level; crates drop in and open into beasts; coins
    buy beasts and upgrades. Everything lives in localStorage['merge.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '2';
+const APP_VERSION = '3';
 const ART = '../art/beasts/';
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -234,9 +234,9 @@ async function main() {
   $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia;
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
   $('#buyBtn').onclick = () => { const w = save.world, lv = save.crate[w], price = 25 * Math.pow(GROW, lv); if (save.fields[w].length >= capOf(save.up.cap)) { toast('Field full — merge some beasts first'); return; } if (save.coins < price) return; save.coins -= price; addBeast(lv); };
+  mount(); away();
   field.addEventListener('touchend', e => { if (e.cancelable) e.preventDefault(); }, { passive: false });   // no Safari double-tap zoom on the field
   document.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
-  mount(); away();
   setInterval(tick, 250);
   document.addEventListener('visibilitychange', () => { if (document.hidden) { save.t = Date.now(); store.set('merge.save', save); } else { lastTick = Date.now(); away(); } });
   window.addEventListener('pagehide', () => { save.t = Date.now(); store.set('merge.save', save); });
