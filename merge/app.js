@@ -4,7 +4,7 @@
    burst; drag one onto an identical one and they merge into the next level; crates drop in and open into beasts; coins
    buy beasts and upgrades. Everything lives in localStorage['merge.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '3';
+const APP_VERSION = '4';
 const ART = '../art/beasts/';
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -57,7 +57,7 @@ function load() {
   for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
 }
 let saveTimer = 0;
-const persist = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => { save.t = Date.now(); store.set('merge.save', save); }, 400); };
+const persist = () => { save.t = Date.now(); store.set('merge.save', save); };
 const income = () => Object.values(save.fields).flat().reduce((s, b) => s + RATE(b.lv), 0);
 
 /* ---------- the field ---------- */

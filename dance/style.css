@@ -124,3 +124,5 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 .crate .tag { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); white-space: nowrap; background: #2a1830; color: #fff; font-size: 12px; font-weight: 700; padding: 4px 8px; margin-bottom: 4px; box-shadow: 0 0 0 2px #fff; line-height: 1.2; pointer-events: none; }
 .field .hint { top: 30%; left: 8%; right: 8%; padding: 8px 12px; background: rgba(42, 24, 48, .85); color: #fff; box-shadow: 0 0 0 2px #fff; font-weight: 700; font-size: 14px; }
 .field .hint:empty { display: none; }
+
+.sheet textarea.nm { font-family: inherit; resize: none; }

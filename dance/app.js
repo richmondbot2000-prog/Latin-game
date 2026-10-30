@@ -4,7 +4,7 @@
    REPO: the game asks for them once and keeps them in localStorage['dance.names'] on the device; a level is
    "<stage> <name>". Save in localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '10';
+const APP_VERSION = '11';
 const ART = 'art/';
 let NAMES = ['Dancer 1', 'Dancer 2', 'Dancer 3'], SPEC = null;
 const SCALE = 1.75;   // sprite pixels → screen pixels on the field
@@ -72,7 +72,7 @@ function load() {
   for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
 }
 let saveTimer = 0;
-const persist = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => { save.t = Date.now(); store.set('dance.save', save); }, 400); };
+const persist = () => { save.t = Date.now(); store.set('dance.save', save); };   // written at once: a force-closed app loses nothing
 const income = () => Object.values(save.fields).flat().reduce((s, b) => s + RATE(b.lv), 0);
 
 /* ---------- the field ---------- */
@@ -216,8 +216,8 @@ function shop() {
   const w = save.world, lv = save.crate[w], canUp = lv < WORLDS[w].end - 1 && lv < CHAIN.length - 2;
   const rows = [`<div class="up ${canUp ? '' : 'max'}"><span class="ic"><img src="art/bag.png" alt=""></span><div class="t"><b>Better dance bags</b><span>${canUp ? `Bags in the ${WORLDS[w].name} bring ${esc(nameOf(CHAIN[lv + 1]))} (level ${lv + 2})` : 'Bags here are as good as they get'}</span></div><button data-k="cratelv" ${save.coins < crateUpCost(w) ? 'disabled' : ''}><i class="cn"></i>${fmt(crateUpCost(w))}</button></div>`,
     ...Object.entries(UPS).map(([k, u]) => { const n = save.up[k], max = n >= u.max; return `<div class="up ${max ? 'max' : ''}"><span class="ic">${u.ic}</span><div class="t"><b>${u.name}${n ? ` · ${n}` : ''}</b><span>${max ? 'Maxed out' : u.desc(n + 1)}</span></div><button data-k="${k}" ${save.coins < u.cost(n) ? 'disabled' : ''}><i class="cn"></i>${fmt(u.cost(n))}</button></div>`; })];
-  sheet(`<h2>Upgrades</h2><div class="small" style="color:var(--muted);margin-bottom:6px">You have <i class="cn"></i>${fmt(save.coins)}</div>${rows.join('')}<button class="linkbtn" id="renameBtn">✏️ Change the dancers' names</button>`);
-  $('#renameBtn').onclick = () => askNames(true);
+  sheet(`<h2>Upgrades</h2><div class="small" style="color:var(--muted);margin-bottom:6px">You have <i class="cn"></i>${fmt(save.coins)}</div>${rows.join('')}<button class="linkbtn" id="renameBtn">✏️ Change the dancers' names</button><button class="linkbtn" id="moveBtn">📲 Move my game to another app or phone</button>`);
+  $('#renameBtn').onclick = () => askNames(true); $('#moveBtn').onclick = moveSheet;
   $('#sheet').querySelectorAll('button[data-k]').forEach(b => { b.onclick = () => {
     const k = b.dataset.k;
     if (k === 'cratelv') { const c = crateUpCost(w); if (save.coins < c) return; save.coins -= c; save.crate[w]++; }
@@ -253,6 +253,24 @@ function askNames(again = false) {
     <button class="btn" id="namesOk">Let's dance</button>`);
   $('#sheet .close').hidden = !again;
   $('#namesOk').onclick = () => { NAMES = [0, 1, 2].map(i => ($('#nm' + i).value.trim() || `Dancer ${i + 1}`).slice(0, 14)); store.set('dance.names', NAMES); closeSheet(); mount(); };
+}
+
+/* ---------- move the game: a save code (the save and the names, as text) to copy from one app or phone into another ---------- */
+function saveCode() { return btoa(unescape(encodeURIComponent(JSON.stringify({ s: save, n: NAMES })))); }
+function moveSheet() {
+  const code = saveCode();
+  sheet(`<h2>Move my game</h2><p class="small" style="color:var(--muted)">On an iPhone the home-screen app and Safari keep separate games. Copy this code here and paste it into the other one (or another phone) to carry everything across: dancers, coins, upgrades and names.</p>
+    <textarea class="nm" id="mvCode" rows="4" readonly style="font-size:12px;word-break:break-all">${code}</textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="mvCopy">Copy</button>${navigator.share ? '<button class="btn" id="mvShare">Share</button>' : ''}</div>
+    <h2 style="margin-top:18px">Paste a code</h2><textarea class="nm" id="mvIn" rows="3" placeholder="Paste a code from the other app…" style="font-size:12px"></textarea>
+    <button class="btn" id="mvLoad">Load it</button><p class="small" style="color:var(--muted)">Loading replaces the game in this app.</p>`);
+  $('#mvCopy').onclick = async () => { try { await navigator.clipboard.writeText(code); toast('Copied'); } catch (e) { $('#mvCode').select(); document.execCommand('copy'); toast('Copied'); } };
+  const sh = $('#mvShare'); if (sh) sh.onclick = () => navigator.share({ text: code }).catch(() => {});
+  $('#mvLoad').onclick = () => {
+    try { const o = JSON.parse(decodeURIComponent(escape(atob($('#mvIn').value.trim())))); if (!o.s || !o.s.fields) throw 0;
+      save = o.s; store.set('dance.save', save); if (o.n) { NAMES = o.n; store.set('dance.names', NAMES); } for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
+      closeSheet(); mount(); toast('Game loaded'); } catch (e) { toast('That code did not work'); }
+  };
 }
 
 /* ---------- start ---------- */
