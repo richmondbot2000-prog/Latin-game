@@ -127,7 +127,9 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 
 .sheet textarea.nm { font-family: inherit; resize: none; }
 
-/* names are light grey until the dancer is touched */
-.beast .lv { opacity: .38; }
-.beast.hold .lv, .beast.drag .lv { opacity: 1; }
+/* names are dark grey; the dancer in front (the last one touched) has hers in black and bold */
+.beast .lv { opacity: .7; }
+.beast.hold .lv, .beast.drag .lv, .beast.last .lv { opacity: 1; }
+.beast.hold .pt i::after, .beast.drag .pt i::after, .beast.last .pt i::after { content: ''; display: block; width: 10px; height: 14px; background: inherit; transform: translateX(1px); }
+.beast.last { z-index: 3; }
 .up .ic.sp { width: 48px; display: flex; justify-content: center; }

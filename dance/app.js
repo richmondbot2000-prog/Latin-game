@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '17';
+const APP_VERSION = '18';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -83,6 +83,7 @@ function mount() {
   field.querySelectorAll('.beast, .crate, .coin, .drop').forEach(e => e.remove());
   els = {};
   save.fields[w].forEach(b => place(b));
+  const last = field.querySelector('.beast:last-of-type'); if (last) last.classList.add('last');
   renderWorlds(); refresh(); hint();
 }
 function renderWorlds() {
@@ -116,9 +117,11 @@ function addBeast(lv, at, pop = true) {
 function removeBeast(b) { const f = save.fields[save.world]; const i = f.indexOf(b); if (i >= 0) f.splice(i, 1); const el = els[b.id]; if (el) el.remove(); delete els[b.id]; }
 
 /* ---------- touch: tap for a coin, drag onto a twin to merge ---------- */
+// the dancer touched last comes to the front and keeps her name in black and bold until another is touched
+function front(el) { field.querySelectorAll('.beast.last').forEach(e => e.classList.remove('last')); el.classList.add('last'); field.appendChild(el); }
 function bindBeast(el, b) {
   let start = null, moved = false, target = null;
-  el.onpointerdown = e => { start = { x: e.clientX, y: e.clientY }; moved = false; el.classList.add('hold'); el.setPointerCapture(e.pointerId); };
+  el.onpointerdown = e => { start = { x: e.clientX, y: e.clientY }; moved = false; el.classList.add('hold'); front(el); el.setPointerCapture(e.pointerId); };
   el.onpointermove = e => {
     if (!start) return;
     if (!moved && Math.hypot(e.clientX - start.x, e.clientY - start.y) < 6) return;
