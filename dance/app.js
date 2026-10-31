@@ -34,7 +34,7 @@ const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wob
   'An icon: her very first move, perfected.', 'A gold statue that comes to life.', 'Superstar: gold fringe and flashbulbs.', 'A Dance Legend in a golden gown.', 'The Spirit of Dance: two Legends become one cloud, in all three sisters\' colours.'];
 // economy: a beast at level L earns RATE(L) a second; the next crate level, a bought beast and the upgrades scale with it
 const GROW = 1.33;
-const RATE = L => 0.5 * Math.pow(GROW, L) * (save && save.encore ? 1 + 0.5 * save.encore : 1);   // an Encore (new game after the finale) adds 50 % for ever
+const RATE = L => 0.5 * Math.pow(GROW, L) * (save && save.encore ? 1 + 0.5 * save.encore : 1) * (save && save.hard ? Math.pow(.5, save.hard) : 1);   // an Encore (new game after the finale) adds 50 % for ever
 const fmt = n => { if (n < 1000) return String(Math.floor(n)); const u = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td', 'Qd', 'Qn', 'Sd', 'St', 'Od', 'Nd', 'Vg']; let i = -1; while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; } return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i]; };
 const UPS = {
   crate: { ic: '<img src="art/bag.png" alt="">', name: 'Faster dance bags', desc: n => `A bag every ${crateEvery(n).toFixed(0)} s`, cost: n => 120 * Math.pow(2.4, n), max: 12 },
@@ -115,7 +115,11 @@ function load() {
 }
 let saveTimer = 0;
 const persist = () => { save.t = Date.now(); store.set('dance.save', save); };   // written at once: a force-closed app loses nothing
-const income = () => Object.values(save.fields).flat().reduce((s, b) => s + RATE(b.lv), 0);
+const earns = b => RATE(b.lv) * (b.lv === SPIRIT ? (b.sl || 1) : 1);   // the Spirit of Dance earns its level times a dancer's rate
+const income = () => Object.values(save.fields).flat().reduce((s, b) => s + earns(b), 0);
+/* the Spirit of Dance: a level 1–100 in the middle of the cloud, which grows at 10 / 30 / 50 / 75; at 100 the game is won */
+const SPIRIT_MAX = 100;
+const spiritScale = sl => sl >= 75 ? 1.25 : sl >= 50 ? 1.1 : sl >= 30 ? .95 : sl >= 10 ? .8 : .65;
 
 /* ---------- the field ---------- */
 function mount() {
@@ -142,6 +146,11 @@ function spot() { return { x: rnd(14, 86), y: rnd(60, 92) }; }
 function place(b, pop = false) {
   const el = document.createElement('div'); el.className = 'beast' + (pop ? ' pop' : '') + (Math.random() < .5 ? ' flip' : '') + (CHAIN[b.lv].stage === 0 ? ' crawl' : '');
   el.innerHTML = `${spriteHTML(CHAIN[b.lv])}${lvHTML(b.lv + 1, CHAIN[b.lv])}`;
+  if (b.lv === SPIRIT) {   // the cloud: semi-transparent, sized by its level, the level number in the middle
+    const sl = b.sl || 1, ss = spiritScale(sl); el.classList.add('spirit'); el.style.setProperty('--ss', ss);
+    el.insertAdjacentHTML('beforeend', `<span class="sn" style="--ss:${ss}">${pixText(String(sl))}</span>`);
+    const lv = el.querySelector('.lv'); if (lv) lv.style.top = Math.round(112 - (112 - (CHAIN[b.lv].top || 0) * SCALE) * ss) - 27 + 'px';
+  }
   el.style.left = b.x + '%'; el.style.top = b.y + '%';
   el.dataset.id = b.id; els[b.id] = el; field.appendChild(el);
   bindBeast(el, b);
@@ -157,9 +166,9 @@ function wander() {
       if (run && els[b.id]) els[b.id].style.transitionDuration = ((run[1] - run[0]) * 40 - 100) + 'ms'; const s = spot(); const el = els[b.id]; if (el) { el.classList.toggle('flip', s.x < b.x); } b.x = s.x; b.y = s.y; if (el) { el.style.left = s.x + '%'; el.style.top = s.y + '%'; } } }
 }
 let nextId = () => (save.nid = (save.nid || 0) + 1);
-function addBeast(lv, at, pop = true) {
+function addBeast(lv, at, pop = true, sl = 1) {
   const w = save.world; const s = at || spot();
-  const b = { id: nextId(), lv, x: s.x, y: s.y }; save.fields[w].push(b); place(b, pop);
+  const b = { id: nextId(), lv, x: s.x, y: s.y }; if (lv === SPIRIT) b.sl = sl; save.fields[w].push(b); place(b, pop);
   discover(lv); persist(); refresh(); hint();
   return b;
 }
@@ -193,11 +202,11 @@ function bindBeast(el, b) {
 function twinNear(b) {
   const me = els[b.id]; if (!me) return null; const m = me.getBoundingClientRect(), mx = m.left + m.width / 2, my = m.top + m.height / 2;
   let best = null, bd = 48;
-  for (const o of save.fields[save.world]) { if (o === b || o.lv !== b.lv || !els[o.id]) continue; const r = els[o.id].getBoundingClientRect(); const d = Math.hypot(r.left + r.width / 2 - mx, r.top + r.height / 2 - my); if (d < bd) { bd = d; best = o; } }
+  for (const o of save.fields[save.world]) { if (o === b || !canMerge(b, o) || !els[o.id]) continue; const r = els[o.id].getBoundingClientRect(); const d = Math.hypot(r.left + r.width / 2 - mx, r.top + r.height / 2 - my); if (d < bd) { bd = d; best = o; } }
   return best;
 }
 function tap(b, e) {
-  const v = RATE(b.lv) * tapMult(save.up.tap) * 2;
+  const v = earns(b) * tapMult(save.up.tap) * 2;
   earn(v, b.x, b.y - 6);
   const el = els[b.id]; if (el) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
 }
@@ -206,9 +215,17 @@ function earn(v, x, y) {
   const c = document.createElement('span'); c.className = 'coin'; c.innerHTML = '<i class="cn"></i>+' + fmt(v); c.style.left = x + '%'; c.style.top = y + '%'; field.appendChild(c); setTimeout(() => c.remove(), 1000);
   refresh(); persist();
 }
+// two of the same dancer merge; the Spirit of Dance also absorbs a Legend Juliette (+1) or another Spirit (the levels add)
+const canMerge = (a, o) => o.lv === a.lv || (a.lv === SPIRIT && o.lv === LEGEND) || (a.lv === LEGEND && o.lv === SPIRIT);
 function merge(a, t) {
+  if (a.lv === SPIRIT || t.lv === SPIRIT) {
+    const sl = Math.min(SPIRIT_MAX, (a.lv === SPIRIT ? a.sl || 1 : 1) + (t.lv === SPIRIT ? t.sl || 1 : 1)), was = Math.max(a.sl || 0, t.sl || 0), at = { x: t.x, y: t.y };
+    removeBeast(a); removeBeast(t); addBeast(SPIRIT, at, true, sl); sparks(at.x, at.y);
+    const grew = [10, 30, 50, 75].some(g => was < g && sl >= g); if (grew && sl < SPIRIT_MAX) toast(`✨ The Spirit of Dance grows — level ${sl}`);
+    if (sl >= SPIRIT_MAX && !save.won) { save.won = Date.now(); persist(); setTimeout(won, 1200); }
+    return;
+  }
   const lv = a.lv + 1;
-  if (lv >= CHAIN.length) { persist(); toast('Two Spirits of Dance cannot merge — retire one to the Hall of Fame 🏆'); setTimeout(hall, 900); return; }
   const at = { x: t.x, y: t.y };
   removeBeast(a); removeBeast(t);
   const b = addBeast(lv, at);
@@ -233,12 +250,33 @@ function finale() {
   for (let i = 0; i < 40; i++) setTimeout(() => { const s = document.createElement('span'); s.className = 'spark'; s.style.left = rnd(10, 90) + '%'; s.style.top = '-10px'; s.style.background = ['#f2a541', '#ff7bb0', '#7ec8ff', '#fff', '#ffd866'][i % 5]; s.style.setProperty('--dx', rnd(-60, 60) + 'px'); s.style.setProperty('--dy', rnd(300, 700) + 'px'); s.style.animationDuration = '2.6s'; document.body.appendChild(s); setTimeout(() => s.remove(), 2700); }, i * 90);
   $('#bow').onclick = () => { f.remove(); hall(); };
 }
+function won() {
+  document.querySelectorAll('.fanfare, .finale').forEach(f => f.remove());
+  const f = document.createElement('div'); f.className = 'finale won';
+  f.innerHTML = `<div class="curtain l"></div><div class="curtain r"></div><div class="show"><div class="kicker">THE SPIRIT OF DANCE · LEVEL ${SPIRIT_MAX}</div><h1>Congratulations</h1>
+    <div class="trio"><div class="legend">${spriteHTML(CHAIN[SPIRIT], 1.5)}</div></div>
+    <p>The girls have gone beyond being physical dancers and have become the universal spirit of dance itself. All dancers forever will channel their power and energy through them. The girls will never die, and the dancing will never end. The universe is a more harmonious place, and everyone has better moves.</p>
+    <p><b>Would you like to restart the game on HARD mode?</b></p><button class="btn" id="hardBtn">RESTART ON HARD MODE</button><button class="linkbtn" id="keepBtn">Keep playing</button></div>`;
+  document.body.appendChild(f); requestAnimationFrame(() => f.classList.add('open'));
+  for (let i = 0; i < 60; i++) setTimeout(() => { const s = document.createElement('span'); s.className = 'spark'; s.style.left = rnd(10, 90) + '%'; s.style.top = '-10px'; s.style.background = ['#56c2b8', '#f06aa0', '#9060d0', '#fff', '#ffd866'][i % 5]; s.style.setProperty('--dx', rnd(-60, 60) + 'px'); s.style.setProperty('--dy', rnd(300, 700) + 'px'); s.style.animationDuration = '2.6s'; f.appendChild(s); setTimeout(() => s.remove(), 2700); }, i * 60);
+  $('#hardBtn').onclick = () => hardMode(f); $('#keepBtn').onclick = () => f.remove();
+}
+// Hard mode: everything starts over — dancers, coins, bags, upgrades, the Dancepedia, stars and encores — and every dancer earns half as much (halved again for each hard restart)
+function hardMode(overlay) {
+  if (!confirm('Restart on HARD mode? All progress is undone — dancers, coins, bags, upgrades, Dancepedia, stars — and every dancer earns 50% less.')) return;
+  const hard = (save.hard || 0) + 1;
+  save = { coins: 0, world: 0, unlocked: 0, fields: {}, crate: {}, up: { crate: 0, cap: 0, tap: 0, away: 0 }, seen: {}, t: Date.now(), total: 0, chainv: save.chainv, hard };
+  for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = []; save.crate[w] = WORLDS[w].start; }
+  persist(); if (overlay) overlay.remove(); closeSheet(); $('#hallBtn').hidden = true; mount(); hardTag(); toast(`🔥 HARD MODE ${hard > 1 ? '×' + hard : ''} — every dancer earns ${Math.round(100 * (1 - Math.pow(.5, hard)))}% less`);
+}
+function hardTag() { let t = $('#hardTag'); if (!t) { t = document.createElement('span'); t.id = 'hardTag'; $('#rate').after(t); } t.textContent = save.hard ? ` HARD${save.hard > 1 ? ' ×' + save.hard : ''}` : ''; }
 function hall() {
   const stars = save.stars || 0, here = save.fields[save.world].filter(isFinal).length, bonus = income() * 3600 * 2;
   sheet(`<div class="detail"><img class="trophy" src="art/trophy.png" alt=""><div class="name">Hall of Fame</div><p class="el">${stars ? `${stars} Legend${stars === 1 ? '' : 's'} ha${stars === 1 ? 's' : 've'} taken a bow` : 'No Legend has taken her bow yet'}${save.encore ? ` · Encore ${save.encore}: +${save.encore * 50}% applause` : ''}</p>
     <p>Two <b>${esc(nameOf(CHAIN[LEGEND]))}</b>s merge into the <b>Spirit of Dance</b>. Retire a Legend Juliette or a Spirit from the stage to the Hall of Fame: she takes her bow, you keep a ⭐ for ever and get a bonus of two hours' coins.</p>
     <button class="btn" id="retire" ${here ? '' : 'disabled'}>⭐ Retire a Legend${here ? ` (+<i class="cn"></i>${fmt(bonus)})` : ' — none on this stage'}</button>
-    <h2 style="margin-top:22px">Encore</h2><p>Start the whole show again from the cot with <b>+50% applause for ever</b>. Your upgrades, Dancepedia and stars stay; the dancers, coins and bags start over.</p><button class="btn" id="encore">🎭 Encore!</button><button class="linkbtn" id="curtain">See the curtain call again</button></div>`);
+    <h2 style="margin-top:22px">Encore</h2><p>Start the whole show again from the cot with <b>+50% applause for ever</b>. Your upgrades, Dancepedia and stars stay; the dancers, coins and bags start over.</p><button class="btn" id="encore">🎭 Encore!</button><button class="linkbtn" id="curtain">See the curtain call again</button>${save.won ? '<h2 style="margin-top:22px">Hard mode</h2><p>The Spirit of Dance reached level 100. Start the whole game again with every dancer earning 50% less.</p><button class="btn" id="hardBtn">🔥 RESTART ON HARD MODE</button><button class="linkbtn" id="wonAgain">See the ending again</button>' : ''}</div>`);
+  if ($('#hardBtn')) { $('#hardBtn').onclick = () => hardMode(); $('#wonAgain').onclick = () => { closeSheet(); won(); }; }
   $('#retire').onclick = () => { const b = save.fields[save.world].find(isFinal); if (!b) return; removeBeast(b); save.stars = (save.stars || 0) + 1; save.coins += bonus; save.total = (save.total || 0) + bonus; persist(); refresh(); hint(); closeSheet(); toast(`⭐ ${nameOf(CHAIN[b.lv])} takes ${CHAIN[b.lv].spirit ? 'its' : 'her'} bow! +${fmt(bonus)}`); };
   $('#encore').onclick = () => { if (!confirm('Start the Encore? Dancers, coins and bags start over; upgrades, stars and the Dancepedia stay, and every dancer earns 50% more for ever.')) return;
     save.encore = (save.encore || 0) + 1; save.fields = {}; save.crate = {}; save.coins = 0; save.world = 0; save.unlocked = 0; save.bagsOpened = 0;
@@ -367,7 +405,7 @@ async function main() {
   await buildChain(); load(); preloadSheets();
   // the page may be an older cached copy (an update on a poor connection): add anything newer that it lacks
   if (!$('#hallBtn')) { const b = document.createElement('button'); b.id = 'hallBtn'; b.className = 'ib'; b.setAttribute('aria-label', 'Hall of Fame'); b.hidden = true; b.innerHTML = '<img src="art/trophy.png" alt="">'; const sb = $('#shopBtn'); if (sb && sb.parentNode) sb.parentNode.insertBefore(b, sb); else document.body.appendChild(b); }
-  $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia; $('#hallBtn').onclick = hall; $('#hallBtn').hidden = !save.finished;
+  $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia; $('#hallBtn').onclick = hall; $('#hallBtn').hidden = !save.finished; hardTag();
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
   $('#buyBtn').onclick = () => { const w = save.world; if (save.fields[w].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); return; } if (lowest(w) < save.crate[w]) inviteSheet(); else invite(save.crate[w]); };
   // Safari zooms on a quick double tap; taps on the stage are game moves, never zooms
