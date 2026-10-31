@@ -117,9 +117,10 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 .coin { display: flex; align-items: center; }
 
 /* the name above the head: two lines of white pixel text with a dark grey shadow (readable on every room), no box */
-.beast .lv { top: -36px; bottom: auto; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0; background: none; box-shadow: none; font-size: 0; line-height: 0; white-space: nowrap; }
+.beast .lv { top: -27px; bottom: auto; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0; background: none; box-shadow: none; font-size: 0; line-height: 0; white-space: nowrap; }
 .pt { display: inline-flex; gap: 2px; filter: drop-shadow(1px 1px 0 #3a3440) drop-shadow(0 0 1px rgba(0,0,0,.6)); }
-.pt i { display: block; width: 10px; height: 14px; background: url('art/font_w.png') 0 0 / auto 14px no-repeat; image-rendering: pixelated; }
+/* the 5 × 7 font at 1.43× (30 % smaller than the 2× it had until v43): a glyph cell is 6 px wide in the sheet */
+.pt i { display: block; width: 7px; height: 10px; background: url('art/font_w.png') calc(var(--i) * -8.5714px) 0 / auto 10px no-repeat; image-rendering: pixelated; }
 
 .crate .tag { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); white-space: nowrap; background: #2a1830; color: #fff; font-size: 12px; font-weight: 700; padding: 4px 8px; margin-bottom: 4px; box-shadow: 0 0 0 2px #fff; line-height: 1.2; pointer-events: none; }
 .field .hint { top: 30%; left: 8%; right: 8%; padding: 8px 12px; background: rgba(42, 24, 48, .85); color: #fff; box-shadow: 0 0 0 2px #fff; font-weight: 700; font-size: 14px; }
@@ -130,7 +131,7 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 /* the dancer in front (the last one touched) has her name at full strength and bold */
 .beast .lv { opacity: .8; }
 .beast.hold .lv, .beast.drag .lv, .beast.last .lv { opacity: 1; }
-.beast.hold .pt i::after, .beast.drag .pt i::after, .beast.last .pt i::after { content: ''; display: block; width: 10px; height: 14px; background: inherit; transform: translateX(1px); }
+.beast.hold .pt i::after, .beast.drag .pt i::after, .beast.last .pt i::after { content: ''; display: block; width: 7px; height: 10px; background: inherit; transform: translateX(1px); }
 .beast.last { z-index: 3; }
 .up .ic.sp { width: 48px; display: flex; justify-content: center; }
 .beast.crawl { transition-timing-function: linear, linear; }

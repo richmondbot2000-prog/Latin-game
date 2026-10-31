@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '43';
+const APP_VERSION = '44';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -70,8 +70,8 @@ async function buildChain() {
 // the name above a dancer's head, two lines ("Baby" / "<name>") in the 5 × 7 pixel font of art/font.png (FONT lists its glyphs;
 // accents are stripped and an unknown character is skipped)
 let FONT = '';
-const pixText = t => `<span class="pt">${[...t.normalize('NFD').replace(/[\u0300-\u036f]/g, '')].map(ch => { const i = FONT.indexOf(ch); return i < 0 ? '' : `<i style="background-position:-${i * 12}px 0"></i>`; }).join('')}</span>`;
-const lvHTML = (n, c) => `<span class="lv" style="top:${Math.round((c.top || 0) * SCALE) - 36}px">${pixText(c.stageName)}${pixText(NAMES[c.sister] || '')}</span>`;
+const pixText = t => `<span class="pt">${[...t.normalize('NFD').replace(/[\u0300-\u036f]/g, '')].map(ch => { const i = FONT.indexOf(ch); return i < 0 ? '' : `<i style="--i:${i}"></i>`; }).join('')}</span>`;
+const lvHTML = (n, c) => `<span class="lv" style="top:${Math.round((c.top || 0) * SCALE) - 27}px">${pixText(c.stageName)}${pixText(NAMES[c.sister] || '')}</span>`;
 const nameOf = c => `${c.stageName} ${NAMES[c.sister] || ''}`.trim();
 // a dancer: a div showing one frame of her sprite sheet, the loop stepped by CSS
 function spriteHTML(c, scale = SCALE, cls = 'spr') {
