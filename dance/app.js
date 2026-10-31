@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '34';
+const APP_VERSION = '35';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -18,7 +18,10 @@ const WORLDS = [   // by stage index (0-based); each has its own room
   { name: 'Ballet theatre', stages: [7, 9], bg: 'art/bg_theatre.png' },
   { name: 'City stage', stages: [10, 11], bg: 'art/bg_city.png' },
   { name: 'World tour', stages: [12, 14], bg: 'art/bg_tour.png' },
-  { name: 'Academy', stages: [15, 19], bg: 'art/bg_academy.png' },
+  { name: 'Academy', stages: [15, 15], bg: 'art/bg_academy.png' },
+  { name: 'Studio', stages: [16, 16], bg: 'art/bg_studio.png' },          // the Choreographers' rehearsal studio
+  { name: 'Stage door', stages: [17, 17], bg: 'art/bg_stagedoor.png' },   // the Directors' backstage
+  { name: 'Hall of fame', stages: [18, 19], bg: 'art/bg_hall.png' },      // the Icons and the Legends
 ];
 const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wobbly twirl.', 'Star of the nursery show.', 'Her first leotard — and first position.',
   'Plié, arabesque, skip: dance school every Saturday.', 'The first real tutu, worn everywhere.', 'Top hat, stripes and jazz hands.', 'Up on pointe at last.',
@@ -79,6 +82,18 @@ function load() {
   if (!save.fields || typeof save.fields !== 'object') save.fields = {}; if (!save.crate) save.crate = {}; if (!save.up) save.up = { crate: 0, cap: 0, tap: 0, away: 0 }; if (!save.seen) save.seen = {};
   if (!(save.world >= 0 && save.world < WORLDS.length)) save.world = 0; if (!(save.unlocked >= 0)) save.unlocked = 0;
   for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
+  // rooms can be split in an update (v35 split the Academy into four): every dancer moves to the room of her stage, a bag that
+  // pointed into a later room moves there too (clamped inside each room's levels), and the open rooms follow what has been made
+  const all = Object.values(save.fields).flat().filter(b => b && CHAIN[b.lv]);
+  for (let w = 0; w < WORLDS.length; w++) save.fields[w] = all.filter(b => CHAIN[b.lv].world === w);
+  for (let w = 0; w < WORLDS.length; w++) {
+    const W_ = WORLDS[w], c = save.crate[w];
+    if (c > W_.end) { for (let v = w + 1; v < WORLDS.length; v++) if (c >= WORLDS[v].start && (save.crate[v] == null || save.crate[v] < Math.min(c, WORLDS[v].end))) save.crate[v] = Math.min(c, WORLDS[v].end); }
+    save.crate[w] = Math.max(W_.start, Math.min(W_.end, c));
+  }
+  const made = Object.keys(save.seen).map(Number).filter(k => CHAIN[k]); const top = Math.max(-1, ...made, ...all.map(b => b.lv));
+  if (top >= 0) { let u = CHAIN[top].world; for (let w = 0; w < WORLDS.length - 1; w++) if (save.seen[WORLDS[w].end]) u = Math.max(u, w + 1); save.unlocked = Math.max(save.unlocked, Math.min(u, WORLDS.length - 1)); }
+  if (save.world > save.unlocked) save.world = save.unlocked;
 }
 let saveTimer = 0;
 const persist = () => { save.t = Date.now(); store.set('dance.save', save); };   // written at once: a force-closed app loses nothing
