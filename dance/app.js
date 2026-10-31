@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '41';
+const APP_VERSION = '42';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -280,7 +280,7 @@ function inviteSheet() {
 }
 function crateUpCost(w) { return 300 * Math.pow(1.38, save.crate[w]); }
 // better bags must be earned: the dancer two levels above the bag has to have been made by merging first
-const crateGate = w => save.crate[w] + 2 < CHAIN.length ? save.crate[w] + 2 : null;
+const crateGate = w => save.crate[w] + 1 < CHAIN.length ? save.crate[w] + 1 : null;   // a bag can bring a dancer once she has been made by merging (two past the bag until v42)
 const crateEarned = w => { const g = crateGate(w); return g == null || !!save.seen[g]; };
 
 /* ---------- the loop ---------- */
@@ -310,7 +310,7 @@ function sheet(html) { const s = $('#sheet'); s.hidden = false; s.innerHTML = `<
 function closeSheet() { $('#sheet').hidden = true; $('#sheet').innerHTML = ''; }
 function shop() {
   const w = save.world, lv = save.crate[w], canUp = lv < WORLDS[w].end - 1 && lv < CHAIN.length - 2, earned = crateEarned(w);
-  const rows = [`<div class="up ${canUp ? '' : 'max'}"><span class="ic"><img src="art/bag.png" alt=""></span><div class="t"><b>Better dance bags</b><span>${canUp ? (earned ? `Bags in the ${WORLDS[w].name} bring ${esc(nameOf(CHAIN[lv + 1]))} (level ${lv + 2})` : `First make ${esc(nameOf(CHAIN[lv + 2]))} by merging — then bags can bring ${esc(nameOf(CHAIN[lv + 1]))}`) : 'Bags here are as good as they get'}</span></div><button data-k="cratelv" ${save.coins < crateUpCost(w) || !earned ? 'disabled' : ''}><i class="cn"></i>${fmt(crateUpCost(w))}</button></div>`,
+  const rows = [`<div class="up ${canUp ? '' : 'max'}"><span class="ic"><img src="art/bag.png" alt=""></span><div class="t"><b>Better dance bags</b><span>${canUp ? (earned ? `Bags in the ${WORLDS[w].name} bring ${esc(nameOf(CHAIN[lv + 1]))} (level ${lv + 2})` : `Locked: make ${esc(nameOf(CHAIN[lv + 1]))} by merging first — then bags here can bring her`) : 'Bags here are as good as they get'}</span></div><button data-k="cratelv" ${save.coins < crateUpCost(w) || !earned ? 'disabled' : ''}>${canUp && !earned ? '🔒 Locked' : `<i class="cn"></i>${fmt(crateUpCost(w))}`}</button></div>`,
     ...Object.entries(UPS).map(([k, u]) => { const n = save.up[k], max = n >= u.max; return `<div class="up ${max ? 'max' : ''}"><span class="ic">${u.ic}</span><div class="t"><b>${u.name}${n ? ` · ${n}` : ''}</b><span>${max ? 'Maxed out' : u.desc(n + 1)}</span></div><button data-k="${k}" ${save.coins < u.cost(n) ? 'disabled' : ''}><i class="cn"></i>${fmt(u.cost(n))}</button></div>`; })];
   sheet(`<h2>Upgrades</h2><div class="small" style="color:var(--muted);margin-bottom:6px">You have <i class="cn"></i>${fmt(save.coins)}</div>${rows.join('')}<button class="linkbtn" id="moveBtn">📲 Move my game to another app or phone</button>`);
   $('#moveBtn').onclick = moveSheet;
