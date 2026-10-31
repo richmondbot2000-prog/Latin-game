@@ -1,10 +1,10 @@
-/* Dance Evolution — tap, drag to merge, evolve.
+/* Dance Sisters (Dance Evolution until v38) — tap, drag to merge, evolve.
    The Merge Beasts engine with dancers: 36 stages × 3 sisters = 108 levels (dancers.json + art/*.png sprite sheets drawn
    by scratchpad/dancers/sisters.py), each level a 6–8 frame dance loop. The three sisters are named below (the owner's
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '37';
+const APP_VERSION = '38';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;

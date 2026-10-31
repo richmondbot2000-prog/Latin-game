@@ -616,7 +616,7 @@ stage name, ecology and the earning rate. Big numbers print as K M B T Qa… (`f
 `manifest.webmanifest`; listed in `languages.json` so every home page links to it. Test: `scratchpad/merge.js` (crate,
 tap, drag-merge, upgrades, Beastpedia, away sheet at 390px). Not built yet: the alternate universe at the end, sound.
 
-## Dance Evolution (`dance/`)
+## Dance Sisters (`dance/`, "Dance Evolution" until v38)
 
 The Merge Beasts engine with **dancers**, at **latin.musicalmagic.uk/dance/** (`dance/app.js` is `merge/app.js` with the chain,
 wording and sprites swapped; same save shape in `localStorage['dance.save']`). **The chain is 36 stages × 3 sisters = 108

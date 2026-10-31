@@ -4,5 +4,5 @@
   {"code": "music", "name": "Music", "flag": "🎵", "path": "music/", "language": "learn-the-notes"},
   {"code": "russian", "name": "Russian", "flag": "🇷🇺", "path": "russian/", "language": "Russian"},
   {"code": "merge", "name": "Merge Beasts", "flag": "🥚", "path": "merge/", "language": "tap-and-merge"},
-  {"code": "dance", "name": "Dance Evolution", "flag": "🩰", "path": "dance/", "language": "tap-and-merge dance"}
+  {"code": "dance", "name": "Dance Sisters", "flag": "🩰", "path": "dance/", "language": "tap-and-merge dance"}
 ]
