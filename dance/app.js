@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '38';
+const APP_VERSION = '39';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -359,6 +359,8 @@ function moveSheet() {
 /* ---------- start ---------- */
 async function main() {
   await buildChain(); load(); preloadSheets();
+  // the page may be an older cached copy (an update on a poor connection): add anything newer that it lacks
+  if (!$('#hallBtn')) { const b = document.createElement('button'); b.id = 'hallBtn'; b.className = 'ib'; b.setAttribute('aria-label', 'Hall of Fame'); b.hidden = true; b.innerHTML = '<img src="art/trophy.png" alt="">'; const sb = $('#shopBtn'); if (sb && sb.parentNode) sb.parentNode.insertBefore(b, sb); else document.body.appendChild(b); }
   $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia; $('#hallBtn').onclick = hall; $('#hallBtn').hidden = !save.finished;
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
   $('#buyBtn').onclick = () => { const w = save.world; if (save.fields[w].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); return; } if (lowest(w) < save.crate[w]) inviteSheet(); else invite(save.crate[w]); };
