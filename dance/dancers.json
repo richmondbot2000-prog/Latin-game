@@ -37,7 +37,8 @@
 "Icon",
 "Statue",
 "Superstar",
-"Legend"
+"Legend",
+"Spirit of Dance"
 ],
 "levels": [
 {
@@ -929,7 +930,15 @@
 "sheet": "art/s36_3.png",
 "frames": 44,
 "top": 0
+},
+{
+"stage": 36,
+"sister": -1,
+"stageName": "Spirit of Dance",
+"sheet": "art/s37_1.png",
+"frames": 40,
+"top": 4
 }
 ],
-"artv": "85b6f1e4"
+"artv": "e2b08fd2"
 }

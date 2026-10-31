@@ -21,7 +21,7 @@ const WORLDS = [   // by stage index (0-based): nine rooms of four stages, each 
   { name: 'Academy', stages: [20, 23], bg: 'art/bg_academy.png' },
   { name: 'Studio', stages: [24, 27], bg: 'art/bg_studio.png' },
   { name: 'Stage door', stages: [28, 31], bg: 'art/bg_stagedoor.png' },
-  { name: 'Hall of fame', stages: [32, 35], bg: 'art/bg_hall.png' },
+  { name: 'Hall of fame', stages: [32, 36], bg: 'art/bg_hall.png' },   // stage 36 is the Spirit of Dance, one level above Legend Juliette
 ];
 const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wobbly twirl.', 'Party hat, balloon and a birthday bounce.', 'Star of the nursery show.',
   'Her first leotard — and first position.', 'Plié, arabesque, skip: dance school every Saturday.', 'The first real tutu, worn everywhere.', 'Top hat, stripes and jazz hands.',
@@ -31,7 +31,7 @@ const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wob
   'Passing it on: her very own dance school.', 'The examiner: marks on the clipboard, a nod.', 'The judge holds up a 10.', 'Graduation day: cap, gown and a jump for joy.',
   'Warming up: leg warmers and a water bottle.', 'Five, six, seven, eight — making the dances now.', 'Dance captain: leading the line.', 'The coach in her tracksuit: squats, stretches, claps.',
   'The understudy in the wings, script in hand.', 'Opening night: the bow from the wings.', 'The leading lady: boa, gloves and the pose.', 'The producer, on the phone, making it happen.',
-  'An icon: her very first move, perfected.', 'A gold statue that comes to life.', 'Superstar: gold fringe and flashbulbs.', 'A Dance Legend in a golden gown.'];
+  'An icon: her very first move, perfected.', 'A gold statue that comes to life.', 'Superstar: gold fringe and flashbulbs.', 'A Dance Legend in a golden gown.', 'The Spirit of Dance: two Legends become one cloud, in all three sisters\' colours.'];
 // economy: a beast at level L earns RATE(L) a second; the next crate level, a bought beast and the upgrades scale with it
 const GROW = 1.33;
 const RATE = L => 0.5 * Math.pow(GROW, L) * (save && save.encore ? 1 + 0.5 * save.encore : 1);   // an Encore (new game after the finale) adds 50 % for ever
@@ -48,7 +48,7 @@ const tapMult = n => 3 + 2 * n;
 const awayFrac = n => Math.min(1, 0.25 + 0.15 * n);
 const awayHours = n => 2 + 2 * n;
 
-let CHAIN = [], WORLD_OF = [], save, field, els = {}, lastTick = Date.now(), crateAt = 0, ticking = false;
+let LEGEND = 107, SPIRIT = 108, CHAIN = [], WORLD_OF = [], save, field, els = {}, lastTick = Date.now(), crateAt = 0, ticking = false;
 const store = { get: (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 
 /* ---------- the chain: 14 stages × 3 sisters, from dancers.json ---------- */
@@ -63,7 +63,8 @@ async function buildChain() {
   // pictures are served cache-first by the worker, so a redrawn picture gets a new address: ?v= the art stamp from dancers.json
   ART_V = SPEC.artv || ''; const stamp = u => ART_V ? u + '?v=' + ART_V : u;
   SPEC.levels.forEach(l => { l.sheet = stamp(l.sheet); }); WORLDS.forEach(w => { w.bg = stamp(w.bg.replace(/\?.*$/, '')); });
-  CHAIN = SPEC.levels.map((l, i) => ({ ...l, world: WORLDS.findIndex(w => l.stage >= w.stages[0] && l.stage <= w.stages[1]), last: l.sister === 2, pic: l.sheet, desc: DESC[l.stage] }));
+  CHAIN = SPEC.levels.map((l, i) => ({ ...l, world: WORLDS.findIndex(w => l.stage >= w.stages[0] && l.stage <= w.stages[1]), last: l.sister === 2 || l.sister < 0, spirit: l.sister < 0, pic: l.sheet, desc: DESC[l.stage] }));
+  LEGEND = CHAIN.findIndex(c => c.stageName === 'Legend' && c.sister === 2); SPIRIT = CHAIN.length - 1;
   WORLDS.forEach((w, i) => { const lv = CHAIN.map((c, k) => c.world === i ? k : -1).filter(k => k >= 0); w.start = lv[0]; w.end = lv[lv.length - 1]; });
   CHAIN.forEach((c, i) => { WORLD_OF[i] = c.world; });
 }
@@ -71,7 +72,7 @@ async function buildChain() {
 // accents are stripped and an unknown character is skipped)
 let FONT = '';
 const pixText = t => `<span class="pt">${[...t.normalize('NFD').replace(/[\u0300-\u036f]/g, '')].map(ch => { const i = FONT.indexOf(ch); return i < 0 ? '' : `<i style="--i:${i}"></i>`; }).join('')}</span>`;
-const lvHTML = (n, c) => `<span class="lv" style="top:${Math.round((c.top || 0) * SCALE) - 27}px">${pixText(c.stageName)}${pixText(NAMES[c.sister] || '')}</span>`;
+const lvHTML = (n, c) => `<span class="lv" style="top:${Math.round((c.top || 0) * SCALE) - 27}px">${c.spirit ? pixText('Spirit of') + pixText('Dance') : pixText(c.stageName) + pixText(NAMES[c.sister] || '')}</span>`;
 const nameOf = c => `${c.stageName} ${NAMES[c.sister] || ''}`.trim();
 // a dancer: a div showing one frame of her sprite sheet, the loop stepped by CSS
 function spriteHTML(c, scale = SCALE, cls = 'spr') {
@@ -207,7 +208,7 @@ function earn(v, x, y) {
 }
 function merge(a, t) {
   const lv = a.lv + 1;
-  if (lv >= CHAIN.length) { persist(); toast('Two Legends cannot merge — retire one to the Hall of Fame 🏆'); setTimeout(hall, 900); return; }
+  if (lv >= CHAIN.length) { persist(); toast('Two Spirits of Dance cannot merge — retire one to the Hall of Fame 🏆'); setTimeout(hall, 900); return; }
   const at = { x: t.x, y: t.y };
   removeBeast(a); removeBeast(t);
   const b = addBeast(lv, at);
@@ -217,15 +218,16 @@ function merge(a, t) {
 }
 function discover(lv) {
   if (!save.seen[lv]) { save.seen[lv] = 1; $('#pediaBtn').classList.add('pulse'); }
-  if (lv === CHAIN.length - 1 && !save.finished) { save.finished = Date.now(); persist(); $('#hallBtn').hidden = false; setTimeout(finale, 1500); }
+  if (lv === LEGEND && !save.finished) { save.finished = Date.now(); persist(); $('#hallBtn').hidden = false; setTimeout(finale, 1500); }
+  if (lv === SPIRIT && !save.spirit) { save.spirit = Date.now(); persist(); }
 }
 /* ---------- the ending: a curtain call the first time the last dancer is made, then the Hall of Fame ---------- */
-const isFinal = b => b.lv === CHAIN.length - 1;
+const isFinal = b => b.lv === LEGEND || b.lv === SPIRIT;   // a Legend Juliette or the Spirit of Dance can take her bow
 function finale() {
   document.querySelectorAll('.fanfare').forEach(f => f.remove());
-  const trio = CHAIN.slice(-3).map(c => `<div class="legend">${spriteHTML(c, 1.25)}</div>`).join('');
+  const trio = CHAIN.slice(LEGEND - 2, LEGEND + 1).map(c => `<div class="legend">${spriteHTML(c, 1.25)}</div>`).join('');
   const f = document.createElement('div'); f.className = 'finale';
-  f.innerHTML = `<div class="curtain l"></div><div class="curtain r"></div><div class="show"><div class="kicker">CURTAIN CALL</div><h1>You did it!</h1><p>All three sisters are Dance Legends — from the cot to the golden gown.</p><div class="trio">${trio}</div><img class="trophy" src="art/trophy.png" alt=""><p class="small">The game goes on: every extra Legend can take her bow in the Hall of Fame, and there is an Encore waiting.</p><button class="btn" id="bow">Take a bow 🌹</button></div>`;
+  f.innerHTML = `<div class="curtain l"></div><div class="curtain r"></div><div class="show"><div class="kicker">CURTAIN CALL</div><h1>You did it!</h1><p>All three sisters are Dance Legends — from the cot to the golden gown.</p><div class="trio">${trio}</div><img class="trophy" src="art/trophy.png" alt=""><p class="small">The game goes on: two Legend Juliettes become the Spirit of Dance, a Legend can take her bow in the Hall of Fame, and there is an Encore waiting.</p><button class="btn" id="bow">Take a bow 🌹</button></div>`;
   document.body.appendChild(f);
   requestAnimationFrame(() => f.classList.add('open'));
   for (let i = 0; i < 40; i++) setTimeout(() => { const s = document.createElement('span'); s.className = 'spark'; s.style.left = rnd(10, 90) + '%'; s.style.top = '-10px'; s.style.background = ['#f2a541', '#ff7bb0', '#7ec8ff', '#fff', '#ffd866'][i % 5]; s.style.setProperty('--dx', rnd(-60, 60) + 'px'); s.style.setProperty('--dy', rnd(300, 700) + 'px'); s.style.animationDuration = '2.6s'; document.body.appendChild(s); setTimeout(() => s.remove(), 2700); }, i * 90);
@@ -234,10 +236,10 @@ function finale() {
 function hall() {
   const stars = save.stars || 0, here = save.fields[save.world].filter(isFinal).length, bonus = income() * 3600 * 2;
   sheet(`<div class="detail"><img class="trophy" src="art/trophy.png" alt=""><div class="name">Hall of Fame</div><p class="el">${stars ? `${stars} Legend${stars === 1 ? '' : 's'} ha${stars === 1 ? 's' : 've'} taken a bow` : 'No Legend has taken her bow yet'}${save.encore ? ` · Encore ${save.encore}: +${save.encore * 50}% applause` : ''}</p>
-    <p>Two Legends cannot merge. Retire a <b>${esc(nameOf(CHAIN[CHAIN.length - 1]))}</b> from the stage to the Hall of Fame: she takes her bow, you keep a ⭐ for ever and get a bonus of two hours' coins.</p>
+    <p>Two <b>${esc(nameOf(CHAIN[LEGEND]))}</b>s merge into the <b>Spirit of Dance</b>. Retire a Legend Juliette or a Spirit from the stage to the Hall of Fame: she takes her bow, you keep a ⭐ for ever and get a bonus of two hours' coins.</p>
     <button class="btn" id="retire" ${here ? '' : 'disabled'}>⭐ Retire a Legend${here ? ` (+<i class="cn"></i>${fmt(bonus)})` : ' — none on this stage'}</button>
     <h2 style="margin-top:22px">Encore</h2><p>Start the whole show again from the cot with <b>+50% applause for ever</b>. Your upgrades, Dancepedia and stars stay; the dancers, coins and bags start over.</p><button class="btn" id="encore">🎭 Encore!</button><button class="linkbtn" id="curtain">See the curtain call again</button></div>`);
-  $('#retire').onclick = () => { const b = save.fields[save.world].find(isFinal); if (!b) return; removeBeast(b); save.stars = (save.stars || 0) + 1; save.coins += bonus; save.total = (save.total || 0) + bonus; persist(); refresh(); hint(); closeSheet(); toast(`⭐ ${nameOf(CHAIN[CHAIN.length - 1])} takes her bow! +${fmt(bonus)}`); };
+  $('#retire').onclick = () => { const b = save.fields[save.world].find(isFinal); if (!b) return; removeBeast(b); save.stars = (save.stars || 0) + 1; save.coins += bonus; save.total = (save.total || 0) + bonus; persist(); refresh(); hint(); closeSheet(); toast(`⭐ ${nameOf(CHAIN[b.lv])} takes ${CHAIN[b.lv].spirit ? 'its' : 'her'} bow! +${fmt(bonus)}`); };
   $('#encore').onclick = () => { if (!confirm('Start the Encore? Dancers, coins and bags start over; upgrades, stars and the Dancepedia stay, and every dancer earns 50% more for ever.')) return;
     save.encore = (save.encore || 0) + 1; save.fields = {}; save.crate = {}; save.coins = 0; save.world = 0; save.unlocked = 0; save.bagsOpened = 0;
     for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = []; save.crate[w] = WORLDS[w].start; }
@@ -333,7 +335,7 @@ function pedia() {
 }
 function fanfare(lv) {
   const b = CHAIN[lv], f = document.createElement('div'); f.className = 'fanfare';
-  f.innerHTML = `<div class="card"><div class="kicker">${b.sister === 0 ? 'NEW STAGE' : 'NEW DANCER'}</div><div class="sprwrap">${spriteHTML(b, 1.5)}</div><div class="name">${esc(nameOf(b))}</div><p>${esc(b.desc)}</p><button class="btn">Bravo!</button></div>`;
+  f.innerHTML = `<div class="card"><div class="kicker">${b.spirit ? '✨ THE SPIRIT OF DANCE ✨' : b.sister === 0 ? 'NEW STAGE' : 'NEW DANCER'}</div><div class="sprwrap">${spriteHTML(b, 1.5)}</div><div class="name">${esc(nameOf(b))}</div><p>${esc(b.desc)}</p><button class="btn">Bravo!</button></div>`;
   f.querySelector('button').onclick = () => f.remove(); f.onclick = e => { if (e.target === f) f.remove(); };
   document.body.appendChild(f);
   for (let i = 0; i < 18; i++) { const s = document.createElement('span'); s.className = 'spark'; s.style.left = '50%'; s.style.top = '45%'; s.style.background = ['#f2a541', '#6fd18a', '#7ec8ff', '#ff7bb0', '#fff'][i % 5]; s.style.setProperty('--dx', rnd(-160, 160) + 'px'); s.style.setProperty('--dy', rnd(-200, 120) + 'px'); document.body.appendChild(s); setTimeout(() => s.remove(), 1100); }
