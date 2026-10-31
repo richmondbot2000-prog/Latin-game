@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '60';
+const APP_VERSION = '61';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -267,7 +267,7 @@ function finale() {
   document.querySelectorAll('.fanfare').forEach(f => f.remove());
   const trio = CHAIN.slice(LEGEND - 2, LEGEND + 1).map(c => `<div class="legend">${spriteHTML(c, 1.25)}</div>`).join('');
   const f = document.createElement('div'); f.className = 'finale';
-  f.innerHTML = `<div class="curtain l"></div><div class="curtain r"></div><div class="show"><div class="kicker">CURTAIN CALL</div><h1>You did it!</h1><p>All three sisters are Dance Legends — from the cot to the golden gown.</p><div class="trio">${trio}</div><img class="trophy" src="art/trophy.png" alt=""><p class="small">The game goes on: two Legend Juliettes become the Spirit of Dance, a Legend can take her bow in the Hall of Fame, and there is an Encore waiting.</p><button class="btn" id="bow">Take a bow 🌹</button></div>`;
+  f.innerHTML = `<div class="curtain l"></div><div class="curtain r"></div><div class="show"><div class="kicker">CURTAIN CALL</div><h1>You did it!</h1><p>All three sisters are Dance Legends — from the cot to the golden gown.</p><div class="trio">${trio}</div><img class="trophy" src="art/trophy.png" alt=""><p class="small">The game goes on: two Legend Juliettes become the Spirit of Dance, and feeding it takes you to the very end.</p><button class="btn" id="bow">Take a bow 🌹</button></div>`;
   document.body.appendChild(f);
   requestAnimationFrame(() => f.classList.add('open'));
   for (let i = 0; i < 40; i++) setTimeout(() => { const s = document.createElement('span'); s.className = 'spark'; s.style.left = rnd(10, 90) + '%'; s.style.top = '-10px'; s.style.background = ['#f2a541', '#ff7bb0', '#7ec8ff', '#fff', '#ffd866'][i % 5]; s.style.setProperty('--dx', rnd(-60, 60) + 'px'); s.style.setProperty('--dy', rnd(300, 700) + 'px'); s.style.animationDuration = '2.6s'; document.body.appendChild(s); setTimeout(() => s.remove(), 2700); }, i * 90);
@@ -284,7 +284,7 @@ function won() {
   for (let i = 0; i < 60; i++) setTimeout(() => { const s = document.createElement('span'); s.className = 'spark'; s.style.left = rnd(10, 90) + '%'; s.style.top = '-10px'; s.style.background = ['#56c2b8', '#f06aa0', '#9060d0', '#fff', '#ffd866'][i % 5]; s.style.setProperty('--dx', rnd(-60, 60) + 'px'); s.style.setProperty('--dy', rnd(300, 700) + 'px'); s.style.animationDuration = '2.6s'; f.appendChild(s); setTimeout(() => s.remove(), 2700); }, i * 60);
   $('#hardBtn').onclick = () => hardMode(f); $('#keepBtn').onclick = () => f.remove();
 }
-// Hard mode: everything starts over — dancers, coins, bags, upgrades, the Dancepedia, stars and encores — and every dancer earns half as much (halved again for each hard restart)
+// Hard mode: everything starts over — dancers, coins, bags, upgrades, the Dancepedia and stars — and every dancer earns half as much (halved again for each hard restart)
 function hardMode(overlay) {
   if (!confirm('Restart on HARD mode? All progress is undone — dancers, coins, bags, upgrades, Dancepedia, stars — and every dancer earns 50% less.')) return;
   const hard = (save.hard || 0) + 1;
@@ -295,16 +295,12 @@ function hardMode(overlay) {
 function hardTag() { let t = $('#hardTag'); if (!t) { t = document.createElement('span'); t.id = 'hardTag'; $('#rate').after(t); } t.textContent = save.hard ? ` HARD${save.hard > 1 ? ' ×' + save.hard : ''}` : ''; }
 function hall() {
   const stars = save.stars || 0, here = save.fields[save.world].filter(isFinal).length, bonus = income() * 3600 * 2;
-  sheet(`<div class="detail"><img class="trophy" src="art/trophy.png" alt=""><div class="name">Hall of Fame</div><p class="el">${stars ? `${stars} Legend${stars === 1 ? '' : 's'} ha${stars === 1 ? 's' : 've'} taken a bow` : 'No Legend has taken her bow yet'}${save.encore ? ` · Encore ${save.encore}: +${save.encore * 50}% applause` : ''}</p>
+  sheet(`<div class="detail"><img class="trophy" src="art/trophy.png" alt=""><div class="name">Hall of Fame</div><p class="el">${stars ? `${stars} Legend${stars === 1 ? '' : 's'} ha${stars === 1 ? 's' : 've'} taken a bow` : 'No Legend has taken her bow yet'}</p>
     <p>Two <b>${esc(nameOf(CHAIN[LEGEND]))}</b>s merge into the <b>Spirit of Dance</b>. Retire a Legend Juliette or a Spirit from the stage to the Hall of Fame: she takes her bow, you keep a ⭐ for ever and get a bonus of two hours' coins.</p>
     <button class="btn" id="retire" ${here ? '' : 'disabled'}>⭐ Retire a Legend${here ? ` (+<i class="cn"></i>${fmt(bonus)})` : ' — none on this stage'}</button>
-    <h2 style="margin-top:22px">Encore</h2><p>Start the whole show again from the cot with <b>+50% applause for ever</b>. Your upgrades, Dancepedia and stars stay; the dancers, coins and bags start over.</p><button class="btn" id="encore">🎭 Encore!</button><button class="linkbtn" id="curtain">See the curtain call again</button>${save.won ? '<h2 style="margin-top:22px">Hard mode</h2><p>The Spirit of Dance reached level 100. Start the whole game again with every dancer earning 50% less.</p><button class="btn" id="hardBtn">🔥 RESTART ON HARD MODE</button><button class="linkbtn" id="wonAgain">See the ending again</button>' : ''}</div>`);
+<button class="linkbtn" id="curtain">See the curtain call again</button>${save.won ? '<h2 style="margin-top:22px">Hard mode</h2><p>The Spirit of Dance reached level 100. Start the whole game again with every dancer earning 50% less.</p><button class="btn" id="hardBtn">🔥 RESTART ON HARD MODE</button><button class="linkbtn" id="wonAgain">See the ending again</button>' : ''}</div>`);
   if ($('#hardBtn')) { $('#hardBtn').onclick = () => hardMode(); $('#wonAgain').onclick = () => { closeSheet(); won(); }; }
   $('#retire').onclick = () => { const b = save.fields[save.world].find(isFinal); if (!b) return; removeBeast(b); save.stars = (save.stars || 0) + 1; save.coins += bonus; save.total = (save.total || 0) + bonus; persist(); refresh(); hint(); closeSheet(); toast(`⭐ ${nameOf(CHAIN[b.lv])} takes ${CHAIN[b.lv].spirit ? 'its' : 'her'} bow! +${fmt(bonus)}`); };
-  $('#encore').onclick = () => { if (!confirm('Start the Encore? Dancers, coins and bags start over; upgrades, stars and the Dancepedia stay, and every dancer earns 50% more for ever.')) return;
-    save.encore = (save.encore || 0) + 1; save.fields = {}; save.crate = {}; save.coins = 0; save.world = 0; save.unlocked = 0; save.bagsOpened = 0;
-    for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = []; save.crate[w] = WORLDS[w].start; }
-    persist(); closeSheet(); mount(); toast(`🎭 Encore ${save.encore}! Every dancer now earns +${save.encore * 50}%`); };
   $('#curtain').onclick = () => { closeSheet(); finale(); };
 }
 
