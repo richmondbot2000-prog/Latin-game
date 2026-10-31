@@ -79,7 +79,7 @@
 "sister": 0,
 "stageName": "Tot",
 "sheet": "art/s02_1.png",
-"frames": 32,
+"frames": 36,
 "top": 51
 },
 {
@@ -87,7 +87,7 @@
 "sister": 1,
 "stageName": "Tot",
 "sheet": "art/s02_2.png",
-"frames": 32,
+"frames": 36,
 "top": 51
 },
 {
@@ -95,7 +95,7 @@
 "sister": 2,
 "stageName": "Tot",
 "sheet": "art/s02_3.png",
-"frames": 32,
+"frames": 36,
 "top": 51
 },
 {
@@ -103,7 +103,7 @@
 "sister": 0,
 "stageName": "Nursery",
 "sheet": "art/s03_1.png",
-"frames": 32,
+"frames": 30,
 "top": 43
 },
 {
@@ -111,7 +111,7 @@
 "sister": 1,
 "stageName": "Nursery",
 "sheet": "art/s03_2.png",
-"frames": 32,
+"frames": 30,
 "top": 31
 },
 {
@@ -119,7 +119,7 @@
 "sister": 2,
 "stageName": "Nursery",
 "sheet": "art/s03_3.png",
-"frames": 32,
+"frames": 30,
 "top": 27
 },
 {
@@ -127,23 +127,23 @@
 "sister": 0,
 "stageName": "Leotard",
 "sheet": "art/s04_1.png",
-"frames": 32,
-"top": 35
+"frames": 36,
+"top": 31
 },
 {
 "stage": 3,
 "sister": 1,
 "stageName": "Leotard",
 "sheet": "art/s04_2.png",
-"frames": 32,
-"top": 28
+"frames": 36,
+"top": 26
 },
 {
 "stage": 3,
 "sister": 2,
 "stageName": "Leotard",
 "sheet": "art/s04_3.png",
-"frames": 32,
+"frames": 36,
 "top": 39
 },
 {
@@ -151,7 +151,7 @@
 "sister": 0,
 "stageName": "Dance school",
 "sheet": "art/s05_1.png",
-"frames": 32,
+"frames": 34,
 "top": 23
 },
 {
@@ -159,7 +159,7 @@
 "sister": 1,
 "stageName": "Dance school",
 "sheet": "art/s05_2.png",
-"frames": 32,
+"frames": 34,
 "top": 27
 },
 {
@@ -167,7 +167,7 @@
 "sister": 2,
 "stageName": "Dance school",
 "sheet": "art/s05_3.png",
-"frames": 32,
+"frames": 34,
 "top": 27
 },
 {
@@ -199,7 +199,7 @@
 "sister": 0,
 "stageName": "Jazz",
 "sheet": "art/s07_1.png",
-"frames": 32,
+"frames": 26,
 "top": 11
 },
 {
@@ -207,7 +207,7 @@
 "sister": 1,
 "stageName": "Jazz",
 "sheet": "art/s07_2.png",
-"frames": 32,
+"frames": 26,
 "top": 13
 },
 {
@@ -215,7 +215,7 @@
 "sister": 2,
 "stageName": "Jazz",
 "sheet": "art/s07_3.png",
-"frames": 32,
+"frames": 26,
 "top": 13
 },
 {
@@ -223,15 +223,15 @@
 "sister": 0,
 "stageName": "En pointe",
 "sheet": "art/s08_1.png",
-"frames": 32,
-"top": 13
+"frames": 30,
+"top": 7
 },
 {
 "stage": 7,
 "sister": 1,
 "stageName": "En pointe",
 "sheet": "art/s08_2.png",
-"frames": 32,
+"frames": 30,
 "top": 14
 },
 {
@@ -239,15 +239,15 @@
 "sister": 2,
 "stageName": "En pointe",
 "sheet": "art/s08_3.png",
-"frames": 32,
-"top": 13
+"frames": 30,
+"top": 12
 },
 {
 "stage": 8,
 "sister": 0,
 "stageName": "Swan",
 "sheet": "art/s09_1.png",
-"frames": 32,
+"frames": 40,
 "top": 11
 },
 {
@@ -255,7 +255,7 @@
 "sister": 1,
 "stageName": "Swan",
 "sheet": "art/s09_2.png",
-"frames": 32,
+"frames": 40,
 "top": 19
 },
 {
@@ -263,7 +263,7 @@
 "sister": 2,
 "stageName": "Swan",
 "sheet": "art/s09_3.png",
-"frames": 32,
+"frames": 40,
 "top": 19
 },
 {
@@ -295,7 +295,7 @@
 "sister": 0,
 "stageName": "Street",
 "sheet": "art/s11_1.png",
-"frames": 32,
+"frames": 24,
 "top": 19
 },
 {
@@ -303,7 +303,7 @@
 "sister": 1,
 "stageName": "Street",
 "sheet": "art/s11_2.png",
-"frames": 32,
+"frames": 24,
 "top": 23
 },
 {
@@ -311,7 +311,7 @@
 "sister": 2,
 "stageName": "Street",
 "sheet": "art/s11_3.png",
-"frames": 32,
+"frames": 24,
 "top": 23
 },
 {
@@ -319,7 +319,7 @@
 "sister": 0,
 "stageName": "Stage star",
 "sheet": "art/s12_1.png",
-"frames": 32,
+"frames": 28,
 "top": 1
 },
 {
@@ -327,7 +327,7 @@
 "sister": 1,
 "stageName": "Stage star",
 "sheet": "art/s12_2.png",
-"frames": 32,
+"frames": 28,
 "top": 1
 },
 {
@@ -335,7 +335,7 @@
 "sister": 2,
 "stageName": "Stage star",
 "sheet": "art/s12_3.png",
-"frames": 32,
+"frames": 28,
 "top": 11
 },
 {
@@ -391,7 +391,7 @@
 "sister": 0,
 "stageName": "Royal gala",
 "sheet": "art/s15_1.png",
-"frames": 32,
+"frames": 36,
 "top": 0
 },
 {
@@ -399,7 +399,7 @@
 "sister": 1,
 "stageName": "Royal gala",
 "sheet": "art/s15_2.png",
-"frames": 32,
+"frames": 36,
 "top": 9
 },
 {
@@ -407,7 +407,7 @@
 "sister": 2,
 "stageName": "Royal gala",
 "sheet": "art/s15_3.png",
-"frames": 32,
+"frames": 36,
 "top": 5
 },
 {
@@ -415,15 +415,15 @@
 "sister": 0,
 "stageName": "Teacher",
 "sheet": "art/s16_1.png",
-"frames": 32,
-"top": 3
+"frames": 38,
+"top": 0
 },
 {
 "stage": 15,
 "sister": 1,
 "stageName": "Teacher",
 "sheet": "art/s16_2.png",
-"frames": 32,
+"frames": 38,
 "top": 3
 },
 {
@@ -431,7 +431,7 @@
 "sister": 2,
 "stageName": "Teacher",
 "sheet": "art/s16_3.png",
-"frames": 32,
+"frames": 38,
 "top": 5
 },
 {
@@ -439,7 +439,7 @@
 "sister": 0,
 "stageName": "Choreographer",
 "sheet": "art/s17_1.png",
-"frames": 32,
+"frames": 26,
 "top": 3
 },
 {
@@ -447,7 +447,7 @@
 "sister": 1,
 "stageName": "Choreographer",
 "sheet": "art/s17_2.png",
-"frames": 32,
+"frames": 26,
 "top": 7
 },
 {
@@ -455,7 +455,7 @@
 "sister": 2,
 "stageName": "Choreographer",
 "sheet": "art/s17_3.png",
-"frames": 32,
+"frames": 26,
 "top": 7
 },
 {
@@ -463,23 +463,23 @@
 "sister": 0,
 "stageName": "Director",
 "sheet": "art/s18_1.png",
-"frames": 32,
-"top": 1
+"frames": 36,
+"top": 0
 },
 {
 "stage": 17,
 "sister": 1,
 "stageName": "Director",
 "sheet": "art/s18_2.png",
-"frames": 32,
-"top": 7
+"frames": 36,
+"top": 5
 },
 {
 "stage": 17,
 "sister": 2,
 "stageName": "Director",
 "sheet": "art/s18_3.png",
-"frames": 32,
+"frames": 36,
 "top": 7
 },
 {
@@ -511,7 +511,7 @@
 "sister": 0,
 "stageName": "Legend",
 "sheet": "art/s20_1.png",
-"frames": 40,
+"frames": 44,
 "top": 0
 },
 {
@@ -519,7 +519,7 @@
 "sister": 1,
 "stageName": "Legend",
 "sheet": "art/s20_2.png",
-"frames": 40,
+"frames": 44,
 "top": 0
 },
 {
@@ -527,7 +527,7 @@
 "sister": 2,
 "stageName": "Legend",
 "sheet": "art/s20_3.png",
-"frames": 40,
+"frames": 44,
 "top": 0
 }
 ]
