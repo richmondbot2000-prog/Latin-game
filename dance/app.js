@@ -4,8 +4,8 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '39';
-const ART = 'art/';
+const APP_VERSION = '40';
+const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
 const SCALE = 0.875;   // sprite pixels (96 × 128 sheets, the cute design at double resolution) → screen pixels on the field (84 × 112)
@@ -60,6 +60,9 @@ async function buildChain() {
     const saved = store.get(key, null); if (saved) return saved; throw new Error('Could not load ' + url);
   };
   SPEC = await get('dancers.json', 'dance.spec'); FONT = await get('art/font.json', 'dance.font');
+  // pictures are served cache-first by the worker, so a redrawn picture gets a new address: ?v= the art stamp from dancers.json
+  ART_V = SPEC.artv || ''; const stamp = u => ART_V ? u + '?v=' + ART_V : u;
+  SPEC.levels.forEach(l => { l.sheet = stamp(l.sheet); }); WORLDS.forEach(w => { w.bg = stamp(w.bg.replace(/\?.*$/, '')); });
   CHAIN = SPEC.levels.map((l, i) => ({ ...l, world: WORLDS.findIndex(w => l.stage >= w.stages[0] && l.stage <= w.stages[1]), last: l.sister === 2, pic: l.sheet, desc: DESC[l.stage] }));
   WORLDS.forEach((w, i) => { const lv = CHAIN.map((c, k) => c.world === i ? k : -1).filter(k => k >= 0); w.start = lv[0]; w.end = lv[lv.length - 1]; });
   CHAIN.forEach((c, i) => { WORLD_OF[i] = c.world; });
