@@ -1,6 +1,6 @@
 {
-"w": 96,
-"h": 128,
+"w": 48,
+"h": 64,
 "stages": [
 "Baby",
 "Tot",
@@ -18,6 +18,9 @@
 "Movie star",
 "Royal gala",
 "Teacher",
+"Choreographer",
+"Director",
+"Icon",
 "Legend"
 ],
 "levels": [
@@ -27,7 +30,7 @@
 "stageName": "Baby",
 "sheet": "art/s01_1.png",
 "frames": 40,
-"top": 42,
+"top": 21,
 "crawl": [
 [
 0,
@@ -45,7 +48,7 @@
 "stageName": "Baby",
 "sheet": "art/s01_2.png",
 "frames": 40,
-"top": 51,
+"top": 25,
 "crawl": [
 [
 27,
@@ -59,7 +62,7 @@
 "stageName": "Baby",
 "sheet": "art/s01_3.png",
 "frames": 40,
-"top": 42,
+"top": 21,
 "crawl": [
 [
 0,
@@ -77,7 +80,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_1.png",
 "frames": 32,
-"top": 49
+"top": 25
 },
 {
 "stage": 1,
@@ -85,7 +88,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_2.png",
 "frames": 32,
-"top": 49
+"top": 25
 },
 {
 "stage": 1,
@@ -93,7 +96,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_3.png",
 "frames": 32,
-"top": 49
+"top": 25
 },
 {
 "stage": 2,
@@ -101,7 +104,7 @@
 "stageName": "Nursery",
 "sheet": "art/s03_1.png",
 "frames": 32,
-"top": 41
+"top": 20
 },
 {
 "stage": 2,
@@ -109,7 +112,7 @@
 "stageName": "Nursery",
 "sheet": "art/s03_2.png",
 "frames": 32,
-"top": 39
+"top": 19
 },
 {
 "stage": 2,
@@ -117,7 +120,7 @@
 "stageName": "Nursery",
 "sheet": "art/s03_3.png",
 "frames": 32,
-"top": 43
+"top": 22
 },
 {
 "stage": 3,
@@ -125,7 +128,7 @@
 "stageName": "Leotard",
 "sheet": "art/s04_1.png",
 "frames": 32,
-"top": 33
+"top": 17
 },
 {
 "stage": 3,
@@ -133,7 +136,7 @@
 "stageName": "Leotard",
 "sheet": "art/s04_2.png",
 "frames": 32,
-"top": 28
+"top": 14
 },
 {
 "stage": 3,
@@ -141,7 +144,7 @@
 "stageName": "Leotard",
 "sheet": "art/s04_3.png",
 "frames": 32,
-"top": 37
+"top": 19
 },
 {
 "stage": 4,
@@ -149,7 +152,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_1.png",
 "frames": 32,
-"top": 23
+"top": 11
 },
 {
 "stage": 4,
@@ -157,7 +160,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_2.png",
 "frames": 32,
-"top": 27
+"top": 13
 },
 {
 "stage": 4,
@@ -165,7 +168,7 @@
 "stageName": "Dance school",
 "sheet": "art/s05_3.png",
 "frames": 32,
-"top": 27
+"top": 13
 },
 {
 "stage": 5,
@@ -173,7 +176,7 @@
 "stageName": "First tutu",
 "sheet": "art/s06_1.png",
 "frames": 32,
-"top": 31
+"top": 15
 },
 {
 "stage": 5,
@@ -181,7 +184,7 @@
 "stageName": "First tutu",
 "sheet": "art/s06_2.png",
 "frames": 32,
-"top": 35
+"top": 17
 },
 {
 "stage": 5,
@@ -189,7 +192,7 @@
 "stageName": "First tutu",
 "sheet": "art/s06_3.png",
 "frames": 32,
-"top": 35
+"top": 18
 },
 {
 "stage": 6,
@@ -197,7 +200,7 @@
 "stageName": "Jazz",
 "sheet": "art/s07_1.png",
 "frames": 32,
-"top": 13
+"top": 6
 },
 {
 "stage": 6,
@@ -205,7 +208,7 @@
 "stageName": "Jazz",
 "sheet": "art/s07_2.png",
 "frames": 32,
-"top": 13
+"top": 6
 },
 {
 "stage": 6,
@@ -213,7 +216,7 @@
 "stageName": "Jazz",
 "sheet": "art/s07_3.png",
 "frames": 32,
-"top": 13
+"top": 6
 },
 {
 "stage": 7,
@@ -221,7 +224,7 @@
 "stageName": "En pointe",
 "sheet": "art/s08_1.png",
 "frames": 32,
-"top": 13
+"top": 6
 },
 {
 "stage": 7,
@@ -229,7 +232,7 @@
 "stageName": "En pointe",
 "sheet": "art/s08_2.png",
 "frames": 32,
-"top": 14
+"top": 7
 },
 {
 "stage": 7,
@@ -237,7 +240,7 @@
 "stageName": "En pointe",
 "sheet": "art/s08_3.png",
 "frames": 32,
-"top": 13
+"top": 6
 },
 {
 "stage": 8,
@@ -245,7 +248,7 @@
 "stageName": "Swan",
 "sheet": "art/s09_1.png",
 "frames": 32,
-"top": 11
+"top": 5
 },
 {
 "stage": 8,
@@ -253,7 +256,7 @@
 "stageName": "Swan",
 "sheet": "art/s09_2.png",
 "frames": 32,
-"top": 19
+"top": 9
 },
 {
 "stage": 8,
@@ -261,7 +264,7 @@
 "stageName": "Swan",
 "sheet": "art/s09_3.png",
 "frames": 32,
-"top": 19
+"top": 9
 },
 {
 "stage": 9,
@@ -277,7 +280,7 @@
 "stageName": "Prima",
 "sheet": "art/s10_2.png",
 "frames": 40,
-"top": 13
+"top": 6
 },
 {
 "stage": 9,
@@ -285,7 +288,7 @@
 "stageName": "Prima",
 "sheet": "art/s10_3.png",
 "frames": 40,
-"top": 11
+"top": 5
 },
 {
 "stage": 10,
@@ -293,7 +296,7 @@
 "stageName": "Street",
 "sheet": "art/s11_1.png",
 "frames": 32,
-"top": 17
+"top": 9
 },
 {
 "stage": 10,
@@ -301,7 +304,7 @@
 "stageName": "Street",
 "sheet": "art/s11_2.png",
 "frames": 32,
-"top": 21
+"top": 11
 },
 {
 "stage": 10,
@@ -309,7 +312,7 @@
 "stageName": "Street",
 "sheet": "art/s11_3.png",
 "frames": 32,
-"top": 21
+"top": 11
 },
 {
 "stage": 11,
@@ -325,7 +328,7 @@
 "stageName": "Stage star",
 "sheet": "art/s12_2.png",
 "frames": 32,
-"top": 1
+"top": 0
 },
 {
 "stage": 11,
@@ -333,7 +336,7 @@
 "stageName": "Stage star",
 "sheet": "art/s12_3.png",
 "frames": 32,
-"top": 9
+"top": 5
 },
 {
 "stage": 12,
@@ -341,7 +344,7 @@
 "stageName": "World tour",
 "sheet": "art/s13_1.png",
 "frames": 32,
-"top": 5
+"top": 3
 },
 {
 "stage": 12,
@@ -349,7 +352,7 @@
 "stageName": "World tour",
 "sheet": "art/s13_2.png",
 "frames": 32,
-"top": 11
+"top": 6
 },
 {
 "stage": 12,
@@ -357,7 +360,7 @@
 "stageName": "World tour",
 "sheet": "art/s13_3.png",
 "frames": 32,
-"top": 3
+"top": 1
 },
 {
 "stage": 13,
@@ -365,7 +368,7 @@
 "stageName": "Movie star",
 "sheet": "art/s14_1.png",
 "frames": 32,
-"top": 5
+"top": 3
 },
 {
 "stage": 13,
@@ -373,7 +376,7 @@
 "stageName": "Movie star",
 "sheet": "art/s14_2.png",
 "frames": 32,
-"top": 9
+"top": 5
 },
 {
 "stage": 13,
@@ -381,7 +384,7 @@
 "stageName": "Movie star",
 "sheet": "art/s14_3.png",
 "frames": 32,
-"top": 11
+"top": 6
 },
 {
 "stage": 14,
@@ -397,7 +400,7 @@
 "stageName": "Royal gala",
 "sheet": "art/s15_2.png",
 "frames": 32,
-"top": 9
+"top": 4
 },
 {
 "stage": 14,
@@ -405,7 +408,7 @@
 "stageName": "Royal gala",
 "sheet": "art/s15_3.png",
 "frames": 32,
-"top": 5
+"top": 2
 },
 {
 "stage": 15,
@@ -413,7 +416,7 @@
 "stageName": "Teacher",
 "sheet": "art/s16_1.png",
 "frames": 32,
-"top": 3
+"top": 1
 },
 {
 "stage": 15,
@@ -421,7 +424,7 @@
 "stageName": "Teacher",
 "sheet": "art/s16_2.png",
 "frames": 32,
-"top": 3
+"top": 1
 },
 {
 "stage": 15,
@@ -429,31 +432,103 @@
 "stageName": "Teacher",
 "sheet": "art/s16_3.png",
 "frames": 32,
-"top": 5
+"top": 2
 },
 {
 "stage": 16,
 "sister": 0,
-"stageName": "Legend",
+"stageName": "Choreographer",
 "sheet": "art/s17_1.png",
-"frames": 40,
+"frames": 32,
 "top": 0
 },
 {
 "stage": 16,
 "sister": 1,
-"stageName": "Legend",
+"stageName": "Choreographer",
 "sheet": "art/s17_2.png",
-"frames": 40,
-"top": 2
+"frames": 32,
+"top": 1
 },
 {
 "stage": 16,
 "sister": 2,
-"stageName": "Legend",
+"stageName": "Choreographer",
 "sheet": "art/s17_3.png",
+"frames": 32,
+"top": 1
+},
+{
+"stage": 17,
+"sister": 0,
+"stageName": "Director",
+"sheet": "art/s18_1.png",
+"frames": 32,
+"top": 3
+},
+{
+"stage": 17,
+"sister": 1,
+"stageName": "Director",
+"sheet": "art/s18_2.png",
+"frames": 32,
+"top": 6
+},
+{
+"stage": 17,
+"sister": 2,
+"stageName": "Director",
+"sheet": "art/s18_3.png",
+"frames": 32,
+"top": 6
+},
+{
+"stage": 18,
+"sister": 0,
+"stageName": "Icon",
+"sheet": "art/s19_1.png",
+"frames": 32,
+"top": 0
+},
+{
+"stage": 18,
+"sister": 1,
+"stageName": "Icon",
+"sheet": "art/s19_2.png",
+"frames": 32,
+"top": 6
+},
+{
+"stage": 18,
+"sister": 2,
+"stageName": "Icon",
+"sheet": "art/s19_3.png",
+"frames": 32,
+"top": 1
+},
+{
+"stage": 19,
+"sister": 0,
+"stageName": "Legend",
+"sheet": "art/s20_1.png",
 "frames": 40,
-"top": 2
+"top": 0
+},
+{
+"stage": 19,
+"sister": 1,
+"stageName": "Legend",
+"sheet": "art/s20_2.png",
+"frames": 40,
+"top": 1
+},
+{
+"stage": 19,
+"sister": 2,
+"stageName": "Legend",
+"sheet": "art/s20_3.png",
+"frames": 40,
+"top": 1
 }
 ]
 }
