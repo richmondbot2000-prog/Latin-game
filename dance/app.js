@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '47';
+const APP_VERSION = '48';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -119,7 +119,7 @@ const earns = b => RATE(b.lv) * (b.lv === SPIRIT ? (b.sl || 1) : 1);   // the Sp
 const income = () => Object.values(save.fields).flat().reduce((s, b) => s + earns(b), 0);
 /* the Spirit of Dance: a level 1–100 in the middle of the cloud, which grows at 10 / 30 / 50 / 75; at 100 the game is won */
 const SPIRIT_MAX = 100;
-const spiritScale = sl => sl >= 75 ? 1.25 : sl >= 50 ? 1.1 : sl >= 30 ? .95 : sl >= 10 ? .8 : .65;
+const spiritScale = sl => sl >= 75 ? 1.45 : sl >= 50 ? 1.25 : sl >= 30 ? 1.08 : sl >= 10 ? .92 : .78;
 
 /* ---------- the field ---------- */
 function mount() {
