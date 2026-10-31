@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '62';
+const APP_VERSION = '63';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -432,6 +432,10 @@ async function main() {
   // the page may be an older cached copy (an update on a poor connection): add anything newer that it lacks
   if (!$('#hallBtn')) { const b = document.createElement('button'); b.id = 'hallBtn'; b.className = 'ib'; b.setAttribute('aria-label', 'Hall of Fame'); b.hidden = true; b.innerHTML = '<img src="art/trophy.png" alt="">'; const sb = $('#shopBtn'); if (sb && sb.parentNode) sb.parentNode.insertBefore(b, sb); else document.body.appendChild(b); }
   $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia; $('#hallBtn').onclick = hall; $('#hallBtn').hidden = !save.finished; hardTag();
+  // belt and braces for iOS: if the page is ever nudged (the keyboard closing after the Move sheet, a stray scroll), put it back
+  const unnudge = () => { if (window.scrollY || window.scrollX) window.scrollTo(0, 0); };
+  addEventListener('focusout', () => setTimeout(unnudge, 50)); addEventListener('resize', unnudge); document.addEventListener('visibilitychange', () => { if (!document.hidden) unnudge(); }); setInterval(unnudge, 2000);
+  document.addEventListener('touchmove', e => { if (!e.target.closest('.sheet .panel, .worlds, textarea')) e.preventDefault(); }, { passive: false });   // nothing outside a sheet or the room strip scrolls
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
   $('#buyBtn').onclick = () => { const w = save.world; if (save.fields[w].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); return; } if (lowest(w) < save.crate[w]) inviteSheet(); else invite(save.crate[w]); };
   // Safari zooms on a quick double tap; taps on the stage are game moves, never zooms
