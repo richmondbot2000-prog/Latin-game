@@ -97,7 +97,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_1.png",
 "frames": 36,
-"top": 51
+"top": 47
 },
 {
 "stage": 1,
@@ -313,7 +313,7 @@
 "stageName": "Sugar Plum",
 "sheet": "art/s11_1.png",
 "frames": 34,
-"top": 0
+"top": 3
 },
 {
 "stage": 10,
@@ -345,7 +345,7 @@
 "stageName": "Prima",
 "sheet": "art/s12_2.png",
 "frames": 40,
-"top": 2
+"top": 10
 },
 {
 "stage": 11,
@@ -353,7 +353,7 @@
 "stageName": "Prima",
 "sheet": "art/s12_3.png",
 "frames": 40,
-"top": 2
+"top": 8
 },
 {
 "stage": 12,
@@ -473,7 +473,7 @@
 "stageName": "World tour",
 "sheet": "art/s17_3.png",
 "frames": 32,
-"top": 0
+"top": 1
 },
 {
 "stage": 17,
@@ -601,7 +601,7 @@
 "stageName": "Judge",
 "sheet": "art/s23_1.png",
 "frames": 30,
-"top": 0
+"top": 5
 },
 {
 "stage": 22,
@@ -609,7 +609,7 @@
 "stageName": "Judge",
 "sheet": "art/s23_2.png",
 "frames": 30,
-"top": 0
+"top": 5
 },
 {
 "stage": 22,
@@ -617,7 +617,7 @@
 "stageName": "Judge",
 "sheet": "art/s23_3.png",
 "frames": 30,
-"top": 0
+"top": 5
 },
 {
 "stage": 23,
@@ -721,7 +721,7 @@
 "stageName": "Coach",
 "sheet": "art/s28_1.png",
 "frames": 24,
-"top": 5
+"top": 3
 },
 {
 "stage": 27,
@@ -729,7 +729,7 @@
 "stageName": "Coach",
 "sheet": "art/s28_2.png",
 "frames": 24,
-"top": 9
+"top": 7
 },
 {
 "stage": 27,
@@ -737,7 +737,7 @@
 "stageName": "Coach",
 "sheet": "art/s28_3.png",
 "frames": 24,
-"top": 13
+"top": 11
 },
 {
 "stage": 28,
@@ -940,5 +940,5 @@
 "top": 4
 }
 ],
-"artv": "881f7245"
+"artv": "870acdf3"
 }
