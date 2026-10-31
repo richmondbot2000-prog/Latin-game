@@ -345,7 +345,7 @@
 "stageName": "Prima",
 "sheet": "art/s12_2.png",
 "frames": 40,
-"top": 10
+"top": 11
 },
 {
 "stage": 11,
@@ -353,7 +353,7 @@
 "stageName": "Prima",
 "sheet": "art/s12_3.png",
 "frames": 40,
-"top": 8
+"top": 9
 },
 {
 "stage": 12,
@@ -601,7 +601,7 @@
 "stageName": "Judge",
 "sheet": "art/s23_1.png",
 "frames": 30,
-"top": 5
+"top": 0
 },
 {
 "stage": 22,
@@ -940,5 +940,5 @@
 "top": 4
 }
 ],
-"artv": "870acdf3"
+"artv": "640c137c"
 }
