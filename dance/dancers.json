@@ -345,7 +345,7 @@
 "stageName": "Prima",
 "sheet": "art/s12_2.png",
 "frames": 40,
-"top": 5
+"top": 2
 },
 {
 "stage": 11,
@@ -353,7 +353,7 @@
 "stageName": "Prima",
 "sheet": "art/s12_3.png",
 "frames": 40,
-"top": 3
+"top": 2
 },
 {
 "stage": 12,
@@ -473,7 +473,7 @@
 "stageName": "World tour",
 "sheet": "art/s17_3.png",
 "frames": 32,
-"top": 1
+"top": 0
 },
 {
 "stage": 17,
@@ -609,7 +609,7 @@
 "stageName": "Judge",
 "sheet": "art/s23_2.png",
 "frames": 30,
-"top": 1
+"top": 0
 },
 {
 "stage": 22,
@@ -617,7 +617,7 @@
 "stageName": "Judge",
 "sheet": "art/s23_3.png",
 "frames": 30,
-"top": 1
+"top": 0
 },
 {
 "stage": 23,
@@ -940,5 +940,5 @@
 "top": 4
 }
 ],
-"artv": "890fface"
+"artv": "1449796f"
 }
