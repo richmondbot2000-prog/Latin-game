@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '49';
+const APP_VERSION = '50';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -31,7 +31,7 @@ const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wob
   'Passing it on: her very own dance school.', 'The examiner: marks on the clipboard, a nod.', 'The judge holds up a 10.', 'Graduation day: cap, gown and a jump for joy.',
   'Warming up: leg warmers and a water bottle.', 'Five, six, seven, eight — making the dances now.', 'Dance captain: leading the line.', 'The coach in her tracksuit: squats, stretches, claps.',
   'The understudy in the wings, script in hand.', 'Opening night: the bow from the wings.', 'The leading lady: boa, gloves and the pose.', 'The producer, on the phone, making it happen.',
-  'An icon: her very first move, perfected.', 'A gold statue that comes to life.', 'Superstar: gold fringe and flashbulbs.', 'A Dance Legend in a golden gown.', 'The Spirit of Dance: two Legends become one cloud, in all three sisters\' colours.'];
+  'An icon: her very first move, perfected.', 'A gold statue that comes to life.', 'Superstar: gold fringe and flashbulbs.', 'A Dance Legend in a golden gown.', 'The spirit grows.'];
 // economy: a beast at level L earns RATE(L) a second; the next crate level, a bought beast and the upgrades scale with it
 const GROW = 1.33;
 const RATE = L => 0.5 * Math.pow(GROW, L) * (save && save.encore ? 1 + 0.5 * save.encore : 1) * (save && save.hard ? Math.pow(.5, save.hard) : 1);   // an Encore (new game after the finale) adds 50 % for ever
