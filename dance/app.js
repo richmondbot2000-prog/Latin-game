@@ -4,11 +4,11 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '30';
+const APP_VERSION = '31';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
-const SCALE = 1.75;   // sprite pixels (48 × 64 sheets) → screen pixels on the field (84 × 112)
+const SCALE = 0.875;   // sprite pixels (96 × 128 sheets, the cute design at double resolution) → screen pixels on the field (84 × 112)
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const EL = { earth: ['🪨', 'Earth'], grass: ['🌿', 'Grass'], water: ['💧', 'Water'], snow: ['❄️', 'Snow'], fire: ['🔥', 'Fire'], crystal: ['💎', 'Crystal'] };
@@ -182,7 +182,7 @@ function discover(lv) {
 const isFinal = b => b.lv === CHAIN.length - 1;
 function finale() {
   document.querySelectorAll('.fanfare').forEach(f => f.remove());
-  const trio = CHAIN.slice(-3).map(c => `<div class="legend">${spriteHTML(c, 2.5)}</div>`).join('');
+  const trio = CHAIN.slice(-3).map(c => `<div class="legend">${spriteHTML(c, 1.25)}</div>`).join('');
   const f = document.createElement('div'); f.className = 'finale';
   f.innerHTML = `<div class="curtain l"></div><div class="curtain r"></div><div class="show"><div class="kicker">CURTAIN CALL</div><h1>You did it!</h1><p>All three sisters are Dance Legends — from the cot to the golden gown.</p><div class="trio">${trio}</div><img class="trophy" src="art/trophy.png" alt=""><p class="small">The game goes on: every extra Legend can take her bow in the Hall of Fame, and there is an Encore waiting.</p><button class="btn" id="bow">Take a bow 🌹</button></div>`;
   document.body.appendChild(f);
@@ -283,15 +283,15 @@ function shop() {
 function pedia() {
   $('#pediaBtn').classList.remove('pulse');
   const seen = Object.keys(save.seen).length;
-  const cells = WORLDS.map((w, i) => `<h3>${esc(w.name)}</h3>` + CHAIN.map((c, k) => c.world === i ? `<div class="cell ${save.seen[k] ? '' : 'unseen'}" data-k="${k}">${spriteHTML(c, 1, 'spr still')}<span class="n">${k + 1}</span></div>` : '').join('')).join('');
+  const cells = WORLDS.map((w, i) => `<h3>${esc(w.name)}</h3>` + CHAIN.map((c, k) => c.world === i ? `<div class="cell ${save.seen[k] ? '' : 'unseen'}" data-k="${k}">${spriteHTML(c, .5, 'spr still')}<span class="n">${k + 1}</span></div>` : '').join('')).join('');
   sheet(`<h2>Dancepedia · ${seen} of ${CHAIN.length}</h2><div class="pedia">${cells}</div>`);
   $('#sheet').querySelectorAll('.cell').forEach(c => { c.onclick = () => { const k = +c.dataset.k, b = CHAIN[k]; if (!save.seen[k]) { toast(`Level ${k + 1} — not found yet`); return; }
-    sheet(`<div class="detail"><div class="sprwrap">${spriteHTML(b, 3)}</div><div class="name">${esc(nameOf(b))}</div><div class="el">${esc(b.stageName)} · level ${k + 1}</div><p>${esc(b.desc)}</p><p class="el">Earns <i class="cn"></i>${fmt(RATE(k))} a second</p><button class="btn" id="back">Back</button></div>`);
+    sheet(`<div class="detail"><div class="sprwrap">${spriteHTML(b, 1.5)}</div><div class="name">${esc(nameOf(b))}</div><div class="el">${esc(b.stageName)} · level ${k + 1}</div><p>${esc(b.desc)}</p><p class="el">Earns <i class="cn"></i>${fmt(RATE(k))} a second</p><button class="btn" id="back">Back</button></div>`);
     $('#back').onclick = pedia; }; });
 }
 function fanfare(lv) {
   const b = CHAIN[lv], f = document.createElement('div'); f.className = 'fanfare';
-  f.innerHTML = `<div class="card"><div class="kicker">${b.sister === 0 ? 'NEW STAGE' : 'NEW DANCER'}</div><div class="sprwrap">${spriteHTML(b, 3)}</div><div class="name">${esc(nameOf(b))}</div><p>${esc(b.desc)}</p><button class="btn">Bravo!</button></div>`;
+  f.innerHTML = `<div class="card"><div class="kicker">${b.sister === 0 ? 'NEW STAGE' : 'NEW DANCER'}</div><div class="sprwrap">${spriteHTML(b, 1.5)}</div><div class="name">${esc(nameOf(b))}</div><p>${esc(b.desc)}</p><button class="btn">Bravo!</button></div>`;
   f.querySelector('button').onclick = () => f.remove(); f.onclick = e => { if (e.target === f) f.remove(); };
   document.body.appendChild(f);
   for (let i = 0; i < 18; i++) { const s = document.createElement('span'); s.className = 'spark'; s.style.left = '50%'; s.style.top = '45%'; s.style.background = ['#f2a541', '#6fd18a', '#7ec8ff', '#ff7bb0', '#fff'][i % 5]; s.style.setProperty('--dx', rnd(-160, 160) + 'px'); s.style.setProperty('--dy', rnd(-200, 120) + 'px'); document.body.appendChild(s); setTimeout(() => s.remove(), 1100); }
