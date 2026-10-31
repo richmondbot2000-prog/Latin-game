@@ -1,10 +1,10 @@
 /* Dance Evolution — tap, drag to merge, evolve.
-   The Merge Beasts engine with dancers: 20 stages × 3 sisters = 60 levels (dancers.json + art/*.png sprite sheets drawn
+   The Merge Beasts engine with dancers: 36 stages × 3 sisters = 108 levels (dancers.json + art/*.png sprite sheets drawn
    by scratchpad/dancers/sisters.py), each level a 6–8 frame dance loop. The three sisters are named below (the owner's
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '35';
+const APP_VERSION = '36';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -12,21 +12,26 @@ const SCALE = 0.875;   // sprite pixels (96 × 128 sheets, the cute design at do
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const EL = { earth: ['🪨', 'Earth'], grass: ['🌿', 'Grass'], water: ['💧', 'Water'], snow: ['❄️', 'Snow'], fire: ['🔥', 'Fire'], crystal: ['💎', 'Crystal'] };
-const WORLDS = [   // by stage index (0-based); each has its own room
-  { name: 'Nursery', stages: [0, 2], bg: 'art/bg_nursery.png' },      // pixel rooms drawn by scratchpad/dancers/backgrounds.py, 96 × 128, the floor from row 70
-  { name: 'Dance school', stages: [3, 6], bg: 'art/bg_school.png' },
-  { name: 'Ballet theatre', stages: [7, 9], bg: 'art/bg_theatre.png' },
-  { name: 'City stage', stages: [10, 11], bg: 'art/bg_city.png' },
-  { name: 'World tour', stages: [12, 14], bg: 'art/bg_tour.png' },
-  { name: 'Academy', stages: [15, 15], bg: 'art/bg_academy.png' },
-  { name: 'Studio', stages: [16, 16], bg: 'art/bg_studio.png' },          // the Choreographers' rehearsal studio
-  { name: 'Stage door', stages: [17, 17], bg: 'art/bg_stagedoor.png' },   // the Directors' backstage
-  { name: 'Hall of fame', stages: [18, 19], bg: 'art/bg_hall.png' },      // the Icons and the Legends
+const WORLDS = [   // by stage index (0-based): nine rooms of four stages, each with its own pixel room (scratchpad/dancers/backgrounds.py, academy.py, rooms2.py)
+  { name: 'Nursery', stages: [0, 3], bg: 'art/bg_nursery.png' },
+  { name: 'Dance school', stages: [4, 7], bg: 'art/bg_school.png' },
+  { name: 'Ballet theatre', stages: [8, 11], bg: 'art/bg_theatre.png' },
+  { name: 'City stage', stages: [12, 15], bg: 'art/bg_city.png' },
+  { name: 'World tour', stages: [16, 19], bg: 'art/bg_tour.png' },
+  { name: 'Academy', stages: [20, 23], bg: 'art/bg_academy.png' },
+  { name: 'Studio', stages: [24, 27], bg: 'art/bg_studio.png' },
+  { name: 'Stage door', stages: [28, 31], bg: 'art/bg_stagedoor.png' },
+  { name: 'Hall of fame', stages: [32, 35], bg: 'art/bg_hall.png' },
 ];
-const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wobbly twirl.', 'Star of the nursery show.', 'Her first leotard — and first position.',
-  'Plié, arabesque, skip: dance school every Saturday.', 'The first real tutu, worn everywhere.', 'Top hat, stripes and jazz hands.', 'Up on pointe at last.',
-  'The Swan: white tutu and a tiara.', 'Prima ballerina, curtain call.', 'Hip-hop, breaking and street style.', 'Headlining the show with a microphone.',
-  'Flamenco, Bollywood and tango around the world.', 'Flashbulbs on the red carpet.', 'A waltz at the palace, tiara and all.', 'Passing it on: her very own dance school.', 'Five, six, seven, eight — making the dances now.', 'Opening night: the bow from the wings.', 'An icon: her very first move, perfected.', 'A Dance Legend in a golden gown.'];
+const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wobbly twirl.', 'Party hat, balloon and a birthday bounce.', 'Star of the nursery show.',
+  'Her first leotard — and first position.', 'Plié, arabesque, skip: dance school every Saturday.', 'The first real tutu, worn everywhere.', 'Top hat, stripes and jazz hands.',
+  'Up on pointe at last.', 'The Swan: white tutu and a tiara.', 'The Sugar Plum Fairy, wand and all.', 'Prima ballerina, curtain call.',
+  'Hip-hop, breaking and street style.', 'Bowler hat and tap shoes: shuffle, hop, step.', 'Salsa night: ruffles and red heels.', 'Headlining the show with a microphone.',
+  'Flamenco, Bollywood and tango around the world.', 'Bollywood: bangles, a flower and a hundred wrist circles.', 'Flashbulbs on the red carpet.', 'A waltz at the palace, tiara and all.',
+  'Passing it on: her very own dance school.', 'The examiner: marks on the clipboard, a nod.', 'The judge holds up a 10.', 'Graduation day: cap, gown and a jump for joy.',
+  'Warming up: leg warmers and a water bottle.', 'Five, six, seven, eight — making the dances now.', 'Dance captain: leading the line.', 'The coach in her tracksuit: squats, stretches, claps.',
+  'The understudy in the wings, script in hand.', 'Opening night: the bow from the wings.', 'The leading lady: boa, gloves and the pose.', 'The producer, on the phone, making it happen.',
+  'An icon: her very first move, perfected.', 'A gold statue that comes to life.', 'Superstar: gold fringe and flashbulbs.', 'A Dance Legend in a golden gown.'];
 // economy: a beast at level L earns RATE(L) a second; the next crate level, a bought beast and the upgrades scale with it
 const GROW = 1.33;
 const RATE = L => 0.5 * Math.pow(GROW, L) * (save && save.encore ? 1 + 0.5 * save.encore : 1);   // an Encore (new game after the finale) adds 50 % for ever
@@ -82,6 +87,15 @@ function load() {
   if (!save.fields || typeof save.fields !== 'object') save.fields = {}; if (!save.crate) save.crate = {}; if (!save.up) save.up = { crate: 0, cap: 0, tap: 0, away: 0 }; if (!save.seen) save.seen = {};
   if (!(save.world >= 0 && save.world < WORLDS.length)) save.world = 0; if (!(save.unlocked >= 0)) save.unlocked = 0;
   for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
+  // v36 went from 20 stages to 36: a save from before is remapped by stage name (every old level keeps its dancer, bag and pedia entry)
+  if ((save.chainv || 1) < 2) {
+    const OLD = ['Baby', 'Tot', 'Nursery', 'Leotard', 'Dance school', 'First tutu', 'Jazz', 'En pointe', 'Swan', 'Prima', 'Street', 'Stage star', 'World tour', 'Movie star', 'Royal gala', 'Teacher', 'Choreographer', 'Director', 'Icon', 'Legend'];
+    const map = old => { const st = SPEC.stages.indexOf(OLD[Math.floor(old / 3)]); return st < 0 ? null : st * 3 + old % 3; };
+    for (const w in save.fields) save.fields[w] = save.fields[w].map(b => (b && map(b.lv) != null) ? { ...b, lv: map(b.lv) } : null).filter(Boolean);
+    for (const w in save.crate) { const m = map(save.crate[w]); if (m != null) save.crate[w] = m; }
+    const seen = {}; for (const k in save.seen) { const m = map(+k); if (m != null) seen[m] = 1; } save.seen = seen;
+    save.chainv = 2;
+  }
   // rooms can be split in an update (v35 split the Academy into four): every dancer moves to the room of her stage, a bag that
   // pointed into a later room moves there too (clamped inside each room's levels), and the open rooms follow what has been made
   const all = Object.values(save.fields).flat().filter(b => b && CHAIN[b.lv]);
@@ -250,7 +264,7 @@ function refresh() {
 // a dancer below the bag level would be stranded for ever (nothing could ever bring her a twin), so Invite can
 // bring in any level from the lowest dancer on the stage up to the bag level
 const lowest = w => save.fields[w].reduce((m, b) => Math.min(m, b.lv), save.crate[w]);
-const priceOf = lv => 40 * Math.pow(1.4, lv);
+const priceOf = lv => 40 * Math.pow(1.35, lv);
 function invite(lv) { const w = save.world; if (save.fields[w].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); return false; } if (save.coins < priceOf(lv)) { toast('Not enough coins yet'); return false; } save.coins -= priceOf(lv); addBeast(lv); return true; }
 function inviteSheet() {
   const w = save.world, on = {}; save.fields[w].forEach(b => { on[b.lv] = (on[b.lv] || 0) + 1; });
@@ -261,7 +275,7 @@ function inviteSheet() {
   sheet(`<h2>Who shall we invite?</h2>${rows.join('')}`);
   document.querySelectorAll('.sheet button[data-lv]').forEach(b => { b.onclick = () => { if (invite(+b.dataset.lv)) closeSheet(); }; });
 }
-function crateUpCost(w) { return 300 * Math.pow(1.45, save.crate[w]); }
+function crateUpCost(w) { return 300 * Math.pow(1.38, save.crate[w]); }
 // better bags must be earned: the dancer two levels above the bag has to have been made by merging first
 const crateGate = w => save.crate[w] + 2 < CHAIN.length ? save.crate[w] + 2 : null;
 const crateEarned = w => { const g = crateGate(w); return g == null || !!save.seen[g]; };
