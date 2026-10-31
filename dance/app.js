@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '59';
+const APP_VERSION = '60';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -104,7 +104,7 @@ async function saveOffline() {
 
 /* ---------- the save ---------- */
 function load() {
-  save = store.get('dance.save', null) || { coins: 0, world: 0, unlocked: 0, fields: {}, crate: {}, up: { crate: 0, cap: 0, tap: 0, away: 0 }, seen: {}, t: Date.now(), total: 0 };
+  save = store.get('dance.save', null) || { coins: 0, world: 0, unlocked: 0, fields: {}, crate: {}, up: { crate: 0, cap: 0, tap: 0, away: 0 }, seen: {}, t: Date.now(), total: 0, chainv: 2 };   // chainv 2: a new game is never put through the old-chain conversion below (v60 — it had shifted every room's first bag three levels up, skipping the Leotard dancers)
   if (!save.fields || typeof save.fields !== 'object') save.fields = {}; if (!save.crate) save.crate = {}; if (!save.up) save.up = { crate: 0, cap: 0, tap: 0, away: 0 }; if (!save.seen) save.seen = {};
   if (!(save.world >= 0 && save.world < WORLDS.length)) save.world = 0; if (!(save.unlocked >= 0)) save.unlocked = 0;
   for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
@@ -125,6 +125,12 @@ function load() {
     const W_ = WORLDS[w], c = save.crate[w];
     if (c > W_.end) { for (let v = w + 1; v < WORLDS.length; v++) if (c >= WORLDS[v].start && (save.crate[v] == null || save.crate[v] < Math.min(c, WORLDS[v].end))) save.crate[v] = Math.min(c, WORLDS[v].end); }
     save.crate[w] = Math.max(W_.start, Math.min(W_.end, c));
+  }
+  // a bag can only have been upgraded past a level once that level was made, so a bag sitting above an unmade level of its room
+  // was pushed there by the old conversion: it goes back to the lowest unmade level (the skipped dancers then come from the bag)
+  for (let w = 0; w < WORLDS.length; w++) {
+    const W_ = WORLDS[w]; let low = W_.start; while (low < save.crate[w] && save.seen[low]) low++;
+    if (low < save.crate[w]) save.crate[w] = low;
   }
   const made = Object.keys(save.seen).map(Number).filter(k => CHAIN[k]); const top = Math.max(-1, ...made, ...all.map(b => b.lv));
   if (top >= 0) { let u = CHAIN[top].world; for (let w = 0; w < WORLDS.length - 1; w++) if (save.seen[WORLDS[w].end]) u = Math.max(u, w + 1); save.unlocked = Math.max(save.unlocked, Math.min(u, WORLDS.length - 1)); }

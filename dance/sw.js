@@ -1,6 +1,6 @@
 // Dance Sisters service worker: the app shell is cached on install; the pictures under art/ are cached as they are fetched
 // (cache first after that) and app.js fetches every one of them once (saveOffline), so the game plays with no connection. Bump CACHE together with APP_VERSION in app.js.
-const CACHE = 'dance-v59';
+const CACHE = 'dance-v60';
 const SHELL = ['./', 'index.html', 'app.js', 'style.css', 'manifest.webmanifest', 'dancers.json', 'art/font.json', 'art/font.png', 'art/font_w.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon-180.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {})))).then(() => self.skipWaiting())); });
 // on activation, anything the new cache is missing (a shell file whose install fetch failed on a poor connection) is copied
