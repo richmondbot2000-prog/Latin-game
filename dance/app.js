@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '28';
+const APP_VERSION = '29';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -21,7 +21,7 @@ const WORLDS = [   // by stage index (0-based); each has its own room
   { name: 'Academy', stages: [15, 16], bg: 'art/bg_academy.png' },
 ];
 const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wobbly twirl.', 'Star of the nursery show.', 'Her first leotard — and first position.',
-  'Plié, arabesque, skip: dance school every Saturday.', 'The first real tutu, worn everywhere.', 'Sequins, kicks and jazz hands.', 'Up on pointe at last.',
+  'Plié, arabesque, skip: dance school every Saturday.', 'The first real tutu, worn everywhere.', 'The competition costume: stars, plaits and leg warmers.', 'Up on pointe at last.',
   'The Swan: white tutu and a tiara.', 'Prima ballerina, curtain call.', 'Hip-hop, breaking and street style.', 'Headlining the show with a microphone.',
   'Flamenco, Bollywood and tango around the world.', 'Flashbulbs on the red carpet.', 'A waltz at the palace, tiara and all.', 'Passing it on: her very own dance school.', 'A Dance Legend in a golden gown.'];
 // economy: a beast at level L earns RATE(L) a second; the next crate level, a bought beast and the upgrades scale with it
