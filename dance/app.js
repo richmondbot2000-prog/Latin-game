@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '33';
+const APP_VERSION = '34';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -45,7 +45,13 @@ const store = { get: (k, d) => { try { const v = localStorage.getItem(k); return
 
 /* ---------- the chain: 14 stages × 3 sisters, from dancers.json ---------- */
 async function buildChain() {
-  SPEC = await (await fetch('dancers.json')).json(); FONT = await (await fetch('art/font.json')).json();
+  // the dancers list and the font: fetched (retried, caches bypassed on a retry), kept in localStorage as the last good copy
+  // so the game still starts offline after an update on a poor connection
+  const get = async (url, key) => {
+    for (let i = 0; i < 3; i++) { try { const ac = new AbortController(); const tm = setTimeout(() => ac.abort(), 4000); const r = await fetch(url, { cache: i ? 'reload' : 'default', signal: ac.signal }); clearTimeout(tm); if (r.ok) { const j = await r.json(); store.set(key, j); return j; } } catch (e) {} await new Promise(r => setTimeout(r, 500)); }
+    const saved = store.get(key, null); if (saved) return saved; throw new Error('Could not load ' + url);
+  };
+  SPEC = await get('dancers.json', 'dance.spec'); FONT = await get('art/font.json', 'dance.font');
   CHAIN = SPEC.levels.map((l, i) => ({ ...l, world: WORLDS.findIndex(w => l.stage >= w.stages[0] && l.stage <= w.stages[1]), last: l.sister === 2, pic: l.sheet, desc: DESC[l.stage] }));
   WORLDS.forEach((w, i) => { const lv = CHAIN.map((c, k) => c.world === i ? k : -1).filter(k => k >= 0); w.start = lv[0]; w.end = lv[lv.length - 1]; });
   CHAIN.forEach((c, i) => { WORLD_OF[i] = c.world; });
@@ -70,6 +76,8 @@ function preloadSheets() { SPEC.levels.forEach(l => { const i = new Image(); i.s
 /* ---------- the save ---------- */
 function load() {
   save = store.get('dance.save', null) || { coins: 0, world: 0, unlocked: 0, fields: {}, crate: {}, up: { crate: 0, cap: 0, tap: 0, away: 0 }, seen: {}, t: Date.now(), total: 0 };
+  if (!save.fields || typeof save.fields !== 'object') save.fields = {}; if (!save.crate) save.crate = {}; if (!save.up) save.up = { crate: 0, cap: 0, tap: 0, away: 0 }; if (!save.seen) save.seen = {};
+  if (!(save.world >= 0 && save.world < WORLDS.length)) save.world = 0; if (!(save.unlocked >= 0)) save.unlocked = 0;
   for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = save.fields[w] || []; if (save.crate[w] == null) save.crate[w] = WORLDS[w].start; }
 }
 let saveTimer = 0;
@@ -83,6 +91,7 @@ function mount() {
   field.style.backgroundImage = `url('${WORLDS[w].bg}')`;
   field.querySelectorAll('.beast, .crate, .coin, .drop').forEach(e => e.remove());
   els = {};
+  save.fields[w] = save.fields[w].filter(b => b && CHAIN[b.lv]);
   save.fields[w].forEach(b => place(b));
   const last = field.querySelector('.beast:last-of-type'); if (last) last.classList.add('last');
   renderWorlds(); refresh(); hint();
@@ -334,4 +343,4 @@ async function main() {
   window.addEventListener('pagehide', () => { save.t = Date.now(); store.set('dance.save', save); });
   if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') navigator.serviceWorker.register('sw.js').catch(() => {});
 }
-main();
+main().catch(e => { const h = $('#hint'); if (h) h.textContent = 'The game could not start: ' + (e && e.message ? e.message : e) + ' — tap to try again'; if (h) h.onclick = () => location.reload(); console.error(e); });
