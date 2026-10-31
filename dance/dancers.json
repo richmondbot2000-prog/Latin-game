@@ -77,7 +77,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_1.png",
 "frames": 32,
-"top": 51
+"top": 49
 },
 {
 "stage": 1,
@@ -85,7 +85,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_2.png",
 "frames": 32,
-"top": 51
+"top": 49
 },
 {
 "stage": 1,
@@ -93,7 +93,7 @@
 "stageName": "Tot",
 "sheet": "art/s02_3.png",
 "frames": 32,
-"top": 51
+"top": 49
 },
 {
 "stage": 2,
@@ -117,7 +117,7 @@
 "stageName": "Nursery",
 "sheet": "art/s03_3.png",
 "frames": 32,
-"top": 45
+"top": 43
 },
 {
 "stage": 3,
@@ -125,7 +125,7 @@
 "stageName": "Leotard",
 "sheet": "art/s04_1.png",
 "frames": 32,
-"top": 35
+"top": 33
 },
 {
 "stage": 3,
@@ -141,7 +141,7 @@
 "stageName": "Leotard",
 "sheet": "art/s04_3.png",
 "frames": 32,
-"top": 39
+"top": 37
 },
 {
 "stage": 4,
@@ -189,7 +189,7 @@
 "stageName": "First tutu",
 "sheet": "art/s06_3.png",
 "frames": 32,
-"top": 37
+"top": 35
 },
 {
 "stage": 6,
@@ -293,7 +293,7 @@
 "stageName": "Street",
 "sheet": "art/s11_1.png",
 "frames": 32,
-"top": 19
+"top": 17
 },
 {
 "stage": 10,
@@ -301,7 +301,7 @@
 "stageName": "Street",
 "sheet": "art/s11_2.png",
 "frames": 32,
-"top": 23
+"top": 21
 },
 {
 "stage": 10,
@@ -309,7 +309,7 @@
 "stageName": "Street",
 "sheet": "art/s11_3.png",
 "frames": 32,
-"top": 23
+"top": 21
 },
 {
 "stage": 11,
@@ -317,7 +317,7 @@
 "stageName": "Stage star",
 "sheet": "art/s12_1.png",
 "frames": 32,
-"top": 1
+"top": 0
 },
 {
 "stage": 11,
@@ -333,7 +333,7 @@
 "stageName": "Stage star",
 "sheet": "art/s12_3.png",
 "frames": 32,
-"top": 11
+"top": 9
 },
 {
 "stage": 12,
@@ -341,7 +341,7 @@
 "stageName": "World tour",
 "sheet": "art/s13_1.png",
 "frames": 32,
-"top": 7
+"top": 5
 },
 {
 "stage": 12,
@@ -349,7 +349,7 @@
 "stageName": "World tour",
 "sheet": "art/s13_2.png",
 "frames": 32,
-"top": 13
+"top": 11
 },
 {
 "stage": 12,
@@ -365,7 +365,7 @@
 "stageName": "Movie star",
 "sheet": "art/s14_1.png",
 "frames": 32,
-"top": 7
+"top": 5
 },
 {
 "stage": 13,
@@ -373,7 +373,7 @@
 "stageName": "Movie star",
 "sheet": "art/s14_2.png",
 "frames": 32,
-"top": 11
+"top": 9
 },
 {
 "stage": 13,
@@ -381,7 +381,7 @@
 "stageName": "Movie star",
 "sheet": "art/s14_3.png",
 "frames": 32,
-"top": 13
+"top": 11
 },
 {
 "stage": 14,
