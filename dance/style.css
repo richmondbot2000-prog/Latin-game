@@ -134,3 +134,18 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 .beast.last { z-index: 3; }
 .up .ic.sp { width: 48px; display: flex; justify-content: center; }
 .beast.crawl { transition-timing-function: linear, linear; }
+
+/* the ending: red curtains part on the three Legends taking their bow */
+.finale { position: fixed; inset: 0; z-index: 27; background: #1a0d18; overflow: hidden; display: grid; place-items: center; }
+.finale .curtain { position: absolute; top: 0; bottom: 0; width: 52%; background: repeating-linear-gradient(90deg, #9c1830 0 14px, #c0213f 14px 26px, #8a1428 26px 34px); transition: transform 1.6s cubic-bezier(.4, 0, .2, 1); z-index: 2; box-shadow: 0 0 30px rgba(0,0,0,.6); }
+.finale .curtain.l { left: 0; } .finale .curtain.r { right: 0; }
+.finale.open .curtain.l { transform: translateX(-100%); } .finale.open .curtain.r { transform: translateX(100%); }
+.finale .show { position: relative; z-index: 1; text-align: center; padding: 20px 18px; max-width: 420px; }
+.finale .kicker { color: var(--accent); font-weight: 800; letter-spacing: .12em; font-size: 13px; }
+.finale h1 { margin: 4px 0 8px; font-size: 34px; }
+.finale p { font-size: 16px; line-height: 1.4; }
+.finale .small { font-size: 13px; color: var(--muted); }
+.finale .trio { display: flex; justify-content: center; gap: 4px; margin: 8px 0; }
+.finale .legend { filter: drop-shadow(0 6px 6px rgba(0,0,0,.5)); }
+.finale .trophy, .detail .trophy { width: 72px; height: 72px; image-rendering: pixelated; margin: 6px auto; display: block; }
+.ib[hidden] { display: none; }

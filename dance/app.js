@@ -1,14 +1,14 @@
 /* Dance Evolution — tap, drag to merge, evolve.
-   The Merge Beasts engine with dancers: 14 stages × 3 sisters = 42 levels (dancers.json + art/*.png sprite sheets drawn
+   The Merge Beasts engine with dancers: 17 stages × 3 sisters = 51 levels (dancers.json + art/*.png sprite sheets drawn
    by scratchpad/dancers/sisters.py), each level a 6–8 frame dance loop. The three sisters are named below (the owner's
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '24';
+const APP_VERSION = '25';
 const ART = 'art/';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
-const SCALE = 1.75;   // sprite pixels → screen pixels on the field
+const SCALE = 0.875;   // sprite pixels (96 × 128 sheets) → screen pixels on the field (84 × 112)
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const EL = { earth: ['🪨', 'Earth'], grass: ['🌿', 'Grass'], water: ['💧', 'Water'], snow: ['❄️', 'Snow'], fire: ['🔥', 'Fire'], crystal: ['💎', 'Crystal'] };
@@ -17,15 +17,16 @@ const WORLDS = [   // by stage index (0-based); each has its own room
   { name: 'Dance school', stages: [3, 6], bg: 'art/bg_school.png' },
   { name: 'Ballet theatre', stages: [7, 9], bg: 'art/bg_theatre.png' },
   { name: 'City stage', stages: [10, 11], bg: 'art/bg_city.png' },
-  { name: 'World tour', stages: [12, 13], bg: 'art/bg_tour.png' },
+  { name: 'World tour', stages: [12, 14], bg: 'art/bg_tour.png' },
+  { name: 'Academy', stages: [15, 16], bg: 'art/bg_academy.png' },
 ];
 const DESC = ['Already bopping to the music in her cot.', 'First tutu, first wobbly twirl.', 'Star of the nursery show.', 'Her first leotard — and first position.',
   'Plié, arabesque, skip: dance school every Saturday.', 'The first real tutu, worn everywhere.', 'Sequins, kicks and jazz hands.', 'Up on pointe at last.',
   'The Swan: white tutu and a tiara.', 'Prima ballerina, curtain call.', 'Hip-hop, breaking and street style.', 'Headlining the show with a microphone.',
-  'Flamenco, Bollywood and tango around the world.', 'A Dance Legend in a golden gown.'];
+  'Flamenco, Bollywood and tango around the world.', 'Flashbulbs on the red carpet.', 'A waltz at the palace, tiara and all.', 'Passing it on: her very own dance school.', 'A Dance Legend in a golden gown.'];
 // economy: a beast at level L earns RATE(L) a second; the next crate level, a bought beast and the upgrades scale with it
 const GROW = 1.33;
-const RATE = L => 0.5 * Math.pow(GROW, L);
+const RATE = L => 0.5 * Math.pow(GROW, L) * (save && save.encore ? 1 + 0.5 * save.encore : 1);   // an Encore (new game after the finale) adds 50 % for ever
 const fmt = n => { if (n < 1000) return String(Math.floor(n)); const u = ['K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td', 'Qd', 'Qn', 'Sd', 'St', 'Od', 'Nd', 'Vg']; let i = -1; while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; } return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i]; };
 const UPS = {
   crate: { ic: '<img src="art/bag.png" alt="">', name: 'Faster dance bags', desc: n => `A bag every ${crateEvery(n).toFixed(0)} s`, cost: n => 120 * Math.pow(2.4, n), max: 12 },
@@ -165,7 +166,7 @@ function earn(v, x, y) {
 }
 function merge(a, t) {
   const lv = a.lv + 1;
-  if (lv >= CHAIN.length) { toast('That is the final dancer!'); persist(); return; }
+  if (lv >= CHAIN.length) { persist(); toast('Two Legends cannot merge — retire one to the Hall of Fame 🏆'); setTimeout(hall, 900); return; }
   const at = { x: t.x, y: t.y };
   removeBeast(a); removeBeast(t);
   const b = addBeast(lv, at);
@@ -173,7 +174,35 @@ function merge(a, t) {
   if (CHAIN[lv].sister === 0 || CHAIN[lv].last) fanfare(lv);
   if (lv === WORLDS[save.world].end && save.unlocked === save.world && save.world < WORLDS.length - 1) { save.unlocked++; persist(); renderWorlds(); setTimeout(() => toast(`🎉 ${WORLDS[save.unlocked].name} is open!`), 1400); }
 }
-function discover(lv) { if (!save.seen[lv]) { save.seen[lv] = 1; $('#pediaBtn').classList.add('pulse'); } }
+function discover(lv) {
+  if (!save.seen[lv]) { save.seen[lv] = 1; $('#pediaBtn').classList.add('pulse'); }
+  if (lv === CHAIN.length - 1 && !save.finished) { save.finished = Date.now(); persist(); $('#hallBtn').hidden = false; setTimeout(finale, 1500); }
+}
+/* ---------- the ending: a curtain call the first time the last dancer is made, then the Hall of Fame ---------- */
+const isFinal = b => b.lv === CHAIN.length - 1;
+function finale() {
+  document.querySelectorAll('.fanfare').forEach(f => f.remove());
+  const trio = CHAIN.slice(-3).map(c => `<div class="legend">${spriteHTML(c, 1.25)}</div>`).join('');
+  const f = document.createElement('div'); f.className = 'finale';
+  f.innerHTML = `<div class="curtain l"></div><div class="curtain r"></div><div class="show"><div class="kicker">CURTAIN CALL</div><h1>You did it!</h1><p>All three sisters are Dance Legends — from the cot to the golden gown.</p><div class="trio">${trio}</div><img class="trophy" src="art/trophy.png" alt=""><p class="small">The game goes on: every extra Legend can take her bow in the Hall of Fame, and there is an Encore waiting.</p><button class="btn" id="bow">Take a bow 🌹</button></div>`;
+  document.body.appendChild(f);
+  requestAnimationFrame(() => f.classList.add('open'));
+  for (let i = 0; i < 40; i++) setTimeout(() => { const s = document.createElement('span'); s.className = 'spark'; s.style.left = rnd(10, 90) + '%'; s.style.top = '-10px'; s.style.background = ['#f2a541', '#ff7bb0', '#7ec8ff', '#fff', '#ffd866'][i % 5]; s.style.setProperty('--dx', rnd(-60, 60) + 'px'); s.style.setProperty('--dy', rnd(300, 700) + 'px'); s.style.animationDuration = '2.6s'; document.body.appendChild(s); setTimeout(() => s.remove(), 2700); }, i * 90);
+  $('#bow').onclick = () => { f.remove(); hall(); };
+}
+function hall() {
+  const stars = save.stars || 0, here = save.fields[save.world].filter(isFinal).length, bonus = income() * 3600 * 2;
+  sheet(`<div class="detail"><img class="trophy" src="art/trophy.png" alt=""><div class="name">Hall of Fame</div><p class="el">${stars ? `${stars} Legend${stars === 1 ? '' : 's'} ha${stars === 1 ? 's' : 've'} taken a bow` : 'No Legend has taken her bow yet'}${save.encore ? ` · Encore ${save.encore}: +${save.encore * 50}% applause` : ''}</p>
+    <p>Two Legends cannot merge. Retire a <b>${esc(nameOf(CHAIN[CHAIN.length - 1]))}</b> from the stage to the Hall of Fame: she takes her bow, you keep a ⭐ for ever and get a bonus of two hours' coins.</p>
+    <button class="btn" id="retire" ${here ? '' : 'disabled'}>⭐ Retire a Legend${here ? ` (+<i class="cn"></i>${fmt(bonus)})` : ' — none on this stage'}</button>
+    <h2 style="margin-top:22px">Encore</h2><p>Start the whole show again from the cot with <b>+50% applause for ever</b>. Your upgrades, Dancepedia and stars stay; the dancers, coins and bags start over.</p><button class="btn" id="encore">🎭 Encore!</button><button class="linkbtn" id="curtain">See the curtain call again</button></div>`);
+  $('#retire').onclick = () => { const b = save.fields[save.world].find(isFinal); if (!b) return; removeBeast(b); save.stars = (save.stars || 0) + 1; save.coins += bonus; save.total = (save.total || 0) + bonus; persist(); refresh(); hint(); closeSheet(); toast(`⭐ ${nameOf(CHAIN[CHAIN.length - 1])} takes her bow! +${fmt(bonus)}`); };
+  $('#encore').onclick = () => { if (!confirm('Start the Encore? Dancers, coins and bags start over; upgrades, stars and the Dancepedia stay, and every dancer earns 50% more for ever.')) return;
+    save.encore = (save.encore || 0) + 1; save.fields = {}; save.crate = {}; save.coins = 0; save.world = 0; save.unlocked = 0; save.bagsOpened = 0;
+    for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = []; save.crate[w] = WORLDS[w].start; }
+    persist(); closeSheet(); mount(); toast(`🎭 Encore ${save.encore}! Every dancer now earns +${save.encore * 50}%`); };
+  $('#curtain').onclick = () => { closeSheet(); finale(); };
+}
 
 /* ---------- crates and buying ---------- */
 function crateReady() { return Date.now() >= crateAt; }
@@ -189,15 +218,15 @@ function refresh() {
   const w = save.world, lv = save.crate[w], ready = crateReady(), full = save.fields[w].length >= capOf(save.up.cap);
   const cb = $('#crateBtn'); cb.classList.toggle('ready', ready && !full); cb.disabled = full;
   $('#crateLbl').innerHTML = ready ? `Dance bag<br><small>${esc(nameOf(CHAIN[lv]))}</small>` : `Dance bag<br><small>${Math.ceil((crateAt - Date.now()) / 1000)} s</small>`;
-  const price = 25 * Math.pow(GROW, lv), up = 40 * Math.pow(GROW, lv + 1), canUp = lv < WORLDS[w].end - 1 && lv < CHAIN.length - 2;
+  const price = priceOf(lv), up = crateUpCost(w), canUp = lv < WORLDS[w].end - 1 && lv < CHAIN.length - 2;
   const bb = $('#buyBtn'); bb.disabled = full || save.coins < price; bb.classList.toggle('ready', !full && save.coins >= price);
   $('#buyLbl').innerHTML = `Invite ${esc(nameOf(CHAIN[lv]))}<br><small><i class="cn"></i>${fmt(price)}</small>`;
-  const sb = $('#shopBtn'); sb.classList.toggle('pulse', (canUp && save.coins >= up) || Object.keys(UPS).some(k => save.up[k] < UPS[k].max && save.coins >= UPS[k].cost(save.up[k])));
+  const sb = $('#shopBtn'); sb.classList.toggle('pulse', (canUp && crateEarned(w) && save.coins >= up) || Object.keys(UPS).some(k => save.up[k] < UPS[k].max && save.coins >= UPS[k].cost(save.up[k])));
 }
 // a dancer below the bag level would be stranded for ever (nothing could ever bring her a twin), so Invite can
 // bring in any level from the lowest dancer on the stage up to the bag level
 const lowest = w => save.fields[w].reduce((m, b) => Math.min(m, b.lv), save.crate[w]);
-const priceOf = lv => 25 * Math.pow(GROW, lv);
+const priceOf = lv => 40 * Math.pow(1.4, lv);
 function invite(lv) { const w = save.world; if (save.fields[w].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); return false; } if (save.coins < priceOf(lv)) { toast('Not enough coins yet'); return false; } save.coins -= priceOf(lv); addBeast(lv); return true; }
 function inviteSheet() {
   const w = save.world, on = {}; save.fields[w].forEach(b => { on[b.lv] = (on[b.lv] || 0) + 1; });
@@ -208,7 +237,10 @@ function inviteSheet() {
   sheet(`<h2>Who shall we invite?</h2>${rows.join('')}`);
   document.querySelectorAll('.sheet button[data-lv]').forEach(b => { b.onclick = () => { if (invite(+b.dataset.lv)) closeSheet(); }; });
 }
-function crateUpCost(w) { return 40 * Math.pow(GROW, save.crate[w] + 1); }
+function crateUpCost(w) { return 300 * Math.pow(1.45, save.crate[w]); }
+// better bags must be earned: the dancer two levels above the bag has to have been made by merging first
+const crateGate = w => save.crate[w] + 2 < CHAIN.length ? save.crate[w] + 2 : null;
+const crateEarned = w => { const g = crateGate(w); return g == null || !!save.seen[g]; };
 
 /* ---------- the loop ---------- */
 function tick() {
@@ -236,14 +268,14 @@ function away() {
 function sheet(html) { const s = $('#sheet'); s.hidden = false; s.innerHTML = `<div class="panel"><button class="ib close" aria-label="Close">✕</button>${html}</div>`; s.querySelector('.close').onclick = closeSheet; s.onclick = e => { if (e.target === s) closeSheet(); }; }
 function closeSheet() { $('#sheet').hidden = true; $('#sheet').innerHTML = ''; }
 function shop() {
-  const w = save.world, lv = save.crate[w], canUp = lv < WORLDS[w].end - 1 && lv < CHAIN.length - 2;
-  const rows = [`<div class="up ${canUp ? '' : 'max'}"><span class="ic"><img src="art/bag.png" alt=""></span><div class="t"><b>Better dance bags</b><span>${canUp ? `Bags in the ${WORLDS[w].name} bring ${esc(nameOf(CHAIN[lv + 1]))} (level ${lv + 2})` : 'Bags here are as good as they get'}</span></div><button data-k="cratelv" ${save.coins < crateUpCost(w) ? 'disabled' : ''}><i class="cn"></i>${fmt(crateUpCost(w))}</button></div>`,
+  const w = save.world, lv = save.crate[w], canUp = lv < WORLDS[w].end - 1 && lv < CHAIN.length - 2, earned = crateEarned(w);
+  const rows = [`<div class="up ${canUp ? '' : 'max'}"><span class="ic"><img src="art/bag.png" alt=""></span><div class="t"><b>Better dance bags</b><span>${canUp ? (earned ? `Bags in the ${WORLDS[w].name} bring ${esc(nameOf(CHAIN[lv + 1]))} (level ${lv + 2})` : `First make ${esc(nameOf(CHAIN[lv + 2]))} by merging — then bags can bring ${esc(nameOf(CHAIN[lv + 1]))}`) : 'Bags here are as good as they get'}</span></div><button data-k="cratelv" ${save.coins < crateUpCost(w) || !earned ? 'disabled' : ''}><i class="cn"></i>${fmt(crateUpCost(w))}</button></div>`,
     ...Object.entries(UPS).map(([k, u]) => { const n = save.up[k], max = n >= u.max; return `<div class="up ${max ? 'max' : ''}"><span class="ic">${u.ic}</span><div class="t"><b>${u.name}${n ? ` · ${n}` : ''}</b><span>${max ? 'Maxed out' : u.desc(n + 1)}</span></div><button data-k="${k}" ${save.coins < u.cost(n) ? 'disabled' : ''}><i class="cn"></i>${fmt(u.cost(n))}</button></div>`; })];
   sheet(`<h2>Upgrades</h2><div class="small" style="color:var(--muted);margin-bottom:6px">You have <i class="cn"></i>${fmt(save.coins)}</div>${rows.join('')}<button class="linkbtn" id="moveBtn">📲 Move my game to another app or phone</button>`);
   $('#moveBtn').onclick = moveSheet;
   $('#sheet').querySelectorAll('button[data-k]').forEach(b => { b.onclick = () => {
     const k = b.dataset.k;
-    if (k === 'cratelv') { const c = crateUpCost(w); if (save.coins < c) return; save.coins -= c; save.crate[w]++; }
+    if (k === 'cratelv') { const c = crateUpCost(w); if (save.coins < c || !crateEarned(w)) return; save.coins -= c; save.crate[w]++; }
     else { const c = UPS[k].cost(save.up[k]); if (save.coins < c) return; save.coins -= c; save.up[k]++; }
     persist(); refresh(); shop();
   }; });
@@ -251,15 +283,15 @@ function shop() {
 function pedia() {
   $('#pediaBtn').classList.remove('pulse');
   const seen = Object.keys(save.seen).length;
-  const cells = WORLDS.map((w, i) => `<h3>${esc(w.name)}</h3>` + CHAIN.map((c, k) => c.world === i ? `<div class="cell ${save.seen[k] ? '' : 'unseen'}" data-k="${k}">${spriteHTML(c, 1, 'spr still')}<span class="n">${k + 1}</span></div>` : '').join('')).join('');
+  const cells = WORLDS.map((w, i) => `<h3>${esc(w.name)}</h3>` + CHAIN.map((c, k) => c.world === i ? `<div class="cell ${save.seen[k] ? '' : 'unseen'}" data-k="${k}">${spriteHTML(c, .5, 'spr still')}<span class="n">${k + 1}</span></div>` : '').join('')).join('');
   sheet(`<h2>Dancepedia · ${seen} of ${CHAIN.length}</h2><div class="pedia">${cells}</div>`);
   $('#sheet').querySelectorAll('.cell').forEach(c => { c.onclick = () => { const k = +c.dataset.k, b = CHAIN[k]; if (!save.seen[k]) { toast(`Level ${k + 1} — not found yet`); return; }
-    sheet(`<div class="detail"><div class="sprwrap">${spriteHTML(b, 3)}</div><div class="name">${esc(nameOf(b))}</div><div class="el">${esc(b.stageName)} · level ${k + 1}</div><p>${esc(b.desc)}</p><p class="el">Earns <i class="cn"></i>${fmt(RATE(k))} a second</p><button class="btn" id="back">Back</button></div>`);
+    sheet(`<div class="detail"><div class="sprwrap">${spriteHTML(b, 1.5)}</div><div class="name">${esc(nameOf(b))}</div><div class="el">${esc(b.stageName)} · level ${k + 1}</div><p>${esc(b.desc)}</p><p class="el">Earns <i class="cn"></i>${fmt(RATE(k))} a second</p><button class="btn" id="back">Back</button></div>`);
     $('#back').onclick = pedia; }; });
 }
 function fanfare(lv) {
   const b = CHAIN[lv], f = document.createElement('div'); f.className = 'fanfare';
-  f.innerHTML = `<div class="card"><div class="kicker">${b.sister === 0 ? 'NEW STAGE' : 'NEW DANCER'}</div><div class="sprwrap">${spriteHTML(b, 3)}</div><div class="name">${esc(nameOf(b))}</div><p>${esc(b.desc)}</p><button class="btn">Bravo!</button></div>`;
+  f.innerHTML = `<div class="card"><div class="kicker">${b.sister === 0 ? 'NEW STAGE' : 'NEW DANCER'}</div><div class="sprwrap">${spriteHTML(b, 1.5)}</div><div class="name">${esc(nameOf(b))}</div><p>${esc(b.desc)}</p><button class="btn">Bravo!</button></div>`;
   f.querySelector('button').onclick = () => f.remove(); f.onclick = e => { if (e.target === f) f.remove(); };
   document.body.appendChild(f);
   for (let i = 0; i < 18; i++) { const s = document.createElement('span'); s.className = 'spark'; s.style.left = '50%'; s.style.top = '45%'; s.style.background = ['#f2a541', '#6fd18a', '#7ec8ff', '#ff7bb0', '#fff'][i % 5]; s.style.setProperty('--dx', rnd(-160, 160) + 'px'); s.style.setProperty('--dy', rnd(-200, 120) + 'px'); document.body.appendChild(s); setTimeout(() => s.remove(), 1100); }
@@ -289,7 +321,7 @@ function moveSheet() {
 /* ---------- start ---------- */
 async function main() {
   await buildChain(); load(); preloadSheets();
-  $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia;
+  $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia; $('#hallBtn').onclick = hall; $('#hallBtn').hidden = !save.finished;
   $('#crateBtn').onclick = () => { const c = field.querySelector('.crate'); if (c) c.onpointerdown(new Event('pointerdown')); else if (!crateReady()) toast(`Next crate in ${Math.ceil((crateAt - Date.now()) / 1000)} s`); };
   $('#buyBtn').onclick = () => { const w = save.world; if (save.fields[w].length >= capOf(save.up.cap)) { toast('Stage full — merge some dancers first'); return; } if (lowest(w) < save.crate[w]) inviteSheet(); else invite(save.crate[w]); };
   // Safari zooms on a quick double tap; taps on the stage are game moves, never zooms
