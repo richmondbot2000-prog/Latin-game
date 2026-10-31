@@ -136,7 +136,7 @@
 "stageName": "Birthday",
 "sheet": "art/s03_3.png",
 "frames": 30,
-"top": 25
+"top": 31
 },
 {
 "stage": 3,
@@ -240,7 +240,7 @@
 "stageName": "Jazz",
 "sheet": "art/s08_1.png",
 "frames": 26,
-"top": 11
+"top": 29
 },
 {
 "stage": 7,
@@ -248,7 +248,7 @@
 "stageName": "Jazz",
 "sheet": "art/s08_2.png",
 "frames": 26,
-"top": 13
+"top": 37
 },
 {
 "stage": 7,
@@ -256,7 +256,7 @@
 "stageName": "Jazz",
 "sheet": "art/s08_3.png",
 "frames": 26,
-"top": 13
+"top": 39
 },
 {
 "stage": 8,
@@ -384,7 +384,7 @@
 "stageName": "Tap",
 "sheet": "art/s14_1.png",
 "frames": 24,
-"top": 3
+"top": 0
 },
 {
 "stage": 13,
@@ -392,7 +392,7 @@
 "stageName": "Tap",
 "sheet": "art/s14_2.png",
 "frames": 24,
-"top": 11
+"top": 3
 },
 {
 "stage": 13,
@@ -400,7 +400,7 @@
 "stageName": "Tap",
 "sheet": "art/s14_3.png",
 "frames": 24,
-"top": 13
+"top": 5
 },
 {
 "stage": 14,
@@ -408,7 +408,7 @@
 "stageName": "Salsa",
 "sheet": "art/s15_1.png",
 "frames": 28,
-"top": 17
+"top": 23
 },
 {
 "stage": 14,
@@ -456,7 +456,7 @@
 "stageName": "World tour",
 "sheet": "art/s17_1.png",
 "frames": 32,
-"top": 7
+"top": 3
 },
 {
 "stage": 16,
@@ -472,7 +472,7 @@
 "stageName": "World tour",
 "sheet": "art/s17_3.png",
 "frames": 32,
-"top": 3
+"top": 1
 },
 {
 "stage": 17,
@@ -528,7 +528,7 @@
 "stageName": "Royal gala",
 "sheet": "art/s20_1.png",
 "frames": 36,
-"top": 0
+"top": 5
 },
 {
 "stage": 19,
@@ -576,7 +576,7 @@
 "stageName": "Examiner",
 "sheet": "art/s22_1.png",
 "frames": 36,
-"top": 1
+"top": 3
 },
 {
 "stage": 21,
@@ -672,7 +672,7 @@
 "stageName": "Choreographer",
 "sheet": "art/s26_1.png",
 "frames": 26,
-"top": 3
+"top": 7
 },
 {
 "stage": 25,
@@ -680,7 +680,7 @@
 "stageName": "Choreographer",
 "sheet": "art/s26_2.png",
 "frames": 26,
-"top": 7
+"top": 11
 },
 {
 "stage": 25,
@@ -688,7 +688,7 @@
 "stageName": "Choreographer",
 "sheet": "art/s26_3.png",
 "frames": 26,
-"top": 7
+"top": 11
 },
 {
 "stage": 26,
@@ -864,7 +864,7 @@
 "stageName": "Statue",
 "sheet": "art/s34_1.png",
 "frames": 44,
-"top": 0
+"top": 2
 },
 {
 "stage": 33,
@@ -931,5 +931,5 @@
 "top": 0
 }
 ],
-"artv": "4da5408f"
+"artv": "85b6f1e4"
 }
