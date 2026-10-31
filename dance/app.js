@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '63';
+const APP_VERSION = '64';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -293,22 +293,24 @@ function hardMode(overlay) {
   persist(); if (overlay) overlay.remove(); closeSheet(); $('#hallBtn').hidden = true; mount(); hardTag(); toast(`🔥 HARD MODE ${hard > 1 ? '×' + hard : ''} — every dancer earns ${Math.round(100 * (1 - Math.pow(.5, hard)))}% less`);
 }
 function hardTag() { let t = $('#hardTag'); if (!t) { t = document.createElement('span'); t.id = 'hardTag'; $('#rate').after(t); } t.textContent = save.hard ? ` HARD${save.hard > 1 ? ' ×' + save.hard : ''}` : ''; }
+const NEW_GAME_LINK = '<button class="linkbtn" id="newGame" style="margin-top:18px;color:#ff8a5c">🔄 Start the game again</button>';
+function newGame() {
+  if (!confirm('Start the game again from the very beginning? Every dancer, coin, bag, upgrade, star and the Dancepedia will be gone. This cannot be undone.')) return;
+  if (!confirm('Are you sure? Tap OK to wipe the game and start again.')) return;
+  save = { coins: 0, world: 0, unlocked: 0, fields: {}, crate: {}, up: { crate: 0, cap: 0, tap: 0, away: 0 }, seen: {}, t: Date.now(), total: 0, chainv: 2 };
+  for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = []; save.crate[w] = WORLDS[w].start; }
+  persist(); closeSheet(); $('#hallBtn').hidden = true; mount(); hardTag(); toast('A brand-new show — tap the dance bag to meet your first dancer');
+}
 function hall() {
   const stars = save.stars || 0, here = save.fields[save.world].filter(isFinal).length, bonus = income() * 3600 * 2;
   sheet(`<div class="detail"><img class="trophy" src="art/trophy.png" alt=""><div class="name">Hall of Fame</div><p class="el">${stars ? `${stars} Legend${stars === 1 ? '' : 's'} ha${stars === 1 ? 's' : 've'} taken a bow` : 'No Legend has taken her bow yet'}</p>
     <p>Two <b>${esc(nameOf(CHAIN[LEGEND]))}</b>s merge into the <b>Spirit of Dance</b>. Retire a Legend Juliette or a Spirit from the stage to the Hall of Fame: she takes her bow, you keep a ⭐ for ever and get a bonus of two hours' coins.</p>
     <button class="btn" id="retire" ${here ? '' : 'disabled'}>⭐ Retire a Legend${here ? ` (+<i class="cn"></i>${fmt(bonus)})` : ' — none on this stage'}</button>
-<button class="linkbtn" id="curtain">See the curtain call again</button><button class="linkbtn" id="newGame" style="margin-top:18px;color:#ff8a5c">🔄 Start the game again</button>${save.won ? '<h2 style="margin-top:22px">Hard mode</h2><p>The Spirit of Dance reached level 100. Start the whole game again with every dancer earning 50% less.</p><button class="btn" id="hardBtn">🔥 RESTART ON HARD MODE</button><button class="linkbtn" id="wonAgain">See the ending again</button>' : ''}</div>`);
+<button class="linkbtn" id="curtain">See the curtain call again</button>${NEW_GAME_LINK}${save.won ? '<h2 style="margin-top:22px">Hard mode</h2><p>The Spirit of Dance reached level 100. Start the whole game again with every dancer earning 50% less.</p><button class="btn" id="hardBtn">🔥 RESTART ON HARD MODE</button><button class="linkbtn" id="wonAgain">See the ending again</button>' : ''}</div>`);
   if ($('#hardBtn')) { $('#hardBtn').onclick = () => hardMode(); $('#wonAgain').onclick = () => { closeSheet(); won(); }; }
   $('#retire').onclick = () => { const b = save.fields[save.world].find(isFinal); if (!b) return; removeBeast(b); save.stars = (save.stars || 0) + 1; save.coins += bonus; save.total = (save.total || 0) + bonus; persist(); refresh(); hint(); closeSheet(); toast(`⭐ ${nameOf(CHAIN[b.lv])} takes ${CHAIN[b.lv].spirit ? 'its' : 'her'} bow! +${fmt(bonus)}`); };
   $('#curtain').onclick = () => { closeSheet(); finale(); };
-  $('#newGame').onclick = () => {
-    if (!confirm('Start the game again from the very beginning? Every dancer, coin, bag, upgrade, star and the Dancepedia will be gone. This cannot be undone.')) return;
-    if (!confirm('Are you sure? Tap OK to wipe the game and start again.')) return;
-    save = { coins: 0, world: 0, unlocked: 0, fields: {}, crate: {}, up: { crate: 0, cap: 0, tap: 0, away: 0 }, seen: {}, t: Date.now(), total: 0, chainv: 2 };
-    for (let w = 0; w < WORLDS.length; w++) { save.fields[w] = []; save.crate[w] = WORLDS[w].start; }
-    persist(); closeSheet(); $('#hallBtn').hidden = true; mount(); hardTag(); toast('A brand-new show — tap the dance bag to meet your first dancer');
-  };
+  $('#newGame').onclick = newGame;
 }
 
 /* ---------- crates and buying ---------- */
@@ -392,7 +394,8 @@ function pedia() {
   $('#pediaBtn').classList.remove('pulse');
   const seen = Object.keys(save.seen).length;
   const cells = WORLDS.map((w, i) => `<h3>${esc(w.name)}</h3>` + CHAIN.map((c, k) => c.world === i ? `<div class="cell ${save.seen[k] ? '' : 'unseen'}" data-k="${k}">${spriteHTML(c, .5, 'spr still')}<span class="n">${k + 1}</span></div>` : '').join('')).join('');
-  sheet(`<h2>Dancepedia · ${seen} of ${CHAIN.length}</h2><div class="pedia">${cells}</div>`);
+  sheet(`<h2>Dancepedia · ${seen} of ${CHAIN.length}</h2><div class="pedia">${cells}</div>${NEW_GAME_LINK}`);
+  $('#newGame').onclick = newGame;
   $('#sheet').querySelectorAll('.cell').forEach(c => { c.onclick = () => { const k = +c.dataset.k, b = CHAIN[k]; if (!save.seen[k]) { toast(`Level ${k + 1} — not found yet`); return; }
     sheet(`<div class="detail"><div class="sprwrap">${spriteHTML(b, 1.5)}</div><div class="name">${esc(nameOf(b))}</div><div class="el">${esc(b.stageName)} · level ${k + 1}</div><p>${esc(b.desc)}</p><p class="el">Earns <i class="cn"></i>${fmt(RATE(k))} a second</p><button class="btn" id="back">Back</button></div>`);
     $('#back').onclick = pedia; }; });
