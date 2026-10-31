@@ -116,10 +116,10 @@ img { image-rendering: pixelated; image-rendering: crisp-edges; }
 i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/coin1.png') 0 0 / 16px 16px no-repeat; image-rendering: pixelated; vertical-align: -2px; margin-right: 2px; }
 .coin { display: flex; align-items: center; }
 
-/* the name above the head: two lines of black pixel text, no box */
+/* the name above the head: two lines of white pixel text with a dark grey shadow (readable on every room), no box */
 .beast .lv { top: -36px; bottom: auto; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0; background: none; box-shadow: none; font-size: 0; line-height: 0; white-space: nowrap; }
-.pt { display: inline-flex; gap: 2px; }
-.pt i { display: block; width: 10px; height: 14px; background: url('art/font.png') 0 0 / auto 14px no-repeat; image-rendering: pixelated; }
+.pt { display: inline-flex; gap: 2px; filter: drop-shadow(1px 1px 0 #3a3440) drop-shadow(0 0 1px rgba(0,0,0,.6)); }
+.pt i { display: block; width: 10px; height: 14px; background: url('art/font_w.png') 0 0 / auto 14px no-repeat; image-rendering: pixelated; }
 
 .crate .tag { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); white-space: nowrap; background: #2a1830; color: #fff; font-size: 12px; font-weight: 700; padding: 4px 8px; margin-bottom: 4px; box-shadow: 0 0 0 2px #fff; line-height: 1.2; pointer-events: none; }
 .field .hint { top: 30%; left: 8%; right: 8%; padding: 8px 12px; background: rgba(42, 24, 48, .85); color: #fff; box-shadow: 0 0 0 2px #fff; font-weight: 700; font-size: 14px; }
@@ -127,8 +127,8 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 
 .sheet textarea.nm { font-family: inherit; resize: none; }
 
-/* names are dark grey; the dancer in front (the last one touched) has hers in black and bold */
-.beast .lv { opacity: .7; }
+/* the dancer in front (the last one touched) has her name at full strength and bold */
+.beast .lv { opacity: .8; }
 .beast.hold .lv, .beast.drag .lv, .beast.last .lv { opacity: 1; }
 .beast.hold .pt i::after, .beast.drag .pt i::after, .beast.last .pt i::after { content: ''; display: block; width: 10px; height: 14px; background: inherit; transform: translateX(1px); }
 .beast.last { z-index: 3; }

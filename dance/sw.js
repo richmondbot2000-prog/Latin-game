@@ -1,7 +1,7 @@
 // Dance Evolution service worker: the app shell is cached on install; the beast pictures and anything else under ../art
 // are cached as they are first fetched (cache first after that). Bump CACHE together with APP_VERSION in app.js.
-const CACHE = 'dance-v40';
-const SHELL = ['./', 'index.html', 'app.js', 'style.css', 'manifest.webmanifest', 'dancers.json', 'art/font.json', 'art/font.png'];
+const CACHE = 'dance-v41';
+const SHELL = ['./', 'index.html', 'app.js', 'style.css', 'manifest.webmanifest', 'dancers.json', 'art/font.json', 'art/font.png', 'art/font_w.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {})))).then(() => self.skipWaiting())); });
 // on activation, anything the new cache is missing (a shell file whose install fetch failed on a poor connection) is copied
 // from the old cache before the old cache is deleted, so an update never leaves the game without its data offline
