@@ -28,5 +28,22 @@
 <div id="sheet" class="sheet" hidden></div>
 <div id="toast" class="toast" hidden></div>
 <script src="app.js"></script>
+<script>
+  // the worker keeps the whole game on the phone (app.js fetches every picture once), so it plays with no connection;
+  // a new version is looked for whenever the app comes to the front and shown as soon as it has taken over
+  if ('serviceWorker' in navigator) addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js');
+      const check = () => reg.update().catch(() => {});
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) check(); });
+      let had = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        let done = false; try { done = sessionStorage.getItem('dance.swr') === '1'; sessionStorage.setItem('dance.swr', '1'); } catch (e) {}
+        if (had && !done) location.reload(); had = true;
+      });
+      try { sessionStorage.removeItem('dance.swr'); } catch (e) {}
+    } catch (e) {}
+  });
+</script>
 </body>
 </html>

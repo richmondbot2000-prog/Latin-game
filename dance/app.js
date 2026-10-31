@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '54';
+const APP_VERSION = '55';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -84,6 +84,23 @@ let frameNo = 0;
 setInterval(() => { frameNo++; document.querySelectorAll('.spr:not(.still)').forEach(el => { const n = +el.dataset.frames || 1; el.style.backgroundPositionX = -((frameNo % n) * +el.dataset.fw) + 'px'; }); }, 40);
 // every sheet is fetched once at the start, so a merge never waits for the network
 function preloadSheets() { SPEC.levels.forEach(l => { const i = new Image(); i.src = l.sheet; }); }
+/* everything the game needs is fetched once in the background, so the worker holds it and the game plays with no
+   connection afterwards: every sheet, every room, the icons; done again only when the art or the app changes */
+const OFFLINE_FILES = ['art/bag.png', 'art/book.png', 'art/clap.png', 'art/coin.png', 'art/coin1.png', 'art/home.png', 'art/manager.png', 'art/shoe.png', 'art/stage.png', 'art/star.png', 'art/trophy.png', 'art/up.png', 'art/font.png', 'art/font_w.png', 'art/font.json', 'icons/icon-192.png', 'icons/icon-512.png', 'manifest.webmanifest'];
+async function saveOffline() {
+  if (!('serviceWorker' in navigator) || !window.caches) return;
+  const stamp = ART_V + ':' + APP_VERSION; if (store.get('dance.offline', '') === stamp) return;
+  try { await navigator.serviceWorker.ready; } catch (e) { return; }
+  const urls = [...new Set([...SPEC.levels.map(l => l.sheet), ...WORLDS.map(w => w.bg), ...OFFLINE_FILES])];
+  let missing = 0;
+  for (const u of urls) {
+    try { const r = await fetch(u); if (!r.ok) missing++; else await r.arrayBuffer(); } catch (e) { missing++; }
+    await new Promise(r => setTimeout(r, 40));
+  }
+  if (missing) return;   // try again next time the game opens
+  const first = !store.get('dance.offline', ''); store.set('dance.offline', stamp);
+  if (first) toast('✅ Saved on this phone — the game now plays without internet');
+}
 
 /* ---------- the save ---------- */
 function load() {
@@ -402,7 +419,7 @@ function moveSheet() {
 
 /* ---------- start ---------- */
 async function main() {
-  await buildChain(); load(); preloadSheets();
+  await buildChain(); load(); preloadSheets(); setTimeout(saveOffline, 2500);
   // the page may be an older cached copy (an update on a poor connection): add anything newer that it lacks
   if (!$('#hallBtn')) { const b = document.createElement('button'); b.id = 'hallBtn'; b.className = 'ib'; b.setAttribute('aria-label', 'Hall of Fame'); b.hidden = true; b.innerHTML = '<img src="art/trophy.png" alt="">'; const sb = $('#shopBtn'); if (sb && sb.parentNode) sb.parentNode.insertBefore(b, sb); else document.body.appendChild(b); }
   $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia; $('#hallBtn').onclick = hall; $('#hallBtn').hidden = !save.finished; hardTag();
