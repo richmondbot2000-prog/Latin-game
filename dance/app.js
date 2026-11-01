@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '69';
+const APP_VERSION = '70';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -145,7 +145,7 @@ const SPIRIT_MAX = 100;
 // the Spirit grows at 5 / 10 / 25 / 40 (the same cloud, bigger) and becomes a new, larger cloud at 50 / 70 / 90 (`tiers` in dancers.json, drawn by spirit.py)
 const SPIRIT_GROWS = [5, 10, 25, 40, 50, 70, 90];
 const spiritTier = sl => sl >= 90 ? 3 : sl >= 70 ? 2 : sl >= 50 ? 1 : 0;
-const spiritScale = sl => sl >= 90 ? 1.65 : sl >= 70 ? 1.5 : sl >= 50 ? 1.35 : sl >= 40 ? 1.25 : sl >= 25 ? 1.1 : sl >= 10 ? .95 : sl >= 5 ? .8 : .65;
+const spiritScale = sl => sl >= 90 ? 1.5 : sl >= 70 ? 1.4 : sl >= 50 ? 1.3 : sl >= 40 ? 1.25 : sl >= 25 ? 1.1 : sl >= 10 ? .95 : sl >= 5 ? .8 : .65;
 const spiritPic = sl => { const c = CHAIN[SPIRIT], t = (c.tiers || [])[spiritTier(sl)]; return t ? { ...c, sheet: t.sheet, top: t.top, w: t.w, h: t.h, mid: t.mid } : c; };
 
 /* ---------- the field ---------- */
