@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '72';
+const APP_VERSION = '73';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -145,7 +145,13 @@ const SPIRIT_MAX = 100;
 // the Spirit grows at 5 / 10 / 25 / 40 (the same cloud, bigger) and becomes a new, larger cloud at 50 / 70 / 90 (`tiers` in dancers.json, drawn by spirit.py)
 const SPIRIT_GROWS = [5, 10, 25, 40, 50, 70, 90];
 const spiritTier = sl => sl >= 90 ? 3 : sl >= 70 ? 2 : sl >= 50 ? 1 : 0;
-const spiritScale = sl => sl >= 90 ? 1.5 : sl >= 70 ? 1.4 : sl >= 50 ? 1.3 : sl >= 40 ? 1.25 : sl >= 25 ? 1.1 : sl >= 10 ? .95 : sl >= 5 ? .8 : .65;
+const spiritScale = sl => sl >= 90 ? 1.15 : sl >= 70 ? 1.25 : sl >= 50 ? 1.2 : sl >= 40 ? 1.25 : sl >= 25 ? 1.1 : sl >= 10 ? .95 : sl >= 5 ? .8 : .65;
+// a big cloud is kept inside the stage: its spot can come no nearer the sides than half its width (v73: the owner saw the clouds cut off at the sides)
+function keepIn(b) {
+  if (b.lv !== SPIRIT) return;
+  const pic = spiritPic(b.sl || 1), half = (pic.w || SPEC.w) * SCALE * spiritScale(b.sl || 1) / 2, fw = field.getBoundingClientRect().width || 370;
+  const m = Math.min(46, Math.max(6, half / fw * 100 + 1)); b.x = Math.max(m, Math.min(100 - m, b.x));
+}
 const spiritPic = sl => { const c = CHAIN[SPIRIT], t = (c.tiers || [])[spiritTier(sl)]; return t ? { ...c, sheet: t.sheet, top: t.top, w: t.w, h: t.h, mid: t.mid } : c; };
 
 /* ---------- the field ---------- */
@@ -172,7 +178,7 @@ const rnd = (a, b) => a + Math.random() * (b - a);
 function spot() { return { x: rnd(14, 86), y: rnd(60, 92) }; }
 function place(b, pop = false) {
   const el = document.createElement('div'); el.className = 'beast' + (pop ? ' pop' : '') + (Math.random() < .5 ? ' flip' : '') + (CHAIN[b.lv].stage === 0 ? ' crawl' : '');
-  const pic = b.lv === SPIRIT ? spiritPic(b.sl || 1) : CHAIN[b.lv];
+  keepIn(b); const pic = b.lv === SPIRIT ? spiritPic(b.sl || 1) : CHAIN[b.lv];
   el.innerHTML = `${spriteHTML(pic)}${lvHTML(b.lv + 1, pic)}`;
   if (b.lv === SPIRIT) {   // the cloud: semi-transparent, sized by its level (a bigger picture from 50 / 70 / 90), the level number in the middle
     const sl = b.sl || 1, ss = spiritScale(sl), tier = spiritTier(sl); el.classList.add('spirit'); el.style.setProperty('--ss', ss);
@@ -191,7 +197,7 @@ function wander() {
     const c = CHAIN[b.lv]; let run = null;
     if (c.crawl) { const k = frameNo % c.frames; run = c.crawl.find(r => k >= r[0] && k < r[0] + 5 && r[1] - r[0] > 8); if (!run) continue; }
     if (Math.random() < (run ? .7 : .25) && !(els[b.id] && els[b.id].classList.contains('drag'))) {
-      if (run && els[b.id]) els[b.id].style.transitionDuration = ((run[1] - run[0]) * 40 - 100) + 'ms'; const s = spot(); const el = els[b.id]; if (el) { el.classList.toggle('flip', s.x < b.x); } b.x = s.x; b.y = s.y; if (el) { el.style.left = s.x + '%'; el.style.top = s.y + '%'; } } }
+      if (run && els[b.id]) els[b.id].style.transitionDuration = ((run[1] - run[0]) * 40 - 100) + 'ms'; const s = spot(); const el = els[b.id]; if (el) { el.classList.toggle('flip', s.x < b.x); } b.x = s.x; b.y = s.y; keepIn(b); if (el) { el.style.left = s.x + '%'; el.style.top = s.y + '%'; } } }
 }
 let nextId = () => (save.nid = (save.nid || 0) + 1);
 function addBeast(lv, at, pop = true, sl = 1) {
@@ -213,7 +219,7 @@ function bindBeast(el, b) {
     if (!moved && Math.hypot(e.clientX - start.x, e.clientY - start.y) < 6) return;
     moved = true; el.classList.add('drag');
     const r = field.getBoundingClientRect();
-    b.x = Math.max(6, Math.min(94, (e.clientX - r.left) / r.width * 100)); b.y = Math.max(20, Math.min(94, (e.clientY - r.top) / r.height * 100));
+    b.x = Math.max(6, Math.min(94, (e.clientX - r.left) / r.width * 100)); b.y = Math.max(20, Math.min(94, (e.clientY - r.top) / r.height * 100)); keepIn(b);
     el.style.left = b.x + '%'; el.style.top = b.y + '%';
     const t = twinNear(b); if (t !== target) { if (target && els[target.id]) els[target.id].classList.remove('target'); target = t; if (t && els[t.id]) els[t.id].classList.add('target'); }
   };
