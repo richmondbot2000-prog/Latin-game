@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '66';
+const APP_VERSION = '67';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -382,9 +382,8 @@ function pedia() {
   $('#pediaBtn').classList.remove('pulse');
   const seen = Object.keys(save.seen).length;
   const cells = WORLDS.map((w, i) => `<h3>${esc(w.name)}</h3>` + CHAIN.map((c, k) => c.world === i ? `<div class="cell ${save.seen[k] ? '' : 'unseen'}" data-k="${k}">${spriteHTML(c, .5, 'spr still')}<span class="n">${k + 1}</span></div>` : '').join('')).join('');
-  sheet(`<h2>Dancepedia · ${seen} of ${CHAIN.length}</h2><div class="pedia">${cells}</div>${save.won ? '<h2 style="margin-top:22px">Hard mode</h2><p>The Spirit of Dance reached level 100. Start the whole game again with every dancer earning 50% less.</p><button class="btn" id="hardBtn">🔥 RESTART ON HARD MODE</button><button class="linkbtn" id="wonAgain">See the ending again</button>' : ''}${NEW_GAME_LINK}`);
+  sheet(`<h2>Dancepedia · ${seen} of ${CHAIN.length}</h2><div class="pedia">${cells}</div>${NEW_GAME_LINK}`);
   $('#newGame').onclick = newGame;
-  if ($('#hardBtn')) { $('#hardBtn').onclick = () => hardMode(); $('#wonAgain').onclick = () => { closeSheet(); won(); }; }
   $('#sheet').querySelectorAll('.cell').forEach(c => { c.onclick = () => { const k = +c.dataset.k, b = CHAIN[k]; if (!save.seen[k]) { toast(`Level ${k + 1} — not found yet`); return; }
     sheet(`<div class="detail"><div class="sprwrap">${spriteHTML(b, 1.5)}</div><div class="name">${esc(nameOf(b))}</div><div class="el">${esc(b.stageName)} · level ${k + 1}</div><p>${esc(b.desc)}</p><p class="el">Earns <i class="cn"></i>${fmt(RATE(k))} a second</p><button class="btn" id="back">Back</button></div>`);
     $('#back').onclick = pedia; }; });
