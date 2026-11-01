@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '67';
+const APP_VERSION = '68';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -278,10 +278,10 @@ function won() {
   f.innerHTML = `<div class="curtain l"></div><div class="curtain r"></div><div class="show"><div class="kicker">THE SPIRIT OF DANCE · LEVEL ${SPIRIT_MAX}</div><h1>Congratulations</h1>
     <div class="trio"><div class="legend">${spriteHTML(CHAIN[SPIRIT], 1.5)}</div></div>
     <p>The girls have gone beyond being physical dancers and have become the universal spirit of dance itself. All dancers forever will channel their power and energy through them. The girls will never die, and the dancing will never end. The universe is a more harmonious place, and everyone has better moves.</p>
-    <p><b>Would you like to restart the game on HARD mode?</b></p><button class="btn" id="hardBtn">RESTART ON HARD MODE</button><button class="linkbtn" id="keepBtn">Keep playing</button></div>`;
+    <p><b>Would you like to restart the game on HARD mode?</b></p><button class="btn" id="hardBtn">RESTART ON HARD MODE</button></div>`;
   document.body.appendChild(f); requestAnimationFrame(() => f.classList.add('open'));
   for (let i = 0; i < 60; i++) setTimeout(() => { const s = document.createElement('span'); s.className = 'spark'; s.style.left = rnd(10, 90) + '%'; s.style.top = '-10px'; s.style.background = ['#56c2b8', '#f06aa0', '#9060d0', '#fff', '#ffd866'][i % 5]; s.style.setProperty('--dx', rnd(-60, 60) + 'px'); s.style.setProperty('--dy', rnd(300, 700) + 'px'); s.style.animationDuration = '2.6s'; f.appendChild(s); setTimeout(() => s.remove(), 2700); }, i * 60);
-  $('#hardBtn').onclick = () => hardMode(f); $('#keepBtn').onclick = () => f.remove();
+  $('#hardBtn').onclick = () => hardMode(f);
 }
 // Hard mode: everything starts over — dancers, coins, bags, upgrades, the Dancepedia and stars — and every dancer earns half as much (halved again for each hard restart)
 function hardMode(overlay) {
@@ -421,6 +421,7 @@ function moveSheet() {
 async function main() {
   await buildChain(); load(); preloadSheets(); setTimeout(saveOffline, 2500);
   // the page may be an older cached copy (an update on a poor connection): add anything newer that it lacks
+  if (save.won) setTimeout(won, 800);   // the game is over: the ending stays until the player restarts on hard mode
   if ($('#hallBtn')) $('#hallBtn').remove();   // the Hall of Fame sheet was dropped in v66; an older cached page still has its button
   $('#shopBtn').onclick = shop; $('#pediaBtn').onclick = pedia; hardTag();
   // belt and braces for iOS: if the page is ever nudged (the keyboard closing after the Move sheet, a stray scroll), put it back
