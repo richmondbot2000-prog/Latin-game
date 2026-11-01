@@ -155,10 +155,11 @@ i.cn { display: inline-block; width: 16px; height: 16px; background: url('art/co
 .ib[hidden] { display: none; }
 
 /* the Spirit of Dance: a semi-transparent cloud sized by its level (--ss), the level number in the middle */
-.beast.spirit .spr { opacity: .8; transform: scale(var(--ss, 1)); transform-origin: 50% 100%; }
-.beast.spirit .sn { position: absolute; left: 50%; bottom: calc(60px * var(--ss, 1)); transform: translateX(-50%) scale(calc(var(--ss, 1) * 1.6)); transform-origin: 50% 50%; pointer-events: none; font-size: 0; line-height: 0; }
+.beast.spirit .spr { opacity: .8; position: absolute; left: 50%; bottom: 0; transform: translateX(-50%) scale(var(--ss, 1)); transform-origin: 50% 100%; }   /* the bigger tiers are wider than a dancer's 84px, so the cloud is centred on the spot */
+.beast.spirit .sn { position: absolute; left: 50%; bottom: calc(60px * var(--ss, 1)); transform: translateX(-50%) scale(var(--ss, 1)); transform-origin: 50% 50%; pointer-events: none; font-size: 0; line-height: 0; }   /* --ss here is the number's own scale, bottom is set by place() to the cloud's centre */
 .beast.spirit .sn .pt { filter: none; }
 .beast.spirit .sn .pt i { background-image: url('art/font.png'); }
 #hardTag { color: #ff8a5c; font-weight: 800; font-size: 13px; margin-left: 4px; }
 .finale.won h1 { color: #ffd866; }
 .finale.won .show p { font-size: 15px; line-height: 1.45; max-width: 330px; margin: 10px auto; }
+.beast.spirit.flip .spr, .beast.spirit.drag .spr, .beast.spirit.flip.drag .spr { transform: translateX(-50%) scale(var(--ss, 1)); }   /* the cloud is never mirrored or enlarged by a drag */

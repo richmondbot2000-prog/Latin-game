@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '68';
+const APP_VERSION = '69';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -62,7 +62,7 @@ async function buildChain() {
   SPEC = await get('dancers.json', 'dance.spec'); FONT = await get('art/font.json', 'dance.font');
   // pictures are served cache-first by the worker, so a redrawn picture gets a new address: ?v= the art stamp from dancers.json
   ART_V = SPEC.artv || ''; const stamp = u => ART_V ? u + '?v=' + ART_V : u;
-  SPEC.levels.forEach(l => { l.sheet = stamp(l.sheet); }); WORLDS.forEach(w => { w.bg = stamp(w.bg.replace(/\?.*$/, '')); });
+  SPEC.levels.forEach(l => { l.sheet = stamp(l.sheet); (l.tiers || []).forEach(t => { t.sheet = stamp(t.sheet); }); }); WORLDS.forEach(w => { w.bg = stamp(w.bg.replace(/\?.*$/, '')); });
   CHAIN = SPEC.levels.map((l, i) => ({ ...l, world: WORLDS.findIndex(w => l.stage >= w.stages[0] && l.stage <= w.stages[1]), last: l.sister === 2 || l.sister < 0, spirit: l.sister < 0, pic: l.sheet, desc: DESC[l.stage] }));
   LEGEND = CHAIN.findIndex(c => c.stageName === 'Legend' && c.sister === 2); SPIRIT = CHAIN.length - 1;
   WORLDS.forEach((w, i) => { const lv = CHAIN.map((c, k) => c.world === i ? k : -1).filter(k => k >= 0); w.start = lv[0]; w.end = lv[lv.length - 1]; });
@@ -76,14 +76,14 @@ const lvHTML = (n, c) => `<span class="lv" style="top:${Math.round((c.top || 0) 
 const nameOf = c => `${c.stageName} ${NAMES[c.sister] || ''}`.trim();
 // a dancer: a div showing one frame of her sprite sheet, the loop stepped by CSS
 function spriteHTML(c, scale = SCALE, cls = 'spr') {
-  const w = SPEC.w * scale, h = SPEC.h * scale;
+  const w = (c.w || SPEC.w) * scale, h = (c.h || SPEC.h) * scale;
   return `<div class="${cls}" data-frames="${c.frames}" data-fw="${w}" style="width:${w}px;height:${h}px;background-image:url('${c.sheet}');background-size:${w * c.frames}px ${h}px"></div>`;
 }
 // the loops are stepped here, not by CSS: every 40 ms each sprite shows its next frame (a still sprite keeps frame 0)
 let frameNo = 0;
 setInterval(() => { frameNo++; document.querySelectorAll('.spr:not(.still)').forEach(el => { const n = +el.dataset.frames || 1; el.style.backgroundPositionX = -((frameNo % n) * +el.dataset.fw) + 'px'; }); }, 40);
 // every sheet is fetched once at the start, so a merge never waits for the network
-function preloadSheets() { SPEC.levels.forEach(l => { const i = new Image(); i.src = l.sheet; }); }
+function preloadSheets() { SPEC.levels.forEach(l => { const i = new Image(); i.src = l.sheet; (l.tiers || []).forEach(t => { const j = new Image(); j.src = t.sheet; }); }); }
 /* everything the game needs is fetched once in the background, so the worker holds it and the game plays with no
    connection afterwards: every sheet, every room, the icons; done again only when the art or the app changes */
 const OFFLINE_FILES = ['art/bag.png', 'art/book.png', 'art/clap.png', 'art/coin.png', 'art/coin1.png', 'art/home.png', 'art/manager.png', 'art/shoe.png', 'art/stage.png', 'art/star.png', 'art/trophy.png', 'art/up.png', 'art/font.png', 'art/font_w.png', 'art/font.json', 'icons/icon-192.png', 'icons/icon-512.png', 'manifest.webmanifest'];
@@ -91,7 +91,7 @@ async function saveOffline() {
   if (!('serviceWorker' in navigator) || !window.caches) return;
   const stamp = ART_V + ':' + APP_VERSION; if (store.get('dance.offline', '') === stamp) return;
   try { await navigator.serviceWorker.ready; } catch (e) { return; }
-  const urls = [...new Set([...SPEC.levels.map(l => l.sheet), ...WORLDS.map(w => w.bg), ...OFFLINE_FILES])];
+  const urls = [...new Set([...SPEC.levels.map(l => l.sheet), ...SPEC.levels.flatMap(l => (l.tiers || []).map(t => t.sheet)), ...WORLDS.map(w => w.bg), ...OFFLINE_FILES])];
   let missing = 0;
   for (const u of urls) {
     try { const r = await fetch(u); if (!r.ok) missing++; else await r.arrayBuffer(); } catch (e) { missing++; }
@@ -142,7 +142,11 @@ const earns = b => RATE(b.lv) * (b.lv === SPIRIT ? (b.sl || 1) : 1);   // the Sp
 const income = () => Object.values(save.fields).flat().reduce((s, b) => s + earns(b), 0);
 /* the Spirit of Dance: a level 1–100 in the middle of the cloud, which grows at 10 / 30 / 50 / 75; at 100 the game is won */
 const SPIRIT_MAX = 100;
-const spiritScale = sl => sl >= 75 ? 1.25 : sl >= 50 ? 1.1 : sl >= 30 ? .95 : sl >= 10 ? .8 : .65;
+// the Spirit grows at 5 / 10 / 25 / 40 (the same cloud, bigger) and becomes a new, larger cloud at 50 / 70 / 90 (`tiers` in dancers.json, drawn by spirit.py)
+const SPIRIT_GROWS = [5, 10, 25, 40, 50, 70, 90];
+const spiritTier = sl => sl >= 90 ? 3 : sl >= 70 ? 2 : sl >= 50 ? 1 : 0;
+const spiritScale = sl => sl >= 90 ? 1.65 : sl >= 70 ? 1.5 : sl >= 50 ? 1.35 : sl >= 40 ? 1.25 : sl >= 25 ? 1.1 : sl >= 10 ? .95 : sl >= 5 ? .8 : .65;
+const spiritPic = sl => { const c = CHAIN[SPIRIT], t = (c.tiers || [])[spiritTier(sl)]; return t ? { ...c, sheet: t.sheet, top: t.top, w: t.w, h: t.h, mid: t.mid } : c; };
 
 /* ---------- the field ---------- */
 function mount() {
@@ -168,11 +172,12 @@ const rnd = (a, b) => a + Math.random() * (b - a);
 function spot() { return { x: rnd(14, 86), y: rnd(60, 92) }; }
 function place(b, pop = false) {
   const el = document.createElement('div'); el.className = 'beast' + (pop ? ' pop' : '') + (Math.random() < .5 ? ' flip' : '') + (CHAIN[b.lv].stage === 0 ? ' crawl' : '');
-  el.innerHTML = `${spriteHTML(CHAIN[b.lv])}${lvHTML(b.lv + 1, CHAIN[b.lv])}`;
-  if (b.lv === SPIRIT) {   // the cloud: semi-transparent, sized by its level, the level number in the middle
-    const sl = b.sl || 1, ss = spiritScale(sl); el.classList.add('spirit'); el.style.setProperty('--ss', ss);
-    el.insertAdjacentHTML('beforeend', `<span class="sn" style="--ss:${ss}">${pixText(String(sl))}</span>`);
-    const lv = el.querySelector('.lv'); if (lv) lv.style.top = Math.round(112 - (112 - (CHAIN[b.lv].top || 0) * SCALE) * ss) - 27 + 'px';
+  const pic = b.lv === SPIRIT ? spiritPic(b.sl || 1) : CHAIN[b.lv];
+  el.innerHTML = `${spriteHTML(pic)}${lvHTML(b.lv + 1, pic)}`;
+  if (b.lv === SPIRIT) {   // the cloud: semi-transparent, sized by its level (a bigger picture from 50 / 70 / 90), the level number in the middle
+    const sl = b.sl || 1, ss = spiritScale(sl), tier = spiritTier(sl); el.classList.add('spirit'); el.style.setProperty('--ss', ss);
+    el.insertAdjacentHTML('beforeend', `<span class="sn" style="--ss:${ss * (1.6 + tier * .35)};bottom:${Math.round((pic.mid || 61) * SCALE * ss)}px">${pixText(String(sl))}</span>`);
+    const lv = el.querySelector('.lv'); if (lv) lv.style.top = Math.round(112 - ((pic.h || SPEC.h) - (pic.top || 0)) * SCALE * ss) - 27 + 'px';
   }
   el.style.left = b.x + '%'; el.style.top = b.y + '%';
   el.dataset.id = b.id; els[b.id] = el; field.appendChild(el);
@@ -244,7 +249,7 @@ function merge(a, t) {
   if (a.lv === SPIRIT || t.lv === SPIRIT) {
     const sl = Math.min(SPIRIT_MAX, (a.lv === SPIRIT ? a.sl || 1 : 1) + (t.lv === SPIRIT ? t.sl || 1 : 1)), was = Math.max(a.sl || 0, t.sl || 0), at = { x: t.x, y: t.y };
     removeBeast(a); removeBeast(t); addBeast(SPIRIT, at, true, sl); sparks(at.x, at.y);
-    const grew = [10, 30, 50, 75].some(g => was < g && sl >= g); if (grew && sl < SPIRIT_MAX) toast(`✨ The Spirit of Dance grows — level ${sl}`);
+    const grew = SPIRIT_GROWS.some(g => was < g && sl >= g); if (grew && sl < SPIRIT_MAX) toast(`✨ The Spirit of Dance grows — level ${sl}`);
     if (sl >= SPIRIT_MAX && !save.won) { save.won = Date.now(); persist(); setTimeout(won, 1200); }
     return;
   }
