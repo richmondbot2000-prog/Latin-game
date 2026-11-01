@@ -4,7 +4,7 @@
    decision, 30 Oct 2026: the names are fixed in the game); a level is "<stage> <name>". Save in
    localStorage['dance.save']; nothing is sent anywhere. */
 'use strict';
-const APP_VERSION = '71';
+const APP_VERSION = '72';
 const ART = 'art/'; let ART_V = '';
 const NAMES = ['Lainey', 'Miri', 'Juliette'];   // youngest first
 let SPEC = null;
@@ -253,12 +253,12 @@ function merge(a, t) {
     if (sl >= SPIRIT_MAX && !save.won) { save.won = Date.now(); persist(); setTimeout(won, 1200); }
     return;
   }
-  const lv = a.lv + 1;
+  const lv = a.lv + 1, isNew = !save.seen[lv];   // the fanfare only the first time she is made (v72: it used to show on every merge)
   const at = { x: t.x, y: t.y };
   removeBeast(a); removeBeast(t);
   const b = addBeast(lv, at);
   sparks(at.x, at.y);
-  if (CHAIN[lv].sister === 0 || CHAIN[lv].last) fanfare(lv);
+  if (isNew && (CHAIN[lv].sister === 0 || CHAIN[lv].last)) fanfare(lv);
   if (lv === WORLDS[save.world].end && save.unlocked === save.world && save.world < WORLDS.length - 1) { save.unlocked++; persist(); renderWorlds(); setTimeout(() => toast(`🎉 ${WORLDS[save.unlocked].name} is open!`), 1400); }
 }
 function discover(lv) {

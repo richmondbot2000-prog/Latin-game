@@ -606,7 +606,7 @@ sky and ground; making a world's last beast opens the next. **Play**: beasts wan
 0.5 × 1.33^L coins a second each, paid as a trickle (`tick`, 4 a second) with a 🪙 drop animation; tap a beast for a
 burst (`tapMult` × its rate); drag one onto an identical one (`twinNear` measures where they are drawn; nobody wanders
 during a drag) and they merge into the next level with sparks, and a fanfare card for a new beast's egg or an adult
-(`fanfare`); a crate drops every `crateEvery` seconds and opens into the world's crate level (`save.crate[w]`,
+(`fanfare`; in Dance Sisters only the first time that level is made — `isNew` in `merge`, v72, after the owner saw "NEW STAGE" on every merge); a crate drops every `crateEvery` seconds and opens into the world's crate level (`save.crate[w]`,
 upgradeable one level at a time, 40 × 1.33^(L+1)); Buy gives that beast for 25 × 1.33^L; the field holds `capOf` beasts
 (10, +2 per upgrade, max 20). **Upgrades** (`UPS`): faster crates, bigger field, stronger taps, tractor (away earnings:
 `awayFrac` 25 % + 15 % a level up to 100 %, `awayHours` 2 + 2 a level, shown by `away()` on return as "While you were
