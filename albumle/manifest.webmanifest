@@ -1,7 +1,7 @@
 {
   "name": "Albumle",
   "short_name": "Albumle",
-  "description": "Guess the album from its genres and mood — one of the 200 best albums of all time, a new one every day.",
+  "description": "Guess the album of the day from the 250 greatest albums.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
