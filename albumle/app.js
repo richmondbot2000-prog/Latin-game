@@ -1,7 +1,7 @@
 /* Albumle — guess one of the 250 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '20';
+const APP_VERSION = '21';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // 'D' (duo) counts as a band until the owner decides how its square should behave (`kind`)
@@ -106,10 +106,11 @@ function render() {
     ${over ? result(a) : `<div class="guessbox"><input id="q" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type an album or artist…" enterkeyhint="go"><div class="sugg" id="sugg" hidden></div></div>`}
     <div class="rows">${rows}</div>
     <div class="legend"><span>year</span><span>band/solo</span><span>genre</span><span>country</span><span>rank</span></div>
-    <div class="foot">${mode === 'daily' ? `<button class="linkbtn" id="practice">Play a practice game</button>` : `<button class="linkbtn" id="daily">Back to today's album</button>`}<br>The ${A.length} albums are RateYourMusic's all-time top ${A.length} · a new one every day at 9am · the cover is fetched from Deezer when the answer shows; nothing else leaves this phone · v${APP_VERSION}</div>`;
+    <div class="foot">${mode === 'daily' ? `<button class="linkbtn" id="practice">Play a practice game</button>` : `<button class="linkbtn" id="daily">Back to today's album</button>`}${standalone() ? '' : `<br><button class="linkbtn" id="install">📲 Add Albumle to your home screen</button>`}<br>The ${A.length} albums are RateYourMusic's all-time top ${A.length} · a new one every day at 9am · the cover is fetched from Deezer when the answer shows; nothing else leaves this phone · v${APP_VERSION}</div>`;
   if (!over) wireInput(a); else showCover(a);
   const p = $('#practice'); if (p) p.onclick = () => { mode = 'practice'; G = load('albumle.practice', null); if (!G || G.done) G = newPractice(); save(); render(); };
   const d = $('#daily'); if (d) d.onclick = () => { mode = 'daily'; G = newDaily(); save(); render(); };
+  const inst = $('#install'); if (inst) inst.onclick = install;
   const sh = $('#share'); if (sh) sh.onclick = share;
   const ag = $('#again'); if (ag) ag.onclick = () => { mode = 'practice'; G = newPractice(); store('albumle.lastPractice', G.idx); save(); render(); };
   const st = $('#seeStats'); if (st) st.onclick = stats;
@@ -189,6 +190,20 @@ function help() {
     <div class="cells"><div class="cell y">1994 ▲<small>6–10 yrs later</small></div><div class="cell n">Band<small>no</small></div><div class="cell y sm">Alternative Rock<small>Rock, not this</small></div><div class="cell g flag">🇬🇧<small>United Kingdom</small></div><div class="cell n">#44 ▼<small>20+ lower</small></div></div>
     <p><b>Year</b>: green within 5 years, yellow 6 to 10 years away, red more than 10; ▲ the answer came out later, ▼ earlier.<br><b>Band or solo</b>: green when the answer is the same kind of act.<br><b>Genre</b>: green for the same genre, yellow for the same broad genre but a different one within it (you guess Alternative Rock, it is Indie Rock), red for a different genre altogether.<br><b>Country</b>: the artist's country — green for the same country, yellow for the same part of the world (the British Isles, North America, the Nordic countries, mainland Europe), red otherwise.<br><b>Rank</b> on the list of ${A.length}: green within 5 places, yellow 6 to 20 away, red more than 20; ▲ the answer is higher up (nearer #1), ▼ lower.</p>
     <p>After three misses you get the artist's initial, after five the title's. Share your squares when you are done, and play practice games as often as you like.</p>`);
+}
+// Add to home screen: Android and desktop Chrome hand us an install prompt (`beforeinstallprompt`); iPhone has no
+// such thing, so the sheet shows the two taps. Hidden once the game is running as an app (`standalone`).
+let installEvt = null; window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvt = e; });
+const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+function install() {
+  if (installEvt) { installEvt.prompt(); installEvt.userChoice.then(() => { installEvt = null; render(); }); return; }
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent), safari = ios && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
+  sheet(`<h2>Add to your home screen</h2>
+    <p>Albumle then opens full screen with its own icon, like an app, and keeps your streak and stats.</p>
+    ${ios ? `${safari ? '' : '<p><b>Open albumle.net in Safari first</b> — only Safari can add a site to the home screen.</p>'}
+    <p>1. Tap the <b>Share</b> button <span style="font-size:1.3em">⎙</span> at the bottom of Safari (the square with an arrow).</p>
+    <p>2. Scroll down and tap <b>Add to Home Screen</b>, then <b>Add</b>.</p>` :
+    `<p>Open the browser menu (⋮) and choose <b>Add to Home screen</b> or <b>Install app</b>.</p>`}`);
 }
 function sheet(html) { $('#sheetBody').innerHTML = html; $('#sheet').hidden = false; }
 function toast(t) { const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 2200); }
