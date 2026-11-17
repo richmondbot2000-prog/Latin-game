@@ -107,7 +107,7 @@
 105 | Led Zeppelin | Led Zeppelin | 12 Jan 1969
 106 | Rumours | Fleetwood Mac | 4 Feb 1977
 107 | Hunky Dory | David Bowie | 17 Dec 1971
-108 | ? | ? | ?
+108 | Donda | Kanye West | 29 Aug 2021
 109 | American Football | American Football | 14 Sep 1999
 110 | Currents | Tame Impala | 17 Jul 2015
 111 | Music Has the Right to Children | Boards of Canada | 20 Apr 1998
@@ -115,7 +115,7 @@
 113 | Daydream Nation | Sonic Youth | 18 Oct 1988
 114 | The Piper at the Gates of Dawn | Pink Floyd | 4 Aug 1967
 115 | Highway 61 Revisited | Bob Dylan | 30 Aug 1965
-116 | ? | ? | ?
+116 | Jesus Is King | Kanye West | 25 Oct 2019
 117 | What's Going On | Marvin Gaye | 21 May 1971
 118 | Thriller | Michael Jackson | 30 Nov 1982
 119 | Siamese Dream | Smashing Pumpkins | 26 Jul 1993
@@ -123,7 +123,7 @@
 121 | Pinkerton | Weezer | 24 Sep 1996
 122 | Some Rap Songs | Earl Sweatshirt | 30 Nov 2018
 123 | Random Access Memories | Daft Punk | 17 May 2013
-124 | ? | ? | ?
+124 | Ágætis byrjun | Sigur Rós | 12 Jun 1999
 125 | Plastic Beach | Gorillaz | 9 Mar 2010
 126 | Since I Left You | The Avalanches | 27 Nov 2000
 127 | Close to the Edge | Yes | 8 Sep 1972
@@ -131,7 +131,7 @@
 129 | Rage Against the Machine | Rage Against the Machine | 10 Nov 1992
 130 | Velocity : Design : Comfort | Sweet Trip | 17 Jun 2003
 131 | The King of Limbs | Radiohead | 18 Feb 2011
-132 | Donuts (unconfirmed, half hidden) | J Dilla | 7 Feb 2006
+132 | Donuts | J Dilla | 7 Feb 2006
 133 | Bottomless Pit | Death Grips | 6 May 2016
 134 | The Black Saint and the Sinner Lady | Mingus | Jul 1963
 135 | Led Zeppelin II | Led Zeppelin | 22 Oct 1969
@@ -139,7 +139,7 @@
 137 | Pornography | The Cure | 3 May 1982
 138 | Section.80 | Kendrick Lamar | 2 Jul 2011
 139 | Veteran | JPEGMAFIA | 19 Jan 2018
-140 | ? | ? | ?
+140 | Die Lit | Playboi Carti | 11 May 2018
 141 | For the first time | Black Country, New Road | 5 Feb 2021
 142 | GNX | Kendrick Lamar | 22 Nov 2024
 143 | Merriweather Post Pavilion | Animal Collective | 20 Jan 2009

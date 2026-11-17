@@ -105,3 +105,6 @@ Schlagenheim | black midi | 2019 | GB | Math Rock, Noise Rock | B
 Let It Be | The Beatles | 1970 | GB | Pop Rock, Rock & Roll | B
 LP! | JPEGMAFIA | 2021 | US | Experimental Hip Hop, Glitch Hop | S
 How I'm Feeling Now | Charli xcx | 2020 | GB | Hyperpop, Electropop | S
+Donda | Kanye West | 2021 | US | Pop Rap, Gospel | S
+Jesus Is King | Kanye West | 2019 | US | Gospel, Pop Rap | S
+Die Lit | Playboi Carti | 2018 | US | Trap, Cloud Rap | S
