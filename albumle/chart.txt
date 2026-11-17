@@ -30,7 +30,7 @@
 28 | Paranoid | Black Sabbath | 18 Sep 1970
 29 | The Queen Is Dead | The Smiths | 16 Jun 1986
 30 | Unknown Pleasures | Joy Division | 15 Jun 1979
-31 | Astral Weeks (unconfirmed, half hidden) | Van Morrison | Nov 1968
+31 | Animals | Pink Floyd | 21 Jan 1977
 32 | The Life of Pablo | Kanye West | 14 Feb 2016
 33 | Late Registration | Kanye West | 30 Aug 2005
 34 | Lift Yr. Skinny Fists Like Antennas to Heaven! | Godspeed You Black Emperor! | 23 Oct 2000
@@ -38,7 +38,7 @@
 36 | Pet Sounds | The Beach Boys | 16 May 1966
 37 | Amnesiac | Radiohead | 4 Jun 2001
 38 | Flower Boy | Tyler, The Creator | 21 Jul 2017
-39 | ? | ? | ?
+39 | Illmatic | Nas | 19 Apr 1994
 40 | Spiderland | Slint | 27 Mar 1991
 41 | Souvlaki | Slowdive | 1 Jun 1993
 42 | Is This It | The Strokes | 27 Aug 2001
@@ -46,7 +46,7 @@
 44 | Selected Ambient Works 85-92 | Aphex Twin | 9 Nov 1992
 45 | Ants From Up There | Black Country, New Road | 4 Feb 2022
 46 | The Wall | Pink Floyd | 30 Nov 1979
-47 | ? | ? | ?
+47 | Rubber Soul | The Beatles | 3 Dec 1965
 48 | Dummy | Portishead | 22 Aug 1994
 49 | Disintegration | The Cure | 2 May 1989
 50 | Discovery | Daft Punk | 13 Mar 2001
@@ -54,7 +54,7 @@
 52 | 808s & Heartbreak | Kanye West | 24 Nov 2008
 53 | Ye | Kanye West | 1 Jun 2018
 54 | A Moon Shaped Pool | Radiohead | 8 May 2016
-55 | ? | ? | ?
+55 | Brat | Charli xcx | 7 Jun 2024
 56 | Hail to the Thief | Radiohead | 9 Jun 2003
 57 | Vespertine | Björk | 27 Aug 2001
 58 | Doolittle | Pixies | 17 Apr 1989
@@ -62,7 +62,7 @@
 60 | Pink Moon | Nick Drake | 25 Feb 1972
 61 | Deathconsciousness | Have a Nice Life | 24 Jan 2008
 62 | KIDS SEE GHOSTS | KIDS SEE GHOSTS | 8 Jun 2018
-63 | ? | ? | ?
+63 | Master of Puppets | Metallica | 3 Mar 1986
 64 | Weezer (Blue Album) | Weezer | 10 May 1994
 65 | Long Season | Fishmans | 25 Oct 1996
 66 | Kind of Blue | Miles Davis | 17 Aug 1959
