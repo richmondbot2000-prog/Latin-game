@@ -1,7 +1,7 @@
-/* Albumle — guess one of the 200 best albums (RateYourMusic's all-time chart) from its genres and mood.
+/* Albumle — guess one of the 250 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '4';
+const APP_VERSION = '5';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const A = ALBUMS.map(([rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour], i) => ({ i, rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour, main: MAIN_OF[genres[0]] || genres[0] }));
@@ -11,7 +11,14 @@ const MAX = 6;
 const EPOCH = Date.UTC(2026, 10, 17);                       // day 0: 17 November 2026
 const dayNo = () => Math.floor((Date.now() - EPOCH) / 864e5);
 function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-const ORDER = (() => { const r = mulberry(20261117); const a = A.map(x => x.i); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; })();
+// the daily order: the first 200 albums were shuffled once with a fixed seed (day 0's album must never change); albums added later
+// (201 onwards, v5) are shuffled with their own seed and slotted in every fifth day from day 1, so they join without moving the past
+const shuffle = (list, seed) => { const r = mulberry(seed), a = list.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const ORDER = (() => {
+  const base = shuffle(A.filter(x => x.rank <= 200).map(x => x.i), 20261117), extra = shuffle(A.filter(x => x.rank > 200).map(x => x.i), 20261118), out = [base[0]];
+  let b = 1, e = 0; while (b < base.length || e < extra.length) { if (e < extra.length && (out.length % 5 === 0 || b >= base.length)) out.push(extra[e++]); else out.push(base[b++]); }
+  return out;
+})();
 const dailyIndex = d => ORDER[((d % A.length) + A.length) % A.length];
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
 const store = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
@@ -58,7 +65,7 @@ function deduce(a) {
     if (g.colour === a.colour) { k.colour = g.colour; k.sure.colour = 1; } else notColour.push(g.colour);
   }
   if (G.guesses.length) {
-    k.year = rangeText(ylo, yhi, String, 1900, 2100); k.rank = rangeText(rlo, rhi, n => '#' + n, 1, 200);
+    k.year = rangeText(ylo, yhi, String, 1900, 2100); k.rank = rangeText(rlo, rhi, n => '#' + n, 1, A.length);
     if (k.year !== '?') { k.sure.year = ylo === yhi; k.part.year = !k.sure.year; }
     if (k.rank !== '?') { k.sure.rank = rlo === rhi; k.part.rank = !k.sure.rank; }
     k.sure.type = 1;
@@ -76,7 +83,7 @@ function render() {
   // its broad family after a yellow, and the cover box lists the colours ruled out
   const known = deduce(a);
   if (over) Object.assign(known, { year: String(a.year), type: a.type === 'B' ? 'Band' : 'Solo', genre: a.genres[0], colour: a.colour, rank: '#' + a.rank, sure: { year: 1, type: 1, genre: 1, colour: 1, rank: 1 } });
-  const vars = [['Year', 'year'], ['Band or solo', 'type'], ['Genre', 'genre'], ['Cover colour', 'colour'], ['Rank (1–200)', 'rank']];
+  const vars = [['Year', 'year'], ['Band or solo', 'type'], ['Genre', 'genre'], ['Cover colour', 'colour'], [`Rank (1–${A.length})`, 'rank']];
   const hints = [];
   if (n >= 3 || over) hints.push(`The artist's name starts with <b>${esc(a.artist[0])}</b>`);
   if (n >= 5 || over) hints.push(`The title starts with <b>${esc(a.title[0])}</b>`);
@@ -93,7 +100,7 @@ function render() {
     ${over ? result(a) : `<div class="guessbox"><input id="q" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type an album or artist…" enterkeyhint="go"><div class="sugg" id="sugg" hidden></div></div>`}
     <div class="rows">${rows}</div>
     <div class="legend"><span>year</span><span>band/solo</span><span>genre</span><span>cover</span><span>rank</span></div>
-    <div class="foot">${mode === 'daily' ? `<button class="linkbtn" id="practice">Play a practice game</button>` : `<button class="linkbtn" id="daily">Back to today's album</button>`}<br>The 200 albums are RateYourMusic's all-time top 200 · nothing leaves this phone · v${APP_VERSION}</div>`;
+    <div class="foot">${mode === 'daily' ? `<button class="linkbtn" id="practice">Play a practice game</button>` : `<button class="linkbtn" id="daily">Back to today's album</button>`}<br>The ${A.length} albums are RateYourMusic's all-time top ${A.length} · nothing leaves this phone · v${APP_VERSION}</div>`;
   if (!over) wireInput(a);
   const p = $('#practice'); if (p) p.onclick = () => { mode = 'practice'; G = load('albumle.practice', null); if (!G || G.done) G = newPractice(); save(); render(); };
   const d = $('#daily'); if (d) d.onclick = () => { mode = 'daily'; G = newDaily(); save(); render(); };
@@ -105,7 +112,7 @@ function result(a) {
   const won = G.done === 'won', n = G.guesses.length;
   return `<div class="result"><div class="sub">${won ? ['Genius!', 'Magnificent!', 'Impressive!', 'Splendid!', 'Great!', 'Phew!'][n - 1] : 'Not this time'}</div>
     <h2>${esc(a.title)}</h2><div class="by">${esc(a.artist)} · ${a.year} · ${flag(a.country)} ${esc(cname(a.country))}</div>
-    <div class="meta">#${a.rank} of the 200 · ${a.genres.map(esc).join(' · ')} · ${a.type === 'B' ? 'band' : 'solo artist'} · ${esc(a.colour.toLowerCase())} cover</div>
+    <div class="meta">#${a.rank} of the ${A.length} · ${a.genres.map(esc).join(' · ')} · ${a.type === 'B' ? 'band' : 'solo artist'} · ${esc(a.colour.toLowerCase())} cover</div>
     <button class="btn" id="share">Share</button>${mode === 'daily' ? `<button class="btn ghost" id="seeStats">Stats</button>` : `<button class="btn ghost" id="again">Another one</button>`}
     ${mode === 'daily' ? `<div class="next" id="next"></div>` : ''}</div>`;
 }
@@ -158,10 +165,10 @@ function stats() {
 }
 function help() {
   sheet(`<h2>How to play</h2>
-    <p>Guess the album in ${MAX} tries. Every day it is one of the <b>200 best albums of all time</b> as rated on RateYourMusic.</p>
-    <p>You are told nothing to start with. Type any album or artist from the 200, pick it from the list, and the squares tell you how close you are on five things. The panel at the top adds up what the squares have told you — guess a 1985 album and hear "earlier", then a 1979 one and hear "later", and it reads <b>1979–1985</b>.</p>
+    <p>Guess the album in ${MAX} tries. Every day it is one of the <b>${A.length} best albums of all time</b> as rated on RateYourMusic.</p>
+    <p>You are told nothing to start with. Type any album or artist from the ${A.length}, pick it from the list, and the squares tell you how close you are on five things. The panel at the top adds up what the squares have told you — guess a 1985 album and hear "earlier", then a 1979 one and hear "later", and it reads <b>1979–1985</b>.</p>
     <div class="cells"><div class="cell y">1994 ▲<small>later</small></div><div class="cell n">Band<small>no</small></div><div class="cell y sm">Alternative Rock<small>Rock, not this</small></div><div class="cell g"><i class="sw" style="background:#3a74d8"></i><small>Blue</small></div><div class="cell n">#44 ▼<small>ranks lower</small></div></div>
-    <p><b>Year</b>: green within 5 years, yellow within 10; ▲ the answer came out later, ▼ earlier.<br><b>Band or solo</b>: green when the answer is the same kind of act.<br><b>Genre</b>: green for the same genre, yellow for the same broad genre but a different one within it (you guess Alternative Rock, it is Indie Rock), red for a different genre altogether.<br><b>Cover colour</b>: green when the answer's cover is mainly that colour.<br><b>Rank</b> on the list of 200: green within 5 places, yellow within 20; ▲ the answer is higher up (nearer #1), ▼ lower.</p>
+    <p><b>Year</b>: green within 5 years, yellow within 10; ▲ the answer came out later, ▼ earlier.<br><b>Band or solo</b>: green when the answer is the same kind of act.<br><b>Genre</b>: green for the same genre, yellow for the same broad genre but a different one within it (you guess Alternative Rock, it is Indie Rock), red for a different genre altogether.<br><b>Cover colour</b>: green when the answer's cover is mainly that colour.<br><b>Rank</b> on the list of ${A.length}: green within 5 places, yellow within 20; ▲ the answer is higher up (nearer #1), ▼ lower.</p>
     <p>After three misses you get the artist's initial, after five the title's. Share your squares when you are done, and play practice games as often as you like.</p>`);
 }
 function sheet(html) { $('#sheetBody').innerHTML = html; $('#sheet').hidden = false; }
