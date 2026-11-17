@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Albumle</title>
+<meta name="description" content="Guess the album from its genres and mood — one of the 200 best albums of all time, a new one every day.">
+<meta name="theme-color" content="#1a1523">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Albumle">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <button class="ib" id="helpBtn" aria-label="How to play">?</button>
+  <h1>Albumle</h1>
+  <button class="ib" id="statsBtn" aria-label="Statistics">▥</button>
+</header>
+<main id="app"></main>
+<div id="sheet" class="sheet" hidden><div class="panel"><button class="close" id="closeSheet" aria-label="Close">×</button><div id="sheetBody"></div></div></div>
+<div id="toast" class="toast" hidden></div>
+<script src="albums.js"></script>
+<script src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+  navigator.serviceWorker.register('sw.js').then(r => { document.addEventListener('visibilitychange', () => { if (!document.hidden) r.update(); }); });
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (!sessionStorage.getItem('albumle.swr')) { sessionStorage.setItem('albumle.swr', '1'); location.reload(); } });
+}
+</script>
+</body>
+</html>

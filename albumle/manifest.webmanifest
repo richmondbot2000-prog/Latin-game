@@ -1,0 +1,14 @@
+{
+  "name": "Albumle",
+  "short_name": "Albumle",
+  "description": "Guess the album from its genres and mood — one of the 200 best albums of all time, a new one every day.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1a1523",
+  "theme_color": "#1a1523",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
