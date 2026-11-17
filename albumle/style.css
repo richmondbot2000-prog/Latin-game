@@ -18,10 +18,10 @@ main { max-width: 520px; margin: 0 auto; padding: 12px 14px 40px; }
 .tag.s2 { font-size: 15px; opacity: .95; } .tag.s3 { font-size: 13px; opacity: .8; } .tag.s4 { font-size: 12px; opacity: .65; }
 .facts { color: var(--mute); font-size: 13px; text-align: center; margin-top: 10px; }
 .hint { background: var(--soft); border: 2px solid var(--line); padding: 8px 12px; margin-top: 10px; font-size: 14px; text-align: center; font-weight: 700; }
-.guessbox { position: relative; margin: 10px 0; }
+.guessbox { position: relative; margin: 14px 0 4px; }
 .guessbox input { width: 100%; padding: 13px 14px; border-radius: 0; border: 2px solid var(--line); background: #fff; color: var(--ink); font-size: 16px; outline: none; }
 .guessbox input:focus { border-color: var(--dark); }
-.sugg { position: absolute; left: 0; right: 0; top: calc(100% + 4px); background: #fff; border: 2px solid var(--line); overflow: hidden; z-index: 5; box-shadow: 0 10px 30px rgba(0,0,0,.15); }
+.sugg { position: absolute; left: 0; right: 0; bottom: calc(100% + 4px); background: #fff; border: 2px solid var(--line); overflow: hidden; z-index: 5; box-shadow: 0 -10px 30px rgba(0,0,0,.15); }
 .sugg button { display: block; width: 100%; text-align: left; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--line); background: none; cursor: pointer; }
 .sugg button:last-child { border-bottom: 0; }
 .sugg b { display: block; } .sugg span { color: var(--mute); font-size: 13px; }

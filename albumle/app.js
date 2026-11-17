@@ -1,7 +1,7 @@
 /* Albumle — guess one of the 250 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '22';
+const APP_VERSION = '23';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // 'D' (duo) counts as a band until the owner decides how its square should behave (`kind`)
@@ -103,9 +103,10 @@ function render() {
     <div class="clue"><div class="label">${n ? 'What you know so far' : 'You are guessing its…'}</div>
       <div class="vars">${vars.map(([k, key]) => { const v = known[key]; return `<div class="var ${known.sure[key] ? 'got' : known.part[key] ? 'part' : ''}"><span>${k}</span><b>${esc(v)}</b></div>`; }).join('')}</div>
       ${hints.map(h => `<div class="hint">${h}</div>`).join('')}</div>
-    ${over ? result(a) : `<div class="guessbox"><input id="q" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type an album or artist…" enterkeyhint="go"><div class="sugg" id="sugg" hidden></div></div>`}
+    ${over ? result(a) : ''}
     <div class="rows">${rows}</div>
     <div class="legend"><span>year</span><span>band/solo</span><span>genre</span><span>country</span><span>rank</span></div>
+    ${over ? '' : `<div class="guessbox"><input id="q" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type an album or artist…" enterkeyhint="go"><div class="sugg" id="sugg" hidden></div></div>`}
     <div class="foot">${mode === 'daily' ? `<button class="linkbtn" id="practice">Play a practice game</button>` : `<button class="linkbtn" id="daily">Back to today's album</button>`}${standalone() ? '' : `<br><button class="linkbtn" id="install">📲 Add Albumle to your home screen</button>`}<br>The ${A.length} albums are RateYourMusic's all-time top ${A.length} · a new one every day at 9am · the cover is fetched from Deezer when the answer shows; nothing else leaves this phone · v${APP_VERSION}</div>`;
   if (!over) wireInput(a); else showCover(a);
   const p = $('#practice'); if (p) p.onclick = () => { mode = 'practice'; G = load('albumle.practice', null); if (!G || G.done) G = newPractice(); save(); render(); };
@@ -141,12 +142,13 @@ function wireInput(a) {
   let list = [];
   const show = () => {
     const t = fold(q.value); list = [];
-    if (t.length >= 2) list = A.filter(x => !G.guesses.includes(x.i) && (fold(x.title).includes(t) || fold(x.artist).includes(t) || fold(x.title + ' ' + x.artist).includes(t))).slice(0, 8);
+    if (t.length >= 2) list = A.filter(x => !G.guesses.includes(x.i) && (fold(x.title).includes(t) || fold(x.artist).includes(t) || fold(x.title + ' ' + x.artist).includes(t))).slice(0, 5);
     box.hidden = !list.length;
     box.innerHTML = list.map(x => `<button data-i="${x.i}"><b>${esc(x.title)}</b><span>${esc(x.artist)} · ${x.year}</span></button>`).join('');
     box.querySelectorAll('button').forEach(b => { b.onclick = () => guess(+b.dataset.i); });
   };
   q.oninput = show;
+  q.onfocus = () => setTimeout(() => q.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
   q.onkeydown = e => { if (e.key === 'Enter' && list.length) { e.preventDefault(); guess(list[0].i); } };
   q.focus();
 }
