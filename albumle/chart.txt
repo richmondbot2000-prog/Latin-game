@@ -1,0 +1,205 @@
+# Albumle: the owner's chart, transcribed from his RateYourMusic screenshots (17 Nov 2026). rank | title | artist | release date
+# "?" marks a rank not yet seen. The game's albums.js is rebuilt from this file once it is complete.
+48 | Dummy | Portishead | 22 Aug 1994
+49 | Disintegration | The Cure | 2 May 1989
+50 | Discovery | Daft Punk | 13 Mar 2001
+51 | Heaven or Las Vegas | Cocteau Twins | 17 Sep 1990
+52 | 808s & Heartbreak | Kanye West | 24 Nov 2008
+53 | Ye | Kanye West | 1 Jun 2018
+54 | A Moon Shaped Pool | Radiohead | 8 May 2016
+55 | ? | ? | ?
+56 | Hail to the Thief | Radiohead | 9 Jun 2003
+57 | Vespertine | Björk | 27 Aug 2001
+58 | Doolittle | Pixies | 17 Apr 1989
+59 | Led Zeppelin [IV] | Led Zeppelin | 8 Nov 1971
+60 | Pink Moon | Nick Drake | 25 Feb 1972
+61 | Deathconsciousness | Have a Nice Life | 24 Jan 2008
+62 | KIDS SEE GHOSTS | KIDS SEE GHOSTS | 8 Jun 2018
+63 | ? | ? | ?
+64 | Weezer (Blue Album) | Weezer | 10 May 1994
+65 | Long Season | Fishmans | 25 Oct 1996
+66 | Kind of Blue | Miles Davis | 17 Aug 1959
+67 | Homogenic | Björk | 22 Sep 1997
+68 | The Doors | The Doors | 4 Jan 1967
+69 | Demon Days | Gorillaz | 24 May 2005
+70 | Mr. Morale & the Big Steppers | Kendrick Lamar | 13 May 2022
+71 | ? | ? | ?
+72 | Funeral | Arcade Fire | 14 Sep 2004
+73 | Atrocity Exhibition | Danny Brown | 30 Sep 2016
+74 | Enter the Wu-Tang (36 Chambers) | Wu-Tang Clan | 9 Nov 1993
+75 | Ride the Lightning | Metallica | 27 Jul 1984
+76 | Grace | Jeff Buckley | 23 Aug 1994
+77 | Channel Orange | Frank Ocean | 10 Jul 2012
+78 | Mezzanine | Massive Attack | 20 Apr 1998
+79 | Mm..Food | MF DOOM | 16 Nov 2004
+80 | Pablo Honey | Radiohead | 20 Apr 1993
+81 | Call Me If You Get Lost | Tyler, The Creator | 25 Jun 2021
+82 | The Low End Theory | A Tribe Called Quest | 24 Sep 1991
+83 | Post | Björk | 15 Jun 1995
+84 | Low | David Bowie | 14 Jan 1977
+85 | Either / Or | Elliott Smith | 25 Feb 1997
+86 | Meddle | Pink Floyd | 5 Nov 1971
+87 | ? | ? | ?
+88 | Scaring the Hoes | JPEGMAFIA & Danny Brown | 24 Mar 2023
+89 | Imaginal Disk | Magdalena Bay | 23 Aug 2024
+90 | The Downward Spiral | Nine Inch Nails | 8 Mar 1994
+91 | Red | King Crimson | 6 Oct 1974
+92 | F♯A♯∞ | Godspeed You Black Emperor! | 14 Aug 1997
+93 | Endtroducing..... | DJ Shadow | 19 Nov 1996
+94 | A Love Supreme | John Coltrane | Jan 1965
+95 | ? | ? | ?
+96 | London Calling | The Clash | 14 Dec 1979
+97 | Debut | Björk | 5 Jul 1993
+98 | Turn On the Bright Lights | Interpol | 20 Aug 2002
+99 | Illinois | Sufjan Stevens | 5 Jul 2005
+100 | Closer | Joy Division | 18 Jul 1980
+101 | Black Sabbath | Black Sabbath | 13 Feb 1970
+102 | Hounds of Love | Kate Bush | 16 Sep 1985
+103 | Master of Reality | Black Sabbath | 6 Aug 1971
+104 | Marquee Moon | Television | 8 Feb 1977
+105 | Led Zeppelin | Led Zeppelin | 12 Jan 1969
+106 | Rumours | Fleetwood Mac | 4 Feb 1977
+107 | Hunky Dory | David Bowie | 17 Dec 1971
+108 | ? | ? | ?
+109 | American Football | American Football | 14 Sep 1999
+110 | Currents | Tame Impala | 17 Jul 2015
+111 | Music Has the Right to Children | Boards of Canada | 20 Apr 1998
+112 | White Pony | Deftones | 20 Jun 2000
+113 | Daydream Nation | Sonic Youth | 18 Oct 1988
+114 | The Piper at the Gates of Dawn | Pink Floyd | 4 Aug 1967
+115 | Highway 61 Revisited | Bob Dylan | 30 Aug 1965
+116 | ? | ? | ?
+117 | What's Going On | Marvin Gaye | 21 May 1971
+118 | Thriller | Michael Jackson | 30 Nov 1982
+119 | Siamese Dream | Smashing Pumpkins | 26 Jul 1993
+120 | Songs for the Deaf | Queens of the Stone Age | 27 Aug 2002
+121 | Pinkerton | Weezer | 24 Sep 1996
+122 | Some Rap Songs | Earl Sweatshirt | 30 Nov 2018
+123 | Random Access Memories | Daft Punk | 17 May 2013
+124 | ? | ? | ?
+125 | Plastic Beach | Gorillaz | 9 Mar 2010
+126 | Since I Left You | The Avalanches | 27 Nov 2000
+127 | Close to the Edge | Yes | 8 Sep 1972
+128 | Twin Fantasy | Car Seat Headrest | 16 Feb 2018
+129 | Rage Against the Machine | Rage Against the Machine | 10 Nov 1992
+130 | Velocity : Design : Comfort | Sweet Trip | 17 Jun 2003
+131 | The King of Limbs | Radiohead | 18 Feb 2011
+132 | Donuts (unconfirmed, half hidden) | J Dilla | 7 Feb 2006
+133 | Bottomless Pit | Death Grips | 6 May 2016
+134 | The Black Saint and the Sinner Lady | Mingus | Jul 1963
+135 | Led Zeppelin II | Led Zeppelin | 22 Oct 1969
+136 | Untrue | Burial | 5 Nov 2007
+137 | Pornography | The Cure | 3 May 1982
+138 | Section.80 | Kendrick Lamar | 2 Jul 2011
+139 | Veteran | JPEGMAFIA | 19 Jan 2018
+140 | ? | ? | ?
+141 | For the first time | Black Country, New Road | 5 Feb 2021
+142 | GNX | Kendrick Lamar | 22 Nov 2024
+143 | Merriweather Post Pavilion | Animal Collective | 20 Jan 2009
+144 | Dirt | Alice in Chains | 29 Sep 1992
+145 | Around the Fur | Deftones | 28 Oct 1997
+146 | Carrie & Lowell | Sufjan Stevens | 31 Mar 2015
+147 | Violator | Depeche Mode | 19 Mar 1990
+148 | ? | ? | ?
+149 | ? | ? | ?
+150 | Bleach | Nirvana | 15 Jun 1989
+151 | Rodeo | Travis Scott | 4 Sep 2015
+152 | Chromakopia | Tyler, The Creator | 28 Oct 2024
+153 | Are You Experienced | The Jimi Hendrix Experience | 12 May 1967
+154 | "Heroes" | David Bowie | 14 Oct 1977
+155 | Station to Station | David Bowie | 23 Jan 1976
+156 | No Love Deep Web | Death Grips | 1 Oct 2012
+157 | White Light/White Heat (unconfirmed, half hidden) | The Velvet Underground | 30 Jan 1968
+158 | ? | ? | ?
+159 | Hellfire | black midi | 15 Jul 2022
+160 | The Smiths | The Smiths | 20 Feb 1984
+161 | Kill 'Em All | Metallica | 25 Jul 1983
+162 | ...And Justice for All | Metallica | 25 Aug 1988
+163 | Electric Ladyland | The Jimi Hendrix Experience | 25 Oct 1968
+164 | To Be Kind | Swans | 13 May 2014
+165 | Titanic Rising | Weyes Blood | 5 Apr 2019
+166 | ? (half hidden) | ? | ?
+167 | The Velvet Underground | The Velvet Underground | Mar 1969
+168 | Soundtracks for the Blind | Swans | 22 Oct 1996
+169 | The New Abnormal | The Strokes | 10 Apr 2020
+170 | Surfer Rosa | Pixies | 21 Mar 1988
+171 | Whatever People Say I Am, That's What I'm Not | Arctic Monkeys | 23 Jan 2006
+172 | Metallica | Metallica | 12 Aug 1991
+173 | Getting Killed | Geese | 2025
+174 | ? | ? | ?
+175 | The Black Parade | My Chemical Romance | 24 Oct 2006
+176 | Watch the Throne | JAY-Z & Kanye West | 8 Aug 2011
+177 | Stratosphere | Duster | 24 Feb 1998
+178 | Yankee Hotel Foxtrot | Wilco | 23 Apr 2002
+179 | Blonde on Blonde | Bob Dylan | 20 Jun 1966
+180 | Piñata | Freddie Gibbs & Madlib | 18 Mar 2014
+181 | Richard D. James Album | Aphex Twin | 4 Nov 1996
+182 | 1000 gecs | 100 gecs | 31 May 2019
+183 | Led Zeppelin III | Led Zeppelin | 5 Oct 1970
+184 | Sound of Silver | LCD Soundsystem | 12 Mar 2007
+185 | All My Heroes Are Cornballs | JPEGMAFIA | 13 Sep 2019
+186 | Whole Lotta Red | Playboi Carti | 25 Dec 2020
+187 | Please Please Me | The Beatles | 22 Mar 1963
+188 | Hot Rats | Frank Zappa | 10 Oct 1969
+189 | ? | ? | ?
+190 | ? | ? | ?
+191 | Rust in Peace | Megadeth | 24 Sep 1990
+192 | Geogaddi | Boards of Canada | 18 Feb 2002
+193 | Bitches Brew | Miles Davis | 30 Mar 1970
+194 | The New Sound | Geordie Greep | 4 Oct 2024
+195 | Laughing Stock | Talk Talk | 16 Sep 1991
+196 | Tago Mago | Can | Aug 1971
+197 | In a Silent Way | Miles Davis | 30 Jul 1969
+198 | Daytona | Pusha T | 25 May 2018
+199 | Wolf | Tyler, The Creator | 2 Apr 2013
+200 | Gorillaz | Gorillaz | 19 Jun 2001
+201 | TA13OO | Denzel Curry | 27 Jul 2018
+202 | Ten | Pearl Jam | 27 Aug 1991
+203 | Meat Is Murder | The Smiths | 11 Feb 1985
+204 | Bloom | Beach House | 15 May 2012
+205 | Room on Fire | The Strokes | 28 Oct 2003
+206 | Fear of Music | Talking Heads | 3 Aug 1979
+207 | Oil of Every Pearl's Un-Insides | SOPHIE | 15 Jun 2018
+208 | Lonerism | Tame Impala | 5 Oct 2012
+209 | Astroworld | Travis Scott | 3 Aug 2018
+210 | (What's the Story) Morning Glory? | Oasis | 2 Oct 1995
+211 | Blood on the Tracks | Bob Dylan | 20 Jan 1975
+212 | Ænima | Tool | 1 Oct 1996
+213 | ? | ? | ?
+214 | Sunbather | Deafheaven | 11 Jun 2013
+215 | Selected Ambient Works Volume II | Aphex Twin | 7 Mar 1994
+216 | Atom Heart Mother | Pink Floyd | 2 Oct 1970
+217 | Reign in Blood | Slayer | 7 Oct 1986
+218 | Another Green World | Eno | 14 Nov 1975
+219 | Norman Fucking Rockwell! | Lana Del Rey | 30 Aug 2019
+220 | The Stone Roses | The Stone Roses | 2 May 1989
+221 | Year of the Snitch | Death Grips | 22 Jun 2018
+222 | Aquemini | Outkast | 29 Sep 1998
+223 | Symbolic | Death | 21 Mar 1995
+224 | Filosofem | Burzum | 31 Jan 1996
+225 | Treasure | Cocteau Twins | 12 Nov 1984
+226 | You Won't Get What You Want | Daughters | 26 Oct 2018
+227 | Midnight Marauders | A Tribe Called Quest | 9 Nov 1993
+228 | Yoshimi Battles the Pink Robots | The Flaming Lips | 16 Jul 2002
+229 | ? | ? | ?
+230 | Hybrid Theory | Linkin Park | 24 Oct 2000
+231 | When the Pawn... | Fiona Apple | 9 Nov 1999
+232 | The Miseducation of Lauryn Hill | Lauryn Hill | 25 Aug 1998
+233 | Blue | Joni Mitchell | 22 Jun 1971
+234 | Songs of Leonard Cohen | Leonard Cohen | 27 Dec 1967
+235 | Speaking in Tongues | Talking Heads | 1 Jun 1983
+236 | To See the Next Part of the Dream | Parannoul | 23 Feb 2021
+237 | ? | ? | ?
+238 | Liquid Swords | Genius/GZA | 7 Nov 1995
+239 | Drukqs | Aphex Twin | 22 Oct 2001
+240 | Discipline | King Crimson | 22 Sep 1981
+241 | Goo | Sonic Youth | 26 Jun 1990
+242 | Physical Graffiti | Led Zeppelin | 24 Feb 1975
+243 | Operation: Doomsday | MF DOOM | 19 Oct 1999
+244 | With The Beatles | The Beatles | 22 Nov 1963
+245 | ? | ? | ?
+246 | ? | ? | ?
+247 | Talking Heads: 77 | Talking Heads | 16 Sep 1977
+248 | Little Dark Age | MGMT | 9 Feb 2018
+249 | Cherry Bomb | Tyler, The Creator | 13 Apr 2015
+250 | This Is Happening | LCD Soundsystem | 18 May 2010
