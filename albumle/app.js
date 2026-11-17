@@ -1,7 +1,7 @@
 /* Albumle — guess one of the 200 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '3';
+const APP_VERSION = '4';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const A = ALBUMS.map(([rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour], i) => ({ i, rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour, main: MAIN_OF[genres[0]] || genres[0] }));
@@ -36,13 +36,47 @@ function compare(g, a) {
   };
 }
 const SQ = { g: '🟩', y: '🟨', n: '🟥' };
+// the range a number can still be in after a guess: green within `g`, yellow within `y`, red beyond — plus the direction
+function bounds(guess, actual, g, y) {
+  const d = actual - guess, ad = Math.abs(d);
+  if (ad <= g) return [guess - g, guess + g];
+  if (ad <= y) return d > 0 ? [guess + g + 1, guess + y] : [guess - y, guess - g - 1];
+  return d > 0 ? [guess + y + 1, Infinity] : [-Infinity, guess - y - 1];
+}
+const rangeText = (lo, hi, fmt, min, max) => { lo = Math.max(lo, min); hi = Math.min(hi, max); return lo === hi ? fmt(lo) : lo > min && hi < max ? `${fmt(lo)}–${fmt(hi)}` : lo > min ? `after ${fmt(lo - 1)}` : hi < max ? `before ${fmt(hi + 1)}` : '?'; };
+function deduce(a) {
+  const k = { year: '?', type: '?', genre: '?', colour: '?', rank: '?', sure: {}, part: {} };
+  let ylo = -Infinity, yhi = Infinity, rlo = -Infinity, rhi = Infinity; const notColour = [], notGenre = [];
+  for (const gi of G.guesses) {
+    const g = A[gi];
+    const [a1, b1] = bounds(g.year, a.year, 5, 10); ylo = Math.max(ylo, a1); yhi = Math.min(yhi, b1);
+    const [a2, b2] = bounds(g.rank, a.rank, 5, 20); rlo = Math.max(rlo, a2); rhi = Math.min(rhi, b2);
+    if (g.type === a.type) k.sure.type = 1; k.type = a.type === 'B' ? 'Band' : 'Solo';   // only two kinds: a red tells you too
+    if (g.genres[0] === a.genres[0]) { k.genre = g.genres[0]; k.sure.genre = 1; }
+    else if (g.main === a.main) { if (!k.sure.genre) { k.genre = `${g.main}, not ${g.genres[0]}`; k.part.genre = 1; } }
+    else notGenre.push(g.main);
+    if (g.colour === a.colour) { k.colour = g.colour; k.sure.colour = 1; } else notColour.push(g.colour);
+  }
+  if (G.guesses.length) {
+    k.year = rangeText(ylo, yhi, String, 1900, 2100); k.rank = rangeText(rlo, rhi, n => '#' + n, 1, 200);
+    if (k.year !== '?') { k.sure.year = ylo === yhi; k.part.year = !k.sure.year; }
+    if (k.rank !== '?') { k.sure.rank = rlo === rhi; k.part.rank = !k.sure.rank; }
+    k.sure.type = 1;
+    if (!k.sure.colour && notColour.length) { k.colour = 'not ' + [...new Set(notColour)].join(', '); k.part.colour = 1; }
+    if (k.genre === '?' && notGenre.length) { k.genre = 'not ' + [...new Set(notGenre)].join(', '); k.part.genre = 1; }
+  }
+  return k;
+}
 
 /* ---------- the page ---------- */
 function render() {
   const a = A[G.idx], n = G.guesses.length, over = !!G.done;
-  // the owner's rule (17 Nov 2026): the album's five facts are shown before the first guess; the squares then say how close each guess is
-  const known = { year: String(a.year), type: a.type === 'B' ? 'Band' : 'Solo', genre: a.genres[0], colour: a.colour, rank: '#' + a.rank };
-  const vars = [['Year', known.year], ['Band or solo', known.type], ['Genre', known.genre], ['Cover colour', known.colour], ['Rank (1–200)', known.rank]];
+  // what the squares have told you so far (the owner, 17 Nov 2026): nothing before the first guess; the year and rank narrow to a
+  // range — "1985 earlier" then "1979 later" gives "1979–1985" — band/solo flips after a red (there are only two), the genre shows
+  // its broad family after a yellow, and the cover box lists the colours ruled out
+  const known = deduce(a);
+  if (over) Object.assign(known, { year: String(a.year), type: a.type === 'B' ? 'Band' : 'Solo', genre: a.genres[0], colour: a.colour, rank: '#' + a.rank, sure: { year: 1, type: 1, genre: 1, colour: 1, rank: 1 } });
+  const vars = [['Year', 'year'], ['Band or solo', 'type'], ['Genre', 'genre'], ['Cover colour', 'colour'], ['Rank (1–200)', 'rank']];
   const hints = [];
   if (n >= 3 || over) hints.push(`The artist's name starts with <b>${esc(a.artist[0])}</b>`);
   if (n >= 5 || over) hints.push(`The title starts with <b>${esc(a.title[0])}</b>`);
@@ -53,8 +87,8 @@ function render() {
   }).join('');
   $('#app').innerHTML = `
     <div class="sub">${mode === 'daily' ? `Albumle #${G.day + 1}` : 'Practice'} · ${over ? (G.done === 'won' ? `solved in ${n}` : 'not solved') : `guess ${n + 1} of ${MAX}`}</div>
-    <div class="clue"><div class="label">The album</div>
-      <div class="vars">${vars.map(([k, v]) => `<div class="var"><span>${k}</span><b>${k === 'Cover colour' ? `<i class="sw" style="background:${SWATCH[v] || '#888'}"></i>` : ''}${esc(v)}</b></div>`).join('')}</div>
+    <div class="clue"><div class="label">${n ? 'What you know so far' : 'You are guessing its…'}</div>
+      <div class="vars">${vars.map(([k, key]) => { const v = known[key]; return `<div class="var ${known.sure[key] ? 'got' : known.part[key] ? 'part' : ''}"><span>${k}</span><b>${key === 'colour' && known.sure.colour ? `<i class="sw" style="background:${SWATCH[v] || '#888'}"></i>` : ''}${esc(v)}</b></div>`; }).join('')}</div>
       ${hints.map(h => `<div class="hint">${h}</div>`).join('')}</div>
     ${over ? result(a) : `<div class="guessbox"><input id="q" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type an album or artist…" enterkeyhint="go"><div class="sugg" id="sugg" hidden></div></div>`}
     <div class="rows">${rows}</div>
@@ -125,7 +159,7 @@ function stats() {
 function help() {
   sheet(`<h2>How to play</h2>
     <p>Guess the album in ${MAX} tries. Every day it is one of the <b>200 best albums of all time</b> as rated on RateYourMusic.</p>
-    <p>You are shown five facts about it: its <b>year</b>, whether it is a <b>band or a solo artist</b>, its <b>genre</b>, the <b>main colour of its cover</b> and its <b>rank</b> on the list of 200. Type any album or artist from the 200, pick it from the list, and the squares tell you how close your guess is on each:</p>
+    <p>You are told nothing to start with. Type any album or artist from the 200, pick it from the list, and the squares tell you how close you are on five things. The panel at the top adds up what the squares have told you — guess a 1985 album and hear "earlier", then a 1979 one and hear "later", and it reads <b>1979–1985</b>.</p>
     <div class="cells"><div class="cell y">1994 ▲<small>later</small></div><div class="cell n">Band<small>no</small></div><div class="cell y sm">Alternative Rock<small>Rock, not this</small></div><div class="cell g"><i class="sw" style="background:#3a74d8"></i><small>Blue</small></div><div class="cell n">#44 ▼<small>ranks lower</small></div></div>
     <p><b>Year</b>: green within 5 years, yellow within 10; ▲ the answer came out later, ▼ earlier.<br><b>Band or solo</b>: green when the answer is the same kind of act.<br><b>Genre</b>: green for the same genre, yellow for the same broad genre but a different one within it (you guess Alternative Rock, it is Indie Rock), red for a different genre altogether.<br><b>Cover colour</b>: green when the answer's cover is mainly that colour.<br><b>Rank</b> on the list of 200: green within 5 places, yellow within 20; ▲ the answer is higher up (nearer #1), ▼ lower.</p>
     <p>After three misses you get the artist's initial, after five the title's. Share your squares when you are done, and play practice games as often as you like.</p>`);
