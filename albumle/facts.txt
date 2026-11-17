@@ -97,3 +97,6 @@ A Moon Shaped Pool | Radiohead | 2016 | GB | Art Rock, Alternative Rock | B
 White Pony | Deftones | 2000 | US | Alternative Metal, Nu Metal | B
 Ænima | Tool | 1996 | US | Alternative Metal, Progressive Metal | B
 The Stone Roses | The Stone Roses | 1989 | GB | Jangle Pop, Neo-Psychedelia | B
+AM | Arctic Monkeys | 2013 | GB | Indie Rock, Garage Rock Revival | B
+Cavalcade | black midi | 2021 | GB | Experimental Rock, Avant-Prog | B
+Cosmogramma | Flying Lotus | 2010 | US | Wonky, Nu Jazz | S

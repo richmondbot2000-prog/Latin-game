@@ -228,7 +228,7 @@
 226 | You Won't Get What You Want | Daughters | 26 Oct 2018
 227 | Midnight Marauders | A Tribe Called Quest | 9 Nov 1993
 228 | Yoshimi Battles the Pink Robots | The Flaming Lips | 16 Jul 2002
-229 | ? | ? | ?
+229 | AM | Arctic Monkeys | 9 Sep 2013
 230 | Hybrid Theory | Linkin Park | 24 Oct 2000
 231 | When the Pawn... | Fiona Apple | 9 Nov 1999
 232 | The Miseducation of Lauryn Hill | Lauryn Hill | 25 Aug 1998
@@ -236,7 +236,7 @@
 234 | Songs of Leonard Cohen | Leonard Cohen | 27 Dec 1967
 235 | Speaking in Tongues | Talking Heads | 1 Jun 1983
 236 | To See the Next Part of the Dream | Parannoul | 23 Feb 2021
-237 | ? | ? | ?
+237 | Cavalcade | black midi | 26 May 2021
 238 | Liquid Swords | Genius/GZA | 7 Nov 1995
 239 | Drukqs | Aphex Twin | 22 Oct 2001
 240 | Discipline | King Crimson | 22 Sep 1981
@@ -244,8 +244,8 @@
 242 | Physical Graffiti | Led Zeppelin | 24 Feb 1975
 243 | Operation: Doomsday | MF DOOM | 19 Oct 1999
 244 | With The Beatles | The Beatles | 22 Nov 1963
-245 | ? | ? | ?
-246 | ? | ? | ?
+245 | Power, Corruption & Lies | New Order | 2 May 1983
+246 | Cosmogramma | Flying Lotus | 3 May 2010
 247 | Talking Heads: 77 | Talking Heads | 16 Sep 1977
 248 | Little Dark Age | MGMT | 9 Feb 2018
 249 | Cherry Bomb | Tyler, The Creator | 13 Apr 2015
