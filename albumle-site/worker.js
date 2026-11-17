@@ -1,4 +1,4 @@
-// albumle.musicalmagic.uk: Albumle's own address. The game's files live in this repository at
+// albumle.net: Albumle's own address (v18; albumle.musicalmagic.uk and www.albumle.net redirect to it, /api/cover answered on every host). The game's files live in this repository at
 // latin.musicalmagic.uk/albumle/ (GitHub Pages allows one custom domain per site), so this worker serves them
 // from here: GET /x → the same file from /albumle/x, cached a little at the edge. It also answers
 // GET /api/cover?title=…&artist=… with the album's cover art, looked up in Deezer's public search (Apple's iTunes Search as a fallback — it rate-limits Workers)
@@ -38,6 +38,7 @@ export default {
       if (body.url) ctx.waitUntil(cache.put(key, res.clone())); return res;
     }
     if (req.method !== 'GET' && req.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
+    if (u.hostname !== 'albumle.net') { u.hostname = 'albumle.net'; return Response.redirect(u.toString(), 301); }
     const path = u.pathname === '/' ? '/' : u.pathname;
     const r = await fetch(SITE + path + u.search, { headers: { accept: req.headers.get('accept') || '*/*' }, cf: { cacheTtl: 60, cacheEverything: true } });
     const h = new Headers(r.headers); h.delete('content-security-policy'); h.set('cache-control', /\.(png|jpg|webp)$/.test(path) ? 'public, max-age=86400' : 'no-cache');

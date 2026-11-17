@@ -1,7 +1,7 @@
 /* Albumle — guess one of the 250 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '17';
+const APP_VERSION = '18';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // 'D' (duo) counts as a band until the owner decides how its square should behave (`kind`)
@@ -15,7 +15,7 @@ const MAX = 6;
 const DAY0 = new Date(2026, 10, 17, 9);
 const dayStart = (now = new Date()) => { const d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9); if (now < d) d.setDate(d.getDate() - 1); return d; };
 const dayNo = () => Math.max(0, Math.round((dayStart() - DAY0) / 864e5));
-const SITE = 'https://albumle.musicalmagic.uk';   // the game's own address (a Cloudflare worker in albumle-site/ that serves these files and looks up covers)
+const SITE = 'https://albumle.net';   // the game's own address (a Cloudflare worker in albumle-site/ that serves these files and looks up covers)
 function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 // the daily order (v9, the owner's chart): day 0 — 17 Nov 2026 — was Selected Ambient Works 85-92 and must stay so; the rest of the
 // 250 follow in one seeded shuffle. Placeholders (ranks still hidden in the owner's screenshots) are pushed to the end of the order.

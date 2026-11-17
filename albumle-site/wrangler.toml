@@ -2,4 +2,4 @@
 name = "albumle-site"
 main = "worker.js"
 compatibility_date = "2025-01-01"
-routes = [{ pattern = "albumle.musicalmagic.uk", custom_domain = true }]
+routes = [{ pattern = "albumle.net", custom_domain = true }, { pattern = "www.albumle.net", custom_domain = true }, { pattern = "albumle.musicalmagic.uk", custom_domain = true }]
