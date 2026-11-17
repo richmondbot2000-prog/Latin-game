@@ -188,8 +188,8 @@
 186 | Whole Lotta Red | Playboi Carti | 25 Dec 2020
 187 | Please Please Me | The Beatles | 22 Mar 1963
 188 | Hot Rats | Frank Zappa | 10 Oct 1969
-189 | ? | ? | ?
-190 | ? | ? | ?
+189 | Mellon Collie and the Infinite Sadness | The Smashing Pumpkins | 23 Oct 1995
+190 | Schlagenheim | black midi | 21 Jun 2019
 191 | Rust in Peace | Megadeth | 24 Sep 1990
 192 | Geogaddi | Boards of Canada | 18 Feb 2002
 193 | Bitches Brew | Miles Davis | 30 Mar 1970
@@ -212,7 +212,7 @@
 210 | (What's the Story) Morning Glory? | Oasis | 2 Oct 1995
 211 | Blood on the Tracks | Bob Dylan | 20 Jan 1975
 212 | Ænima | Tool | 1 Oct 1996
-213 | ? | ? | ?
+213 | The Lonesome Crowded West | Modest Mouse | 18 Nov 1997
 214 | Sunbather | Deafheaven | 11 Jun 2013
 215 | Selected Ambient Works Volume II | Aphex Twin | 7 Mar 1994
 216 | Atom Heart Mother | Pink Floyd | 2 Oct 1970

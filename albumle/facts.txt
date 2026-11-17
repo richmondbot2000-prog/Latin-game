@@ -100,3 +100,5 @@ The Stone Roses | The Stone Roses | 1989 | GB | Jangle Pop, Neo-Psychedelia | B
 AM | Arctic Monkeys | 2013 | GB | Indie Rock, Garage Rock Revival | B
 Cavalcade | black midi | 2021 | GB | Experimental Rock, Avant-Prog | B
 Cosmogramma | Flying Lotus | 2010 | US | Wonky, Nu Jazz | S
+Mellon Collie and the Infinite Sadness | The Smashing Pumpkins | 1995 | US | Alternative Rock, Grunge | B
+Schlagenheim | black midi | 2019 | GB | Math Rock, Noise Rock | B
