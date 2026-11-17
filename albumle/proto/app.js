@@ -4,11 +4,11 @@
    kind of act if they match — and the year and rank as earlier / later, higher / lower. Everything shared piles up in
    the panel at the top, which therefore only ever says things that are true of the answer.
    Same daily album and practice games as the main game; progress is kept apart under albumle.proto.* */
-const APP_VERSION = 'p1';
+const APP_VERSION = 'p2';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const A = ALBUMS.map(([rank, title, artist, year, country, genres, descriptors, type, lang], i) => ({ i, rank, title, artist, year, country, genres, descriptors, type, kind: type === 'S' ? 'S' : 'B', lang }));
-const MAX = 6;
+// no limit on guesses (the son's rule): you keep going until the album is found
 const DAY0 = new Date(2026, 10, 17, 9);
 const dayStart = (now = new Date()) => { const d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9); if (now < d) d.setDate(d.getDate() - 1); return d; };
 const dayNo = () => Math.max(0, Math.round((dayStart() - DAY0) / 864e5));
@@ -81,8 +81,7 @@ function render() {
     <div class="facts"><span class="fl">Genres</span>${facts.genres.length ? chips(facts.genres, 'g') : '<span class="none">none found yet</span>'}</div>
     <div class="facts"><span class="fl">Descriptors</span>${facts.descriptors.length ? chips(facts.descriptors, 'd') : '<span class="none">none found yet</span>'}</div>
     ${!over && (k.notGenres.length || k.notDesc.length) ? `<details class="ruled"><summary>Ruled out (${k.notGenres.length + k.notDesc.length})</summary>${chips(k.notGenres, 'x')}${chips(k.notDesc, 'x')}</details>` : ''}`;
-  const rows = Array.from({ length: MAX }, (_, j) => {
-    const gi = G.guesses[j]; if (gi === undefined) return `<div class="row empty"><span></span><span></span><span></span></div>`;
+  const rows = G.guesses.slice().reverse().map(gi => {   // newest guess at the top, nearest the panel
     const g = A[gi], f = compare(g, a), got = [...f.genres.map(x => ['g', x]), ...f.descriptors.map(x => ['d', x])];
     if (f.kind) got.unshift(['k', f.kind]); if (f.lang) got.unshift(['k', f.lang]); if (f.country) got.unshift(['k', flag(f.country) + ' ' + cname(f.country)]);
     return `<div class="row"><div class="who">${esc(g.title)} <span>— ${esc(g.artist)}</span></div>
@@ -90,7 +89,7 @@ function render() {
       <div class="common">${got.length ? got.map(([c, x]) => `<span class="chip ${c}">${esc(x)}</span>`).join('') : '<span class="none">nothing in common</span>'}</div></div></div>`;
   }).join('');
   $('#app').innerHTML = `
-    <div class="sub">${mode === 'daily' ? `Albumle #${G.day + 1}` : 'Practice'} · ${over ? (G.done === 'won' ? `solved in ${n}` : 'not solved') : `guess ${n + 1} of ${MAX}`} · <b>prototype</b></div>
+    <div class="sub">${mode === 'daily' ? `Albumle #${G.day + 1}` : 'Practice'} · ${over ? `solved in ${n}` : n ? `${n} guess${n === 1 ? '' : 'es'} so far` : 'guess away'} · <b>prototype</b></div>
     <div class="clue"><div class="label">${over ? 'The album' : n ? 'What you know so far' : 'Everything true of the answer will build up here'}</div>${panel}${hints.map(h => `<div class="hint">${h}</div>`).join('')}</div>
     ${over ? result(a) : ''}
     <div class="rows">${rows}</div>
@@ -103,8 +102,8 @@ function render() {
   const ag = $('#again'); if (ag) ag.onclick = () => { mode = 'practice'; G = newPractice(); store('albumle.proto.last', G.idx); save(); render(); };
 }
 function result(a) {
-  const won = G.done === 'won', n = G.guesses.length;
-  return `<div class="result"><div class="sub">${won ? ['Genius!', 'Magnificent!', 'Impressive!', 'Splendid!', 'Great!', 'Phew!'][n - 1] : 'Not this time'}</div>
+  const n = G.guesses.length;
+  return `<div class="result"><div class="sub">${n === 1 ? 'Genius!' : n <= 3 ? 'Magnificent!' : n <= 6 ? 'Splendid!' : n <= 10 ? 'Great!' : 'Got there!'}</div>
     <div class="coverbox" id="coverbox"></div>
     <h2>${esc(a.title)}</h2><div class="by">${esc(a.artist)} · ${a.year} · ${flag(a.country)} ${esc(cname(a.country))}</div>
     <div class="meta">#${a.rank} of the ${A.length} · ${kindName(a.kind).toLowerCase()} · ${esc(a.lang)}</div>
@@ -139,16 +138,16 @@ function wireInput(a) {
 function guess(i) {
   const a = A[G.idx];
   G.guesses.push(i);
-  if (i === G.idx) G.done = 'won'; else if (G.guesses.length >= MAX) G.done = 'lost';
+  if (i === G.idx) G.done = 'won';
   if (mode === 'practice') store('albumle.proto.last', G.idx);
   save(); render();
-  if (G.done) setTimeout(() => toast(G.done === 'won' ? '🎉 ' + a.title : 'It was ' + a.title), 300);
+  if (G.done) setTimeout(() => toast('🎉 ' + a.title), 300);
   else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function shareText() {
-  const a = A[G.idx], won = G.done === 'won';
+  const a = A[G.idx];
   const lines = G.guesses.map(gi => { const f = compare(A[gi], a), c = f.genres.length + f.descriptors.length + (f.kind ? 1 : 0) + (f.lang ? 1 : 0); return `${f.year.cls === 'g' ? '🟩' : '🟥'}${f.rank.cls === 'g' ? '🟩' : '🟥'} ${'🟨'.repeat(Math.min(c, 8))}${c > 8 ? '+' : ''} ${c} in common`; });
-  return `Albumle${mode === 'daily' ? ` #${G.day + 1}` : ' practice'} ${won ? G.guesses.length : 'X'}/${MAX}\n${lines.join('\n')}\n${SITE}/proto/`;
+  return `Albumle${mode === 'daily' ? ` #${G.day + 1}` : ' practice'} · solved in ${G.guesses.length}\n${lines.join('\n')}\n${SITE}/proto/`;
 }
 async function share() {
   const text = shareText();
@@ -160,7 +159,7 @@ function help() {
     <p>This is a <b>prototype</b> of a new way to play. The album of the day is one of the ${A.length} best albums of all time on RateYourMusic, and every album carries what its RateYourMusic page says: the year, its rank, all of its genres, its descriptors, its language, and whether it is a band or a solo artist.</p>
     <p>Each guess shows you <b>only what it has in common with the answer</b>. Guess <i>Unknown Pleasures</i> when the answer is <i>Remain in Light</i> and you learn that the answer is post-punk, male vocals, anxious, existential… and that it came out later and sits higher up the chart. Guess <i>Disintegration</i> next and you learn nothing new about the genre, but the year is now boxed in between the two.</p>
     <p>Everything you learn piles up in the panel at the top, and everything in it is true of the answer. The guesses that share nothing tell you something too: open <b>Ruled out</b> to see what the answer is not.</p>
-    <p>${MAX} guesses. The artist's initial after three misses, the title's after five.</p>`);
+    <p>As many guesses as you need. The artist's initial comes after three misses, the title's after five.</p>`);
 }
 function sheet(html) { $('#sheetBody').innerHTML = html; $('#sheet').hidden = false; }
 function toast(t) { const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 2200); }

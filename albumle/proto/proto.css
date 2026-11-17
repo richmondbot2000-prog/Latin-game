@@ -13,5 +13,5 @@
 .ruled .chip { margin: 4px 4px 0 0; }
 .cells3 { display: grid; grid-template-columns: 92px 92px minmax(0, 1fr); gap: 5px; }
 .common { border: 2px solid var(--line); padding: 5px; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; min-height: 46px; }
-.row.empty { grid-template-columns: 92px 92px minmax(0, 1fr); }
+
 .row .who { margin-top: 2px; }
