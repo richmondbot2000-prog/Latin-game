@@ -70,7 +70,7 @@
 68 | The Doors | The Doors | 4 Jan 1967
 69 | Demon Days | Gorillaz | 24 May 2005
 70 | Mr. Morale & the Big Steppers | Kendrick Lamar | 13 May 2022
-71 | ? | ? | ?
+71 | The Glow Pt. 2 | The Microphones | 11 Sep 2001
 72 | Funeral | Arcade Fire | 14 Sep 2004
 73 | Atrocity Exhibition | Danny Brown | 30 Sep 2016
 74 | Enter the Wu-Tang (36 Chambers) | Wu-Tang Clan | 9 Nov 1993
@@ -86,7 +86,7 @@
 84 | Low | David Bowie | 14 Jan 1977
 85 | Either / Or | Elliott Smith | 25 Feb 1997
 86 | Meddle | Pink Floyd | 5 Nov 1971
-87 | ? | ? | ?
+87 | Toxicity | System of a Down | 4 Sep 2001
 88 | Scaring the Hoes | JPEGMAFIA & Danny Brown | 24 Mar 2023
 89 | Imaginal Disk | Magdalena Bay | 23 Aug 2024
 90 | The Downward Spiral | Nine Inch Nails | 8 Mar 1994
@@ -94,7 +94,7 @@
 92 | F♯A♯∞ | Godspeed You Black Emperor! | 14 Aug 1997
 93 | Endtroducing..... | DJ Shadow | 19 Nov 1996
 94 | A Love Supreme | John Coltrane | Jan 1965
-95 | ? | ? | ?
+95 | Blackstar | David Bowie | 8 Jan 2016
 96 | London Calling | The Clash | 14 Dec 1979
 97 | Debut | Björk | 5 Jul 1993
 98 | Turn On the Bright Lights | Interpol | 20 Aug 2002
