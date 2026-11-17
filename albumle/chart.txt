@@ -147,8 +147,8 @@
 145 | Around the Fur | Deftones | 28 Oct 1997
 146 | Carrie & Lowell | Sufjan Stevens | 31 Mar 2015
 147 | Violator | Depeche Mode | 19 Mar 1990
-148 | ? | ? | ?
-149 | ? | ? | ?
+148 | Lateralus | Tool | 15 May 2001
+149 | Let It Be | The Beatles | 8 May 1970
 150 | Bleach | Nirvana | 15 Jun 1989
 151 | Rodeo | Travis Scott | 4 Sep 2015
 152 | Chromakopia | Tyler, The Creator | 28 Oct 2024
@@ -156,8 +156,8 @@
 154 | "Heroes" | David Bowie | 14 Oct 1977
 155 | Station to Station | David Bowie | 23 Jan 1976
 156 | No Love Deep Web | Death Grips | 1 Oct 2012
-157 | White Light/White Heat (unconfirmed, half hidden) | The Velvet Underground | 30 Jan 1968
-158 | ? | ? | ?
+157 | White Light/White Heat | The Velvet Underground | 30 Jan 1968
+158 | LP! | JPEGMAFIA | 22 Oct 2021
 159 | Hellfire | black midi | 15 Jul 2022
 160 | The Smiths | The Smiths | 20 Feb 1984
 161 | Kill 'Em All | Metallica | 25 Jul 1983
@@ -165,7 +165,7 @@
 163 | Electric Ladyland | The Jimi Hendrix Experience | 25 Oct 1968
 164 | To Be Kind | Swans | 13 May 2014
 165 | Titanic Rising | Weyes Blood | 5 Apr 2019
-166 | ? (half hidden) | ? | ?
+166 | How I'm Feeling Now | Charli xcx | 15 May 2020
 167 | The Velvet Underground | The Velvet Underground | Mar 1969
 168 | Soundtracks for the Blind | Swans | 22 Oct 1996
 169 | The New Abnormal | The Strokes | 10 Apr 2020
@@ -173,7 +173,7 @@
 171 | Whatever People Say I Am, That's What I'm Not | Arctic Monkeys | 23 Jan 2006
 172 | Metallica | Metallica | 12 Aug 1991
 173 | Getting Killed | Geese | 2025
-174 | ? | ? | ?
+174 | Songs in the Key of Life | Stevie Wonder | 28 Sep 1976
 175 | The Black Parade | My Chemical Romance | 24 Oct 2006
 176 | Watch the Throne | JAY-Z & Kanye West | 8 Aug 2011
 177 | Stratosphere | Duster | 24 Feb 1998
