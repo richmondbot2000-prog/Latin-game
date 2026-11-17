@@ -1,7 +1,7 @@
 /* Albumle — guess one of the 250 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '5';
+const APP_VERSION = '6';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const A = ALBUMS.map(([rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour], i) => ({ i, rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour, main: MAIN_OF[genres[0]] || genres[0] }));
@@ -35,11 +35,11 @@ function compare(g, a) {
   const dy = a.year - g.year, dr = a.rank - g.rank, ay = Math.abs(dy), ar = Math.abs(dr);
   const sameSub = g.genres[0] === a.genres[0], sameMain = g.main === a.main;
   return {
-    year: { cls: ay <= 5 ? 'g' : ay <= 10 ? 'y' : 'n', text: `${g.year}${dy === 0 ? '' : dy > 0 ? ' ▲' : ' ▼'}`, sub: dy === 0 ? 'same year' : ay <= 5 ? (dy > 0 ? 'a little later' : 'a little earlier') : dy > 0 ? 'later' : 'earlier' },
+    year: { cls: ay <= 5 ? 'g' : ay <= 10 ? 'y' : 'n', text: `${g.year}${dy === 0 ? '' : dy > 0 ? ' ▲' : ' ▼'}`, sub: dy === 0 ? 'same year' : ay <= 5 ? 'within 5 yrs' : `${ay <= 10 ? '6–10' : '10+'} yrs ${dy > 0 ? 'later' : 'earlier'}` },
     type: { cls: g.type === a.type ? 'g' : 'n', text: g.type === 'B' ? 'Band' : 'Solo', sub: g.type === a.type ? 'yes' : 'no' },
     genre: { cls: sameSub ? 'g' : sameMain ? 'y' : 'n', text: g.genres[0], sub: sameSub ? 'same genre' : sameMain ? `${g.main}, not this` : g.main, small: true },
     colour: { cls: g.colour === a.colour ? 'g' : 'n', text: `<i class="sw" style="background:${SWATCH[g.colour] || '#888'}"></i>`, sub: g.colour },
-    rank: { cls: ar <= 5 ? 'g' : ar <= 20 ? 'y' : 'n', text: `#${g.rank}${dr === 0 ? '' : dr < 0 ? ' ▲' : ' ▼'}`, sub: dr === 0 ? 'the one' : ar <= 5 ? (dr < 0 ? 'just above' : 'just below') : dr < 0 ? 'ranks higher' : 'ranks lower' },
+    rank: { cls: ar <= 5 ? 'g' : ar <= 20 ? 'y' : 'n', text: `#${g.rank}${dr === 0 ? '' : dr < 0 ? ' ▲' : ' ▼'}`, sub: dr === 0 ? 'the one' : ar <= 5 ? 'within 5 places' : `${ar <= 20 ? '6–20' : '20+'} ${dr < 0 ? 'higher' : 'lower'}` },
   };
 }
 const SQ = { g: '🟩', y: '🟨', n: '🟥' };
@@ -167,8 +167,8 @@ function help() {
   sheet(`<h2>How to play</h2>
     <p>Guess the album in ${MAX} tries. Every day it is one of the <b>${A.length} best albums of all time</b> as rated on RateYourMusic.</p>
     <p>You are told nothing to start with. Type any album or artist from the ${A.length}, pick it from the list, and the squares tell you how close you are on five things. The panel at the top adds up what the squares have told you — guess a 1985 album and hear "earlier", then a 1979 one and hear "later", and it reads <b>1979–1985</b>.</p>
-    <div class="cells"><div class="cell y">1994 ▲<small>later</small></div><div class="cell n">Band<small>no</small></div><div class="cell y sm">Alternative Rock<small>Rock, not this</small></div><div class="cell g"><i class="sw" style="background:#3a74d8"></i><small>Blue</small></div><div class="cell n">#44 ▼<small>ranks lower</small></div></div>
-    <p><b>Year</b>: green within 5 years, yellow within 10; ▲ the answer came out later, ▼ earlier.<br><b>Band or solo</b>: green when the answer is the same kind of act.<br><b>Genre</b>: green for the same genre, yellow for the same broad genre but a different one within it (you guess Alternative Rock, it is Indie Rock), red for a different genre altogether.<br><b>Cover colour</b>: green when the answer's cover is mainly that colour.<br><b>Rank</b> on the list of ${A.length}: green within 5 places, yellow within 20; ▲ the answer is higher up (nearer #1), ▼ lower.</p>
+    <div class="cells"><div class="cell y">1994 ▲<small>6–10 yrs later</small></div><div class="cell n">Band<small>no</small></div><div class="cell y sm">Alternative Rock<small>Rock, not this</small></div><div class="cell g"><i class="sw" style="background:#3a74d8"></i><small>Blue</small></div><div class="cell n">#44 ▼<small>20+ lower</small></div></div>
+    <p><b>Year</b>: green within 5 years, yellow 6 to 10 years away, red more than 10; ▲ the answer came out later, ▼ earlier.<br><b>Band or solo</b>: green when the answer is the same kind of act.<br><b>Genre</b>: green for the same genre, yellow for the same broad genre but a different one within it (you guess Alternative Rock, it is Indie Rock), red for a different genre altogether.<br><b>Cover colour</b>: green when the answer's cover is mainly that colour.<br><b>Rank</b> on the list of ${A.length}: green within 5 places, yellow 6 to 20 away, red more than 20; ▲ the answer is higher up (nearer #1), ▼ lower.</p>
     <p>After three misses you get the artist's initial, after five the title's. Share your squares when you are done, and play practice games as often as you like.</p>`);
 }
 function sheet(html) { $('#sheetBody').innerHTML = html; $('#sheet').hidden = false; }
