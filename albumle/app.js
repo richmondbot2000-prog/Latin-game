@@ -1,10 +1,11 @@
 /* Albumle — guess one of the 250 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '8';
+const APP_VERSION = '9';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const A = ALBUMS.map(([rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour], i) => ({ i, rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour, main: MAIN_OF[genres[0]] || genres[0] }));
+// 'D' (duo) counts as a band until the owner decides how its square should behave (`kind`)
+const A = ALBUMS.map(([rank, title, artist, year, country, genres, type, placeholder], i) => ({ i, rank, title, artist, year, country, genres, type, kind: type === 'S' ? 'S' : 'B', placeholder, main: MAIN_OF[genres[0]] || genres[0] }));
 const KEYS = ['year', 'type', 'genre', 'country', 'rank'];   // v8: the artist's country replaced the cover colour (the owner: colour "doesn't work well")
 const REGION = { GB: 'British Isles', IE: 'British Isles', US: 'North America', CA: 'North America', SE: 'Nordic', NO: 'Nordic', IS: 'Nordic', FR: 'mainland Europe', DE: 'mainland Europe', JP: 'Asia', AU: 'Oceania', BR: 'South America', NG: 'Africa' };
 const region = c => REGION[c] || cname(c);
@@ -16,13 +17,13 @@ const dayStart = (now = new Date()) => { const d = new Date(now.getFullYear(), n
 const dayNo = () => Math.max(0, Math.round((dayStart() - DAY0) / 864e5));
 const SITE = 'https://albumle.musicalmagic.uk';   // the game's own address (a Cloudflare worker in albumle-site/ that serves these files and looks up covers)
 function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-// the daily order: the first 200 albums were shuffled once with a fixed seed (day 0's album must never change); albums added later
-// (201 onwards, v5) are shuffled with their own seed and slotted in every fifth day from day 1, so they join without moving the past
+// the daily order (v9, the owner's chart): day 0 — 17 Nov 2026 — was Selected Ambient Works 85-92 and must stay so; the rest of the
+// 250 follow in one seeded shuffle. Placeholders (ranks still hidden in the owner's screenshots) are pushed to the end of the order.
 const shuffle = (list, seed) => { const r = mulberry(seed), a = list.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 const ORDER = (() => {
-  const base = shuffle(A.filter(x => x.rank <= 200).map(x => x.i), 20261117), extra = shuffle(A.filter(x => x.rank > 200).map(x => x.i), 20261118), out = [base[0]];
-  let b = 1, e = 0; while (b < base.length || e < extra.length) { if (e < extra.length && (out.length % 5 === 0 || b >= base.length)) out.push(extra[e++]); else out.push(base[b++]); }
-  return out;
+  const first = A.find(x => x.title === 'Selected Ambient Works 85-92') || A[0];
+  const rest = shuffle(A.filter(x => x !== first && !x.placeholder).map(x => x.i), 20261118), tail = shuffle(A.filter(x => x.placeholder).map(x => x.i), 20261119);
+  return [first.i, ...rest, ...tail];
 })();
 const dailyIndex = d => ORDER[((d % A.length) + A.length) % A.length];
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
@@ -41,7 +42,7 @@ function compare(g, a) {
   const sameSub = g.genres[0] === a.genres[0], sameMain = g.main === a.main;
   return {
     year: { cls: ay <= 5 ? 'g' : ay <= 10 ? 'y' : 'n', text: `${g.year}${dy === 0 ? '' : dy > 0 ? ' ▲' : ' ▼'}`, sub: dy === 0 ? 'same year' : ay <= 5 ? 'within 5 yrs' : `${ay <= 10 ? '6–10' : '10+'} yrs ${dy > 0 ? 'later' : 'earlier'}` },
-    type: { cls: g.type === a.type ? 'g' : 'n', text: g.type === 'B' ? 'Band' : 'Solo', sub: g.type === a.type ? 'yes' : 'no' },
+    type: { cls: g.kind === a.kind ? 'g' : 'n', text: g.kind === 'B' ? 'Band' : 'Solo', sub: g.kind === a.kind ? 'yes' : 'no' },
     genre: { cls: sameSub ? 'g' : sameMain ? 'y' : 'n', text: g.genres[0], sub: sameSub ? 'same genre' : sameMain ? `${g.main}, not this` : g.main, small: true },
     country: { cls: g.country === a.country ? 'g' : region(g.country) === region(a.country) ? 'y' : 'n', text: flag(g.country), sub: g.country === a.country ? cname(g.country) : region(g.country) === region(a.country) ? `${region(g.country)}, not ${cname(g.country)}` : cname(g.country) },
     rank: { cls: ar <= 5 ? 'g' : ar <= 20 ? 'y' : 'n', text: `#${g.rank}${dr === 0 ? '' : dr < 0 ? ' ▲' : ' ▼'}`, sub: dr === 0 ? 'the one' : ar <= 5 ? 'within 5 places' : `${ar <= 20 ? '6–20' : '20+'} ${dr < 0 ? 'higher' : 'lower'}` },
@@ -63,7 +64,7 @@ function deduce(a) {
     const g = A[gi];
     const [a1, b1] = bounds(g.year, a.year, 5, 10); ylo = Math.max(ylo, a1); yhi = Math.min(yhi, b1);
     const [a2, b2] = bounds(g.rank, a.rank, 5, 20); rlo = Math.max(rlo, a2); rhi = Math.min(rhi, b2);
-    if (g.type === a.type) k.sure.type = 1; k.type = a.type === 'B' ? 'Band' : 'Solo';   // only two kinds: a red tells you too
+    if (g.kind === a.kind) k.sure.type = 1; k.type = a.kind === 'B' ? 'Band' : 'Solo';   // only two kinds: a red tells you too
     if (g.genres[0] === a.genres[0]) { k.genre = g.genres[0]; k.sure.genre = 1; }
     else if (g.main === a.main) { if (!k.sure.genre) { k.genre = `${g.main}, not ${g.genres[0]}`; k.part.genre = 1; } }
     else notGenre.push(g.main);
@@ -87,7 +88,7 @@ function render() {
   // range — "1985 earlier" then "1979 later" gives "1979–1985" — band/solo flips after a red (there are only two), the genre shows
   // its broad family after a yellow, and the country box lists the flags ruled out
   const known = deduce(a);
-  if (over) Object.assign(known, { year: String(a.year), type: a.type === 'B' ? 'Band' : 'Solo', genre: a.genres[0], country: `${flag(a.country)} ${cname(a.country)}`, rank: '#' + a.rank, sure: { year: 1, type: 1, genre: 1, country: 1, rank: 1 } });
+  if (over) Object.assign(known, { year: String(a.year), type: a.kind === 'B' ? 'Band' : 'Solo', genre: a.genres[0], country: `${flag(a.country)} ${cname(a.country)}`, rank: '#' + a.rank, sure: { year: 1, type: 1, genre: 1, country: 1, rank: 1 } });
   const vars = [['Year', 'year'], ['Band or solo', 'type'], ['Genre', 'genre'], ['Country', 'country'], [`Rank (1–${A.length})`, 'rank']];
   const hints = [];
   if (n >= 3 || over) hints.push(`The artist's name starts with <b>${esc(a.artist[0])}</b>`);
@@ -118,7 +119,7 @@ function result(a) {
   return `<div class="result"><div class="sub">${won ? ['Genius!', 'Magnificent!', 'Impressive!', 'Splendid!', 'Great!', 'Phew!'][n - 1] : 'Not this time'}</div>
     <div class="coverbox" id="coverbox"></div>
     <h2>${esc(a.title)}</h2><div class="by">${esc(a.artist)} · ${a.year} · ${flag(a.country)} ${esc(cname(a.country))}</div>
-    <div class="meta">#${a.rank} of the ${A.length} · ${a.genres.map(esc).join(' · ')} · ${a.type === 'B' ? 'band' : 'solo artist'}</div>
+    <div class="meta">#${a.rank} of the ${A.length} · ${a.genres.map(esc).join(' · ')} · ${a.kind === 'B' ? 'band' : 'solo artist'}</div>
     <button class="btn" id="share">Share</button>${mode === 'daily' ? `<button class="btn ghost" id="seeStats">Stats</button>` : `<button class="btn ghost" id="again">Another one</button>`}
     ${mode === 'daily' ? `<div class="next" id="next"></div>` : ''}</div>`;
 }

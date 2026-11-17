@@ -1,0 +1,99 @@
+# Albumle: facts for albums that were not in the first list — title | artist | year | country | subgenre, genre | B band / S solo / D duo
+808s & Heartbreak | Kanye West | 2008 | US | Electropop, Alternative R&B | S
+Ye | Kanye West | 2018 | US | Hip Hop, Pop Rap | S
+Hail to the Thief | Radiohead | 2003 | GB | Art Rock, Alternative Rock | B
+KIDS SEE GHOSTS | KIDS SEE GHOSTS | 2018 | US | Experimental Hip Hop, Pop Rap | D
+Weezer (Blue Album) | Weezer | 1994 | US | Power Pop, Alternative Rock | B
+The Doors | The Doors | 1967 | US | Psychedelic Rock, Blues Rock | B
+Demon Days | Gorillaz | 2005 | GB | Art Pop, Alternative Dance | B
+Mr. Morale & the Big Steppers | Kendrick Lamar | 2022 | US | Conscious Hip Hop, West Coast Hip Hop | S
+Mm..Food | MF DOOM | 2004 | US | Abstract Hip Hop, East Coast Hip Hop | S
+Pablo Honey | Radiohead | 1993 | GB | Alternative Rock, Grunge | B
+Call Me If You Get Lost | Tyler, The Creator | 2021 | US | Hip Hop, East Coast Hip Hop | S
+Scaring the Hoes | JPEGMAFIA & Danny Brown | 2023 | US | Experimental Hip Hop, Hardcore Hip Hop | D
+Imaginal Disk | Magdalena Bay | 2024 | US | Synthpop, Neo-Psychedelia | D
+Debut | Björk | 1993 | IS | Art Pop, Alternative Dance | S
+Black Sabbath | Black Sabbath | 1970 | GB | Heavy Metal, Blues Rock | B
+Led Zeppelin | Led Zeppelin | 1969 | GB | Blues Rock, Hard Rock | B
+Currents | Tame Impala | 2015 | AU | Neo-Psychedelia, Synthpop | B
+The Piper at the Gates of Dawn | Pink Floyd | 1967 | GB | Psychedelic Rock, Psychedelic Pop | B
+Siamese Dream | Smashing Pumpkins | 1993 | US | Alternative Rock, Shoegaze | B
+Songs for the Deaf | Queens of the Stone Age | 2002 | US | Stoner Rock, Hard Rock | B
+Random Access Memories | Daft Punk | 2013 | FR | Nu-Disco, Synth Funk | D
+Plastic Beach | Gorillaz | 2010 | GB | Art Pop, Alternative Dance | B
+Rage Against the Machine | Rage Against the Machine | 1992 | US | Rap Rock, Alternative Metal | B
+Velocity : Design : Comfort | Sweet Trip | 2003 | US | Glitch Pop, Shoegaze | D
+The King of Limbs | Radiohead | 2011 | GB | Art Rock, Electronic | B
+Bottomless Pit | Death Grips | 2016 | US | Experimental Hip Hop, Industrial Hip Hop | B
+Led Zeppelin II | Led Zeppelin | 1969 | GB | Hard Rock, Blues Rock | B
+Pornography | The Cure | 1982 | GB | Gothic Rock, Post-Punk | B
+Section.80 | Kendrick Lamar | 2011 | US | Conscious Hip Hop, West Coast Hip Hop | S
+For the first time | Black Country, New Road | 2021 | GB | Post-Rock, Experimental Rock | B
+GNX | Kendrick Lamar | 2024 | US | West Coast Hip Hop, Pop Rap | S
+Dirt | Alice in Chains | 1992 | US | Grunge, Alternative Metal | B
+Around the Fur | Deftones | 1997 | US | Alternative Metal, Nu Metal | B
+Violator | Depeche Mode | 1990 | GB | Synthpop, Alternative Dance | B
+Bleach | Nirvana | 1989 | US | Grunge, Noise Rock | B
+Rodeo | Travis Scott | 2015 | US | Trap, Pop Rap | S
+Chromakopia | Tyler, The Creator | 2024 | US | Hip Hop, Neo-Soul | S
+Are You Experienced | The Jimi Hendrix Experience | 1967 | US | Psychedelic Rock, Blues Rock | B
+"Heroes" | David Bowie | 1977 | GB | Art Rock, Experimental Rock | S
+No Love Deep Web | Death Grips | 2012 | US | Industrial Hip Hop, Experimental Hip Hop | B
+White Light/White Heat | The Velvet Underground | 1968 | US | Experimental Rock, Noise Rock | B
+Hellfire | black midi | 2022 | GB | Avant-Prog, Experimental Rock | B
+The Smiths | The Smiths | 1984 | GB | Jangle Pop, Indie Pop | B
+Kill 'Em All | Metallica | 1983 | US | Thrash Metal, Heavy Metal | B
+...And Justice for All | Metallica | 1988 | US | Thrash Metal, Progressive Metal | B
+The Velvet Underground | The Velvet Underground | 1969 | US | Folk Rock, Art Rock | B
+The New Abnormal | The Strokes | 2020 | US | Indie Rock, New Wave | B
+Whatever People Say I Am, That's What I'm Not | Arctic Monkeys | 2006 | GB | Indie Rock, Post-Punk Revival | B
+Metallica | Metallica | 1991 | US | Heavy Metal, Thrash Metal | B
+Getting Killed | Geese | 2025 | US | Art Rock, Indie Rock | B
+The Black Parade | My Chemical Romance | 2006 | US | Pop Punk, Emo | B
+Watch the Throne | JAY-Z & Kanye West | 2011 | US | Hip Hop, Pop Rap | D
+1000 gecs | 100 gecs | 2019 | US | Hyperpop, Electropop | D
+Led Zeppelin III | Led Zeppelin | 1970 | GB | Folk Rock, Hard Rock | B
+All My Heroes Are Cornballs | JPEGMAFIA | 2019 | US | Experimental Hip Hop, Glitch Pop | S
+Whole Lotta Red | Playboi Carti | 2020 | US | Rage, Trap | S
+Please Please Me | The Beatles | 1963 | GB | Merseybeat, Pop Rock | B
+Hot Rats | Frank Zappa | 1969 | US | Jazz-Rock, Jazz Fusion | S
+The New Sound | Geordie Greep | 2024 | GB | Art Rock, Jazz-Rock | S
+Daytona | Pusha T | 2018 | US | East Coast Hip Hop, Hardcore Hip Hop | S
+Wolf | Tyler, The Creator | 2013 | US | Hip Hop, Jazz Rap | S
+Gorillaz | Gorillaz | 2001 | GB | Alternative Dance, Trip Hop | B
+TA13OO | Denzel Curry | 2018 | US | Southern Hip Hop, Trap | S
+Ten | Pearl Jam | 1991 | US | Grunge, Hard Rock | B
+Meat Is Murder | The Smiths | 1985 | GB | Jangle Pop, Indie Pop | B
+Bloom | Beach House | 2012 | US | Dream Pop, Indie Pop | D
+Room on Fire | The Strokes | 2003 | US | Indie Rock, Garage Rock Revival | B
+Fear of Music | Talking Heads | 1979 | US | New Wave, Post-Punk | B
+Lonerism | Tame Impala | 2012 | AU | Neo-Psychedelia, Psychedelic Pop | B
+Astroworld | Travis Scott | 2018 | US | Trap, Pop Rap | S
+(What's the Story) Morning Glory? | Oasis | 1995 | GB | Britpop, Pop Rock | B
+Atom Heart Mother | Pink Floyd | 1970 | GB | Progressive Rock, Psychedelic Rock | B
+Year of the Snitch | Death Grips | 2018 | US | Experimental Hip Hop, Industrial Hip Hop | B
+You Won't Get What You Want | Daughters | 2018 | US | Noise Rock, Industrial Rock | B
+Midnight Marauders | A Tribe Called Quest | 1993 | US | Jazz Rap, East Coast Hip Hop | B
+Yoshimi Battles the Pink Robots | The Flaming Lips | 2002 | US | Neo-Psychedelia, Psychedelic Pop | B
+Hybrid Theory | Linkin Park | 2000 | US | Nu Metal, Rap Rock | B
+When the Pawn... | Fiona Apple | 1999 | US | Art Pop, Singer-Songwriter | S
+Speaking in Tongues | Talking Heads | 1983 | US | New Wave, Funk | B
+To See the Next Part of the Dream | Parannoul | 2021 | KR | Shoegaze, Emo | S
+Drukqs | Aphex Twin | 2001 | GB | IDM, Drill and Bass | S
+Discipline | King Crimson | 1981 | GB | Progressive Rock, New Wave | B
+Goo | Sonic Youth | 1990 | US | Noise Rock, Alternative Rock | B
+Operation: Doomsday | MF DOOM | 1999 | US | Abstract Hip Hop, East Coast Hip Hop | S
+With The Beatles | The Beatles | 1963 | GB | Merseybeat, Pop Rock | B
+Talking Heads: 77 | Talking Heads | 1977 | US | New Wave, Art Punk | B
+Little Dark Age | MGMT | 2018 | US | Synthpop, Neo-Psychedelia | D
+Cherry Bomb | Tyler, The Creator | 2015 | US | Hip Hop, Neo-Soul | S
+This Is Happening | LCD Soundsystem | 2010 | US | Dance-Punk, Indietronica | B
+Graduation | Kanye West | 2007 | US | Pop Rap, Hip Hop | S
+The Life of Pablo | Kanye West | 2016 | US | Hip Hop, Pop Rap | S
+Flower Boy | Tyler, The Creator | 2017 | US | Neo-Soul, Hip Hop | S
+The Wall | Pink Floyd | 1979 | GB | Progressive Rock, Art Rock | B
+Igor | Tyler, The Creator | 2019 | US | Neo-Soul, Alternative R&B | S
+A Moon Shaped Pool | Radiohead | 2016 | GB | Art Rock, Alternative Rock | B
+White Pony | Deftones | 2000 | US | Alternative Metal, Nu Metal | B
+Ænima | Tool | 1996 | US | Alternative Metal, Progressive Metal | B
+The Stone Roses | The Stone Roses | 1989 | GB | Jangle Pop, Neo-Psychedelia | B
