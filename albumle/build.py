@@ -44,7 +44,7 @@ for line in open(os.path.join(H, 'chart.txt')):
 if missing: print('NO FACTS FOR', missing)
 assert len(rows) == 250 and [r[0] for r in rows] == list(range(1, 251)), (len(rows), [r[0] for r in rows][:5])
 main_src = old[old.index('const MAIN = {'):]
-EXTRA = {'Rock': ['Stoner Rock', 'Rap Rock', 'Merseybeat', 'Alternative Dance'], 'Metal': ['Nu Metal'], 'Punk': ['Pop Punk', 'Midwest Emo'], 'Hip Hop': ['Rage', 'Cloud Rap'], 'Pop': ['Electropop', 'Hyperpop', 'Alt-Pop'], 'Electronic': ['Deconstructed Club', 'Chillwave', 'Progressive Electronic']}
+EXTRA = {'Rock': ['Stoner Rock', 'Rap Rock', 'Merseybeat', 'Alternative Dance'], 'Metal': ['Nu Metal'], 'Punk': ['Pop Punk', 'Midwest Emo'], 'Hip Hop': ['Rage', 'Cloud Rap'], 'Pop': ['Electropop', 'Hyperpop', 'Alt-Pop'], 'Electronic': ['Deconstructed Club', 'Chillwave', 'Progressive Electronic', 'Wonky']}
 for k, v in EXTRA.items():
     key = ("  '%s': [" % k) if ' ' in k else ("  %s: [" % k)
     assert key in main_src, key
