@@ -1,5 +1,52 @@
 # Albumle: the owner's chart, transcribed from his RateYourMusic screenshots (17 Nov 2026). rank | title | artist | release date
 # "?" marks a rank not yet seen. The game's albums.js is rebuilt from this file once it is complete.
+1 | OK Computer | Radiohead | 16 Jun 1997
+2 | Kid A | Radiohead | 3 Oct 2000
+3 | To Pimp a Butterfly | Kendrick Lamar | 15 Mar 2015
+4 | The Dark Side of the Moon | Pink Floyd | 23 Mar 1973
+5 | In Rainbows | Radiohead | 10 Oct 2007
+6 | Loveless | my bloody valentine | 11 Nov 1991
+7 | My Beautiful Dark Twisted Fantasy | Kanye West | 22 Nov 2010
+8 | Wish You Were Here (half hidden) | Pink Floyd | 12 Sep 1975
+9 | good kid, m.A.A.d city | Kendrick Lamar | 22 Oct 2012
+10 | The Bends | Radiohead | 13 Mar 1995
+11 | In the Court of the Crimson King | King Crimson | 10 Oct 1969
+12 | Abbey Road | The Beatles | 26 Sep 1969
+13 | In the Aeroplane Over the Sea | Neutral Milk Hotel | 10 Feb 1998
+14 | Igor | Tyler, The Creator | 17 May 2019
+15 | Nevermind | Nirvana | 24 Sep 1991
+16 | ? | ? | ?
+17 | Madvillainy | Madvillain | 23 Mar 2004
+18 | The Velvet Underground & Nico | The Velvet Underground & Nico | 12 Mar 1967
+19 | The College Dropout | Kanye West | 10 Feb 2004
+20 | Yeezus | Kanye West | 18 Jun 2013
+21 | Sgt. Peppers Lonely Hearts Club Band | The Beatles | 26 May 1967
+22 | The Money Store | Death Grips | 24 Apr 2012
+23 | The Rise and Fall of Ziggy Stardust and The Spiders From Mars | David Bowie | 16 Jun 1972
+24 | Graduation | Kanye West | 11 Sep 2007
+25 | Remain in Light | Talking Heads | 8 Oct 1980
+26 | Blonde | Frank Ocean | 20 Aug 2016
+27 | Damn. | Kendrick Lamar | 14 Apr 2017
+28 | Paranoid | Black Sabbath | 18 Sep 1970
+29 | The Queen Is Dead | The Smiths | 16 Jun 1986
+30 | Unknown Pleasures | Joy Division | 15 Jun 1979
+31 | Astral Weeks (unconfirmed, half hidden) | Van Morrison | Nov 1968
+32 | The Life of Pablo | Kanye West | 14 Feb 2016
+33 | Late Registration | Kanye West | 30 Aug 2005
+34 | Lift Yr. Skinny Fists Like Antennas to Heaven! | Godspeed You Black Emperor! | 23 Oct 2000
+35 | In Utero | Nirvana | 21 Sep 1993
+36 | Pet Sounds | The Beach Boys | 16 May 1966
+37 | Amnesiac | Radiohead | 4 Jun 2001
+38 | Flower Boy | Tyler, The Creator | 21 Jul 2017
+39 | ? | ? | ?
+40 | Spiderland | Slint | 27 Mar 1991
+41 | Souvlaki | Slowdive | 1 Jun 1993
+42 | Is This It | The Strokes | 27 Aug 2001
+43 | The Beatles [White Album] | The Beatles | 22 Nov 1968
+44 | Selected Ambient Works 85-92 | Aphex Twin | 9 Nov 1992
+45 | Ants From Up There | Black Country, New Road | 4 Feb 2022
+46 | The Wall | Pink Floyd | 30 Nov 1979
+47 | ? | ? | ?
 48 | Dummy | Portishead | 22 Aug 1994
 49 | Disintegration | The Cure | 2 May 1989
 50 | Discovery | Daft Punk | 13 Mar 2001
