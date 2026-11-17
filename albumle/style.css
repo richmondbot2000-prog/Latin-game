@@ -70,3 +70,5 @@ main { max-width: 520px; margin: 0 auto; padding: 12px 14px 40px; }
 .coverbox { margin: 4px auto 12px; width: min(240px, 60vw); aspect-ratio: 1; }
 .cover { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,.5); opacity: 0; transform: scale(.94); transition: opacity .5s, transform .5s; display: block; }
 .cover.in { opacity: 1; transform: none; }
+.cell.flag { font-size: 22px; line-height: 1; }
+.cell.flag small { font-size: 9px; }
