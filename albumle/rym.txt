@@ -1,0 +1,126 @@
+# Albumle prototype data (the owner's son's design, 17 Nov 2026): what each album's RateYourMusic page says.
+# title | artist | language | genres (; separated, primary first) | descriptors (; separated)
+# Written from memory of the RYM pages for the albums the first list did not hold; correct any line from the real page.
+Sgt. Peppers Lonely Hearts Club Band | The Beatles | English | Psychedelic Pop; Pop Rock; Baroque Pop | psychedelic; playful; melodic; eclectic; warm; surreal; whimsical; summer; conceptual
+Graduation | Kanye West | English | Pop Rap; Hip Hop | triumphant; uplifting; energetic; boastful; melodic; anthemic; lush; introspective
+The Life of Pablo | Kanye West | English | Hip Hop; Pop Rap; Gospel | eclectic; chaotic; boastful; religious; introspective; playful; sexual; manic
+Lift Yr. Skinny Fists Like Antennas to Heaven! | Godspeed You Black Emperor! | English | Post-Rock | epic; atmospheric; apocalyptic; melancholic; cinematic; progressive; instrumental; lonely; hypnotic
+Flower Boy | Tyler, The Creator | English | Hip Hop; Neo-Soul; Pop Rap | lush; introspective; melodic; summer; warm; lonely; mellow; bittersweet; lgbt
+The Beatles [White Album] | The Beatles | English | Pop Rock; Rock; Psychedelic Rock | eclectic; playful; melodic; surreal; humorous; raw; quirky; sprawling
+The Wall | Pink Floyd | English | Progressive Rock; Art Rock | concept album; theatrical; melancholic; alienation; angry; rock opera; bleak; cinematic; introspective
+808s & Heartbreak | Kanye West | English | Electropop; Art Pop; Alternative R&B | melancholic; cold; lonely; breakup; minimalistic; introspective; atmospheric; sombre; death
+Ye | Kanye West | English | Hip Hop; Pop Rap | introspective; personal; mental health; melodic; short; mellow; raw; love
+A Moon Shaped Pool | Radiohead | English | Art Rock; Chamber Pop; Art Pop | melancholic; lush; atmospheric; breakup; sombre; orchestral; introspective; mellow; bittersweet
+Brat | Charli xcx | English | Electropop; Dance-Pop; Electroclash | party; energetic; hedonistic; introspective; female vocalist; sexual; playful; summer; club
+Hail to the Thief | Radiohead | English | Alternative Rock; Art Rock | political; anxious; paranoid; eclectic; dark; cryptic; melancholic; urgent
+KIDS SEE GHOSTS | KIDS SEE GHOSTS | English | Hip Hop; Psychedelic Hip Hop; Pop Rap | psychedelic; mental health; cathartic; uplifting; spiritual; short; introspective; triumphant
+Weezer (Blue Album) | Weezer | English | Power Pop; Alternative Rock | catchy; melodic; nerdy; playful; energetic; bittersweet; nostalgic; anthemic; male vocalist
+The Doors | The Doors | English | Psychedelic Rock; Blues Rock | psychedelic; dark; poetic; sexual; hypnotic; mysterious; energetic; bluesy; nocturnal
+Demon Days | Gorillaz | English | Alternative Rock; Hip Hop; Art Pop | apocalyptic; eclectic; melancholic; conceptual; atmospheric; nocturnal; cryptic; dark
+Mr. Morale & the Big Steppers | Kendrick Lamar | English | Conscious Hip Hop; West Coast Hip Hop | introspective; personal; mental health; concept album; philosophical; raw; conscious; emotional
+Mm..Food | MF DOOM | English | Abstract Hip Hop; East Coast Hip Hop | humorous; playful; sampling; surreal; quirky; boastful; dense; witty
+Pablo Honey | Radiohead | English | Alternative Rock; Grunge | angsty; melodic; melancholic; raw; energetic; self-hatred; anthemic; youthful
+Call Me If You Get Lost | Tyler, The Creator | English | Hip Hop; Pop Rap; Neo-Soul | boastful; eclectic; luxurious; travel; playful; melodic; lush; triumphant
+Toxicity | System of a Down | English | Alternative Metal; Nu Metal | energetic; political; manic; angry; chaotic; aggressive; heavy; anthemic; quirky
+Scaring the Hoes | JPEGMAFIA & Danny Brown | English | Experimental Hip Hop; Abstract Hip Hop | chaotic; noisy; humorous; sampling; manic; abrasive; playful; dense
+Imaginal Disk | Magdalena Bay | English | Synthpop; Art Pop; Progressive Pop | psychedelic; lush; concept album; playful; futuristic; female vocalist; melodic; surreal; dreamy
+Blackstar | David Bowie | English | Art Rock; Jazz Fusion; Experimental Rock | death; dark; cryptic; atmospheric; melancholic; mysterious; sombre; introspective; avant-garde
+Debut | Björk | English | Art Pop; House; Trip Hop | playful; female vocalist; eclectic; lush; quirky; romantic; warm; sensual; danceable
+Black Sabbath | Black Sabbath | English | Heavy Metal; Blues Rock | dark; occult; heavy; ominous; bluesy; doom; raw; sinister; nocturnal
+Led Zeppelin | Led Zeppelin | English | Hard Rock; Blues Rock | energetic; bluesy; heavy; raw; sexual; passionate; male vocalist; psychedelic
+Donda | Kanye West | English | Hip Hop; Gospel; Pop Rap | religious; sprawling; death; introspective; spiritual; atmospheric; melancholic; long
+Currents | Tame Impala | English | Psychedelic Pop; Synthpop; Neo-Psychedelia | breakup; lush; introspective; melancholic; dreamy; psychedelic; melodic; warm; danceable
+White Pony | Deftones | English | Alternative Metal; Shoegaze; Nu Metal | atmospheric; sensual; dark; heavy; dreamy; nocturnal; passionate; ethereal; melancholic
+The Piper at the Gates of Dawn | Pink Floyd | English | Psychedelic Rock; Space Rock | psychedelic; playful; whimsical; surreal; fantasy; childhood; eclectic; quirky; hypnotic
+Jesus Is King | Kanye West | English | Gospel; Christian Hip Hop | religious; spiritual; short; uplifting; choral; sampling; mellow; serious
+Siamese Dream | Smashing Pumpkins | English | Alternative Rock; Shoegaze; Grunge | lush; melancholic; dreamy; angsty; bittersweet; heavy; nostalgic; psychedelic; introspective
+Songs for the Deaf | Queens of the Stone Age | English | Hard Rock; Stoner Rock; Alternative Rock | energetic; concept album; heavy; desert; dark; driving; hypnotic; manic; male vocalist
+Random Access Memories | Daft Punk | English | Disco; Nu-Disco; Electronic | nostalgic; lush; danceable; funky; polished; melodic; romantic; futuristic; warm
+Plastic Beach | Gorillaz | English | Alternative Rock; Hip Hop; Synthpop | eclectic; concept album; melancholic; summer; atmospheric; playful; environmental; lush
+Twin Fantasy | Car Seat Headrest | English | Indie Rock; Lo-Fi | love; lgbt; introspective; angsty; passionate; concept album; mental health; bittersweet; longing
+Rage Against the Machine | Rage Against the Machine | English | Rap Metal; Funk Metal | political; angry; aggressive; energetic; protest; heavy; rebellious; anthemic; funky
+Velocity : Design : Comfort | Sweet Trip | English | Shoegaze; Glitch Pop; IDM | dreamy; ethereal; lush; playful; psychedelic; female vocalist; warm; futuristic; summer
+The King of Limbs | Radiohead | English | Art Rock; Electronic; Art Pop | atmospheric; hypnotic; rhythmic; cryptic; nature; mellow; abstract; nocturnal
+Bottomless Pit | Death Grips | English | Experimental Hip Hop; Industrial Hip Hop; Noise Rock | aggressive; noisy; abrasive; manic; chaotic; energetic; angry; nihilistic
+The Black Saint and the Sinner Lady | Mingus | English | Avant-Garde Jazz; Third Stream; Post-Bop | passionate; orchestral; complex; instrumental; dense; dramatic; sensual; progressive; cinematic
+Led Zeppelin II | Led Zeppelin | English | Hard Rock; Blues Rock | heavy; energetic; bluesy; sexual; raw; riff; passionate; male vocalist
+Pornography | The Cure | English | Gothic Rock; Post-Punk | bleak; dark; nihilistic; depressive; cold; atmospheric; suicide; hypnotic; anxious
+Section.80 | Kendrick Lamar | English | Conscious Hip Hop; West Coast Hip Hop | conscious; political; introspective; concept album; jazzy; serious; lyrical; mellow
+Die Lit | Playboi Carti | English | Trap; Cloud Rap | hedonistic; hypnotic; energetic; minimalistic; party; repetitive; boastful; psychedelic
+For the first time | Black Country, New Road | English | Post-Rock; Experimental Rock; Chamber Music | anxious; cathartic; chaotic; surreal; sarcastic; dense; progressive; neurotic
+GNX | Kendrick Lamar | English | West Coast Hip Hop; Hip Hop | boastful; energetic; aggressive; triumphant; short; confrontational; melodic; political
+Dirt | Alice in Chains | English | Grunge; Alternative Metal | dark; heavy; drugs; depressive; death; bleak; heavy; pessimistic; male vocalist
+Around the Fur | Deftones | English | Alternative Metal; Nu Metal | heavy; sensual; aggressive; atmospheric; dark; passionate; energetic; raw
+Violator | Depeche Mode | English | Synthpop; Alternative Dance | dark; sensual; melancholic; religious; atmospheric; love; cold; hypnotic; nocturnal
+Let It Be | The Beatles | English | Pop Rock; Rock | bittersweet; melodic; raw; warm; nostalgic; melancholic; uplifting; playful
+Bleach | Nirvana | English | Grunge; Noise Rock | raw; heavy; angsty; dark; noisy; energetic; sludgy; lo-fi
+Rodeo | Travis Scott | English | Trap; Southern Hip Hop; Psychedelic Hip Hop | psychedelic; atmospheric; dark; hedonistic; drugs; nocturnal; energetic; lush
+Chromakopia | Tyler, The Creator | English | Hip Hop; West Coast Hip Hop; Neo-Soul | introspective; personal; paranoid; eclectic; dense; anxious; lush; concept album
+Are You Experienced | The Jimi Hendrix Experience | English | Psychedelic Rock; Blues Rock | psychedelic; energetic; bluesy; raw; playful; passionate; surreal; sexual; warm
+"Heroes" | David Bowie | English | Art Rock; Experimental Rock; Ambient | atmospheric; cold; passionate; anthemic; melancholic; futuristic; instrumental; eclectic
+No Love Deep Web | Death Grips | English | Experimental Hip Hop; Industrial Hip Hop | aggressive; paranoid; dark; abrasive; minimalistic; cold; angry; nihilistic; nocturnal
+White Light/White Heat | The Velvet Underground | English | Noise Rock; Experimental Rock; Proto-Punk | noisy; abrasive; raw; drugs; chaotic; dark; lo-fi; avant-garde; sexual
+LP! | JPEGMAFIA | English | Experimental Hip Hop; Glitch Hop | chaotic; humorous; eclectic; sampling; noisy; angry; playful; dense
+Hellfire | black midi | English | Avant-Prog; Experimental Rock; Progressive Rock | chaotic; theatrical; manic; complex; sarcastic; dense; apocalyptic; surreal; violent
+The Smiths | The Smiths | English | Jangle Pop; Indie Pop | melancholic; poetic; romantic; lonely; bittersweet; longing; sombre; male vocalist; introspective
+Kill 'Em All | Metallica | English | Thrash Metal; Speed Metal | energetic; aggressive; heavy; raw; fast; rebellious; violent; riff
+...And Justice for All | Metallica | English | Thrash Metal; Progressive Metal | political; complex; long; heavy; angry; progressive; dark; technical; serious
+How I'm Feeling Now | Charli xcx | English | Hyperpop; Electropop | love; lonely; energetic; introspective; futuristic; female vocalist; emotional; noisy; romantic
+The Velvet Underground | The Velvet Underground | English | Folk Rock; Art Rock | mellow; melancholic; intimate; warm; poetic; calm; gentle; love; introspective
+The New Abnormal | The Strokes | English | Indie Rock; New Wave | melancholic; nostalgic; melodic; bittersweet; mellow; urban; nocturnal; introspective
+Whatever People Say I Am, That's What I'm Not | Arctic Monkeys | English | Indie Rock; Post-Punk Revival; Garage Rock Revival | energetic; urban; witty; nocturnal; youthful; sarcastic; party; raw; british
+Metallica | Metallica | English | Heavy Metal; Thrash Metal | heavy; anthemic; dark; polished; aggressive; melodic; riff; male vocalist
+Getting Killed | Geese | English | Art Rock; Post-Punk; Indie Rock | chaotic; passionate; manic; raw; eclectic; theatrical; anxious; energetic
+The Black Parade | My Chemical Romance | English | Pop Punk; Emo; Rock Opera | concept album; theatrical; death; anthemic; dramatic; cathartic; energetic; melodic
+Watch the Throne | JAY-Z & Kanye West | English | Hip Hop; Pop Rap | boastful; luxurious; triumphant; energetic; political; sampling; dense; anthemic
+1000 gecs | 100 gecs | English | Hyperpop; Bubblegum Bass | chaotic; playful; humorous; noisy; manic; quirky; energetic; eclectic; absurd
+Led Zeppelin III | Led Zeppelin | English | Hard Rock; Folk Rock | acoustic; eclectic; bluesy; warm; energetic; pastoral; heavy; melodic
+All My Heroes Are Cornballs | JPEGMAFIA | English | Experimental Hip Hop; Glitch Hop | eclectic; chaotic; humorous; sampling; melodic; dense; playful; introspective
+Whole Lotta Red | Playboi Carti | English | Rage; Trap | aggressive; energetic; chaotic; dark; hedonistic; repetitive; raw; manic; vampires
+Please Please Me | The Beatles | English | Merseybeat; Pop Rock | energetic; playful; love; catchy; youthful; happy; raw; romantic
+Hot Rats | Frank Zappa | English | Jazz-Rock; Jazz Fusion | instrumental; complex; playful; progressive; technical; eclectic; energetic; quirky
+Mellon Collie and the Infinite Sadness | The Smashing Pumpkins | English | Alternative Rock; Art Rock | sprawling; eclectic; melancholic; angsty; epic; lush; bittersweet; nostalgic; heavy
+Schlagenheim | black midi | English | Math Rock; Noise Rock; Experimental Rock | chaotic; technical; angular; manic; noisy; complex; cryptic; abrasive
+The New Sound | Geordie Greep | English | Avant-Prog; Jazz-Rock; Latin Rock | theatrical; humorous; sarcastic; eclectic; sexual; manic; complex; playful; dense
+Daytona | Pusha T | English | East Coast Hip Hop; Hardcore Hip Hop | boastful; drugs; short; sampling; dark; luxurious; confrontational; lyrical
+Wolf | Tyler, The Creator | English | Hip Hop; West Coast Hip Hop | concept album; introspective; angsty; dark; jazzy; melancholic; humorous; love
+Gorillaz | Gorillaz | English | Alternative Rock; Trip Hop; Hip Hop | eclectic; playful; psychedelic; mellow; summer; quirky; hypnotic; atmospheric
+TA13OO | Denzel Curry | English | Hardcore Hip Hop; Southern Hip Hop | concept album; dark; aggressive; mental health; energetic; political; angry; introspective
+Ten | Pearl Jam | English | Grunge; Alternative Rock | passionate; anthemic; melancholic; angsty; male vocalist; introspective; energetic; epic
+Meat Is Murder | The Smiths | English | Jangle Pop; Indie Pop | political; melancholic; sarcastic; poetic; angry; witty; bittersweet; british
+Bloom | Beach House | English | Dream Pop | dreamy; ethereal; lush; melancholic; atmospheric; nostalgic; female vocalist; bittersweet; warm
+Room on Fire | The Strokes | English | Indie Rock; Garage Rock Revival | catchy; energetic; urban; nocturnal; melodic; cool; melancholic; short
+Fear of Music | Talking Heads | English | Post-Punk; New Wave; Art Punk | paranoid; anxious; angular; dark; quirky; rhythmic; cryptic; nocturnal; urban
+Lonerism | Tame Impala | English | Neo-Psychedelia; Psychedelic Pop | psychedelic; lonely; lush; dreamy; introspective; melodic; warm; alienation
+Astroworld | Travis Scott | English | Trap; Psychedelic Hip Hop | psychedelic; atmospheric; hedonistic; dark; energetic; nocturnal; drugs; lush
+(What's the Story) Morning Glory? | Oasis | English | Britpop; Pop Rock | anthemic; nostalgic; uplifting; melodic; catchy; british; optimistic; energetic
+Ænima | Tool | English | Progressive Metal; Alternative Metal | dark; complex; heavy; philosophical; angry; progressive; hypnotic; misanthropic; sarcastic
+Atom Heart Mother | Pink Floyd | English | Progressive Rock; Psychedelic Rock | orchestral; pastoral; progressive; psychedelic; mellow; eclectic; epic; calm
+Another Green World | Eno | English | Art Pop; Ambient; Art Rock | atmospheric; calm; pastoral; dreamy; instrumental; ethereal; playful; warm; mysterious
+The Stone Roses | The Stone Roses | English | Neo-Psychedelia; Jangle Pop; Madchester | psychedelic; uplifting; melodic; summer; danceable; anthemic; british; lush
+Year of the Snitch | Death Grips | English | Experimental Hip Hop; Noise Rock; Industrial Hip Hop | chaotic; psychedelic; manic; noisy; paranoid; abrasive; eclectic; surreal
+You Won't Get What You Want | Daughters | English | Noise Rock; Industrial Rock; Post-Hardcore | dark; anxious; abrasive; ominous; violent; nihilistic; apocalyptic; menacing; cold
+Midnight Marauders | A Tribe Called Quest | English | East Coast Hip Hop; Jazz Rap | jazzy; mellow; playful; warm; conscious; sampling; urban; nocturnal
+Yoshimi Battles the Pink Robots | The Flaming Lips | English | Neo-Psychedelia; Psychedelic Pop; Art Pop | psychedelic; bittersweet; death; dreamy; melancholic; surreal; uplifting; philosophical; futuristic
+AM | Arctic Monkeys | English | Indie Rock; Garage Rock Revival | nocturnal; sensual; cool; love; melodic; heavy; lonely; urban
+Hybrid Theory | Linkin Park | English | Nu Metal; Rap Metal | angsty; anthemic; energetic; angry; alienation; melodic; heavy; catchy
+When the Pawn... | Fiona Apple | English | Art Pop; Singer-Songwriter; Chamber Pop | breakup; female vocalist; angry; passionate; introspective; sarcastic; poetic; bittersweet; jazzy
+Speaking in Tongues | Talking Heads | English | New Wave; Dance-Punk; Funk | danceable; playful; funky; quirky; rhythmic; uplifting; energetic; surreal
+To See the Next Part of the Dream | Parannoul | Korean | Shoegaze; Emo; Noise Pop | nostalgic; melancholic; noisy; lo-fi; dreamy; passionate; youthful; lonely; bittersweet
+Cavalcade | black midi | English | Avant-Prog; Experimental Rock; Jazz-Rock | theatrical; complex; chaotic; eclectic; dramatic; surreal; technical; dense
+Liquid Swords | Genius/GZA | English | East Coast Hip Hop; Hardcore Hip Hop | dark; cryptic; lyrical; cold; sampling; martial arts; nocturnal; urban; philosophical
+Drukqs | Aphex Twin | English | IDM; Drill and Bass; Modern Classical | eclectic; chaotic; sprawling; instrumental; complex; melancholic; calm; manic; playful
+Discipline | King Crimson | English | Progressive Rock; New Wave; Art Rock | technical; complex; rhythmic; angular; progressive; hypnotic; polyrhythmic; instrumental
+Goo | Sonic Youth | English | Noise Rock; Alternative Rock | noisy; angular; dissonant; cool; raw; energetic; sarcastic; urban
+Operation: Doomsday | MF DOOM | English | Abstract Hip Hop; East Coast Hip Hop | sampling; lo-fi; playful; comic; surreal; witty; mellow; cryptic
+With The Beatles | The Beatles | English | Merseybeat; Pop Rock | energetic; love; catchy; playful; romantic; youthful; happy; melodic
+Cosmogramma | Flying Lotus | English | Wonky; Nu Jazz; Glitch Hop | psychedelic; complex; dense; eclectic; cosmic; instrumental; futuristic; chaotic; spiritual
+Talking Heads: 77 | Talking Heads | English | New Wave; Art Punk; Post-Punk | quirky; anxious; angular; playful; nervous; urban; witty; energetic
+Little Dark Age | MGMT | English | Synthpop; Neo-Psychedelia | dark; playful; psychedelic; melancholic; sarcastic; nostalgic; catchy; satirical; death
+Cherry Bomb | Tyler, The Creator | English | Hip Hop; Neo-Soul; Experimental Hip Hop | eclectic; noisy; chaotic; lush; abrasive; love; energetic; playful
+This Is Happening | LCD Soundsystem | English | Dance-Punk; Indie Rock; Electronic | danceable; nostalgic; bittersweet; energetic; repetitive; witty; long; urban; introspective
+# Fuller entries (closer to the real RYM pages) — a line here wins over the first list's facts.
+Remain in Light | Talking Heads | English | New Wave; Art Funk; Post-Punk; Afrobeat; Dance-Punk | rhythmic; male vocalist; anxious; abstract; philosophical; existential; polyrhythmic; energetic; hypnotic; surreal; urban; cryptic; eclectic; dense; tribal
+Unknown Pleasures | Joy Division | English | Post-Punk; Gothic Rock | male vocalist; cold; dark; anxious; melancholic; alienation; atmospheric; existential; abstract; depressive; philosophical; nocturnal; introspective; lonely; bleak; urban
+Disintegration | The Cure | English | Gothic Rock; Post-Punk; Dream Pop | male vocalist; melancholic; atmospheric; lush; dark; longing; introspective; sombre; romantic; nocturnal; bittersweet; ethereal; lonely; cold; hypnotic
+Closer | Joy Division | English | Post-Punk; Gothic Rock | male vocalist; bleak; cold; depressive; dark; death; existential; atmospheric; alienation; suicide; introspective; hypnotic; minimalistic; sombre; anxious

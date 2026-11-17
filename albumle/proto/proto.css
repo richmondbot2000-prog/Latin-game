@@ -1,0 +1,17 @@
+/* the prototype's own bits on top of the main stylesheet */
+.top h1 small { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--mute); vertical-align: middle; margin-left: 4px; }
+.clue .facts { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 8px; text-align: left; font-size: 13px; color: var(--ink); }
+.clue .fl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); width: 100%; }
+.chip { display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 700; line-height: 1.2; color: #fff; background: var(--mute); }
+.chip.g { background: var(--g); }
+.chip.d { background: var(--y); }
+.chip.k { background: var(--dark); }
+.chip.x { background: #fff; color: var(--mute); border: 1px solid var(--line); text-decoration: line-through; font-weight: 600; }
+.none { color: var(--mute); font-size: 12px; font-style: italic; }
+.ruled { margin-top: 8px; font-size: 12px; color: var(--mute); }
+.ruled summary { cursor: pointer; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 10px; }
+.ruled .chip { margin: 4px 4px 0 0; }
+.cells3 { display: grid; grid-template-columns: 92px 92px minmax(0, 1fr); gap: 5px; }
+.common { border: 2px solid var(--line); padding: 5px; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; min-height: 46px; }
+.row.empty { grid-template-columns: 92px 92px minmax(0, 1fr); }
+.row .who { margin-top: 2px; }

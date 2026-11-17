@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Albumle prototype</title>
+<meta name="description" content="A prototype of Albumle: every guess shows what it has in common with the album of the day.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/icon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../icons/icon-180.png">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="proto.css">
+</head>
+<body>
+<header class="top">
+  <button class="ib" id="helpBtn" aria-label="How to play">?</button>
+  <h1>Albumle <small>prototype</small></h1>
+  <span class="ib" style="visibility:hidden"></span>
+</header>
+<main id="app"></main>
+<div id="sheet" class="sheet" hidden><div class="panel"><button class="close" id="closeSheet" aria-label="Close">×</button><div id="sheetBody"></div></div></div>
+<div id="toast" class="toast" hidden></div>
+<script src="albums.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
