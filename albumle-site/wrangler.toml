@@ -1,0 +1,5 @@
+# Deploy from the albumle-site/ folder:  CLOUDFLARE_API_TOKEN=x npx wrangler deploy
+name = "albumle-site"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+routes = [{ pattern = "albumle.musicalmagic.uk", custom_domain = true }]

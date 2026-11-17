@@ -1,15 +1,18 @@
 /* Albumle — guess one of the 250 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '6';
+const APP_VERSION = '7';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const A = ALBUMS.map(([rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour], i) => ({ i, rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour, main: MAIN_OF[genres[0]] || genres[0] }));
 const KEYS = ['year', 'type', 'genre', 'colour', 'rank'];
 const SWATCH = { White: '#f3f0ea', Black: '#17141c', Grey: '#8d8a95', Red: '#d8343a', Orange: '#ef8a2c', Yellow: '#f0cf3c', Green: '#3f9f5a', Blue: '#3a74d8', Purple: '#7d4fc9', Pink: '#ef7fb6', Brown: '#8a5a36' };
 const MAX = 6;
-const EPOCH = Date.UTC(2026, 10, 17);                       // day 0: 17 November 2026
-const dayNo = () => Math.floor((Date.now() - EPOCH) / 864e5);
+// a new album every day at 9 in the morning, local time (the owner's ask, like Nerdle): day 0 began at 09:00 on 17 November 2026
+const DAY0 = new Date(2026, 10, 17, 9);
+const dayStart = (now = new Date()) => { const d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9); if (now < d) d.setDate(d.getDate() - 1); return d; };
+const dayNo = () => Math.max(0, Math.round((dayStart() - DAY0) / 864e5));
+const SITE = 'https://albumle.musicalmagic.uk';   // the game's own address (a Cloudflare worker in albumle-site/ that serves these files and looks up covers)
 function mulberry(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 // the daily order: the first 200 albums were shuffled once with a fixed seed (day 0's album must never change); albums added later
 // (201 onwards, v5) are shuffled with their own seed and slotted in every fifth day from day 1, so they join without moving the past
@@ -100,8 +103,8 @@ function render() {
     ${over ? result(a) : `<div class="guessbox"><input id="q" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type an album or artist…" enterkeyhint="go"><div class="sugg" id="sugg" hidden></div></div>`}
     <div class="rows">${rows}</div>
     <div class="legend"><span>year</span><span>band/solo</span><span>genre</span><span>cover</span><span>rank</span></div>
-    <div class="foot">${mode === 'daily' ? `<button class="linkbtn" id="practice">Play a practice game</button>` : `<button class="linkbtn" id="daily">Back to today's album</button>`}<br>The ${A.length} albums are RateYourMusic's all-time top ${A.length} · nothing leaves this phone · v${APP_VERSION}</div>`;
-  if (!over) wireInput(a);
+    <div class="foot">${mode === 'daily' ? `<button class="linkbtn" id="practice">Play a practice game</button>` : `<button class="linkbtn" id="daily">Back to today's album</button>`}<br>The ${A.length} albums are RateYourMusic's all-time top ${A.length} · a new one every day at 9am · the cover is fetched from Deezer when the answer shows; nothing else leaves this phone · v${APP_VERSION}</div>`;
+  if (!over) wireInput(a); else showCover(a);
   const p = $('#practice'); if (p) p.onclick = () => { mode = 'practice'; G = load('albumle.practice', null); if (!G || G.done) G = newPractice(); save(); render(); };
   const d = $('#daily'); if (d) d.onclick = () => { mode = 'daily'; G = newDaily(); save(); render(); };
   const sh = $('#share'); if (sh) sh.onclick = share;
@@ -111,10 +114,23 @@ function render() {
 function result(a) {
   const won = G.done === 'won', n = G.guesses.length;
   return `<div class="result"><div class="sub">${won ? ['Genius!', 'Magnificent!', 'Impressive!', 'Splendid!', 'Great!', 'Phew!'][n - 1] : 'Not this time'}</div>
+    <div class="coverbox" id="coverbox"></div>
     <h2>${esc(a.title)}</h2><div class="by">${esc(a.artist)} · ${a.year} · ${flag(a.country)} ${esc(cname(a.country))}</div>
     <div class="meta">#${a.rank} of the ${A.length} · ${a.genres.map(esc).join(' · ')} · ${a.type === 'B' ? 'band' : 'solo artist'} · ${esc(a.colour.toLowerCase())} cover</div>
     <button class="btn" id="share">Share</button>${mode === 'daily' ? `<button class="btn ghost" id="seeStats">Stats</button>` : `<button class="btn ghost" id="again">Another one</button>`}
     ${mode === 'daily' ? `<div class="next" id="next"></div>` : ''}</div>`;
+}
+// the cover is looked up only when the answer is revealed, through the game's own worker (Deezer's public search) — none are stored here
+async function showCover(a) {
+  const box = $('#coverbox'); if (!box) return;
+  try {
+    const key = 'albumle.cover.' + a.i; let url = load(key, null);
+    if (url === null) { const r = await fetch(`${SITE}/api/cover?title=${encodeURIComponent(a.title)}&artist=${encodeURIComponent(a.artist)}`); const j = await r.json(); url = j.url || ''; store(key, url); }
+    if (!url || !$('#coverbox')) return;
+    const img = new Image(); img.alt = `${a.title} — ${a.artist}`; img.className = 'cover';
+    img.onload = () => { const b = $('#coverbox'); if (b) { b.innerHTML = ''; b.appendChild(img); requestAnimationFrame(() => img.classList.add('in')); } };
+    img.src = url;
+  } catch (e) {}
 }
 function wireInput(a) {
   const q = $('#q'), box = $('#sugg');
@@ -148,7 +164,7 @@ function record(n) {
 function shareText() {
   const a = A[G.idx], won = G.done === 'won';
   const lines = G.guesses.map(gi => { const f = compare(A[gi], a); return KEYS.map(k => SQ[f[k].cls]).join(''); });
-  return `${mode === 'daily' ? `Albumle #${G.day + 1}` : 'Albumle practice'} ${won ? G.guesses.length : 'X'}/${MAX}\n${lines.join('\n')}\nhttps://latin.musicalmagic.uk/albumle/`;
+  return `${mode === 'daily' ? `Albumle #${G.day + 1}` : 'Albumle practice'} ${won ? G.guesses.length : 'X'}/${MAX}\n${lines.join('\n')}\n${SITE}/`;
 }
 async function share() {
   const text = shareText();
@@ -175,9 +191,9 @@ function sheet(html) { $('#sheetBody').innerHTML = html; $('#sheet').hidden = fa
 function toast(t) { const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 2200); }
 function tickNext() {
   const el = $('#next'); if (!el) return;
-  const ms = EPOCH + (dayNo() + 1) * 864e5 - Date.now(), h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3);
-  el.textContent = `Next album in ${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  if (ms < 1000) { G = newDaily(); render(); }
+  const next = dayStart(); next.setDate(next.getDate() + 1); const ms = next - Date.now(), h = Math.floor(ms / 36e5), m = Math.floor(ms % 36e5 / 6e4), s = Math.floor(ms % 6e4 / 1e3);
+  el.textContent = `Next album at 9am · in ${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  if (ms < 1000 || load('albumle.daily', G).day !== dayNo()) { G = newDaily(); save(); render(); }
 }
 function main() {
   G = newDaily(); save(); render();
