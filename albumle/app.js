@@ -1,10 +1,12 @@
 /* Albumle — guess one of the 200 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '1';
+const APP_VERSION = '2';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const A = ALBUMS.map(([rank, title, artist, year, country, genres, desc, tracks, minutes], i) => ({ i, rank, title, artist, year, country, genres, desc, tracks, minutes }));
+const A = ALBUMS.map(([rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour], i) => ({ i, rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour, main: MAIN_OF[genres[0]] || genres[0] }));
+const KEYS = ['year', 'type', 'genre', 'colour', 'rank'];
+const SWATCH = { White: '#f3f0ea', Black: '#17141c', Grey: '#8d8a95', Red: '#d8343a', Orange: '#ef8a2c', Yellow: '#f0cf3c', Green: '#3f9f5a', Blue: '#3a74d8', Purple: '#7d4fc9', Pink: '#ef7fb6', Brown: '#8a5a36' };
 const MAX = 6;
 const EPOCH = Date.UTC(2026, 10, 17);                       // day 0: 17 November 2026
 const dayNo = () => Math.floor((Date.now() - EPOCH) / 864e5);
@@ -23,38 +25,46 @@ function save() { if (mode === 'daily') store('albumle.daily', G); else store('a
 
 /* ---------- feedback: how a guess compares with the answer ---------- */
 function compare(g, a) {
-  const dy = a.year - g.year, dr = a.rank - g.rank;
-  const shared = g.genres.filter(x => a.genres.includes(x));
+  const dy = a.year - g.year, dr = a.rank - g.rank, ay = Math.abs(dy), ar = Math.abs(dr);
+  const sameSub = g.genres[0] === a.genres[0], sameMain = g.main === a.main;
   return {
-    year: { cls: dy === 0 ? 'g' : Math.abs(dy) <= 3 ? 'y' : 'n', text: `${g.year}${dy === 0 ? '' : dy > 0 ? ' ▲' : ' ▼'}`, sub: dy === 0 ? 'same year' : dy > 0 ? 'later' : 'earlier' },
-    artist: { cls: g.artist === a.artist ? 'g' : 'n', text: g.artist === a.artist ? '✓' : '✗', sub: g.artist === a.artist ? 'same artist' : 'artist' },
-    country: { cls: g.country === a.country ? 'g' : 'n', text: flag(g.country), sub: g.country === a.country ? 'same country' : cname(g.country) },
-    genre: { cls: shared.length && g.genres[0] === a.genres[0] ? 'g' : shared.length ? 'y' : 'n', text: shared.length ? (shared.length === g.genres.length ? 'all' : shared.length) : '0', sub: shared.length ? `shared genre${shared.length > 1 ? 's' : ''}` : 'genres' },
-    rank: { cls: dr === 0 ? 'g' : Math.abs(dr) <= 10 ? 'y' : 'n', text: `#${g.rank}${dr === 0 ? '' : dr < 0 ? ' ▲' : ' ▼'}`, sub: dr === 0 ? 'the one' : dr < 0 ? 'ranks higher' : 'ranks lower' },
+    year: { cls: ay <= 5 ? 'g' : ay <= 10 ? 'y' : 'n', text: `${g.year}${dy === 0 ? '' : dy > 0 ? ' ▲' : ' ▼'}`, sub: dy === 0 ? 'same year' : ay <= 5 ? (dy > 0 ? 'a little later' : 'a little earlier') : dy > 0 ? 'later' : 'earlier' },
+    type: { cls: g.type === a.type ? 'g' : 'n', text: g.type === 'B' ? 'Band' : 'Solo', sub: g.type === a.type ? 'yes' : 'no' },
+    genre: { cls: sameSub ? 'g' : sameMain ? 'y' : 'n', text: g.genres[0], sub: sameSub ? 'same genre' : sameMain ? `${g.main}, not this` : g.main, small: true },
+    colour: { cls: g.colour === a.colour ? 'g' : 'n', text: `<i class="sw" style="background:${SWATCH[g.colour] || '#888'}"></i>`, sub: g.colour },
+    rank: { cls: ar <= 5 ? 'g' : ar <= 20 ? 'y' : 'n', text: `#${g.rank}${dr === 0 ? '' : dr < 0 ? ' ▲' : ' ▼'}`, sub: dr === 0 ? 'the one' : ar <= 5 ? (dr < 0 ? 'just above' : 'just below') : dr < 0 ? 'ranks higher' : 'ranks lower' },
   };
 }
-const SQ = { g: '🟩', y: '🟨', n: '⬛' };
+const SQ = { g: '🟩', y: '🟨', n: '🟥' };
 
 /* ---------- the page ---------- */
 function render() {
   const a = A[G.idx], n = G.guesses.length, over = !!G.done;
-  const tags = a.genres.map(g => `<span class="tag genre">${esc(g)}</span>`).join('') + a.desc.map((d, i) => `<span class="tag s${Math.min(4, 1 + Math.floor(i / 2))}">${esc(d)}</span>`).join('');
+  const known = { year: '?', type: '?', genre: '?', colour: '?', rank: '?' };
+  for (const gi of G.guesses) { const g = A[gi], f = compare(g, a);
+    if (f.year.cls === 'g') known.year = a.year === g.year ? String(a.year) : `${g.year} ± 5`; else if (f.year.cls === 'y' && known.year === '?') known.year = `${g.year} ± 10`;
+    if (f.type.cls === 'g') known.type = g.type === 'B' ? 'Band' : 'Solo';
+    if (f.genre.cls === 'g') known.genre = g.genres[0]; else if (f.genre.cls === 'y' && (known.genre === '?' || known.genre === g.main)) known.genre = g.main + ' …';
+    if (f.colour.cls === 'g') known.colour = g.colour;
+    if (f.rank.cls === 'g') known.rank = a.rank === g.rank ? '#' + a.rank : `#${g.rank} ± 5`; else if (f.rank.cls === 'y' && known.rank === '?') known.rank = `#${g.rank} ± 20`; }
+  if (over) Object.assign(known, { year: String(a.year), type: a.type === 'B' ? 'Band' : 'Solo', genre: a.genres[0], colour: a.colour, rank: '#' + a.rank });
+  const vars = [['Year', known.year], ['Band or solo', known.type], ['Genre', known.genre], ['Cover colour', known.colour], ['Rank (1–200)', known.rank]];
   const hints = [];
   if (n >= 3 || over) hints.push(`The artist's name starts with <b>${esc(a.artist[0])}</b>`);
   if (n >= 5 || over) hints.push(`The title starts with <b>${esc(a.title[0])}</b>`);
   const rows = Array.from({ length: MAX }, (_, k) => {
     const gi = G.guesses[k]; if (gi === undefined) return `<div class="row empty"></div>`;
     const g = A[gi], f = compare(g, a);
-    return `<div class="row"><div class="who">${esc(g.title)} <span>— ${esc(g.artist)}</span></div><div class="cells">${['year', 'artist', 'country', 'genre', 'rank'].map(k => `<div class="cell ${f[k].cls}">${f[k].text}<small>${esc(f[k].sub)}</small></div>`).join('')}</div></div>`;
+    return `<div class="row"><div class="who">${esc(g.title)} <span>— ${esc(g.artist)}</span></div><div class="cells">${KEYS.map(k => `<div class="cell ${f[k].cls}${f[k].small ? ' sm' : ''}">${k === 'colour' ? f[k].text : esc(f[k].text)}<small>${esc(f[k].sub)}</small></div>`).join('')}</div></div>`;
   }).join('');
   $('#app').innerHTML = `
     <div class="sub">${mode === 'daily' ? `Albumle #${G.day + 1}` : 'Practice'} · ${over ? (G.done === 'won' ? `solved in ${n}` : 'not solved') : `guess ${n + 1} of ${MAX}`}</div>
-    <div class="clue"><div class="label">This album is…</div><div class="cloud">${tags}</div>
-      <div class="facts">${a.tracks} track${a.tracks === 1 ? '' : 's'} · ${a.minutes >= 100 ? Math.round(a.minutes / 60 * 10) / 10 + ' hours' : a.minutes + ' minutes'}</div>
+    <div class="clue"><div class="label">${n ? 'What you know so far' : 'You are guessing its…'}</div>
+      <div class="vars">${vars.map(([k, v]) => `<div class="var ${v === '?' ? '' : 'got'}"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}</div>
       ${hints.map(h => `<div class="hint">${h}</div>`).join('')}</div>
     ${over ? result(a) : `<div class="guessbox"><input id="q" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type an album or artist…" enterkeyhint="go"><div class="sugg" id="sugg" hidden></div></div>`}
     <div class="rows">${rows}</div>
-    <div class="legend"><span>year</span><span>artist</span><span>country</span><span>genre</span><span>RYM rank</span></div>
+    <div class="legend"><span>year</span><span>band/solo</span><span>genre</span><span>cover</span><span>rank</span></div>
     <div class="foot">${mode === 'daily' ? `<button class="linkbtn" id="practice">Play a practice game</button>` : `<button class="linkbtn" id="daily">Back to today's album</button>`}<br>The 200 albums are RateYourMusic's all-time top 200 · nothing leaves this phone · v${APP_VERSION}</div>`;
   if (!over) wireInput(a);
   const p = $('#practice'); if (p) p.onclick = () => { mode = 'practice'; G = load('albumle.practice', null); if (!G || G.done) G = newPractice(); save(); render(); };
@@ -67,7 +77,7 @@ function result(a) {
   const won = G.done === 'won', n = G.guesses.length;
   return `<div class="result"><div class="sub">${won ? ['Genius!', 'Magnificent!', 'Impressive!', 'Splendid!', 'Great!', 'Phew!'][n - 1] : 'Not this time'}</div>
     <h2>${esc(a.title)}</h2><div class="by">${esc(a.artist)} · ${a.year} · ${flag(a.country)} ${esc(cname(a.country))}</div>
-    <div class="meta">#${a.rank} on RateYourMusic · ${a.genres.map(esc).join(' · ')}</div>
+    <div class="meta">#${a.rank} of the 200 · ${a.genres.map(esc).join(' · ')} · ${a.type === 'B' ? 'band' : 'solo artist'} · ${esc(a.colour.toLowerCase())} cover</div>
     <button class="btn" id="share">Share</button>${mode === 'daily' ? `<button class="btn ghost" id="seeStats">Stats</button>` : `<button class="btn ghost" id="again">Another one</button>`}
     ${mode === 'daily' ? `<div class="next" id="next"></div>` : ''}</div>`;
 }
@@ -102,7 +112,7 @@ function record(n) {
 }
 function shareText() {
   const a = A[G.idx], won = G.done === 'won';
-  const lines = G.guesses.map(gi => { const f = compare(A[gi], a); return ['year', 'artist', 'country', 'genre', 'rank'].map(k => SQ[f[k].cls]).join(''); });
+  const lines = G.guesses.map(gi => { const f = compare(A[gi], a); return KEYS.map(k => SQ[f[k].cls]).join(''); });
   return `${mode === 'daily' ? `Albumle #${G.day + 1}` : 'Albumle practice'} ${won ? G.guesses.length : 'X'}/${MAX}\n${lines.join('\n')}\nhttps://latin.musicalmagic.uk/albumle/`;
 }
 async function share() {
@@ -120,12 +130,11 @@ function stats() {
 }
 function help() {
   sheet(`<h2>How to play</h2>
-    <p>Guess the album in ${MAX} tries. Every day the album is one of the <b>200 best albums of all time</b> as rated on RateYourMusic.</p>
-    <p>You see its <b>genres</b> (purple) and the words listeners use to describe it, plus how many tracks it has and how long it is. Type any album or artist from the 200 and pick it from the list.</p>
-    <p>Each guess tells you how close you are:</p>
-    <div class="cells"><div class="cell y">1994 ▲<small>later</small></div><div class="cell n">✗<small>artist</small></div><div class="cell g">🇬🇧<small>same country</small></div><div class="cell y">1<small>shared genre</small></div><div class="cell n">#44 ▼<small>ranks lower</small></div></div>
-    <p><b>Year</b>: ▲ means the answer came out later, ▼ earlier; yellow is within three years. <b>Artist</b> and <b>country</b> turn green when they match. <b>Genre</b> counts the genres you share, green when the main genre is the same. <b>Rank</b>: ▲ means the answer sits higher up the chart (nearer #1), ▼ lower; yellow is within ten places.</p>
-    <p>After three misses you get the artist's initial; after five, the title's. Share your squares when you are done, and play practice games as often as you like.</p>`);
+    <p>Guess the album in ${MAX} tries. Every day it is one of the <b>200 best albums of all time</b> as rated on RateYourMusic.</p>
+    <p>You are told nothing to start with. Type any album or artist from the 200, pick it from the list, and the squares tell you how close you are on five things:</p>
+    <div class="cells"><div class="cell y">1994 ▲<small>later</small></div><div class="cell n">Band<small>no</small></div><div class="cell y sm">Alternative Rock<small>Rock, not this</small></div><div class="cell g"><i class="sw" style="background:#3a74d8"></i><small>Blue</small></div><div class="cell n">#44 ▼<small>ranks lower</small></div></div>
+    <p><b>Year</b>: green within 5 years, yellow within 10; ▲ the answer came out later, ▼ earlier.<br><b>Band or solo</b>: green when the answer is the same kind of act.<br><b>Genre</b>: green for the same genre, yellow for the same broad genre but a different one within it (you guess Alternative Rock, it is Indie Rock), red for a different genre altogether.<br><b>Cover colour</b>: green when the answer's cover is mainly that colour.<br><b>Rank</b> on the list of 200: green within 5 places, yellow within 20; ▲ the answer is higher up (nearer #1), ▼ lower.</p>
+    <p>The panel at the top keeps what you have found out. After three misses you get the artist's initial, after five the title's. Share your squares when you are done, and play practice games as often as you like.</p>`);
 }
 function sheet(html) { $('#sheetBody').innerHTML = html; $('#sheet').hidden = false; }
 function toast(t) { const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 2200); }
