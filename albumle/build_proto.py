@@ -30,6 +30,8 @@ LANG = {'long season': 'Japanese', '98 12 28': 'Japanese', 'clube da esquina': '
         'ambient 1 music for airports': 'Instrumental', 'in rainbows': 'English'}
 ALIAS = {'sgt peppers lonely hearts club band': 'sgt pepper s lonely hearts club band', 'the beatles white album': 'the beatles the white album',
          'lift yr skinny fists like antennas to heaven': 'lift your skinny fists like antennas to heaven', 'twin fantasy': 'twin fantasy face to face', 'f a': 'fa'}
+ratings = {int(l.split('|')[0]): float(l.split('|')[1]) for l in open('ratings.txt') if l[0].isdigit()}
+dates = {int(l.split(' | ')[0]): l.strip().split(' | ')[3] for l in open('chart.txt') if l[0].isdigit()}
 out, missing = [], []
 for rank, title, artist, year, country, genres, typ, ph in cur:
     k = (fold(title), fold(artist)); k2 = (ALIAS.get(k[0], k[0]), k[1])
@@ -38,9 +40,9 @@ for rank, title, artist, year, country, genres, typ, ph in cur:
     if k in rym or k2 in rym: g, d, lang = rym.get(k) or rym.get(k2)   # a line in rym.txt wins over the first list's facts
     elif src: g, d = src
     else: missing.append(title); g, d = genres, []
-    out.append([rank, title, artist, year, country, g, d, typ, lang])
+    out.append([rank, title, artist, year, country, g, d, typ, lang, ratings.get(rank), dates.get(rank, str(year))])
 if missing: print('NO FACTS:', missing)
-js = "// Albumle prototype data, written by build_proto.py — never edit by hand.\n// [rank, title, artist, year, country, genres, descriptors, 'B' band / 'S' solo / 'D' duo, language]\nconst ALBUMS = [\n" + ",\n".join(json.dumps(r, ensure_ascii=False) for r in out) + "\n];\n"
+js = "// Albumle prototype data, written by build_proto.py — never edit by hand.\n// [rank, title, artist, year, country, genres, descriptors, 'B' band / 'S' solo / 'D' duo, language, RYM rating, release date]\nconst ALBUMS = [\n" + ",\n".join(json.dumps(r, ensure_ascii=False) for r in out) + "\n];\n"
 js += "const COUNTRY = " + re.search(r'const COUNTRY = (\{.*?\});', open('albums.js').read(), re.S).group(1) + ";\n"
 open('proto/albums.js', 'w').write(js)
 from collections import Counter

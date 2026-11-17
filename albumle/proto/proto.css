@@ -1,17 +1,73 @@
-/* the prototype's own bits on top of the main stylesheet */
-.top h1 small { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--mute); vertical-align: middle; margin-left: 4px; }
-.clue .facts { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; margin-top: 8px; text-align: left; font-size: 13px; color: var(--ink); }
-.clue .fl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--mute); width: 100%; }
-.chip { display: inline-block; padding: 3px 8px; font-size: 12px; font-weight: 700; line-height: 1.2; color: #fff; background: var(--mute); }
-.chip.g { background: var(--g); }
-.chip.d { background: var(--y); }
-.chip.k { background: var(--dark); }
-.chip.x { background: #fff; color: var(--mute); border: 1px solid var(--line); text-decoration: line-through; font-weight: 600; }
-.none { color: var(--mute); font-size: 12px; font-style: italic; }
-.ruled { margin-top: 8px; font-size: 12px; color: var(--mute); }
-.ruled summary { cursor: pointer; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 10px; }
-.ruled .chip { margin: 4px 4px 0 0; }
-.cells3 { display: grid; grid-template-columns: 92px 92px minmax(0, 1fr); gap: 5px; }
-.common { border: 2px solid var(--line); padding: 5px; display: flex; flex-wrap: wrap; gap: 4px; align-content: flex-start; min-height: 46px; }
-
-.row .who { margin-top: 2px; }
+/* Albumle prototype, p3: the game screen is the RateYourMusic album page (the owner's son's mockup, 17 Nov 2026) —
+   a dark page, a mystery cover, and the page's own lines (Released, RYM Rating, Ranked, Genres, Descriptors, Language)
+   filling in as the guesses reveal them. */
+:root { --bg: #11151c; --card: #1a1f2a; --card2: #232a38; --ink: #e9edf4; --mute: #8e97a8; --line: #2d3545; --blue: #6ea8ff; --g: #6aaa64; --y: #c9b458; --n: #c4524c; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-text-size-adjust: 100%; }
+body { min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
+button { font: inherit; color: inherit; }
+.top { display: flex; align-items: center; justify-content: space-between; padding: calc(8px + env(safe-area-inset-top)) 14px 8px; border-bottom: 1px solid var(--line); }
+.top h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: .01em; }
+.top h1 small { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--mute); vertical-align: middle; margin-left: 6px; }
+.ib { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); font-weight: 800; font-size: 16px; cursor: pointer; color: var(--ink); }
+main { max-width: 560px; margin: 0 auto; padding: 12px 14px 48px; }
+.sub { color: var(--mute); font-size: 13px; text-align: center; margin: 0 0 10px; }
+/* the album page */
+.page { background: var(--card); border: 1px solid var(--line); padding: 16px 16px 10px; }
+.cover { display: block; width: min(220px, 56vw); aspect-ratio: 1; margin: 0 auto 14px; background: #0b0e14; border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 110px; font-weight: 800; color: #fff; overflow: hidden; }
+.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.page h2 { margin: 0; font-size: 26px; font-weight: 400; line-height: 1.15; }
+.page .by { color: var(--mute); font-size: 17px; margin: 2px 0 12px; }
+.page .by b { color: var(--blue); font-weight: 700; }
+.line { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 6px 10px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 14px; line-height: 1.4; align-items: start; }
+.line .k { color: var(--mute); }
+.line .v { color: var(--ink); }
+.line .v.unknown { color: #4a5467; }
+.line .v b { font-weight: 700; }
+.line .v.got { color: var(--g); font-weight: 700; }
+.line .v.part { color: var(--y); }
+.chip { display: inline-block; margin: 0 6px 4px 0; font-size: 14px; line-height: 1.3; }
+.chip.g { color: var(--blue); font-weight: 700; }
+.chip.d { color: var(--ink); }
+.chip.d::after, .chip.g::after { content: ","; color: var(--mute); }
+.chip:last-child::after { content: ""; }
+.chip.new { background: rgba(201,180,88,.18); outline: 1px solid rgba(201,180,88,.5); padding: 0 4px; }
+.chip.x { color: var(--mute); text-decoration: line-through; font-size: 12px; }
+.none { color: #4a5467; font-style: italic; }
+.ruled { margin-top: 6px; font-size: 12px; color: var(--mute); }
+.ruled summary { cursor: pointer; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 10px; padding: 6px 0; }
+.hint { background: var(--card2); padding: 8px 12px; margin-top: 10px; font-size: 14px; text-align: center; }
+/* guesses */
+.rows { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.row { background: var(--card); border: 1px solid var(--line); padding: 10px 12px; }
+.row .who { font-weight: 700; font-size: 15px; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .who span { color: var(--mute); font-weight: 400; }
+.nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-bottom: 6px; }
+.num { padding: 5px 4px; text-align: center; font-size: 13px; font-weight: 700; color: #fff; background: var(--n); line-height: 1.15; }
+.num.g { background: var(--g); }
+.num small { display: block; font-size: 10px; font-weight: 600; opacity: .85; text-transform: uppercase; letter-spacing: .03em; }
+.common { font-size: 13px; line-height: 1.5; }
+.common .k { color: var(--mute); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; margin-right: 6px; }
+.common .chip { font-size: 13px; }
+/* input */
+.guessbox { position: relative; margin: 14px 0 4px; }
+.guessbox input { width: 100%; padding: 13px 14px; border-radius: 0; border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 16px; outline: none; }
+.guessbox input:focus { border-color: var(--blue); }
+.sugg { position: absolute; left: 0; right: 0; bottom: calc(100% + 4px); background: var(--card2); border: 1px solid var(--line); overflow: hidden; z-index: 5; box-shadow: 0 -10px 30px rgba(0,0,0,.5); }
+.sugg button { display: block; width: 100%; text-align: left; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--line); background: none; cursor: pointer; }
+.sugg button:last-child { border-bottom: 0; }
+.sugg b { display: block; } .sugg span { color: var(--mute); font-size: 13px; }
+.btn { display: inline-block; border: 0; border-radius: 4px; padding: 11px 20px; font-weight: 700; background: var(--blue); color: #0b0e14; cursor: pointer; margin: 4px; font-size: 15px; }
+.btn.ghost { background: var(--card2); color: var(--ink); }
+.linkbtn { background: none; border: 0; color: var(--blue); font-weight: 700; cursor: pointer; padding: 8px; }
+.result { text-align: center; padding: 6px 0 2px; }
+.next { color: var(--mute); font-size: 13px; margin-top: 8px; }
+.sheet { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: flex-end; justify-content: center; z-index: 20; }
+.sheet .panel { position: relative; background: var(--card); width: 100%; max-width: 560px; max-height: 86vh; max-height: 86dvh; overflow: auto; overscroll-behavior: contain; border-top: 1px solid var(--line); padding: 0 18px calc(24px + env(safe-area-inset-bottom)); }
+.sheet .close { position: sticky; float: right; top: 10px; margin-right: -6px; z-index: 3; width: 34px; height: 34px; border: 0; background: none; font-size: 26px; cursor: pointer; color: var(--ink); }
+.sheet h2 { position: sticky; top: 0; z-index: 2; background: var(--card); margin: 0 -18px 12px; padding: 20px 56px 10px 18px; font-size: 18px; border-bottom: 1px solid var(--line); }
+.sheet p { line-height: 1.5; font-size: 15px; }
+.toast { position: fixed; left: 50%; top: 12%; transform: translateX(-50%); background: #fff; color: #11151c; padding: 12px 16px; font-weight: 700; z-index: 30; border-radius: 4px; font-size: 14px; }
+.foot { text-align: center; color: var(--mute); font-size: 12px; margin-top: 24px; line-height: 1.6; }
+.foot a { color: var(--mute); }
+[hidden] { display: none !important; }
