@@ -7,7 +7,7 @@
 5 | In Rainbows | Radiohead | 10 Oct 2007
 6 | Loveless | my bloody valentine | 11 Nov 1991
 7 | My Beautiful Dark Twisted Fantasy | Kanye West | 22 Nov 2010
-8 | Wish You Were Here (half hidden) | Pink Floyd | 12 Sep 1975
+8 | Wish You Were Here | Pink Floyd | 12 Sep 1975
 9 | good kid, m.A.A.d city | Kendrick Lamar | 22 Oct 2012
 10 | The Bends | Radiohead | 13 Mar 1995
 11 | In the Court of the Crimson King | King Crimson | 10 Oct 1969
@@ -15,7 +15,7 @@
 13 | In the Aeroplane Over the Sea | Neutral Milk Hotel | 10 Feb 1998
 14 | Igor | Tyler, The Creator | 17 May 2019
 15 | Nevermind | Nirvana | 24 Sep 1991
-16 | ? | ? | ?
+16 | Revolver | The Beatles | 5 Aug 1966
 17 | Madvillainy | Madvillain | 23 Mar 2004
 18 | The Velvet Underground & Nico | The Velvet Underground & Nico | 12 Mar 1967
 19 | The College Dropout | Kanye West | 10 Feb 2004

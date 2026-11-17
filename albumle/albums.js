@@ -17,7 +17,7 @@ const ALBUMS = [
 [13, "In the Aeroplane Over the Sea", "Neutral Milk Hotel", 1998, "US", ["Indie Folk", "Indie Rock", "Psychedelic Folk"], "B", 0],
 [14, "Igor", "Tyler, The Creator", 2019, "US", ["Neo-Soul", "Alternative R&B"], "S", 0],
 [15, "Nevermind", "Nirvana", 1991, "US", ["Grunge", "Alternative Rock"], "B", 0],
-[16, "Revolver", "The Beatles", 1966, "GB", ["Psychedelic Pop", "Pop Rock"], "B", 1],
+[16, "Revolver", "The Beatles", 1966, "GB", ["Psychedelic Pop", "Pop Rock"], "B", 0],
 [17, "Madvillainy", "Madvillain", 2004, "US", ["Abstract Hip Hop", "Jazz Rap"], "D", 0],
 [18, "The Velvet Underground & Nico", "The Velvet Underground & Nico", 1967, "US", ["Art Rock", "Experimental Rock", "Proto-Punk"], "B", 0],
 [19, "The College Dropout", "Kanye West", 2004, "US", ["Conscious Hip Hop", "Pop Rap"], "S", 0],
