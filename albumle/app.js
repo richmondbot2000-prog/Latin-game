@@ -1,7 +1,7 @@
 /* Albumle — guess one of the 250 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '21';
+const APP_VERSION = '22';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // 'D' (duo) counts as a band until the owner decides how its square should behave (`kind`)
@@ -94,7 +94,7 @@ function render() {
   if (n >= 3 || over) hints.push(`The artist's name starts with <b>${esc(a.artist[0])}</b>`);
   if (n >= 5 || over) hints.push(`The title starts with <b>${esc(a.title[0])}</b>`);
   const rows = Array.from({ length: MAX }, (_, k) => {
-    const gi = G.guesses[k]; if (gi === undefined) return `<div class="row empty"></div>`;
+    const gi = G.guesses[k]; if (gi === undefined) return `<div class="row empty">${"<span></span>".repeat(5)}</div>`;
     const g = A[gi], f = compare(g, a);
     return `<div class="row"><div class="who">${esc(g.title)} <span>— ${esc(g.artist)}</span></div><div class="cells">${KEYS.map(k => `<div class="cell ${f[k].cls}${f[k].small ? ' sm' : ''}${k === 'country' ? ' flag' : ''}">${esc(f[k].text)}<small>${esc(f[k].sub)}</small></div>`).join('')}</div></div>`;
   }).join('');
