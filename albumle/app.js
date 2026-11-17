@@ -1,7 +1,7 @@
 /* Albumle — guess one of the 200 best albums (RateYourMusic's all-time chart) from its genres and mood.
    Tradle-style: every guess says how far away you are — year, artist, country, genre, chart rank.
    A new album every day; practice games any time. Everything lives in this browser's localStorage. */
-const APP_VERSION = '2';
+const APP_VERSION = '3';
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const A = ALBUMS.map(([rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour], i) => ({ i, rank, title, artist, year, country, genres, desc, tracks, minutes, type, colour, main: MAIN_OF[genres[0]] || genres[0] }));
@@ -40,14 +40,8 @@ const SQ = { g: '🟩', y: '🟨', n: '🟥' };
 /* ---------- the page ---------- */
 function render() {
   const a = A[G.idx], n = G.guesses.length, over = !!G.done;
-  const known = { year: '?', type: '?', genre: '?', colour: '?', rank: '?' };
-  for (const gi of G.guesses) { const g = A[gi], f = compare(g, a);
-    if (f.year.cls === 'g') known.year = a.year === g.year ? String(a.year) : `${g.year} ± 5`; else if (f.year.cls === 'y' && known.year === '?') known.year = `${g.year} ± 10`;
-    if (f.type.cls === 'g') known.type = g.type === 'B' ? 'Band' : 'Solo';
-    if (f.genre.cls === 'g') known.genre = g.genres[0]; else if (f.genre.cls === 'y' && (known.genre === '?' || known.genre === g.main)) known.genre = g.main + ' …';
-    if (f.colour.cls === 'g') known.colour = g.colour;
-    if (f.rank.cls === 'g') known.rank = a.rank === g.rank ? '#' + a.rank : `#${g.rank} ± 5`; else if (f.rank.cls === 'y' && known.rank === '?') known.rank = `#${g.rank} ± 20`; }
-  if (over) Object.assign(known, { year: String(a.year), type: a.type === 'B' ? 'Band' : 'Solo', genre: a.genres[0], colour: a.colour, rank: '#' + a.rank });
+  // the owner's rule (17 Nov 2026): the album's five facts are shown before the first guess; the squares then say how close each guess is
+  const known = { year: String(a.year), type: a.type === 'B' ? 'Band' : 'Solo', genre: a.genres[0], colour: a.colour, rank: '#' + a.rank };
   const vars = [['Year', known.year], ['Band or solo', known.type], ['Genre', known.genre], ['Cover colour', known.colour], ['Rank (1–200)', known.rank]];
   const hints = [];
   if (n >= 3 || over) hints.push(`The artist's name starts with <b>${esc(a.artist[0])}</b>`);
@@ -59,8 +53,8 @@ function render() {
   }).join('');
   $('#app').innerHTML = `
     <div class="sub">${mode === 'daily' ? `Albumle #${G.day + 1}` : 'Practice'} · ${over ? (G.done === 'won' ? `solved in ${n}` : 'not solved') : `guess ${n + 1} of ${MAX}`}</div>
-    <div class="clue"><div class="label">${n ? 'What you know so far' : 'You are guessing its…'}</div>
-      <div class="vars">${vars.map(([k, v]) => `<div class="var ${v === '?' ? '' : 'got'}"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}</div>
+    <div class="clue"><div class="label">The album</div>
+      <div class="vars">${vars.map(([k, v]) => `<div class="var"><span>${k}</span><b>${k === 'Cover colour' ? `<i class="sw" style="background:${SWATCH[v] || '#888'}"></i>` : ''}${esc(v)}</b></div>`).join('')}</div>
       ${hints.map(h => `<div class="hint">${h}</div>`).join('')}</div>
     ${over ? result(a) : `<div class="guessbox"><input id="q" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type an album or artist…" enterkeyhint="go"><div class="sugg" id="sugg" hidden></div></div>`}
     <div class="rows">${rows}</div>
@@ -131,10 +125,10 @@ function stats() {
 function help() {
   sheet(`<h2>How to play</h2>
     <p>Guess the album in ${MAX} tries. Every day it is one of the <b>200 best albums of all time</b> as rated on RateYourMusic.</p>
-    <p>You are told nothing to start with. Type any album or artist from the 200, pick it from the list, and the squares tell you how close you are on five things:</p>
+    <p>You are shown five facts about it: its <b>year</b>, whether it is a <b>band or a solo artist</b>, its <b>genre</b>, the <b>main colour of its cover</b> and its <b>rank</b> on the list of 200. Type any album or artist from the 200, pick it from the list, and the squares tell you how close your guess is on each:</p>
     <div class="cells"><div class="cell y">1994 ▲<small>later</small></div><div class="cell n">Band<small>no</small></div><div class="cell y sm">Alternative Rock<small>Rock, not this</small></div><div class="cell g"><i class="sw" style="background:#3a74d8"></i><small>Blue</small></div><div class="cell n">#44 ▼<small>ranks lower</small></div></div>
     <p><b>Year</b>: green within 5 years, yellow within 10; ▲ the answer came out later, ▼ earlier.<br><b>Band or solo</b>: green when the answer is the same kind of act.<br><b>Genre</b>: green for the same genre, yellow for the same broad genre but a different one within it (you guess Alternative Rock, it is Indie Rock), red for a different genre altogether.<br><b>Cover colour</b>: green when the answer's cover is mainly that colour.<br><b>Rank</b> on the list of 200: green within 5 places, yellow within 20; ▲ the answer is higher up (nearer #1), ▼ lower.</p>
-    <p>The panel at the top keeps what you have found out. After three misses you get the artist's initial, after five the title's. Share your squares when you are done, and play practice games as often as you like.</p>`);
+    <p>After three misses you get the artist's initial, after five the title's. Share your squares when you are done, and play practice games as often as you like.</p>`);
 }
 function sheet(html) { $('#sheetBody').innerHTML = html; $('#sheet').hidden = false; }
 function toast(t) { const el = $('#toast'); el.textContent = t; el.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { el.hidden = true; }, 2200); }
